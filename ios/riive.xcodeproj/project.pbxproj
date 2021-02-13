@@ -161,7 +161,6 @@
 				1C9A6F1BEA3987982ACB31CD /* Pods-riive-tvOSTests.debug.xcconfig */,
 				B6C1BF49F57374D69AE834BB /* Pods-riive-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
