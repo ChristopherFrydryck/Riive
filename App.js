@@ -26,6 +26,9 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import Icon from './components/Icon'
+import Color from './constants/Colors'
+
 import { observer, Provider } from 'mobx-react/native'
 // import UserStore from './stores/userStore'
 // import ComponentStore from './stores/componentStore'
@@ -106,8 +109,17 @@ export default class App extends React.Component {
   render() {
     if (this.state.fontLoaded){
       return (
+        <SafeAreaView>
+          <Text style={{fontFamily: "Poppins-Regular"}}>Hello World</Text>
+          <Icon 
+                    iconName="home-city"
+                    iconLib="MaterialCommunityIcons"
+                    iconColor={Colors.cosmos500}
+                    iconSize={120}
+                    style={{marginBottom: 32}}
+                />
+        </SafeAreaView>
         
-        <Text style={{fontFamily: "Poppins-Regular"}}>Hello World</Text>
         // <Provider {...stores}>
         //   <AuthNavigator initRoute="Home"/>
         // </Provider>

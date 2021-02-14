@@ -357,6 +357,8 @@ PODS:
     - React
   - RNSVG (9.13.3):
     - React
+  - RNVectorIcons (8.0.0):
+    - React-Core
   - Stripe (14.0.1)
   - tipsi-stripe (7.5.3):
     - React
@@ -406,6 +408,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - tipsi-stripe (from `../node_modules/tipsi-stripe`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -508,6 +511,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  RNVectorIcons:
+    :path: "../node_modules/react-native-vector-icons"
   tipsi-stripe:
     :path: "../node_modules/tipsi-stripe"
   Yoga:
@@ -568,6 +573,7 @@ SPEC CHECKSUMS:
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 254da4b84f25971cbb30ed3ddc84131f23cac812
   RNSVG: f6177f8d7c095fada7cfee2e4bb7388ba426064c
+  RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
   Stripe: 4305b646743612854819fb5d5cf67aaeb93577c0
   tipsi-stripe: fb5b32e890a4528322c491e1827133a3cb919e0a
   TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38

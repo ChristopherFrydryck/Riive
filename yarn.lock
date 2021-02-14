@@ -7077,7 +7077,7 @@
     "unimodules-sensors-interface" "~5.1.0"
     "unimodules-task-manager-interface" "~5.1.0"
 
-"react-native-vector-icons@*":
+"react-native-vector-icons@*", "react-native-vector-icons@^8.0.0":
   "integrity" "sha512-u3NWvO+b7nTCxx7IU4EzukFyiApHdpjbsjKgMFEI2Ma+r1Mq48s0ajvBCIPI7LCgKBGYclOxWmMV9DHV2cJFlw=="
   "resolved" "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-8.0.0.tgz"
   "version" "8.0.0"
