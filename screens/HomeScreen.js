@@ -24,7 +24,7 @@ import {
 import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
-import { observer, Provider } from 'mobx-react/native'
+import { observer, inject } from 'mobx-react/native'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 
@@ -46,7 +46,8 @@ const stores = {
   UserStore, ComponentStore
 }
 
-
+@inject("UserStore")
+@observer
 export default class App extends React.Component {
   constructor(props){
     super(props);
@@ -58,7 +59,7 @@ export default class App extends React.Component {
 
 
   async componentDidMount(){
-    
+  
   }
 
   render() {
