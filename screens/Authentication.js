@@ -17,7 +17,10 @@ import ComponentStore from '../stores/componentStore'
 
 
 // Firebase imports
-import * as firebase from 'firebase'
+// import * as firebase from 'firebase'
+import * as firebase from 'firebase/app';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import 'firebase/firestore';
 import 'firebase/auth';
 
@@ -92,7 +95,7 @@ export default class Authentication extends React.Component {
         name: this.props.UserStore.fullname,
         email: this.props.UserStore.email,
         phone: this.props.UserStore.phone,
-        FBID: firebase.auth().currentUser.uid,
+        FBID: auth().currentUser.uid,
       })
     }
     try{
@@ -106,7 +109,7 @@ export default class Authentication extends React.Component {
 
   // Resets the password of the state with email
   resetPassword = () =>{
-    firebase.auth().sendPasswordResetEmail(this.props.UserStore.email).then(function() {
+    auth().sendPasswordResetEmail(this.props.UserStore.email).then(function() {
         alert('Check your email for a password reset link.')
       }).catch(function(error) {
         alert('Failed to send password reset. ' + error.message)
@@ -167,7 +170,7 @@ export default class Authentication extends React.Component {
     // If vars are true and valid beguin creating user
     if(nameValid && phoneValid){
     
-    firebase.auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then((userCredentials) => {
+     auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then((userCredentials) => {
         // RETURN ALL THIS IF EMAIL AND PASSWORD ARE TRUE
 
         this.setState({
@@ -180,22 +183,22 @@ export default class Authentication extends React.Component {
         
         // Updates user's displayName in firebase auth
         if(userCredentials.user){
-          this.props.UserStore.userID = firebase.auth().currentUser.uid;
+          this.props.UserStore.userID = auth().currentUser.uid;
            userCredentials.user.updateProfile({
             displayName: this.props.UserStore.fullname
            })
            userCredentials.user.updateEmail(this.props.UserStore.email).then(() => {
-                this.props.UserStore.joinedDate = firebase.auth().currentUser.metadata.creationTime
+                this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime
                 // IMPORTANT!!! Defines user location in database
-                this.props.UserStore.userID = firebase.auth().currentUser.uid;
+                this.props.UserStore.userID = auth().currentUser.uid;
               }).then(() => {
                 //start firestore
-                const db = firebase.firestore();
+                const db = firestore();
                 const doc = db.collection('users').doc(this.props.UserStore.userID);
 
                 doc.get().then((docData) => {
                     db.collection("users").doc(this.props.UserStore.userID).set({
-                      id: firebase.auth().currentUser.uid,
+                      id: auth().currentUser.uid,
                       fullname: this.props.UserStore.fullname,
                       firstname: this.props.UserStore.firstname,
                       lastname: this.props.UserStore.lastname,
@@ -208,8 +211,8 @@ export default class Authentication extends React.Component {
                       payments: [],
                       trips: [],
                       photo: '',
-                      joined_date: firebase.auth().currentUser.metadata.creationTime,
-                      last_update: firebase.auth().currentUser.metadata.creationTime,
+                      joined_date: auth().currentUser.metadata.creationTime,
+                      last_update: auth().currentUser.metadata.creationTime,
                       disabled: {
                         isDisabled: false,
                         disabledEnds: new Date().getTime() / 1000,
@@ -229,8 +232,8 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.phone = this.props.UserStore.phone;
                     this.props.UserStore.stripeID = "";
                     this.props.UserStore.photo = "";
-                    this.props.UserStore.joinedDate = firebase.auth().currentUser.metadata.creationTime;
-                    this.props.UserStore.last_update = firebase.auth().currentUser.metadata.creationTime;
+                    this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
+                    this.props.UserStore.last_update = auth().currentUser.metadata.creationTime;
                     this.props.UserStore.vehicles = [];
                     this.props.UserStore.listings = [];
                     this.props.UserStore.payments = [];
@@ -246,7 +249,7 @@ export default class Authentication extends React.Component {
                   this.props.navigation.navigate('Home')
      
                   // ID if user signed in via email or google
-                  this.props.UserStore.signInProvider = firebase.auth().currentUser.providerData[0].providerId;
+                  this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
      
                 
      
@@ -257,11 +260,11 @@ export default class Authentication extends React.Component {
               }).then(() => this.createStripeCustomer())
               .then(() =>  {
                 // Sends email to valid user
-                firebase.auth().currentUser.sendEmailVerification()
+                auth().currentUser.sendEmailVerification()
               })
                 .catch((e) => {
                 alert('Whoops! We accidently lost connection. Try signing up again.' + e)
-                firebase.auth().currentUser.delete();
+                auth().currentUser.delete();
                 })
         
                   
@@ -304,16 +307,17 @@ onPressSignIn = async() => {
   this.setState ({ authenticating: true})
 
 
-  firebase.auth().signInWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async() => {
+  auth().signInWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async() => {
     // define user id before calling the db from it
-    this.props.UserStore.userID = firebase.auth().currentUser.uid;
+    this.props.UserStore.userID = auth().currentUser.uid;
     this.setState({
       emailError: '',
       passwordError: '',
     })
 
 
-    const db = firebase.firestore();
+    const db = firestore();
+
     const doc = db.collection('users').doc(this.props.UserStore.userID);
 
     const searchHistoryRef = db.collection('users').doc(this.props.UserStore.userID).collection('searchHistory');
@@ -341,7 +345,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.userID = doc.data().id;
                 this.props.UserStore.stripeID = doc.data().stripeID;
                 this.props.UserStore.photo = doc.data().photo;
-                this.props.UserStore.joinedDate = firebase.auth().currentUser.metadata.creationTime;
+                this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
                 this.props.UserStore.last_update = doc.data().last_update;
                 this.props.UserStore.vehicles = doc.data().vehicles;
                 this.props.UserStore.listings = [];
@@ -353,10 +357,10 @@ onPressSignIn = async() => {
                 this.props.UserStore.pushTokens = doc.data().pushTokens || [];
 
                 // ID if user signed in via email or google
-                this.props.UserStore.signInProvider = firebase.auth().currentUser.providerData[0].providerId;
+                this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
                 
-
-                var currentTime = firebase.firestore.Timestamp.now();
+              
+                var currentTime = firestore.Timestamp.now();
 
                 // in case a user reverts their email change via profile update
                 db.collection("users").doc(this.props.UserStore.userID).update({
@@ -375,7 +379,7 @@ onPressSignIn = async() => {
   }).then((doc) => {
     const length = doc.data().listings.length;
     if( length > 0 && length <= 10){
-      db.collection('listings').where(firebase.firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
+      db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
         for(let i = 0; i < qs.docs.length; i++){
           listingsData.push(qs.docs[i].data())
@@ -391,8 +395,9 @@ onPressSignIn = async() => {
     while(listings.length > 0){
       allArrs.push(listings.splice(0, 10))
     }
+
     for(let i = 0; i < allArrs.length; i++){
-      db.collection('listings').where(firebase.firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+      db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
         for(let i = 0; i < qs.docs.length; i++){
           listingsData.push(qs.docs[i].data())
         }
@@ -410,9 +415,10 @@ onPressSignIn = async() => {
     alert("Failed to grab user data. Please try again. " + e)
   })
 
-  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+  
+  // auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
     // alert('Persisted!')
-  })
+  // })
 
 
   }).catch( async (error) => {
@@ -460,7 +466,7 @@ onPressSignIn = async() => {
         await fetch('https://us-central1-riive-parking.cloudfunctions.net/getUserDataFromEmail', settings).then((res) => {
           return res.json()
         }).then((body) => {
-          const db = firebase.firestore();
+          const db = firestore();
           const doc = db.collection('users').doc(body.uid)
           return doc.get()
         }).then((user) => {

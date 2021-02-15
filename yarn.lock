@@ -1367,6 +1367,16 @@
     "opencollective-postinstall" "^2.0.1"
     "superstruct" "^0.6.2"
 
+"@react-native-firebase/auth@^10.8.0":
+  "integrity" "sha512-aKKImq/z1kaWNvssWqb0aBgtctH34Pnke6wFTM6GE3R3uGZ57d+lPVl+57az8D3nj5xVwJyNftl6/1WmPzCPBw=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/auth/-/auth-10.8.0.tgz"
+  "version" "10.8.0"
+
+"@react-native-firebase/firestore@^10.8.0":
+  "integrity" "sha512-HRt4q/P15ejmHjtQ5j21vFXpSmpMYE9JYyFo6PSonL9wFtuA8ujEeX/OVUf1c8JRAZMdTCVdchHUDdFsABUWUg=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/firestore/-/firestore-10.8.0.tgz"
+  "version" "10.8.0"
+
 "@react-native-firebase/messaging@^10.6.4":
   "integrity" "sha512-93xjjUhp61wIVADONX51Gry4k4luaENrsnbYjwxoUnWcG5vxHIAwPbeXwWIfEs1/oiv7vvXScc11WjE95LLfiw=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-10.8.0.tgz"
