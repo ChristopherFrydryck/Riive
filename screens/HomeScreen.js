@@ -148,21 +148,50 @@ export default class Home extends Component {
 
   getCurrentLocation = async(isFirstTime) => {
     try{
-      await check(
+      const permission = await check(
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
-      ).then(async(res) => {
-        if(res !== "granted"){
-          const final = await requestLocationAccuracy().then(res2 => {
-            if(res2 !== "granted"){
-              Geolocation.getCurrentPosition(info => console.log(info));
-            }
-          })
+      )
+
+      if(permission !== "granted"){
+        Geolocation.getCurrentPosition(
+          position => {
+            const initialPosition = JSON.stringify(position);
+            console.log(initialPosition)
+          },
+          error => {Alert.alert(
+            "Location Unavailable",
+            "Enable location permissions to discover parking nearby.",
+            [
+              {
+                text: "No thanks",
+                onPress: () => {},
+                style: "cancel"
+              },
+              { text: "Enable location services", onPress: () => Linking.openSettings()}
+            ],
+            { cancelable: false }
+          );}
+        );
+      }else{
+        Geolocation.watchPosition(pos => console.log(`Position is at: ${JSON.stringify(pos)}`))
+      }
+
+     
+      // await check(
+      //   Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+      // ).then(async(res) => {
+      //   if(res !== "granted"){
+      //     const final = await requestLocationAccuracy().then(res2 => {
+      //       if(res2 !== "granted"){
+      //         Geolocation.getCurrentPosition(info => console.log(info));
+      //       }
+      //     })
           
           
-        }else{
-          Geolocation.getCurrentPosition(info => console.log(info));
-        }
-      })
+      //   }else{
+      //     Geolocation.getCurrentPosition(info => console.log(info));
+      //   }
+      // })
 
      
       
