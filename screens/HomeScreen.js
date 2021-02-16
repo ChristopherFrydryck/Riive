@@ -146,6 +146,47 @@ export default class Home extends Component {
     }
   }
 
+  setLocationState = (isFirstTime, lat, lng) => {
+    try{
+        if(isFirstTime){
+            
+            this.region = {
+                ...this.region,
+                current: {
+                    ...this.region.current,
+                    latitude: lat,
+                    longitude: lng
+                }
+            }
+
+            this.currentLocation = {
+                ...this.currentLocation,
+                geometry: {
+                    location: {
+                        lat: lat,
+                        lng: lng,
+                    }
+                }
+            }
+
+        }else{
+            this.currentLocation = {
+                ...this.currentLocation,
+                    geometry: {
+                        location: {
+                            lat: lat,
+                            lng: lng,
+                        }
+                    }
+            }
+
+        }
+
+      } catch (error) {
+        Alert.alert(error)
+      }
+  }
+
   getCurrentLocation = async(isFirstTime) => {
     try{
       const permission = await check(
@@ -156,11 +197,11 @@ export default class Home extends Component {
         Geolocation.getCurrentPosition(
           position => {
             const initialPosition = JSON.stringify(position);
-            console.log(initialPosition)
+            this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
           },
           error => {Alert.alert(
-            "Location Unavailable",
-            "Enable location permissions to discover parking nearby.",
+            "Location Services Disabled",
+            "Enable location permissions and restart Riive to discover parking nearby.",
             [
               {
                 text: "No thanks",
@@ -173,25 +214,11 @@ export default class Home extends Component {
           );}
         );
       }else{
-        Geolocation.watchPosition(pos => console.log(`Position is at: ${JSON.stringify(pos)}`))
+        Geolocation.watchPosition(pos => {
+          this.setLocationState(isFirstTime, pos.coords.latitude, pos.coords.longitude)
+      })
       }
 
-     
-      // await check(
-      //   Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
-      // ).then(async(res) => {
-      //   if(res !== "granted"){
-      //     const final = await requestLocationAccuracy().then(res2 => {
-      //       if(res2 !== "granted"){
-      //         Geolocation.getCurrentPosition(info => console.log(info));
-      //       }
-      //     })
-          
-          
-      //   }else{
-      //     Geolocation.getCurrentPosition(info => console.log(info));
-      //   }
-      // })
 
      
       
@@ -199,9 +226,10 @@ export default class Home extends Component {
         
     
     }catch(e){
+      console.log(e)
           Alert.alert(
           "Location Unavailable",
-          "Enable location permissions to discover parking nearby.",
+          "Enable location permissions and restart Riive to discover parking nearby.",
           [
             {
               text: "No thanks",
@@ -218,55 +246,7 @@ export default class Home extends Component {
 
   // getCurrentLocation = async(isFirstTime) => {
     
-  // if(Platform.OS === 'android'){
-  //   const granted = await PermissionsAndroid.check(
-  //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-  //   try{
-  //     if (!granted) {
-  //       const finalCheck = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-  //       if(finalCheck !== 'granted'){
-  //         throw "Failure to get location"
-  //       }else{
-  //         Geolocation.getCurrentPosition(info => console.log(info));
-  //       }
-  //     } else {
-  //       Geolocation.getCurrentPosition(info => console.log(info));
-  //     }
-  //   }catch(e){
-  //     Alert.alert(
-  //       "Location Unavailable",
-  //       "Enable location permissions to discover parking nearby.",
-  //       [
-  //         {
-  //           text: "No thanks",
-  //           onPress: () => {},
-  //           style: "cancel"
-  //         },
-  //         { text: "Enable location services", onPress: () => Linking.openSettings()}
-  //       ],
-  //       { cancelable: false }
-  //     );
-  //   }
-  // }else{
-  //   try{
-  //     if(Geolocation.)Geolocation.getCurrentPosition(info => console.log(info));
-  //   }catch(e){
-  //     Alert.alert(
-  //       "Location Unavailable",
-  //       "Enable location permissions to discover parking nearby.",
-  //       [
-  //         {
-  //           text: "No thanks",
-  //           onPress: () => {},
-  //           style: "cancel"
-  //         },
-  //         { text: "Enable location services", onPress: () => Linking.openURL('app-settings://')}
-          
-  //       ],
-  //       { cancelable: false }
-  //     );
-  //   }
-  // }
+
     // try {
     //     let { status } = await Location.requestPermissionsAsync();
     //     if (status !== 'granted') {
