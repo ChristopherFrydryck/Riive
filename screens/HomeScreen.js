@@ -1,6 +1,6 @@
 
 import React, {Component, createRef} from 'react'
-import {View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox} from 'react-native'
+import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking} from 'react-native'
 
 import axios from 'axios'
 import ActionSheet from "react-native-actions-sheet";
@@ -8,6 +8,8 @@ import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import Geolocation from '@react-native-community/geolocation';
+import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
 
 import Button from '../components/Button'
 import Text from '../components/Txt'
@@ -47,7 +49,7 @@ const stores = {
 const actionSheetRef = createRef();
 const db = firestore();
 
-@inject("UserStore")
+@inject("UserStore", "ComponentStore")
 @observer
 export default class Home extends Component {
   interval = 0;
@@ -144,12 +146,151 @@ export default class Home extends Component {
     }
   }
 
+  getCurrentLocation = async(isFirstTime) => {
+    try{
+      await check(
+        Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+      ).then(async(res) => {
+        if(res !== "granted"){
+          const final = await requestLocationAccuracy().then(res2 => {
+            if(res2 !== "granted"){
+              Geolocation.getCurrentPosition(info => console.log(info));
+            }
+          })
+          
+          
+        }else{
+          Geolocation.getCurrentPosition(info => console.log(info));
+        }
+      })
+
+     
+      
+      
+        
+    
+    }catch(e){
+          Alert.alert(
+          "Location Unavailable",
+          "Enable location permissions to discover parking nearby.",
+          [
+            {
+              text: "No thanks",
+              onPress: () => {},
+              style: "cancel"
+            },
+            { text: "Enable location services", onPress: () => Linking.openSettings()}
+          ],
+          { cancelable: false }
+        );
+    }
+  }
+
+
+  // getCurrentLocation = async(isFirstTime) => {
+    
+  // if(Platform.OS === 'android'){
+  //   const granted = await PermissionsAndroid.check(
+  //     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+  //   try{
+  //     if (!granted) {
+  //       const finalCheck = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+  //       if(finalCheck !== 'granted'){
+  //         throw "Failure to get location"
+  //       }else{
+  //         Geolocation.getCurrentPosition(info => console.log(info));
+  //       }
+  //     } else {
+  //       Geolocation.getCurrentPosition(info => console.log(info));
+  //     }
+  //   }catch(e){
+  //     Alert.alert(
+  //       "Location Unavailable",
+  //       "Enable location permissions to discover parking nearby.",
+  //       [
+  //         {
+  //           text: "No thanks",
+  //           onPress: () => {},
+  //           style: "cancel"
+  //         },
+  //         { text: "Enable location services", onPress: () => Linking.openSettings()}
+  //       ],
+  //       { cancelable: false }
+  //     );
+  //   }
+  // }else{
+  //   try{
+  //     if(Geolocation.)Geolocation.getCurrentPosition(info => console.log(info));
+  //   }catch(e){
+  //     Alert.alert(
+  //       "Location Unavailable",
+  //       "Enable location permissions to discover parking nearby.",
+  //       [
+  //         {
+  //           text: "No thanks",
+  //           onPress: () => {},
+  //           style: "cancel"
+  //         },
+  //         { text: "Enable location services", onPress: () => Linking.openURL('app-settings://')}
+          
+  //       ],
+  //       { cancelable: false }
+  //     );
+  //   }
+  // }
+    // try {
+    //     let { status } = await Location.requestPermissionsAsync();
+    //     if (status !== 'granted') {
+    //       throw "Failure to get location"
+    //     }
+    //     let location = await Location.getCurrentPositionAsync({});
+        
+    //     if(isFirstTime){
+            
+    //         this.region = {
+    //             ...this.region,
+    //             current: {
+    //                 ...this.region.current,
+    //                 latitude: location.coords.latitude,
+    //                 longitude: location.coords.longitude
+    //             }
+    //         }
+
+    //         this.currentLocation = {
+    //             ...this.currentLocation,
+    //             geometry: {
+    //                 location: {
+    //                     lat: location.coords.latitude,
+    //                     lng: location.coords.longitude,
+    //                 }
+    //             }
+    //         }
+
+    //     }else{
+    //         this.currentLocation = {
+    //             ...this.currentLocation,
+    //                 geometry: {
+    //                     location: {
+    //                         lat: location.coords.latitude,
+    //                         lng: location.coords.longitude,
+    //                     }
+    //                 }
+    //         }
+
+    //     }
+
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+// }
+
 
   async componentDidMount(){
     LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-
+    // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
+         this.getCurrentLocation();
         // this.mapLocationFunction();
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);
@@ -181,6 +322,11 @@ export default class Home extends Component {
     // let minutes = parseInt(minutesString)
     return(`${hours}:${minutesString} ${parseInt(hoursString) >= 12 ? 'PM' : 'AM'}`)
   }
+
+  searchFilterTimeCallback = (timeData) => {
+    this.setState({timeSearched: timeData, dayTimeValid: true});
+    this.slideBottomPill()
+}
 
   searchFilterDayCallback = (dayData) => {
     this.setState({daySearched: dayData, dayTimeValid: true});
@@ -442,6 +588,38 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
 
 this.forceUpdate();
 }
+
+
+filterResults = async() => {
+  if(this.state.searchFilterOpen){
+      await this.getResults(this.region.current.latitude, this.region.current.longitude, this.region.current.longitudeDelta * 69, 99999.9999, 99999.9999)
+  }
+  
+  await this.setState({searchFilterOpen: !this.state.searchFilterOpen})
+   
+}
+
+clickSpace = async(data) => {
+  await this.checkDayTimeValid()
+  if(this.state.dayTimeValid){
+      await this.props.ComponentStore.selectedExternalSpot.clear()
+      this.setState({selectedSpace: data.space, selectedSpaceHost: data.host})
+      this.props.ComponentStore.selectedExternalSpot.push(data.space)
+
+  
+      if(this.state.searchInputValue.split("").length > 0){
+          await this.getDistance(`${data.space.region.latitude}, ${data.space.region.longitude}`, `${this.region.searched.latitude}, ${this.region.searched.longitude}`, "walking")
+      }
+
+  
+      await actionSheetRef.current?.setModalVisible(true)
+  }
+
+
+
+  
+}
+
 
 onSelectAddress = async(det) => {
   const db = firestore();

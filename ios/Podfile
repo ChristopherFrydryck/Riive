@@ -10,6 +10,20 @@ target 'riive' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+
+
+  # iOS Permissions Library
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  pod 'Permission-Notifications', :path => "#{permissions_path}/Notifications"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary"
+
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing
