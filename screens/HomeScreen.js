@@ -118,6 +118,9 @@ export default class Home extends Component {
       }
     }
 
+    this.mapScrolling = false;
+        this.results = [];
+
     this.region = {
       searched: {
           latitude: null,
@@ -144,6 +147,34 @@ export default class Home extends Component {
             }
         }
     }
+  }
+
+  async componentDidMount(){
+    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
+    // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
+       // Set Status Bar page info here!
+       this._navListener = this.props.navigation.addListener('didFocus', () => {
+        
+        
+        if(this.state.searchFilterOpen){
+            StatusBar.setBarStyle('light-content', true);
+            Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
+        }else{
+            StatusBar.setBarStyle('dark-content', true);
+            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+        }
+       
+      });
+
+      this._navListener = this.props.navigation.addListener('didBlur', () => {
+        clearInterval(this._interval)
+      })
+
+      await this.mapLocationFunction();
+      await this.getCurrentLocation(true);
+
+      this.rippleAnimation();
+
   }
 
   setLocationState = (isFirstTime, lat, lng) => {
@@ -181,23 +212,33 @@ export default class Home extends Component {
             }
 
         }
+        this.forceUpdate();
 
       } catch (error) {
         Alert.alert(error)
       }
   }
 
+  mapLocationFunction = () => {
+    this._interval = setInterval(() => {
+        if(this.mapScrolling === false){
+          this.getCurrentLocation(false)
+        }
+      }, 5000)
+      
+}
+
   getCurrentLocation = async(isFirstTime) => {
+  
     try{
-      const permission = await check(
+      const permission = check(
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
       )
 
       if(permission !== "granted"){
-        Geolocation.getCurrentPosition(
-          position => {
-            const initialPosition = JSON.stringify(position);
+        await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
+            // console.log(`Lat is ${position.coords.latitude}`)
           },
           error => {Alert.alert(
             "Location Services Disabled",
@@ -214,19 +255,19 @@ export default class Home extends Component {
           );}
         );
       }else{
-        Geolocation.watchPosition(pos => {
+        await Geolocation.watchPosition((position) => {
           this.setLocationState(isFirstTime, pos.coords.latitude, pos.coords.longitude)
+          // console.log(`Lat is ${position.coords.latitude}`)
+         
       })
       }
 
-
      
-      
       
         
     
     }catch(e){
-      console.log(e)
+     
           Alert.alert(
           "Location Unavailable",
           "Enable location permissions and restart Riive to discover parking nearby.",
@@ -244,82 +285,10 @@ export default class Home extends Component {
   }
 
 
-  // getCurrentLocation = async(isFirstTime) => {
-    
-
-    // try {
-    //     let { status } = await Location.requestPermissionsAsync();
-    //     if (status !== 'granted') {
-    //       throw "Failure to get location"
-    //     }
-    //     let location = await Location.getCurrentPositionAsync({});
-        
-    //     if(isFirstTime){
-            
-    //         this.region = {
-    //             ...this.region,
-    //             current: {
-    //                 ...this.region.current,
-    //                 latitude: location.coords.latitude,
-    //                 longitude: location.coords.longitude
-    //             }
-    //         }
-
-    //         this.currentLocation = {
-    //             ...this.currentLocation,
-    //             geometry: {
-    //                 location: {
-    //                     lat: location.coords.latitude,
-    //                     lng: location.coords.longitude,
-    //                 }
-    //             }
-    //         }
-
-    //     }else{
-    //         this.currentLocation = {
-    //             ...this.currentLocation,
-    //                 geometry: {
-    //                     location: {
-    //                         lat: location.coords.latitude,
-    //                         lng: location.coords.longitude,
-    //                     }
-    //                 }
-    //         }
-
-    //     }
-
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-// }
-
-
-  async componentDidMount(){
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-    // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
-       // Set Status Bar page info here!
-       this._navListener = this.props.navigation.addListener('didFocus', () => {
-         this.getCurrentLocation();
-        // this.mapLocationFunction();
-        if(this.state.searchFilterOpen){
-            StatusBar.setBarStyle('light-content', true);
-            Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
-        }else{
-            StatusBar.setBarStyle('dark-content', true);
-            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
-        }
-       
-      });
-
-      this._navListener = this.props.navigation.addListener('didBlur', () => {
-        clearInterval(this._interval)
-      })
 
 
 
-      this.rippleAnimation();
-
-  }
+ 
 
   convertToCommonTime = (t) => {
     let hoursString = t.substring(0,2)
@@ -834,6 +803,7 @@ goToReserveSpace = () => {
   }
 
   render() {
+  
     const {width, height} = Dimensions.get('window')
     const {firstname, email} = this.props.UserStore
     if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
