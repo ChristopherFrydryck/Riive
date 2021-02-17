@@ -41,6 +41,13 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import * as geofirestore from 'geofirestore'
 
+if(Platform.OS === 'android') { // only android needs polyfill
+  require('intl'); // import intl object
+  require('intl/locale-data/jsonp/en');
+  Intl.__disableRegExpRestore()
+}
+
+
 
 
 const stores = {
@@ -912,6 +919,114 @@ goToReserveSpace = () => {
                             />)
                 })}
             </MapView>
+            <View style={{zIndex: 9, position: 'absolute', top: -16}}>
+             <GooglePlacesAutocomplete
+               placeholder='Search by destination...'
+               returnKeyType={'done'}  
+                            
+               autofocus={false}
+              ref={(instance) => { this.GooglePlacesRef = instance }}
+                            currentLocation={false}
+               minLength={2}
+               listViewDisplayed={false}
+               fetchDetails={true}
+               onPress={(data, details = null) => {this.onSelectAddress(details)}}
+               textInputProps={{
+                   onFocus: () => {
+                       this.setState({
+                           inputFocus: true,
+                       })
+                       clearInterval(this._interval)
+                   },
+                   onBlur: () => {
+                       this.setState({
+                           inputFocus: false
+                       })
+                                    this.mapLocationFunction();
+                   },
+                   clearButtonMode: 'never'
+               }}
+               renderRightButton={() => 
+                   <Icon 
+                       iconName="x"
+                       iconColor={Colors.cosmos500}
+                       iconSize={24}
+                       onPress={() => this.clearAddress()}
+                       style={{ position: "relative", 
+                       borderRadius: width/2,
+                       padding: 10, display: this.state.searchedAddress ? "flex" : "none"}}
+                   />
+               }
+               query={{
+                  key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+                  language: 'en'
+              }}
+              GooglePlacesSearchQuery={{
+                rankby: 'distance',
+                types: 'address',
+                components: "country:us"
+              }}
+              // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
+              nearbyPlacesAPI={'GoogleReverseGeocoding'}
+              debounce={200}
+              predefinedPlacesAlwaysVisible={true}
+              enablePoweredByContainer={false}
+              predefinedPlaces={[this.currentLocation]}
+
+              styles={{
+                  container:{
+                      display: this.state.searchFilterOpen ? 'none' : 'flex',
+                      justifySelf: 'content',
+                      width: width,
+                      alignItems: "center",
+                  },
+                  textInputContainer:{
+                      width: width - 24,
+                      backgroundColor: "white",
+                      height: 48,
+                      borderTopWidth: 0,
+                      borderBottomWidth: 0,
+                      borderRadius: width/2, 
+                      // Shadow
+                      shadowColor: '#000', 
+                      shadowOpacity: 0.2, 
+                      shadowOffset:{width: 1, height: 1}, 
+                      shadowRadius: 4, 
+                      elevation: 12,
+                  },
+                  textInput:{
+                      marginTop: 0, 
+                      height: 40,
+                      alignSelf: 'center',
+                      paddingRight: 0,
+                  },
+                  listView:{
+                      paddingVertical: 6,
+                      borderRadius: 9,
+                      // position: 'absolute',
+                      top: 8,
+                      width: width - 24,
+                      zIndex: 9,
+                      backgroundColor: 'white',
+                      // Shadow
+                      shadowColor: '#000', 
+                      shadowOpacity: 0.2, 
+                      shadowOffset:{width: 1, height: 1}, 
+                      shadowRadius: 4, 
+                      elevation: 12,
+                  },
+                  predefinedPlacesDescription:{
+                      color: Colors.fortune700,
+                  },
+                  separator:{
+                      marginVertical: 2,
+                  },
+                  //   row:{
+                  //       marginTop: 32, 
+                  //   }
+                }}                      
+              />
+            </View>
           </View>
 
           

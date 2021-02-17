@@ -5,6 +5,7 @@ import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
 import com.zoontek.rnpermissions.RNPermissionsPackage;
 import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.facebook.react.ReactInstanceManager;
