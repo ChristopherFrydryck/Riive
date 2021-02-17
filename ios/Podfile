@@ -24,6 +24,12 @@ target 'riive' do
 
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
 
+  rn_maps_path = '../node_modules/react-native-maps'
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+#  pod 'react-native-google-maps', path: 'rn_maps_path'
+  pod 'GoogleMaps'
+  pod 'Google-Maps-iOS-Utils'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing

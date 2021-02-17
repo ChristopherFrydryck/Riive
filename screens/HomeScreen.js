@@ -18,6 +18,7 @@ import ProfilePic from '../components/ProfilePic';
 import Image from '../components/Image'
 import ListingMarker from '../components/ListingMarker'
 import FilterButton from '../components/FilterButton'
+import SearchFilter from '../components/SearchFilter'
 
 
 import Colors from '../constants/Colors'
@@ -808,15 +809,114 @@ goToReserveSpace = () => {
     const {firstname, email} = this.props.UserStore
     if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
       return (
-        <SafeAreaView>
-          <Text>Hello World</Text>
-          <Icon 
-            iconName="parking"
-            iconLib="FontAwesome5"
-            iconColor={Colors.cosmos500}
-            iconSize={120}
-            style={{marginBottom: 32}}
-          />
+        <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
+
+          {/* Search Filter component */}
+          <View style={{opacity: this.state.searchFilterOpen ? 1 : 0,  marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, zIndex: 999, position: 'absolute'}}>
+              <SearchFilter visible={this.state.searchFilterOpen} currentSearch={this.state.searchInputValue} timeCallback={(data) => this.searchFilterTimeCallback(data)} dayCallback={(data) => this.searchFilterDayCallback(data)}/>
+              {this.state.searchFilterOpen ? 
+              <TouchableOpacity onPress={() => this.filterResults()} style={{width: width, height: height, backgroundColor: 'black', opacity: 0.3}} disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}/>
+              : null}
+          </View>
+
+          <View style={{paddingHorizontal: 16, paddingBottom: this.state.searchFilterOpen ? 0 : 36, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between"}}>
+            <Text type="semiBold" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text>
+            <FilterButton 
+              onPress={() => this.filterResults()}
+              disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}
+              searchFilterOpen={this.state.searchFilterOpen}
+              daySearched={this.state.daySearched}
+              timeSearched={this.state.timeSearched}
+            />
+          </View>
+          
+          <View style={{flex: 1}}>
+          <MapView
+              provider={MapView.PROVIDER_GOOGLE}
+              mapStyle={DayMap}
+              style={styles.mapStyle}
+              onRegionChangeComplete={region =>  this.onRegionChange(region)}
+              onRegionChange={() => this.mapScrolling = true}
+              initialRegion={{
+                latitude: this.currentLocation.geometry.location.lat,
+                longitude: this.currentLocation.geometry.location.lng,
+                latitudeDelta: this.region.current.latitudeDelta || 0.025,
+                longitudeDelta: this.region.current.longitudeDelta || 0.025
+              }}
+              region={Platform.OS == 'ios' ? {
+                  latitude: this.region.searched.latitude && !this.state.mapScrolled ? this.region.searched.latitude : this.region.current.latitude,
+
+                  longitude: this.region.searched.longitude && !this.state.mapScrolled ? this.region.searched.longitude : this.region.current.longitude,
+
+                  latitudeDelta: this.region.searched.latitudeDelta  && !this.state.mapScrolled ? this.region.searched.latitudeDelta : this.region.current.latitudeDelta ,
+
+                  longitudeDelta: this.region.searched.longitudeDelta  && !this.state.mapScrolled ? this.region.searched.longitudeDelta : this.region.current.longitudeDelta
+                } : 
+                  this.region.searched.latitude && this.region.searched.longitude && !this.state.mapScrolled ? 
+                    {
+                      latitude: this.region.searched.latitude || this.region.current.latitude,
+
+                      longitude: this.region.searched.longitude || this.region.current.longitude,
+    
+                      latitudeDelta: this.region.searched.latitudeDelta || this.region.current.latitudeDelta ,
+
+                      longitudeDelta: this.region.searched.longitudeDelta || this.region.current.longitudeDelta
+                    }
+                  :
+                    null}
+              pitchEnabled={false} 
+              rotateEnabled={false} 
+              zoomEnabled={true} 
+              scrollEnabled={true}
+              minZoomLevel={6}
+              toolbarEnabled={false}
+              moveOnMarkerPress={false}
+          >
+              {this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng ? 
+                  <Marker 
+                    anchor={{x: 0.5, y: 0.5}} // For Android          
+                    coordinate={{
+                      latitude: this.currentLocation.geometry.location.lat,
+                      longitude: this.currentLocation.geometry.location.lng
+                    }} 
+                      style={{position: 'relative', width: 150, height: 150, alignItems: 'center', justifyContent: 'center'}}
+                  >
+                    {Platform.OS == "android" ?
+                        <View style={[styles.circleMarker, {}]}>
+                            <Animated.View style={[styles.circleMarker, { top: 0, left: 0, opacity: this.state.rippleFadeAnimation, transform:[{scale: this.state.rippleScaleAnimation},]}]}></Animated.View>
+                          </View>
+                      :
+                          <View style={{width: 150, height: 150}}>
+                            <View style={[styles.circleMarker,{ left: 63, top: 63}]}>
+                                <Animated.View style={[styles.circleMarker, { top: 0, left: 0, opacity: this.state.rippleFadeAnimation, transform:[{scale: this.state.rippleScaleAnimation}]}]}></Animated.View>
+                              </View>
+                          </View>
+                    }
+                  </Marker>
+                : null}
+
+                {this.state.searchedAddress ?
+                    <Marker 
+                      coordinate={{
+                        latitude: this.region.searched.latitude,
+                        longitude: this.region.searched.longitude
+                      }}   
+                    />
+                 : null }
+                
+                {this.results.map(x => {
+                    return( <ListingMarker 
+                                key={x.space.listingID}
+                                listing={x.space}
+                                onPress={() => this.clickSpace(x)}
+                            />)
+                })}
+            </MapView>
+          </View>
+
+          
+
+
         </SafeAreaView>
       )
     }else{
