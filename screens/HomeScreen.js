@@ -1029,6 +1029,109 @@ goToReserveSpace = () => {
             </View>
           </View>
 
+          <ActionSheet 
+                    ref = {actionSheetRef}
+                    bounceOnOpen={true}
+                    bounciness={4}
+                    gestureEnabled={true}
+                    containerStyle={{paddingTop: 8}}
+                    extraScroll={40}
+                    delayActionSheetDrawTime={0}
+                    initialOffsetFromBottom = {1}
+                 
+                   >
+                        <View>
+                            {this.state.selectedSpace && this.state.selectedSpaceHost ?
+                            
+                            <View style={{paddingTop: 8}}>
+                                
+                                <Image 
+                                    aspectRatio={21/9}
+                                    source={{uri: this.state.selectedSpace.photo}}
+                                    // backupSource={require('../assets/img/Logo_001.png')}
+                                    resizeMode={'cover'}
+                                /> 
+                                <View style={styles.actionSheetContent}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
+                                        <Text style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>{this.state.selectedSpace.spaceName}</Text>
+                                        <ProfilePic 
+                                            source={{ uri: this.state.selectedSpaceHost.photo }}
+                                            imgWidth = {32}
+                                            imgHeight = {32}
+                                            initals={this.state.selectedSpaceHost.firstname.charAt(0).toUpperCase() + "" + this.state.selectedSpaceHost.lastname.charAt(0).toUpperCase()}
+                                            style={{backgroundColor:"#FFFFFF", flex: 1}}
+                                            fontSize={12}
+                                            fontColor="#1D2951"
+                                            onPress={() => this.goToHostProfile()}
+                                            alt="Your profile picture"
+                                        />
+                                    </View>
+                                    <Text style={{fontSize: 16}}>{this.state.selectedSpace.spacePrice}/hr</Text>
+                                    <Text style={{marginBottom: 16}}>No ratings yet</Text>
+                                    {/* {this.state.selectedSpace.spaceBio ?
+                                        <Text style={{marginBottom: 16}}>{this.state.selectedSpace.spaceBio}</Text>
+                                    : null} */}
+                                    {this.state.searchInputValue != '' && this.state.locationDifferenceWalking.duration != null ? 
+                                        <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 48}}>
+                                             <Icon 
+                                                iconName="walk"
+                                                iconColor={Colors.cosmos500}
+                                                iconSize={24}
+                                                iconLib="MaterialCommunityIcons"
+                                                style={{paddingRight: 8}}
+                                            />
+                                            
+                                            { this.state.locationDifferenceWalking.duration.split(" ")[1] === 'mins' || this.state.locationDifferenceWalking.duration.split(" ")[1] === 'min' ?
+                                                <Text numberOfLines={1}>{this.state.locationDifferenceWalking.duration} to {this.state.searchInputValue}</Text> 
+                                                :
+                                                <Text numberOfLines={1}>Longer than 1 hour to {this.state.searchInputValue}</Text> 
+                                            }
+                                        </View>
+                                    : null}
+                                    <Button style={{backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.tango900}} textStyle={{color: Colors.tango900}} onPress={() => this.goToSpaceProfile()}>More Details</Button>
+                                    <Button onPress={() => this.goToReserveSpace()} style = {{backgroundColor: Colors.tango700, height: 48}} textStyle={{color: 'white'}}>Reserve Space</Button>
+                                </View>
+                            </View>
+                            : 
+                            <View>
+                                <SvgAnimatedLinearGradient width={Dimensions.get('window').width} style={{marginTop: 8}}>
+                                    <Rect width={width} height={width * 2.3333} rx="0" ry="0" />
+                                </SvgAnimatedLinearGradient>
+                                <View style={styles.actionSheetContent}>
+                                    <SvgAnimatedLinearGradient  width={width - 32} height="225" style={{marginTop: 8}}>
+                                        {/* <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}> */}
+                                            <Rect x="0" y="0" width={width *.7} height={32} />
+                                            <Circle x={width - 64} y="0" cx="16" cy="16" r="16"/>
+                                            <Rect x="0" y="40" width="80" height="16" />
+                                            <Rect x="0" y="64" width="64" height="16" />
+                                            <Rect x="0" y="96" width={width} height="16" />
+                                            <Rect x="0" y="120" width={width} height="16" />
+                                            <Rect x="0" y="144" width={width * .4} height="16" />
+                                            <Rect x="0" y="176" width={width} height="40" />
+                                        {/* </View> */}
+                                    </SvgAnimatedLinearGradient>
+                                </View>
+                            </View>
+                            }
+                        </View>
+                    </ActionSheet>
+                    
+
+                    <Animated.View style={[styles.searchToastPill, {bottom: this.state.slideUpAnimation}]}>
+                        {/* <ActivityIndicator /> */}
+                        {this.state.fetchingResults ? 
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                <ActivityIndicator color="white"/>
+                                <Text style={{color: "white", paddingLeft: 8}}>Finding Spaces</Text>
+                            </View>  
+                        : !this.state.dayTimeValid ? 
+                            <Text style={{color: "white"}}>Update Search Time</Text>
+                        : this.results.length === 0 ? 
+                            <Text style={{color: "white"}}>No Results</Text>
+                        : null}
+                    </Animated.View>
+          
+
           
 
 
