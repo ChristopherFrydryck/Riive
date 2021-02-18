@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import {View, StyleSheet, Switch, Modal, SafeAreaView, Dimensions, Animated, Picker, Platform, FlatList, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, Switch, Modal, SafeAreaView, ScrollView, Dimensions, Animated, Picker, Platform, FlatList, TouchableOpacity} from 'react-native'
 
 
 
@@ -475,32 +475,53 @@ export default class SearchFilter extends React.PureComponent{
 
 
 
-    _updateIndex = async({ viewableItems }) => {
+    _updateIndex = ( viewableItems ) => {
 
-        let date = new Date();
-        let hour = date.getHours()
-        let minute = date.getMinutes();
-        let minutes = minute >= 10 ? minute.toString() : "0" + minute;
+        let e = viewableItems.nativeEvent.contentOffset.x;
+
+        let availDays = this.state.dayData.filter(x => x.isEnabled)
+
+   
+
+         // Scroll position first item
+         if(e < Dimensions.get("window").width * .16/2){
+            console.log(availDays[0])
+        // Scroll position any other than first
+        }else{
+            let i = Math.round(e/(Dimensions.get("window").width * .16))
+            // Ensure that scroll position is less than the length of flatlist
+            if(i < availDays.length){
+                console.log(availDays[i])
+            // If error occurs where it is longer, set to last item in flatlist
+            }else{
+                console.log(availDays[availDays.length - 1])
+            }
+        }
+
+        // let date = new Date();
+        // let hour = date.getHours()
+        // let minute = date.getMinutes();
+        // let minutes = minute >= 10 ? minute.toString() : "0" + minute;
     
-        let firstItemCurrentDay = this.state.startTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
+        // let firstItemCurrentDay = this.state.startTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
 
-        let firstItemCurrentDayEnd = this.state.endTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
+        // let firstItemCurrentDayEnd = this.state.endTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
         
-
-        this.currentIndex = viewableItems[0].index;
-        await this.setState(prevState => ({dayValue: viewableItems[0].item.index - 3}))
-        await this.getIndex();
+        
+        // this.currentIndex = viewableItems[0].index;
+        // await this.setState(prevState => ({dayValue: viewableItems[0].item.index - 3}))
+        // await this.getIndex();
 
      
-        if(this.state.dayValue === 0){
-            this.setState({departValue: firstItemCurrentDayEnd[this.state.departIndex]})
-        }
-        await this.slideAnimate(true)
+        // if(this.state.dayValue === 0){
+        //     this.setState({departValue: firstItemCurrentDayEnd[this.state.departIndex]})
+        // }
+        // await this.slideAnimate(true)
 
         
-        this.goToIndexArrivals(this.state.arriveIndex, false)
+        // this.goToIndexArrivals(this.state.arriveIndex, false)
        
-        await this.props.dayCallback(this.state.dayData[this.state.dayValue + 3]);
+        // await this.props.dayCallback(this.state.dayData[this.state.dayValue + 3]);
 
     }
     
@@ -639,6 +660,11 @@ export default class SearchFilter extends React.PureComponent{
         let {width, height} = Dimensions.get('window');
         let {startTimes, endTimes} = this.state
 
+        let res = this.state.dayData.map(x => {
+            return this.renderDays(x, x.index)
+        })
+        
+
        
         
        
@@ -654,19 +680,21 @@ export default class SearchFilter extends React.PureComponent{
                         
                         </View>
                        
-                        <FlatList 
+                        <ScrollView 
                             ref={(ref) => { this._dayFlatlist = ref; }}
                             data={this.state.dayData.filter(x => x.isEnabled)}
-                            extraData={this.state}
-                            renderItem={({item, index}) => {
+                            // extraData={this.state}
+                            // renderItem={({item, index}) => {
                                 
-                                    return this.renderDays(item, index)
                                 
-                            }}
+                                
+                            // }}
                             keyExtractor={item => item.index.toString()}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
                             maxToRenderPerBatch={2}
+                            scrollEventThrottle={7}
+                            onScroll = {(event) => this._updateIndex(event)}
                             onMomentumScrollBegin={() => this.setState({scrollingDates: true})}
                             onMomentumScrollEnd={() => this.setState({scrollingDates: false})}
 
@@ -674,32 +702,32 @@ export default class SearchFilter extends React.PureComponent{
 
                             snapToOffsets ={[...Array(this.state.dayData.filter(x => x.isEnabled).length)].map((x, i) => i * (width*.16)) }
 
-                            ListHeaderComponent={() => {
-                                let res = this.state.dayData.filter((x, i)=> !x.isEnabled && i < 4).map(x => {
-                                    return this.renderDays(x, x.index)
-                                })
-                                return (
-                                    <View style={{flexDirection: 'row'}}>{res}</View>
-                                )
-                            }
+                            // ListHeaderComponent={() => {
+                            //     let res = this.state.dayData.filter((x, i)=> !x.isEnabled && i < 4).map(x => {
+                            //         return this.renderDays(x, x.index)
+                            //     })
+                            //     return (
+                            //         <View style={{flexDirection: 'row'}}>{res}</View>
+                            //     )
+                            // }
                                 
-                            }
+                            // }
 
-                            ListFooterComponent={() => {
-                                let res = this.state.dayData.filter((x, i)=> !x.isEnabled && i > 6).map(x => {
-                                    return this.renderDays(x, x.index)
-                                })
-                                return (
-                                    <View style={{flexDirection: 'row', width: width / 2}}>{res}</View>
-                                )
-                            }
+                            // ListFooterComponent={() => {
+                            //     let res = this.state.dayData.filter((x, i)=> !x.isEnabled && i > 6).map(x => {
+                            //         return this.renderDays(x, x.index)
+                            //     })
+                            //     return (
+                            //         <View style={{flexDirection: 'row', width: width / 2}}>{res}</View>
+                            //     )
+                            // }
                                 
-                            }
-                            ListFooterComponentStyle={{
-                                width: width / 2 - 55,
-                                flexGrow: 1,
-                                overflow: 'visible'
-                            }}
+                            // }
+                            // ListFooterComponentStyle={{
+                            //     width: width / 2 - 55,
+                            //     flexGrow: 1,
+                            //     overflow: 'visible'
+                            // }}
                             bounces={false}
                             getItemLayout={(data, index) => {
                                 return {
@@ -711,9 +739,9 @@ export default class SearchFilter extends React.PureComponent{
                             initialScrollIndex={this.currentIndex}
                             
                             decelerationRate={0}
-                            onViewableItemsChanged={this._updateIndex}
+                            // onViewableItemsChanged={this._updateIndex}
                             viewabilityConfig={this.viewabilityConfig}
-                        />
+                        ><View style={{flexDirection: 'row'}}>{res}</View></ScrollView>
                         <View style={styles.triangle} />
                     </View>
 
