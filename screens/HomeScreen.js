@@ -827,7 +827,7 @@ goToReserveSpace = () => {
           </View>
 
           <View style={{paddingHorizontal: 16, paddingBottom: this.state.searchFilterOpen ? 0 : 36, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between"}}>
-            <Text type="semiBold" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text>
+            <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text>
             <FilterButton 
               onPress={() => this.filterResults()}
               disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}
@@ -1053,7 +1053,7 @@ goToReserveSpace = () => {
                                 /> 
                                 <View style={styles.actionSheetContent}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
-                                        <Text style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>{this.state.selectedSpace.spaceName}</Text>
+                                        <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>{this.state.selectedSpace.spaceName}</Text>
                                         <ProfilePic 
                                             source={{ uri: this.state.selectedSpaceHost.photo }}
                                             imgWidth = {32}

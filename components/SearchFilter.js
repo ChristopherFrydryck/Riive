@@ -97,9 +97,16 @@ export default class SearchFilter extends React.PureComponent{
             this.setState({dayData: this.getDays()})
             this.slideAnimate(true)
         }
+
+        // Scrolling dates check current date
+        if(!prevState.scrollingTimes && this.state.scrollingTimes){
+            console.log("TIMES")
+        }
         
        
     }
+
+    
 
 
     
@@ -387,7 +394,8 @@ export default class SearchFilter extends React.PureComponent{
             
 
              Animated.spring(this.state.xSlide, {
-                toValue: 20
+                toValue: 20,
+                useNativeDriver: true,
             }).start()
              this.setState(prevState => ({arriveActive: true, arriveValue: prevState.arriveValue, departValue: prevState.departValue}))
              this.goToIndexArrivals(this.state.arriveIndex, false)
@@ -397,7 +405,8 @@ export default class SearchFilter extends React.PureComponent{
         }else{
            
             Animated.spring(this.state.xSlide, {
-                toValue: width/2 + 20
+                toValue: width/2 + 20,
+                useNativeDriver: true
             }).start()
              this.setState(prevState => ({arriveActive: false, arriveValue: prevState.arriveValue, departValue: prevState.departValue}))
             this.goToIndexDepartures(this.state.departIndex, false)
@@ -496,8 +505,10 @@ export default class SearchFilter extends React.PureComponent{
     }
     
 
-    _updateIndexTimes = async( event ) => {
+    _updateIndexTimes = ( event ) => {
         let e = event.nativeEvent.contentOffset.x;
+
+       
 
         let date = new Date();
         let hour = date.getHours()
@@ -518,16 +529,16 @@ export default class SearchFilter extends React.PureComponent{
             if(this.state.dayValue != 0){
                 // Scroll position first item
                 if(e < 24){
-                    await this.setState({arriveValue: this.state.startTimes[0], arriveIndex: 0})
+                    this.setState({arriveValue: this.state.startTimes[0], arriveIndex: 0})
                 // Scroll position any other than first
                 }else{
                     let i = (Math.round(e/48))
                     // Ensure that scroll position is less than the length of flatlist
                     if(i < this.state.startTimes.length){
-                        await  this.setState({arriveValue: this.state.startTimes[i], arriveIndex: i})
+                        this.setState({arriveValue: this.state.startTimes[i], arriveIndex: i})
                     // If error occurs where it is longer, set to last item in flatlist
                     }else{
-                        await  this.setState({arriveValue: this.state.startTimes[this.state.startTimes.length - 1], arriveIndex: this.state.startTimes.length - 1})
+                        this.setState({arriveValue: this.state.startTimes[this.state.startTimes.length - 1], arriveIndex: this.state.startTimes.length - 1})
                     }
                 }
                 // Collision handling for arrive/depart times for not current day
@@ -538,16 +549,16 @@ export default class SearchFilter extends React.PureComponent{
             }else{
                 // Scroll position first item
                 if(e < 24){
-                    await this.setState({arriveValue: firstItemCurrentDay[0], arriveIndex: 0})
+                    this.setState({arriveValue: firstItemCurrentDay[0], arriveIndex: 0})
                 // Scroll position any other than first
                 }else{
                     let i = (Math.round(e/48))
                      // Ensure that scroll position is less than the length of flatlist
                     if(i < this.state.startTimes.length){
-                        await  this.setState({arriveValue: firstItemCurrentDay[i], arriveIndex: i})
+                         this.setState({arriveValue: firstItemCurrentDay[i], arriveIndex: i})
                     // If error occurs where it is longer, set to last item in flatlist
                     }else{
-                        await  this.setState({arriveValue: firstItemCurrentDay[firstItemCurrentDay.length - 1], arriveIndex: firstItemCurrentDay.length - 1})
+                        this.setState({arriveValue: firstItemCurrentDay[firstItemCurrentDay.length - 1], arriveIndex: firstItemCurrentDay.length - 1})
                     }
                 }
                 // Collision handling for arrive/depart times for current day
@@ -571,7 +582,7 @@ export default class SearchFilter extends React.PureComponent{
                         this.setState({departValue: this.state.endTimes[i], departIndex: i})
                     // If error occurs where it is longer, set to last item in flatlist
                     }else{
-                        await  this.setState({departValue: this.state.endTimes[this.state.endTimes.length - 1], arriveIndex: this.state.endTimes.length - 1})
+                        this.setState({departValue: this.state.endTimes[this.state.endTimes.length - 1], arriveIndex: this.state.endTimes.length - 1})
                     }
                 }
 
@@ -592,7 +603,7 @@ export default class SearchFilter extends React.PureComponent{
                         this.setState({departValue: firstItemCurrentDayEnd[i], departIndex: i})
                     // If error occurs where it is longer, set to last item in flatlist
                     }else{
-                        await  this.setState({departValue: firstItemCurrentDayEnd[firstItemCurrentDayEnd.length - 1], departIndex: firstItemCurrentDayEnd.length - 1})
+                        this.setState({departValue: firstItemCurrentDayEnd[firstItemCurrentDayEnd.length - 1], departIndex: firstItemCurrentDayEnd.length - 1})
                     }
                 }
                 // Collision handling for arrive/depart times for current day
@@ -605,7 +616,8 @@ export default class SearchFilter extends React.PureComponent{
             
         }
 
-        await this.props.timeCallback([this.state.arriveValue, this.state.departValue]);
+        this.props.timeCallback([this.state.arriveValue, this.state.departValue]);
+       
         
     }
 
@@ -620,11 +632,14 @@ export default class SearchFilter extends React.PureComponent{
         return(`${hours}:${minutesString} ${parseInt(hoursString) >= 12 ? 'PM' : 'AM'}`)
     }
 
+    
+
     render(){
         let {visible, currentSearch} = this.props;
         let {width, height} = Dimensions.get('window');
         let {startTimes, endTimes} = this.state
 
+       
         
        
         
@@ -642,6 +657,7 @@ export default class SearchFilter extends React.PureComponent{
                         <FlatList 
                             ref={(ref) => { this._dayFlatlist = ref; }}
                             data={this.state.dayData.filter(x => x.isEnabled)}
+                            extraData={this.state}
                             renderItem={({item, index}) => {
                                 
                                     return this.renderDays(item, index)
@@ -650,6 +666,7 @@ export default class SearchFilter extends React.PureComponent{
                             keyExtractor={item => item.index.toString()}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
+                            maxToRenderPerBatch={2}
                             onMomentumScrollBegin={() => this.setState({scrollingDates: true})}
                             onMomentumScrollEnd={() => this.setState({scrollingDates: false})}
 
@@ -692,7 +709,7 @@ export default class SearchFilter extends React.PureComponent{
                                 }
                             }}
                             initialScrollIndex={this.currentIndex}
-                            // onScrollToIndexFailed = {(e) => {console.log(e)}}
+                            
                             decelerationRate={0}
                             onViewableItemsChanged={this._updateIndex}
                             viewabilityConfig={this.viewabilityConfig}
@@ -724,10 +741,10 @@ export default class SearchFilter extends React.PureComponent{
                             zIndex: 999,
                             backgroundColor: 'green',
                             borderColor: 'transparent'}}></View> */}
-                            {this.state.arriveActive ? 
+                            {/* {this.state.arriveActive ?  */}
                             <FlatList 
-                                ref={(ref) => { this.arrivalFlatlist = ref; }}
-                                data={this.state.startTimes}
+                                ref={this.state.arriveActive ? (ref) => { this.arrivalFlatlist = ref; } : (ref) => { this.departureFlatlist = ref; }}
+                                data={this.state.arriveActive ? this.state.startTimes : this.state.endTimes}
                                 keyExtractor={(item) => item.key.toString()}
                                 onScroll={(event) => { 
                                     this._updateIndexTimes(event)
@@ -735,6 +752,7 @@ export default class SearchFilter extends React.PureComponent{
                                 
                                 onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
                                 onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
+                                maxToRenderPerBatch={2}
                                 getItemLayout={(data, index) => {
                                     return {
                                         length: index === 0 ? this.timeWidth/2 : this.timeWidth,
@@ -754,18 +772,14 @@ export default class SearchFilter extends React.PureComponent{
                                 ListFooterComponent={() => {
                                     return(<View />)
                                 }}
-                                pagingEnabled={true}
+                                // pagingEnabled={true}
                                 decelerationRate={0}
                                 showsHorizontalScrollIndicator={false}
                                 snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
-                                renderItem={({item, index}) => {
-                              
-                                        return this.renderArriveTimes(item, index, this.state.arriveActive)
-                                    
-                                }}
+                                renderItem={this.state.arriveActive ?({item, index}) => this.renderArriveTimes(item, index, this.state.arriveActive) : ({item, index}) => this.renderDepartTimes(item, index, this.state.arriveActive)}
                                 
                             />
-                            :
+                            {/* :
                             <FlatList 
                                 ref={(ref) => { this.departureFlatlist = ref; }}
                                 data={this.state.endTimes}
@@ -775,6 +789,7 @@ export default class SearchFilter extends React.PureComponent{
                                 }}
                                 onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
                                 onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
+                                maxToRenderPerBatch={2}
                                 getItemLayout={(data, index) => {
                                     return {
                                         length: index === 0 ? this.timeWidth/2 : this.timeWidth,
@@ -788,19 +803,13 @@ export default class SearchFilter extends React.PureComponent{
                                 contentContainerStyle={{marginTop: 24, height: 80}}
                                 ListHeaderComponentStyle={{paddingLeft: width/2}}
                                 ListHeaderComponent={({item, index}) => {
-                                    // let res = this.state.endTimes.filter((x, i)=> x.key < this.state.arriveValue.key).map(x => {
-                                    //     return <Text>{x.labelFormatted}</Text>
-                                    // })
-                                    // return (
-                                    //     <View style={{flexDirection: 'row', width: width / 2}}>{res}</View>
-                                    // )
                                    return <View />
                                 }}
                                 ListFooterComponentStyle={{paddingLeft: width/2 - 20}}
                                 ListFooterComponent={() => {
                                     return(<View />)
                                 }}
-                                pagingEnabled={true}
+                                // pagingEnabled={true}
                                 decelerationRate={0}
                                 showsHorizontalScrollIndicator={false}
                                 snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
@@ -811,7 +820,7 @@ export default class SearchFilter extends React.PureComponent{
                                 }}
                                 
                             />
-                            }
+                            } */}
                     </View>
                 </View>
             </Fragment>
