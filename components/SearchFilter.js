@@ -480,23 +480,33 @@ export default class SearchFilter extends React.PureComponent{
         let e = viewableItems.nativeEvent.contentOffset.x;
 
         let availDays = this.state.dayData.filter(x => x.isEnabled)
+        let day = availDays[0]
 
    
 
          // Scroll position first item
          if(e < Dimensions.get("window").width * .16/2){
-            console.log(availDays[0])
+            // console.log(availDays[0])
+            day = availDays[0]
+            this.setState({dayValue: day})
         // Scroll position any other than first
         }else{
             let i = Math.round(e/(Dimensions.get("window").width * .16))
             // Ensure that scroll position is less than the length of flatlist
             if(i < availDays.length){
-                console.log(availDays[i])
+                // console.log(availDays[i])
+                day = availDays[i]
+                this.setState({dayValue: day})
             // If error occurs where it is longer, set to last item in flatlist
             }else{
-                console.log(availDays[availDays.length - 1])
+                day = availDays[availDays.length - 1]
+                this.setState({dayValue: day})
             }
         }
+
+        this.props.dayCallback(day);
+
+        this.slideAnimate(true)
 
         // let date = new Date();
         // let hour = date.getHours()
@@ -663,6 +673,10 @@ export default class SearchFilter extends React.PureComponent{
         let res = this.state.dayData.map(x => {
             return this.renderDays(x, x.index)
         })
+
+        let arrives = this.state.startTimes.map(x => {
+            return this.renderArriveTimes(x, x.key)
+        })
         
 
        
@@ -769,8 +783,23 @@ export default class SearchFilter extends React.PureComponent{
                             zIndex: 999,
                             backgroundColor: 'green',
                             borderColor: 'transparent'}}></View> */}
+                            <ScrollView
+                                ref={this.state.arriveActive ? (ref) => { this.arrivalFlatlist = ref; } : (ref) => { this.departureFlatlist = ref; }}
+                                onScroll = {(event) => this._updateIndexTimes(event)}
+                                onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
+                                onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
+                                horizontal
+                                snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
+                                bounces={false}
+                                maxToRenderPerBatch={2}
+                                scrollEventThrottle={7}
+                                contentContainerStyle={{marginTop: 24, height: 80}}
+                                showsHorizontalScrollIndicator={false}
+                            >
+                                {this.state.arriveActive ? arrives : null}
+                            </ScrollView>
                             {/* {this.state.arriveActive ?  */}
-                            <FlatList 
+                            {/* <FlatList 
                                 ref={this.state.arriveActive ? (ref) => { this.arrivalFlatlist = ref; } : (ref) => { this.departureFlatlist = ref; }}
                                 data={this.state.arriveActive ? this.state.startTimes : this.state.endTimes}
                                 keyExtractor={(item) => item.key.toString()}
@@ -806,7 +835,7 @@ export default class SearchFilter extends React.PureComponent{
                                 snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
                                 renderItem={this.state.arriveActive ?({item, index}) => this.renderArriveTimes(item, index, this.state.arriveActive) : ({item, index}) => this.renderDepartTimes(item, index, this.state.arriveActive)}
                                 
-                            />
+                            /> */}
                             {/* :
                             <FlatList 
                                 ref={(ref) => { this.departureFlatlist = ref; }}
