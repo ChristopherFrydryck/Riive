@@ -797,7 +797,7 @@ export default class SearchFilter extends React.PureComponent{
                                 bounces={false}
                                 maxToRenderPerBatch={2}
                                 scrollEventThrottle={7}
-                                contentContainerStyle={{paddingHorizontal: width/2, marginTop: 24, height: 80}}
+                                contentContainerStyle={this.state.arriveActive ? {paddingHorizontal: width/2, marginTop: 24, height: 80} : {paddingLeft: width/2, paddingRight: width/2 -24, marginTop: 24, height: 80}}
                                 showsHorizontalScrollIndicator={false}
                             >
                                 {this.state.arriveActive ? arrives : departs}
