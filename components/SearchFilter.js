@@ -677,6 +677,10 @@ export default class SearchFilter extends React.PureComponent{
         let arrives = this.state.startTimes.map(x => {
             return this.renderArriveTimes(x, x.key)
         })
+
+        let departs = this.state.endTimes.map(x => {
+            return this.renderDepartTimes(x, x.key)
+        })
         
 
        
@@ -789,14 +793,14 @@ export default class SearchFilter extends React.PureComponent{
                                 onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
                                 onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
                                 horizontal
-                                snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
+                                snapToOffsets = {this.state.arriveActive ? [...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5)) : [...Array(this.state.endTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
                                 bounces={false}
                                 maxToRenderPerBatch={2}
                                 scrollEventThrottle={7}
-                                contentContainerStyle={{marginTop: 24, height: 80}}
+                                contentContainerStyle={{paddingHorizontal: width/2, marginTop: 24, height: 80}}
                                 showsHorizontalScrollIndicator={false}
                             >
-                                {this.state.arriveActive ? arrives : null}
+                                {this.state.arriveActive ? arrives : departs}
                             </ScrollView>
                             {/* {this.state.arriveActive ?  */}
                             {/* <FlatList 
