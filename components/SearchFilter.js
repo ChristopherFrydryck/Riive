@@ -90,6 +90,7 @@ export default class SearchFilter extends React.PureComponent{
         if(!prevProps.visible && this.props.visible){
             this.slideAnimate(true)
             this.setState({dayData: this.getDays()})
+            this.goToIndexDays(this.state.dayValue.index - 3, false)
             this.forceUpdate(); 
         }
         // Scrolling dates check current date
@@ -243,7 +244,7 @@ export default class SearchFilter extends React.PureComponent{
                 <View style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
                     <View style={hourStyle}/>
                         {item.key % 2 === 0 ? 
-                            <View style={{flexDirection: 'row', position: 'absolute', width: 48, zIndex: 999, bottom: 0,}}>
+                            <View style={{flexDirection: 'row', position: 'absolute', width: this.timeWidth, zIndex: 999, bottom: 0,}}>
                                 <Text style={textStyle}>{this.convertToCommonTime(item.label).split(":")[0]}</Text>
                                 <Text style={textStyle.length > 1 ? styles.timeTextActive : null}>{item.labelFormatted.slice(-2)}</Text>
                             </View>
@@ -256,7 +257,7 @@ export default class SearchFilter extends React.PureComponent{
                 <View style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
                     <View style={hourStyle}/>
                         {item.key % 2 === 0 ? 
-                            <View style={{flexDirection: 'row', position: 'absolute', width: 48, zIndex: 999, bottom: 0,}}>
+                            <View style={{flexDirection: 'row', position: 'absolute', width: this.timeWidth, zIndex: 999, bottom: 0,}}>
                                 <Text style={textStyle}>{this.convertToCommonTime(item.label).split(":")[0]}</Text>
                                 <Text style={textStyle.length > 1 ? styles.timeTextActive : null}>{item.labelFormatted.slice(-2)}</Text>
                             </View>
@@ -418,21 +419,23 @@ export default class SearchFilter extends React.PureComponent{
     goToIndexDays = (i, animated) => {
         const wait = new Promise((resolve) => setTimeout(resolve, 0));
         wait.then( () => {
-            this._dayFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: 300}); 
+            this._dayFlatlist.scrollTo({x: i*Dimensions.get('window').width * .16, animated: animated}); 
         });
     }
 
     goToIndexArrivals = (i, animated) => {
          const wait = new Promise((resolve) => setTimeout(resolve, 0));
         wait.then( () => {
-            this.arrivalFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2});
+            // this.arrivalFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2});
+            this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
         });
     }
 
     goToIndexDepartures = (i, animated) => {
         const wait = new Promise((resolve) => setTimeout(resolve, 0));
        wait.then( () => {
-           this.departureFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2}); 
+        //    this.departureFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2}); 
+        this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
        });
    }
 
@@ -563,7 +566,7 @@ export default class SearchFilter extends React.PureComponent{
                     this.setState({arriveValue: this.state.startTimes[0], arriveIndex: 0})
                 // Scroll position any other than first
                 }else{
-                    let i = (Math.round(e/48))
+                    let i = (Math.round(e/this.timeWidth))
                     // Ensure that scroll position is less than the length of flatlist
                     if(i < this.state.startTimes.length){
                         this.setState({arriveValue: this.state.startTimes[i], arriveIndex: i})
@@ -583,7 +586,7 @@ export default class SearchFilter extends React.PureComponent{
                     this.setState({arriveValue: firstItemCurrentDay[0], arriveIndex: 0})
                 // Scroll position any other than first
                 }else{
-                    let i = (Math.round(e/48))
+                    let i = (Math.round(e/this.timeWidth))
                      // Ensure that scroll position is less than the length of flatlist
                     if(i < this.state.startTimes.length){
                          this.setState({arriveValue: firstItemCurrentDay[i], arriveIndex: i})
@@ -607,7 +610,7 @@ export default class SearchFilter extends React.PureComponent{
                     this.setState({departValue: this.state.endTimes[0], departIndex: 0})
                 // Scroll position any other than first
                 }else{
-                    let i = (Math.round(e/48))
+                    let i = (Math.round(e/this.timeWidth))
                     // Ensure that scroll position is less than the length of flatlist
                     if(i < this.state.endTimes.length){
                         this.setState({departValue: this.state.endTimes[i], departIndex: i})
@@ -628,7 +631,7 @@ export default class SearchFilter extends React.PureComponent{
                     this.setState({departValue: firstItemCurrentDayEnd[0], departIndex: 0})
                 // Scroll position any other than first
                 }else{
-                    let i = (Math.round(e/48))
+                    let i = (Math.round(e/this.timeWidth))
                     // Ensure that scroll position is less than the length of flatlist
                     if(i < this.state.endTimes.length){
                         this.setState({departValue: firstItemCurrentDayEnd[i], departIndex: i})
@@ -788,7 +791,7 @@ export default class SearchFilter extends React.PureComponent{
                             backgroundColor: 'green',
                             borderColor: 'transparent'}}></View> */}
                             <ScrollView
-                                ref={this.state.arriveActive ? (ref) => { this.arrivalFlatlist = ref; } : (ref) => { this.departureFlatlist = ref; }}
+                                ref={(ref) => { this.timesList = ref; }}
                                 onScroll = {(event) => this._updateIndexTimes(event)}
                                 onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
                                 onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
@@ -823,7 +826,7 @@ export default class SearchFilter extends React.PureComponent{
                                 }}
                                 horizontal
                                 bounces={false}
-                                initialNumToRender={48}
+                                initialNumToRender={this.timeWidth}
                                 contentContainerStyle={{marginTop: 24, height: 80}}
                                 ListHeaderComponentStyle={{paddingLeft: width/2}}
                                 ListHeaderComponent={() => {
@@ -860,7 +863,7 @@ export default class SearchFilter extends React.PureComponent{
                                 }}
                                 horizontal
                                 bounces={false}
-                                initialNumToRender={48}
+                                initialNumToRender={this.timeWidth}
                                 contentContainerStyle={{marginTop: 24, height: 80}}
                                 ListHeaderComponentStyle={{paddingLeft: width/2}}
                                 ListHeaderComponent={({item, index}) => {
