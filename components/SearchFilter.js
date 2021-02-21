@@ -398,7 +398,7 @@ export default class SearchFilter extends React.PureComponent{
                 toValue: 20,
                 useNativeDriver: true,
             }).start()
-             this.setState(prevState => ({arriveActive: true, arriveValue: prevState.arriveValue, departValue: prevState.departValue}))
+             await this.setState(prevState => ({arriveActive: true, arriveValue: prevState.arriveValue, departValue: prevState.departValue}))
              this.goToIndexArrivals(this.state.arriveIndex, false)
              
             
@@ -409,7 +409,7 @@ export default class SearchFilter extends React.PureComponent{
                 toValue: width/2 + 20,
                 useNativeDriver: true
             }).start()
-             this.setState(prevState => ({arriveActive: false, arriveValue: prevState.arriveValue, departValue: prevState.departValue}))
+            await this.setState(prevState => ({arriveActive: false, arriveValue: prevState.arriveValue, departValue: prevState.departValue}))
             this.goToIndexDepartures(this.state.departIndex, false)
             
         }
@@ -451,12 +451,6 @@ export default class SearchFilter extends React.PureComponent{
 
         let newIndexArrival, newIndexDeparture
 
- 
-
-
-     
-        
-        
 
         var endTimes = []
          for (var i = 0 ; i < Times[1].end.length; i++){
@@ -478,11 +472,10 @@ export default class SearchFilter extends React.PureComponent{
             newIndexDeparture = this.state.endTimes.indexOf(this.state.departValue)
         }
 
+       
+        console.log(`getIndex: ${newIndexArrival}`)
         await this.setState({arriveIndex: newIndexArrival, departIndex: newIndexDeparture})
 
-        
-
-        
 
    }
 
@@ -523,6 +516,8 @@ export default class SearchFilter extends React.PureComponent{
         this.props.dayCallback(day);
 
         this.slideAnimate(true)
+
+        
 
         // let date = new Date();
         // let hour = date.getHours()
@@ -720,51 +715,16 @@ export default class SearchFilter extends React.PureComponent{
                         <ScrollView 
                             ref={(ref) => { this._dayFlatlist = ref; }}
                             data={this.state.dayData.filter(x => x.isEnabled)}
-                            // extraData={this.state}
-                            // renderItem={({item, index}) => {
-                                
-                                
-                                
-                            // }}
                             keyExtractor={item => item.index.toString()}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
                             maxToRenderPerBatch={2}
                             scrollEventThrottle={7}
-                            onScroll = {(event) => this._updateIndex(event)}
+                            onScrollEndDrag = {(event) => this._updateIndex(event)}
                             onMomentumScrollBegin={() => this.setState({scrollingDates: true})}
                             onMomentumScrollEnd={() => this.setState({scrollingDates: false})}
-
                             contentContainerStyle={{marginLeft: -20}}
-
                             snapToOffsets ={[...Array(this.state.dayData.filter(x => x.isEnabled).length)].map((x, i) => i * (width*.16)) }
-
-                            // ListHeaderComponent={() => {
-                            //     let res = this.state.dayData.filter((x, i)=> !x.isEnabled && i < 4).map(x => {
-                            //         return this.renderDays(x, x.index)
-                            //     })
-                            //     return (
-                            //         <View style={{flexDirection: 'row'}}>{res}</View>
-                            //     )
-                            // }
-                                
-                            // }
-
-                            // ListFooterComponent={() => {
-                            //     let res = this.state.dayData.filter((x, i)=> !x.isEnabled && i > 6).map(x => {
-                            //         return this.renderDays(x, x.index)
-                            //     })
-                            //     return (
-                            //         <View style={{flexDirection: 'row', width: width / 2}}>{res}</View>
-                            //     )
-                            // }
-                                
-                            // }
-                            // ListFooterComponentStyle={{
-                            //     width: width / 2 - 55,
-                            //     flexGrow: 1,
-                            //     overflow: 'visible'
-                            // }}
                             bounces={false}
                             getItemLayout={(data, index) => {
                                 return {
@@ -774,9 +734,7 @@ export default class SearchFilter extends React.PureComponent{
                                 }
                             }}
                             initialScrollIndex={this.currentIndex}
-                            
                             decelerationRate={0}
-                            // onViewableItemsChanged={this._updateIndex}
                             viewabilityConfig={this.viewabilityConfig}
                         ><View style={{flexDirection: 'row'}}>{res}</View></ScrollView>
                         <View style={styles.triangle} />
@@ -798,14 +756,6 @@ export default class SearchFilter extends React.PureComponent{
                                 <Animated.View style={{borderBottomWidth: 3, borderBottomColor: Colors.apollo500, position: 'absolute', width: width/2.5, height: 35, transform:[{translateX: this.state.xSlide}]
                             }} />
                         </View>
-                            {/* <View style={{
-                            left: width/2 - 2,
-                            width: 2, 
-                            height: 200,
-                            position: 'absolute',
-                            zIndex: 999,
-                            backgroundColor: 'green',
-                            borderColor: 'transparent'}}></View> */}
                             <ScrollView
                                 ref={(ref) => { this.timesList = ref; }}
                                 onScroll = {(event) => this._updateIndexTimes(event)}
@@ -815,92 +765,12 @@ export default class SearchFilter extends React.PureComponent{
                                 snapToOffsets = {this.state.arriveActive ? [...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5)) : [...Array(this.state.endTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
                                 bounces={false}
                                 maxToRenderPerBatch={2}
-                                scrollEventThrottle={7}
+                                scrollEventThrottle={16}
                                 contentContainerStyle={this.state.arriveActive ? {paddingHorizontal: width/2, marginTop: 24, height: 80} : {paddingLeft: width/2, paddingRight: width/2 -24, marginTop: 24, height: 80}}
                                 showsHorizontalScrollIndicator={false}
                             >
                                 {this.state.arriveActive ? arrives : departs}
                             </ScrollView>
-                            {/* {this.state.arriveActive ?  */}
-                            {/* <FlatList 
-                                ref={this.state.arriveActive ? (ref) => { this.arrivalFlatlist = ref; } : (ref) => { this.departureFlatlist = ref; }}
-                                data={this.state.arriveActive ? this.state.startTimes : this.state.endTimes}
-                                keyExtractor={(item) => item.key.toString()}
-                                onScroll={(event) => { 
-                                    this._updateIndexTimes(event)
-                                }}
-                                
-                                onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
-                                onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
-                                maxToRenderPerBatch={2}
-                                getItemLayout={(data, index) => {
-                                    return {
-                                        length: index === 0 ? this.timeWidth/2 : this.timeWidth,
-                                        offset: index === 0 ? 0 : (this.timeWidth * index) + (width/2) + (index*0.5),
-                                        index
-                                    }
-                                }}
-                                horizontal
-                                bounces={false}
-                                initialNumToRender={this.timeWidth}
-                                contentContainerStyle={{marginTop: 24, height: 80}}
-                                ListHeaderComponentStyle={{paddingLeft: width/2}}
-                                ListHeaderComponent={() => {
-                                    return(<View />)
-                                }}
-                                ListFooterComponentStyle={{paddingLeft: width/2}}
-                                ListFooterComponent={() => {
-                                    return(<View />)
-                                }}
-                                // pagingEnabled={true}
-                                decelerationRate={0}
-                                showsHorizontalScrollIndicator={false}
-                                snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
-                                renderItem={this.state.arriveActive ?({item, index}) => this.renderArriveTimes(item, index, this.state.arriveActive) : ({item, index}) => this.renderDepartTimes(item, index, this.state.arriveActive)}
-                                
-                            /> */}
-                            {/* :
-                            <FlatList 
-                                ref={(ref) => { this.departureFlatlist = ref; }}
-                                data={this.state.endTimes}
-                                keyExtractor={(item) => item.key.toString()}
-                                onScroll={(event) => { 
-                                    this._updateIndexTimes(event)
-                                }}
-                                onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
-                                onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
-                                maxToRenderPerBatch={2}
-                                getItemLayout={(data, index) => {
-                                    return {
-                                        length: index === 0 ? this.timeWidth/2 : this.timeWidth,
-                                        offset: index === 0 ? 0 : (this.timeWidth * index) + (width/2) + (index*0.5),
-                                        index
-                                    }
-                                }}
-                                horizontal
-                                bounces={false}
-                                initialNumToRender={this.timeWidth}
-                                contentContainerStyle={{marginTop: 24, height: 80}}
-                                ListHeaderComponentStyle={{paddingLeft: width/2}}
-                                ListHeaderComponent={({item, index}) => {
-                                   return <View />
-                                }}
-                                ListFooterComponentStyle={{paddingLeft: width/2 - 20}}
-                                ListFooterComponent={() => {
-                                    return(<View />)
-                                }}
-                                // pagingEnabled={true}
-                                decelerationRate={0}
-                                showsHorizontalScrollIndicator={false}
-                                snapToOffsets = {[...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
-                                renderItem={({item, index}) => {
-                              
-                                        return this.renderDepartTimes(item, index, this.state.arriveActive)
-                                    
-                                }}
-                                
-                            />
-                            } */}
                     </View>
                 </View>
             </Fragment>
