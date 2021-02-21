@@ -99,9 +99,9 @@ export default class SearchFilter extends React.PureComponent{
             this.slideAnimate(true)
         }
 
-        // Scrolling dates check current date
+        // Scrolling times check current times
         if(!prevState.scrollingTimes && this.state.scrollingTimes){
-            console.log("TIMES")
+            this.setState({dayData: this.getDays()})
         }
         
        
@@ -451,7 +451,20 @@ export default class SearchFilter extends React.PureComponent{
 
         let newIndexArrival, newIndexDeparture
 
+ 
+
+
+     
+        
+        
+
+        var endTimes = []
+         for (var i = 0 ; i < Times[1].end.length; i++){
+            endTimes.push({key: i, label: Times[1].end[i], labelFormatted: this.convertToCommonTime(Times[1].end[i])})
+         }
+
         if(this.state.dayValue === 0){
+      
             let i = firstItemCurrentDay.indexOf(this.state.arriveValue)
             newIndexArrival = i === -1 ? 0 : i;
         }else{
@@ -485,13 +498,13 @@ export default class SearchFilter extends React.PureComponent{
         let availDays = this.state.dayData.filter(x => x.isEnabled)
         let day = availDays[0]
 
-   
+        
 
          // Scroll position first item
          if(e < Dimensions.get("window").width * .16/2){
             // console.log(availDays[0])
             day = availDays[0]
-            this.setState({dayValue: day})
+            this.setState({dayValue: day.index - 3})
         // Scroll position any other than first
         }else{
             let i = Math.round(e/(Dimensions.get("window").width * .16))
@@ -499,11 +512,11 @@ export default class SearchFilter extends React.PureComponent{
             if(i < availDays.length){
                 // console.log(availDays[i])
                 day = availDays[i]
-                this.setState({dayValue: day})
+                this.setState({dayValue: day.index - 3})
             // If error occurs where it is longer, set to last item in flatlist
             }else{
                 day = availDays[availDays.length - 1]
-                this.setState({dayValue: day})
+                this.setState({dayValue: day.index - 3})
             }
         }
 
@@ -553,9 +566,12 @@ export default class SearchFilter extends React.PureComponent{
        
         
 
-        let firstItemCurrentDay = this.state.startTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) -30)
+        let firstItemCurrentDay = this.state.startTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
 
+        
         let firstItemCurrentDayEnd = this.state.endTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
+
+        
 
         // Arrive tab active
         if(this.state.arriveActive){
