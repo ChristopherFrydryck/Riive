@@ -4,6 +4,7 @@ import { createBottomTabNavigator }  from 'react-navigation-tabs'
 // import { createStackNavigator } from 'react-navigation-stack'
 // import  TripsNavigator  from './TripsNavigator'
 import HomeScreen from '../screens/HomeScreen'
+import Trips from '../screens/VistingTrips'
 // import ProfileNavigator from './ProfileNavigator'
 // import HomeNavigator from './HomeNavigator'
 
@@ -23,6 +24,21 @@ const navBar =  createBottomTabNavigator(
                     <TabBarIcon 
                         focused={focused}
                         name='search'
+                        tintColor={tintColor}
+                    />
+                )
+            }
+        },
+        Trips: {
+            screen: Trips,
+            navigationOptions: {
+                headerShown: false,
+                tabBarLabel: 'Trips',
+                title: 'Your Trips',
+                tabBarIcon: ({ focused, tintColor }) => (
+                    <TabBarIcon 
+                        focused={focused}
+                        name='map-pin'
                         tintColor={tintColor}
                     />
                 )
