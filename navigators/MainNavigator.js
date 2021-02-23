@@ -4,6 +4,7 @@ import { createBottomTabNavigator }  from 'react-navigation-tabs'
 // import { createStackNavigator } from 'react-navigation-stack'
 import  TripsNavigator  from './TripsNavigator'
 import HomeScreen from '../screens/HomeScreen'
+import Profile from '../screens/ProfileScreen'
 // import ProfileNavigator from './ProfileNavigator'
 // import HomeNavigator from './HomeNavigator'
 
@@ -42,8 +43,22 @@ const navBar =  createBottomTabNavigator(
                     />
                 )
             }
-        }
-        
+        },
+        Profile: {
+            screen: Profile,
+            navigationOptions: {
+                headerShown: false,
+                tabBarLabel: 'Profile',
+                title: 'Your Profile',
+                tabBarIcon: ({ focused, tintColor }) => (
+                    <TabBarIcon 
+                        focused={focused}
+                        name='user' 
+                        tintColor={tintColor}
+                    />
+                )
+            }
+        }, 
     },
     // {
     //     Home: {
