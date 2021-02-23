@@ -1,7 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableHighlight, Dimensions } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import { View, Text, StyleSheet, TouchableHighlight, Dimensions, TouchableOpacity} from 'react-native';
 
 const Circle = ({ onPress, top, left, width, height, color, ...props}) => {
     const style = [styles.circle, props.style || {}]

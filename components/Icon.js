@@ -1,10 +1,6 @@
 import React from 'react'
 import {View, Text, StyleSheet, Dimensions} from 'react-native'
 
-// import { Feather, Entypo, EvilIcons, Foundation, Ionicons, AntDesign, FontAwesome, MaterialCommunityIcons, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
-
-// import { Ionicons, AntDesign, FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons, Entypo, EvilIcons, Foundation, Feather } from 'react-native-vector-icons';
-
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'

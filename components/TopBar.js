@@ -14,7 +14,7 @@ const topBar = ({...props}) => {
 
 const styles = StyleSheet.create({
     bar: {
-        flex: 1,
+        flex: 0,
         flexDirection: 'row',
         alignSelf: 'center',
         justifyContent: 'flex-start',

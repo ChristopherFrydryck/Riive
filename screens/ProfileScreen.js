@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl} from 'react-native'
+import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, TouchableOpacity} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import {NavigationActions} from 'react-navigation'
 import Input from '../components/Input'
@@ -18,6 +18,7 @@ import DialogInput from 'react-native-dialog-input'
 // import Dialog from 'react-native-dialog'
 // import * as ImagePicker from 'expo-image-picker'
 // import * as Permissions from 'expo-permissions'
+import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
 // import SnackBar from 'react-native-snackbar-component'
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
@@ -224,12 +225,13 @@ class Profile extends Component{
 
 
     getPermissionAsync = async () => {
-        if (Platform.OS === 'ios') {
-          const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-          if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-          }
-        }
+        // if (Platform.OS === 'ios') {
+        //   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        //   if (status !== 'granted') {
+        //     alert('Sorry, we need camera roll permissions to make this work!');
+        //   }
+        // }
+        
       }
 
       onShare = async () => {
@@ -660,7 +662,7 @@ class Profile extends Component{
                     colors={['#FF8708', '#FFB33D']}
                     style={styles.headerBox}
                 >
-                    <TopBar style={{zIndex: 9999}}>
+                    <TopBar style={{zIndex: 9}}>
                         <Icon 
                             iconName="arrow-left"
                             iconColor="#FFFFFF"
@@ -737,45 +739,11 @@ class Profile extends Component{
                         />
                     </View>
                 }
-                    <View style={{position: 'absolute', zIndex: 999, top: -55, width: 80, height: 80,overflow: 'visible'}}>
-                            <Circle 
-                                onPress={() => {this.editAccountModal(true)}}
-                                left={(width/2) + 15}
-                                top={0}
-                                width={50}
-                                height={30}
-                                style={{shadowColor: '#000', margin: 5, overflow: 'visible', backgroundColor:"#FFFFFF", width: 40, height: 40, shadowOpacity: 0.6, shadowOffset:{width: 0, height: 0}, shadowRadius: 3, elevation: 12}}
-                            >   
-                                <Icon
-                                    iconName="edit-2"
-                                    iconColor="#fbb144"
-                                    iconSize={18}
-                                    
-                                />
-                            </Circle>
-                        </View> 
                     
                 
                     </View>
                     : 
-                    <View>
-                         <View style={{position: 'absolute', zIndex: 999, top: -55, width: 80, height: 80,overflow: 'visible'}}>
-                            <Circle 
-                                onPress={() => {this.editAccountModal(true)}}
-                                left={(width/2) + 15}
-                                top={0}
-                                width={50}
-                                height={30}
-                                style={{shadowColor: '#000', margin: 5, overflow: 'visible', backgroundColor:"#FFFFFF", width: 40, height: 40, shadowOpacity: 0.6, shadowOffset:{width: 0, height: 0}, shadowRadius: 3, elevation: 12}}
-                            >   
-                                <Icon
-                                    iconName="edit-2"
-                                    iconColor="#fbb144"
-                                    iconSize={18}
-                                    
-                                />
-                            </Circle>
-                        </View> 
+                    <View> 
                         <ProfilePic 
                             initals={initals}
                             imgWidth={80}
@@ -785,12 +753,24 @@ class Profile extends Component{
                             fontColor={Colors.apollo900}
 
                         />
-                        
-                        <View style={styles.container}>
-                      
-                     </View>
                     </View>
                     }
+
+                        <Circle 
+                            onPress={() => {this.editAccountModal(true)}}
+                            left={width/2 + 15}
+                            top={-60}
+                            width={50}
+                            height={30}
+                            style={{zIndex: 9999, shadowColor: '#000', margin: 5, overflow: 'visible', backgroundColor:"#FFFFFF", width: 40, height: 40, shadowOpacity: 0.6, shadowOffset:{width: 0, height: 0}, shadowRadius: 3, elevation: 12}}
+                            >   
+                                <Icon
+                                    iconName="edit-2"
+                                    iconColor="#fbb144"
+                                    iconSize={18}
+                                    
+                                />
+                            </Circle>
 
                    
                     <ScrollView style={{marginTop: 40}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>

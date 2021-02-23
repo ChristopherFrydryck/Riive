@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, TouchableHighlight, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableHighlight, Dimensions, TouchableOpacity } from 'react-native';
 import Text from './Txt'
 import Colors from '../constants/Colors'
 import Icon from '../components/Icon'
@@ -11,7 +11,6 @@ import { withNavigation } from 'react-navigation';
 import {inject, observer} from 'mobx-react/native'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 //For Shimmer
