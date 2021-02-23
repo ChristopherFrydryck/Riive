@@ -2,9 +2,8 @@ import React from 'react';
 import { Platform, StatusBar} from 'react-native';
 import { createBottomTabNavigator }  from 'react-navigation-tabs'
 // import { createStackNavigator } from 'react-navigation-stack'
-// import  TripsNavigator  from './TripsNavigator'
+import  TripsNavigator  from './TripsNavigator'
 import HomeScreen from '../screens/HomeScreen'
-import Trips from '../screens/VistingTrips'
 // import ProfileNavigator from './ProfileNavigator'
 // import HomeNavigator from './HomeNavigator'
 
@@ -30,7 +29,7 @@ const navBar =  createBottomTabNavigator(
             }
         },
         Trips: {
-            screen: Trips,
+            screen: TripsNavigator,
             navigationOptions: {
                 headerShown: false,
                 tabBarLabel: 'Trips',

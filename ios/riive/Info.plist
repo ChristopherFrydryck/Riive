@@ -38,13 +38,14 @@
 		</dict>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need access to your location to show you relevant search results. With "Always" access we'll also send you location based notifications.</string>
+	<string>We need access to your location to show you relevant search results. With &quot;Always&quot; access we&apos;ll also send you location based notifications.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need access to your location to show you relevant search results. With "Always" access we'll also send you location based notifications.</string>
+	<string>We need access to your location to show you relevant search results. With &quot;Always&quot; access we&apos;ll also send you location based notifications.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need access to your location to show you relevant search results.</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>Poppins-Light.ttf</string>
 		<string>Poppins-Black.ttf</string>
 		<string>Poppins-BlackItalic.ttf</string>
 		<string>Poppins-Bold.ttf</string>

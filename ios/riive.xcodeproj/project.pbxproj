@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* riiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* riiveTests.m */; };
+		062D1E6725E496E200D03320 /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56625D899C0004FE037 /* Poppins-Light.ttf */; };
 		0673F58C25D89B06004FE037 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
-		0673F58D25D89B06004FE037 /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56625D899C0004FE037 /* Poppins-Light.ttf */; };
 		0673F58E25D89B06004FE037 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56225D899C0004FE037 /* Poppins-Bold.ttf */; };
 		0673F58F25D89B06004FE037 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */; };
 		0673F59025D89B06004FE037 /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56425D899C0004FE037 /* Poppins-ExtraLightItalic.ttf */; };
@@ -410,8 +410,8 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 49J3538JQK;
 						LastSwiftMigration = 1120;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -457,6 +457,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				062D1E6725E496E200D03320 /* Poppins-Light.ttf in Resources */,
 				0673F59825D89B06004FE037 /* Poppins-SemiBold.ttf in Resources */,
 				0673F59925D89B06004FE037 /* Poppins-SemiBoldItalic.ttf in Resources */,
 				0673F59525D89B06004FE037 /* Poppins-ExtraLight.ttf in Resources */,
@@ -477,7 +478,6 @@
 				0673F59A25D89B06004FE037 /* Poppins-ExtraBold.ttf in Resources */,
 				0673F59425D89B06004FE037 /* Poppins-Thin.ttf in Resources */,
 				0673F59C25D89B06004FE037 /* Poppins-ThinItalic.ttf in Resources */,
-				0673F58D25D89B06004FE037 /* Poppins-Light.ttf in Resources */,
 				553177E6754A4FE0AB601115 /* AntDesign.ttf in Resources */,
 				B8843B862CD74023B769ECC3 /* Entypo.ttf in Resources */,
 				B23B916D2B6C499AAB470C38 /* EvilIcons.ttf in Resources */,
@@ -906,8 +906,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 49J3538JQK;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -1000,6 +1002,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive;
 				PRODUCT_NAME = riive;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1012,8 +1015,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 49J3538JQK;
+				DEVELOPMENT_TEAM = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"COCOAPODS=1",
@@ -1105,6 +1110,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive;
 				PRODUCT_NAME = riive;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

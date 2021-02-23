@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity} from 'react-native'
-
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
@@ -21,9 +20,10 @@ import 'firebase/firestore';
 import {inject, observer} from 'mobx-react/native'
 
 
+
 @inject("UserStore", "ComponentStore")
 @observer
-export default class VisitingTrips extends Component{
+export default class HostedTrips extends Component{
    constructor(props){
         super(props);
         this.state = {
@@ -44,13 +44,12 @@ export default class VisitingTrips extends Component{
         // Set Status Bar page info here!
     this._navListener = this.props.navigation.addListener('didFocus', () => {
             StatusBar.setBarStyle('dark-content', true);
-            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');     
+            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
         });
-        this.updateVisits();
-
+        this.updateVisits(); 
     }
 
-    updateVisits = () => {   
+    updateVisits = () => {
         try{
             this.setState({isRefreshing: true})
             this.scrollingList = false
@@ -66,7 +65,7 @@ export default class VisitingTrips extends Component{
 
 
     
-            var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(6)
+            var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(6)
             // spaceVisits = spaceVisits.where("isCancelled", '==', false)
 
             var visits = [];
@@ -113,6 +112,8 @@ export default class VisitingTrips extends Component{
                 visits.forEach(x => {
                     x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
                 })
+
+                
                 
                 return(visits)
 
@@ -151,22 +152,22 @@ export default class VisitingTrips extends Component{
                 let year = date.getFullYear();
             
 
-                var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(5)
+                var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(5)
 
                 var visits = this.state.visits;
-
+            
                     spaceVisits.startAfter(this.state.lastRenderedItem).get().then( async(nextData) => {
                         await this.setState({lastRenderedItem: nextData.docs[nextData.docs.length-1]})
 
                         for(doc of nextData.docs){
                             const listingCollection = db.collection("listings").doc(doc.data().listingID)
-            
+
                             const isToday = doc.data().visit.day.dateName === today && doc.data().visit.day.year === year && doc.data().visit.day.monthName === month;
-            
+
                             await listingCollection.get().then(listing => {
-                                return listing.data()
+                                    return listing.data()
                             }).then(listing => {
-            
+                                
                                 if(isToday){
                                     var title = "Today"
                                 }else{
@@ -203,11 +204,11 @@ export default class VisitingTrips extends Component{
                         this.setState({isRefreshing: false, visits: a})
                         this.scrollingList = true;
                     })
-                }catch(e){
-                    alert(e)
-                    this.setState({isRefreshing: false})
-                    this.scrollingList = true;
-                }
+            }catch(e){
+                alert(e)
+                this.setState({isRefreshing: false})
+                this.scrollingList = true;
+            }
         }
     };
 
@@ -215,15 +216,15 @@ export default class VisitingTrips extends Component{
     renderVisit = (data) => {
         const {visit, listing, isInPast, current} = data;
         const {isCancelled} = visit
-        const hostName = `${visit.hostName.split(" ")[0]} ${visit.hostName.split(" ")[1].slice(0,1)}.`
+        const visitorName = `${visit.visitorName.split(" ")[0]} ${visit.visitorName.split(" ")[1].slice(0,1)}.`
         return(
 
             <TouchableOpacity disabled={isCancelled} style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, modalVisible: true})}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <View style={{borderRadius: 4, overflow: 'hidden',}}>
-                        {!isCancelled ? 
+                    {!isCancelled ? 
                             <View style={{position: 'absolute', zIndex: 9, backgroundColor: 'white', top: 4, left: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 4}}>
-                                <Text>{visit.price.total}</Text>
+                                <Text>{visit.price.price}</Text>
                             </View>
                         : null }
                         <Image 
@@ -238,12 +239,12 @@ export default class VisitingTrips extends Component{
                                 resizeMode={'cover'}
                         /> 
                     </View>
-                 <View style={{flex: 1, marginHorizontal: 8}}>  
+                 <View style={{flex: 1, marginHorizontal: 8}}>
                     <Text numberOfLines={1} ellipsizeMode='tail' style={{fontSize: 18}}>{listing.spaceName}</Text>
                     {isCancelled ? 
-                      <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {data.cancelledBy === 'host' || 'you'}</Text>
+                      <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {data.cancelledBy === 'host' ? 'you' : 'guest'}</Text>
                     : 
-                      <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Hosted by {hostName}</Text>
+                      <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visited by {visitorName}</Text>
                     }
                     {isCancelled ? null : 
                         <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text>
@@ -259,29 +260,24 @@ export default class VisitingTrips extends Component{
         return(
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32}}>
                 <Icon 
-                    iconName="parking"
-                    iconLib="FontAwesome5"
+                    iconName="home-city"
+                    iconLib="MaterialCommunityIcons"
                     iconColor={Colors.cosmos500}
                     iconSize={120}
                     style={{marginBottom: 32}}
                 />
-                <Text type="Medium" style={{fontSize: 24, textAlign: 'center', color: Colors.cosmos500}} >You have no booked trips.</Text>
-                <Text type="Regular" style={{marginTop: 8, fontSize: 16, textAlign: 'center', color: Colors.cosmos500}}>Pull down to refresh and see any trips you have planned.</Text>
+                <Text type="Medium" style={{fontSize: 24, textAlign: 'center', color: Colors.cosmos500}} >You are not hosting any guests... yet!</Text>
+                <Text type="Regular" style={{marginTop: 8, fontSize: 16, textAlign: 'center', color: Colors.cosmos500}}>Pull down to refresh and see if any future trips are booked.</Text>
             </View>
         )
     }
 
-    openGps = (lat, lng, fullAddress) => {
-        const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
-        const latLng = `${lat},${lng}`;
-        const label = fullAddress;
-        const url = Platform.select({
-            ios: `${scheme}${label}@${latLng}`,
-            android: `${scheme}${latLng}(${label})`
-        })
-
-        Linking.openURL(url);
-      }
+    openEditSpace = (spot) => {
+        this.props.ComponentStore.selectedSpot.clear()
+        this.props.ComponentStore.selectedSpot.push(spot)
+        this.setState({modalVisible: false})
+        this.props.navigation.navigate("EditSpace")
+    }
 
 
     LoadingIndicatorBottom = () => {
@@ -306,7 +302,7 @@ export default class VisitingTrips extends Component{
         this.setState({modalVisible: false})
         this.props.navigation.navigate("TOS")
     }
-
+ 
     VisitModal(props) {
         const {data, visible} = props;
         
@@ -341,7 +337,7 @@ export default class VisitingTrips extends Component{
                         <View style={{flex: 0}}>
                             <View style={{flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: Platform.OS === 'ios' ? 0 : 16}}>
                                 <Text numberOfLines={1}  ellipsizeMode='tail' style={{ fontSize: 18}}>{data.listing.spaceName}</Text>
-                                <Text type="Regular" numberOfLines={1} ellipsizeMode='tail' style={{paddingBottom: 8}}>Hosted by {hostName}</Text>
+                                <Text type="Regular" numberOfLines={1} ellipsizeMode='tail' style={{paddingBottom: 8}}>Visit by {hostName}</Text>
                             </View>
                                 <Icon 
                                     iconName="x"
@@ -359,8 +355,8 @@ export default class VisitingTrips extends Component{
                             /> 
                             <View style={{paddingHorizontal: 16}}>
                                 
-                                <Text numberOfLines={1} style={{textAlign: 'center', fontSize: 18, marginTop: 8, paddingBottom: 4}}>{isToday ? `Today, ${data.visit.visit.day.monthName} ${data.visit.visit.day.dateName} ${data.visit.visit.day.year}` : `${data.visit.visit.day.dayName}, ${data.visit.visit.day.monthName} ${data.visit.visit.day.dateName} ${data.visit.visit.day.year}`}</Text>
-                                <Text numberOfLines={1} style={{textAlign: "center", paddingBottom: 8, color: Colors.cosmos300}}>Driving {data.visit.vehicle.Year} {data.visit.vehicle.Make} {data.visit.vehicle.Model} ({data.visit.vehicle.LicensePlate})</Text>
+                            <Text numberOfLines={1} style={{textAlign: 'center', fontSize: 18, marginTop: 8, paddingBottom: 4}}>{isToday ? `Today, ${data.visit.visit.day.monthName} ${data.visit.visit.day.dateName} ${data.visit.visit.day.year}` : `${data.visit.visit.day.dayName}, ${data.visit.visit.day.monthName} ${data.visit.visit.day.dateName} ${data.visit.visit.day.year}`}</Text>
+                            <Text numberOfLines={1} style={{textAlign: "center", paddingBottom: 8, color: Colors.cosmos300}}>Driving {data.visit.vehicle.Year} {data.visit.vehicle.Make} {data.visit.vehicle.Model} ({data.visit.vehicle.LicensePlate})</Text>
                                 <View style={{flexDirection: 'row', alignItems: "flex-end", justifyContent: 'space-between', marginTop: 0, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: Colors.mist900}}>
                                     <View style={{flexDirection: 'column', alignItems: 'center', flex: 3}}>
                                         <Text type="Light" numberOfLines={1} style={{fontSize: 18}}>Arrival</Text>
@@ -374,12 +370,12 @@ export default class VisitingTrips extends Component{
                                         style={{flex: 1, paddingBottom: 4, textAlign: 'center'}}
                                     />
                                     <View style={{flexDirection: 'column', alignItems: 'center', flex: 3}}>
-                                        <Text  type="Light" numberOfLines={1} style={{fontSize: 18}}>Departure</Text>
+                                        <Text type="Light" numberOfLines={1} style={{fontSize: 18}}>Departure</Text>
                                         <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.tango700}}>{data.visit.visit.time.end.labelFormatted} {sameTimezone ? null : data.listing.timezone.timeZoneAbbr}</Text>
                                     </View>
                                 </View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8}}>
-                                        <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Listing Details</Text>
+                                        <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Visit Details</Text>
                                         <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{data.visit.tripID}</Text>
                                 </View>
                                 {data.listing.spaceBio ? <Text style={{color: Colors.cosmos500, lineHeight: Platform.OS === 'ios' ? 18 : 20}}>{data.listing.spaceBio}</Text> : null}
@@ -401,7 +397,7 @@ export default class VisitingTrips extends Component{
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
                                         <Text>{data.listing.address.full}</Text>
-                                        <Button onPress={() => this.openGps(data.listing.region.latitude, data.listing.region.longitude, data.listing.address.full)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Get Directions</Button>
+                                        <Button onPress={() => this.openEditSpace(data.listing)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Edit Details</Button>
                                     </View>
                                 </View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8}}>
@@ -442,7 +438,6 @@ export default class VisitingTrips extends Component{
                                 : 
                                 <View style={{flexDirection: 'row'}}>
                                     <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Cancel Trip</Button>
-                                    <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Edit Trip Details</Button>
                                 </View>
                                 }
                             </View>
@@ -457,8 +452,8 @@ export default class VisitingTrips extends Component{
             return null
         }
     }
-
     
+
     render(){
         return(
             <View style={styles.container}>
