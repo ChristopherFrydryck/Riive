@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl} from 'react-native'
-// import { LinearGradient } from 'expo-linear-gradient'
+import LinearGradient from 'react-native-linear-gradient'
 import {NavigationActions} from 'react-navigation'
 import Input from '../components/Input'
 import Button from '../components/Button'
@@ -656,10 +656,10 @@ class Profile extends Component{
 
             <View style={{flex: 1}}>
 
-                {/* <LinearGradient
+                <LinearGradient
                     colors={['#FF8708', '#FFB33D']}
                     style={styles.headerBox}
-                > */}
+                >
                     <TopBar style={{zIndex: 9999}}>
                         <Icon 
                             iconName="arrow-left"
@@ -699,7 +699,7 @@ class Profile extends Component{
                             style={{marginLeft: "auto"}}
                         /> */}
                     </TopBar>
-                {/* </LinearGradient> */}
+                </LinearGradient>
                  
 
 
