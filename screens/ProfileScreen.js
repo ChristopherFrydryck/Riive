@@ -5,6 +5,8 @@ import {NavigationActions} from 'react-navigation'
 import Input from '../components/Input'
 import Button from '../components/Button'
 
+import ImagePicker from 'react-native-image-crop-picker';
+
 import ProfilePic from '../components/ProfilePic'
 import TopBar from '../components/TopBar'
 import Icon from '../components/Icon'
@@ -27,6 +29,7 @@ import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 //Firebase imports
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage'
 import firestore from '@react-native-firebase/firestore';
 import 'firebase/firestore';
 import 'firebase/auth';
@@ -257,31 +260,44 @@ class Profile extends Component{
       
 
 
-    pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [3, 3],
-            quality: 0.1,
-            // base64: true,
+    pickImage = () => {
+        // let result = await launchImageLibrary({
+        //     mediaType: 'photo',
+        //     allowsEditing: true,
+        //     aspect: [3, 3],
+        //     quality: 0.1,
+        //     // base64: true,
+        //   });
+
+        ImagePicker.openPicker({
+            mediaType: "photo",
+            width: 320,
+            height: 320,
+            compressImageQuality: 0.1,
+            cropping: true
+          }).then(image => {
+            console.log(image);
+            this.setState({imageUploading: true})
+            this.uploadImg(image.path)
+            this.setState({imageUploading: false})
           });
 
-          this.setState({imageUploading: true})
+          
       
       
-          if (!result.cancelled) {
-                this.uploadImg(result.uri)
-                    .then(() => {
-                        // alert("Success!")
-                        this.setState({imageUploading: false})
-                    }).catch(() => {
-                        // alert("Failed to upload image. Please try again.")
-                        this.setState({imageUploading: false})
-                    })
+        //   if (!result.cancelled) {
+        //         this.uploadImg(result.uri)
+        //             .then(() => {
+        //                 // alert("Success!")
+        //                 this.setState({imageUploading: false})
+        //             }).catch(() => {
+        //                 // alert("Failed to upload image. Please try again.")
+        //                 this.setState({imageUploading: false})
+        //             })
             
-          }else{
-              this.setState({imageUploading: false})
-          }
+        //   }else{
+        //       this.setState({imageUploading: false})
+        //   }
         };
 
 
@@ -293,7 +309,7 @@ class Profile extends Component{
         const response = await fetch(uri)
         const blob = await response.blob()
 
-        const storageRef = firebase.storage().ref();
+        const storageRef = storage().ref();
         const profilePicRef = storageRef.child("users/" + this.props.UserStore.userID + '/profile-pic')
         return profilePicRef.put(blob)
         .then(() => {

@@ -1364,7 +1364,7 @@
   "resolved" "https://registry.npmjs.org/@react-native-community/viewpager/-/viewpager-2.0.2.tgz"
   "version" "2.0.2"
 
-"@react-native-firebase/app@^10.6.4", "@react-native-firebase/app@10.8.0":
+"@react-native-firebase/app@^10.8.0", "@react-native-firebase/app@10.8.0", "@react-native-firebase/app@10.8.1":
   "integrity" "sha512-VIWVpqb+V4ltOEmpUEfcsA/ZmcV+FLWGMlRGN+xB/cXorD3nYhYF/LPxOtX7TOHrlxPeL2dikLry9hKv4PlZCw=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/app/-/app-10.8.0.tgz"
   "version" "10.8.0"
@@ -1386,6 +1386,11 @@
   "integrity" "sha512-93xjjUhp61wIVADONX51Gry4k4luaENrsnbYjwxoUnWcG5vxHIAwPbeXwWIfEs1/oiv7vvXScc11WjE95LLfiw=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-10.8.0.tgz"
   "version" "10.8.0"
+
+"@react-native-firebase/storage@^10.6.4":
+  "integrity" "sha512-1Db87rh7DekGxynnbVo0jU+/LokJ8G0v5NWbVYyU0C2LOFjjuaODkQG4hYQKD/Pr85n5w0kD8P9k9HRRWbH9eQ=="
+  "resolved" "https://registry.npmjs.org/@react-native-firebase/storage/-/storage-10.8.1.tgz"
+  "version" "10.8.1"
 
 "@react-native-windows/cli@0.63.10":
   "integrity" "sha512-nCVCN6DKciOtmou71Sj3b30CvQfnD+t9TbSYa8uuGTguB57A3F2gOBl+6fS+r9cAQ5V5mMAX2LWg1YovT8sPcw=="
@@ -7080,7 +7085,7 @@
   "resolved" "https://registry.npmjs.org/react-native-google-signin/-/react-native-google-signin-2.1.1.tgz"
   "version" "2.1.1"
 
-"react-native-image-crop-picker@^0.32.2":
+"react-native-image-crop-picker@^0.32.3":
   "integrity" "sha512-+2em4wBcjpAkDat9gfNjGMIDvtjd67ekVaUQ6jC0dP2KOylX5zQbUlUQxx/gMbxQRZZDmBy8YGCDG1Y8D2d+oA=="
   "resolved" "https://registry.npmjs.org/react-native-image-crop-picker/-/react-native-image-crop-picker-0.32.3.tgz"
   "version" "0.32.3"
