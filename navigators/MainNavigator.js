@@ -4,8 +4,8 @@ import { createBottomTabNavigator }  from 'react-navigation-tabs'
 // import { createStackNavigator } from 'react-navigation-stack'
 import  TripsNavigator  from './TripsNavigator'
 import HomeScreen from '../screens/HomeScreen'
-import Profile from '../screens/ProfileScreen'
-// import ProfileNavigator from './ProfileNavigator'
+// import Profile from '../screens/ProfileScreen'
+import ProfileNavigator from './ProfileNavigator'
 // import HomeNavigator from './HomeNavigator'
 
 import TabBarIcon from './TabBarIcon'
@@ -45,7 +45,7 @@ const navBar =  createBottomTabNavigator(
             }
         },
         Profile: {
-            screen: Profile,
+            screen: ProfileNavigator,
             navigationOptions: {
                 headerShown: false,
                 tabBarLabel: 'Profile',

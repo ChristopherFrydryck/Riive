@@ -5,7 +5,7 @@ import LegalNavigator from './LegalNavigator'
 import Profile from '../screens/ProfileScreen'
 // import AddVehicle from '../screens/AddVehicle'
 // import EditVehicle from '../screens/EditVehicle'
-// import AddPayment from '../screens/AddPayment'
+import AddPayment from '../screens/AddPayment'
 // import EditPayment from '../screens/EditPayment'
 // import AddSpace from '../screens/AddSpace'
 // import EditSpace from '../screens/EditSpace'
@@ -21,7 +21,7 @@ const ProfileNavigator = createStackNavigator({
     },
     // AddVehicle: AddVehicle,
     // EditVehicle: EditVehicle,
-    // AddPayment: AddPayment,
+    AddPayment: AddPayment,
     // EditPayment: EditPayment,
     // AddSpace: AddSpace,
     // EditSpace: EditSpace,

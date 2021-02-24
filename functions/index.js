@@ -202,9 +202,6 @@ const fs = require('fs');
         })
     })
 
-    exports.enterApp = functions.https.onRequest((request, response) => {
-        
-    })
 
     exports.deleteSource = functions.https.onRequest((request, response) => {
         db.collection("users").doc(request.body.FBID).get().then(async(doc) => {
