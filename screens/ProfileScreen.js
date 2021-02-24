@@ -320,7 +320,9 @@ class Profile extends Component{
                  this.props.UserStore.photo = uri;
 
                 })
-            })
+        }).catch(e => {
+            Alert.alert(e)
+        })
 
         
     }

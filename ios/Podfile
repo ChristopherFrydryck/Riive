@@ -30,6 +30,8 @@ target 'riive' do
   # pod 'GoogleMaps'
   # pod 'Google-Maps-iOS-Utils'
 
+  pod 'RNFBStorage', :path => '../node_modules/@react-native-firebase/storage'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing
