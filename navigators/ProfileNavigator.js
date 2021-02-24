@@ -3,7 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 import LegalNavigator from './LegalNavigator'
 
 import Profile from '../screens/ProfileScreen'
-// import AddVehicle from '../screens/AddVehicle'
+import AddVehicle from '../screens/AddVehicle'
 // import EditVehicle from '../screens/EditVehicle'
 import AddPayment from '../screens/AddPayment'
 import EditPayment from '../screens/EditPayment'
@@ -19,7 +19,7 @@ const ProfileNavigator = createStackNavigator({
             headerShown: false,
         }
     },
-    // AddVehicle: AddVehicle,
+    AddVehicle: AddVehicle,
     // EditVehicle: EditVehicle,
     AddPayment: AddPayment,
     EditPayment: EditPayment,
