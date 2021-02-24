@@ -227,15 +227,15 @@ export default class VisitingTrips extends Component{
                             </View>
                         : null }
                         <Image 
-                                aspectRatio={1/1}
-                                source={{uri: listing.photo}}
-                                height={100}
-                                style={{shadowColor: '#000', 
-                                shadowOpacity: 0.6, 
-                                shadowOffset:{width: 0, height: 0}, 
-                                shadowRadius: 3, 
-                                elevation: 0,}}
-                                resizeMode={'cover'}
+                            aspectRatio={1/1}
+                            source={{uri: listing.photo}}
+                            height={100}
+                            style={{shadowColor: '#000', 
+                            shadowOpacity: 0.6, 
+                            shadowOffset:{width: 0, height: 0}, 
+                            shadowRadius: 3, 
+                            elevation: 0,}}
+                            resizeMode={'cover'}
                         /> 
                     </View>
                  <View style={{flex: 1, marginHorizontal: 8}}>  
