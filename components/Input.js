@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput, Platform } from 'react-native';
 import Text from './Txt'
 import Color from '../constants/Colors'
 import {TextInputMask} from 'react-native-masked-text'
@@ -14,7 +14,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     return (
         <View {...allProps}>
             <View style={styles.container}>
-                 <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                 <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                      <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                      <Text style={styles.label_disabled}>{rightText}</Text>
                 </View>
@@ -219,15 +219,14 @@ const styles = StyleSheet.create({
     
     label: {
         paddingTop: 4,
-        paddingBottom: 2,
         color: '#333',
         fontSize: 14,
         fontWeight: '400',
+        height: 24,
         width: 'auto'
     },
     label_disabled: {
         paddingTop: 4,
-        paddingBottom: 2,
         color: Color.cosmos300,
         fontSize: 14,
         fontWeight: '400',
