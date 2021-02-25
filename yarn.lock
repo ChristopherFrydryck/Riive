@@ -7121,10 +7121,10 @@
     "date-and-time" "0.9.0"
     "tinymask" "1.0.2"
 
-"react-native-modal-selector@^1.1.2":
-  "integrity" "sha512-4qjMDSHCoWJSSxCsiNvKQiAH0LMg5ef/dijmlac7km+UzMeAzD6GIub9Xa1vSoQojRkF7NEz5ug+g8giOxDIaA=="
-  "resolved" "https://registry.npmjs.org/react-native-modal-selector/-/react-native-modal-selector-1.1.5.tgz"
-  "version" "1.1.5"
+"react-native-modal-selector@^2.0.3":
+  "integrity" "sha512-d1ejtVi40p34p3eDC55r93Qb1UWUq2oSuIU+GRBhbrcwNcxWbstRAU8Him2BYbns5g/jzyeOQOJzyEnKCMniBw=="
+  "resolved" "https://registry.npmjs.org/react-native-modal-selector/-/react-native-modal-selector-2.0.3.tgz"
+  "version" "2.0.3"
   dependencies:
     "prop-types" "^15.5.10"
 

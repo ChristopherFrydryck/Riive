@@ -297,7 +297,7 @@ class AddVehicle extends React.Component{
                             error={this.state.error.make}
                             style={{height: 28}}
                             onValueChange = {Platform.OS === "ios" ? (value) => this.setState({makeSelected: value.label}, () => {this.checkYearMake()}) 
-                                                                   : (value) => this.setState({makeSelected: value}, () => {this.checkYearMake()})}   
+                            : (value) => this.setState({makeSelected: value}, () => {this.checkYearMake()})}   
                         >
                             {Platform.OS === "android" ?
                                 carObjArray.map((carMake) => {

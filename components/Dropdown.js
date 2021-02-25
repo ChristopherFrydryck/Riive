@@ -41,6 +41,7 @@ class Dropdown extends React.PureComponent{
                         scrollViewAccessibilityLabel={'Scrollable options'}
                         cancelButtonAccessibilityLabel={'Cancel Button'}
                         onChange={this.props.onValueChange}
+                        onModalClose={this.props.onValueChange}
                         overlayStyle={{paddingTop: '15%'}}
                         data={this.props.children}
                     >
