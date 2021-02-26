@@ -186,32 +186,7 @@ class editSpace extends Component {
     };
 
     pickImage = async () => {
-      // const permissions = [Permissions.CAMERA_ROLL];
-      // let isGranted = true;
-      let prevPhoto = this.state.photo
-        
-      // for(let i = 0; i < permissions.length; i++){
-      //   let perms = await Permissions.askAsync(permissions[i]);
-      //   // console.log(permissions[i], perms.status)
-
-      //   if(perms.status != 'granted'){
-      //     isGranted = false;
-      //     break;
-      //   }else{
-      //     isGranted = true;
-      //     continue;
-      //   }
-      // }
-
-      // if(isGranted === true){
-      //   let result = await ImagePicker.launchImageLibraryAsync({
-      //     mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      //     allowsEditing: true,
-      //     aspect: [16, 9],
-      //     quality: 0.5,
-      //     // base64: true,
-      //   });
-
+      
       ImagePicker.openPicker({
         mediaType: "photo",
         width: Dimensions.get("window").width,
@@ -229,26 +204,6 @@ class editSpace extends Component {
 
         
 
-        // this.setState({imageUploading: true, photo: result.uri})
-    
-    
-      //   if (!result.cancelled) {
-            
-      //             try {
-      //                console.log("Success!")
-      //                 this.setState({imageUploading: false, changesMade: true})
-      //             }
-      //             catch {
-      //                 console.log("Failed to upload image. Please try again.")
-      //                 this.setState({imageUploading: false})
-      //             }
-          
-      //   }else{
-      //       this.setState({imageUploading: false, photo: prevPhoto})
-      //   }
-      // }else{
-      //   this.getPermissionAsync(Permissions.CAMERA_ROLL)
-      // }
     };
 
 
