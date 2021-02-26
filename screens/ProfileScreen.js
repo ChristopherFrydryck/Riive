@@ -590,7 +590,7 @@ class Profile extends Component{
                             style={{marginVertical: 20, marginLeft: 8}}
                             color="#ffffff"
                         >
-                            <ActivityIndicator/>  
+                            <ActivityIndicator size="large" color={Colors.cosmos300}/>  
                         </Circle>
 
 

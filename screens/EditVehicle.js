@@ -1,9 +1,8 @@
 import React from "react"
-import { View, ScrollView, Picker, StatusBar, StyleSheet, ActivityIndicator, Platform} from 'react-native'
+import { View, ScrollView, Platform, Picker, StatusBar, StyleSheet, ActivityIndicator} from 'react-native'
 import Input from '../components/Input'
 import Dropdown from '../components/Dropdown'
 import Button from '../components/Button'
-import Colors from '../constants/Colors'
 import axios from 'axios'
 
 import * as firebase from 'firebase/app';
@@ -12,8 +11,13 @@ import firestore from '@react-native-firebase/firestore';
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
+import { requireNativeViewManager } from '@unimodules/core';
 
+import Colors from '../constants/Colors'
 import Cars from '../constants/CarManufacturers'
+import ClickableChip from "../components/ClickableChip"
+
+
 
 
 
@@ -22,19 +26,30 @@ var d = new Date();
 const year = d.getFullYear();
 
 
+
+
 @inject("UserStore", "ComponentStore")
 @observer
+
+
 class AddVehicle extends React.Component{
     _isMounted = false;
 
-    static navigationOptions = {
-        title: "Add A Vehicle",
+    static navigationOptions = ({ navigation }) => {
+        return{
+        title: "Edit My Vehicle",
         headerTitleStyle:{
             fontWeight: "300",
             fontSize: 18,
-        }
+        },
+    //     headerRight: <ClickableChip  onPress={navigation.getParam('deleteVehicle')}
+    //     bgColor='rgba(rgba(232, 86, 86, 0.3))' // Colors.Tango300 with opacity of 30%
+    //     textColor={Colors.hal700}
+    //     style={{marginRight: 16}}>Delete</ClickableChip>
     
-    };
+    // };
+        };
+    }
 
     
 
@@ -42,12 +57,12 @@ class AddVehicle extends React.Component{
         super(props);
 
         this.state = {
-            yearSelected: 0,
-            makeSelected: "Choose a Manufacturer...",
-            modelSelected: "Car Model...",
+            yearSelected: this.props.ComponentStore.selectedVehicle[0].Year,
+            makeSelected: this.props.ComponentStore.selectedVehicle[0].Make,
+            modelSelected: "", // Set after fetching API
             modelEnabled: false,
-            licensePlateNum: "",
-            vehicleColor: "Black",
+            licensePlateNum: this.props.ComponentStore.selectedVehicle[0].LicensePlate,
+            vehicleColor: this.props.ComponentStore.selectedVehicle[0].Color,
             loadingVehicleAPI: false,
             error: {
                 year: "",
@@ -69,6 +84,53 @@ class AddVehicle extends React.Component{
         
     }
 
+    componentDidMount(){
+        this.props.navigation.setParams({ deleteVehicle: this.deleteVehicle})
+        this._isMounted = true;
+
+        this.checkYearMake()
+
+
+          // Set Status Bar page info here!
+       this._navListener = this.props.navigation.addListener('didFocus', () => {
+        StatusBar.setBarStyle('dark-content', true);
+        Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+      });
+    }
+
+
+
+     deleteVehicle = async () => {
+
+        if(this._isMounted){
+        const db = firestore();
+
+        // Remove the current vehicle
+       await db.collection("users").doc(this.props.UserStore.userID).update({
+            vehicles: firestore.FieldValue.arrayRemove({
+                VehicleID: this.props.ComponentStore.selectedVehicle[0].VehicleID,
+                Year: this.props.ComponentStore.selectedVehicle[0].Year,
+                Make: this.props.ComponentStore.selectedVehicle[0].Make,
+                Model: this.props.ComponentStore.selectedVehicle[0].Model,
+                LicensePlate: this.props.ComponentStore.selectedVehicle[0].LicensePlate,
+                Color: this.props.ComponentStore.selectedVehicle[0].Color
+            })
+         })
+
+          // remove the old vehicle from the userstore mobx vehicles array
+        const updatedVehicleArray = this.props.UserStore.vehicles.filter(i => i.VehicleID !== this.props.ComponentStore.selectedVehicle[0].VehicleID)
+        this.props.UserStore.vehicles = updatedVehicleArray
+       
+        }else{
+            alert("Error deleting vehicle")
+        }
+
+        // navigate back to home.
+        this.props.navigation.navigate("Profile")
+
+     
+    }
+
     submitVehicle = async () => {
         const db = firestore();
 
@@ -79,11 +141,21 @@ class AddVehicle extends React.Component{
             this.state.error.modelValid &&
             this.state.error.yearValid &&
             this.state.error.licenseValid){
-                const ref = db.collection("users").doc(); // creates unique ID
-                // add vehicle to database
+                // Remove the old vehicle
+                db.collection("users").doc(this.props.UserStore.userID).update({
+                    vehicles: firestore.FieldValue.arrayRemove({
+                        VehicleID: this.props.ComponentStore.selectedVehicle[0].VehicleID,
+                        Year: this.props.ComponentStore.selectedVehicle[0].Year,
+                        Make: this.props.ComponentStore.selectedVehicle[0].Make,
+                        Model: this.props.ComponentStore.selectedVehicle[0].Model,
+                        LicensePlate: this.props.ComponentStore.selectedVehicle[0].LicensePlate,
+                        Color: this.props.ComponentStore.selectedVehicle[0].Color
+                    })
+                })
+                // Add the new vehicle
                 db.collection("users").doc(this.props.UserStore.userID).update({
                     vehicles: firestore.FieldValue.arrayUnion({
-                        VehicleID: ref.id,
+                        VehicleID: this.props.ComponentStore.selectedVehicle[0].VehicleID,
                         Year: this.state.yearSelected,
                         Make: this.state.makeSelected,
                         Model: this.state.modelSelected,
@@ -91,9 +163,14 @@ class AddVehicle extends React.Component{
                         Color: this.state.vehicleColor
                     })
                  })
-                 // add vehicle to mobx UserStore
+
+                 // remove the old vehicle from the userstore mobx vehicles array
+                 const updatedVehicleArray = this.props.UserStore.vehicles.filter(i => i.VehicleID !== this.props.ComponentStore.selectedVehicle[0].VehicleID)
+                 this.props.UserStore.vehicles = updatedVehicleArray
+
+                 // add new vehicle to mobx vehicles userstore array
                  this.props.UserStore.vehicles.push({
-                    VehicleID: ref.id,
+                    VehicleID: this.props.ComponentStore.selectedVehicle[0].VehicleID,
                     Year: this.state.yearSelected,
                     Make: this.state.makeSelected,
                     Model: this.state.modelSelected,
@@ -101,13 +178,13 @@ class AddVehicle extends React.Component{
                     Color: this.state.vehicleColor
                  })
 
-                 // navigate back to profile
-                 this.props.navigation.goBack(null)
-                 
-        }else{
-            
-        }
-        }else{
+                 // Navigate back to profile
+
+                 this.props.navigation.navigate("Profile")
+
+            }else{
+                alert("Fix errors...")
+        }}else{
             alert("failed to submit vehicle")
         }
        
@@ -215,7 +292,7 @@ class AddVehicle extends React.Component{
                 this.setState({loadingVehicleAPI: true})
                 axios.get('https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/' + this.state.makeSelected + '/modelyear/' + this.state.yearSelected + '/vehicleType/c?format=json')
                 .then(response => {
-                    if (this._isMounted){
+                    if(this._isMounted){
                         this.setState({loadingVehicleAPI: false})
                         var arr = response.data.Results.filter(function(car){
                             return (car.VehicleTypeId == 2 ||
@@ -223,10 +300,11 @@ class AddVehicle extends React.Component{
                                     car.VehicleTypeId == 7
                             )
                         });
+                        // remove dupliate cars in data...
                         unique = arr.filter((car, i, u) => u.findIndex(t=>(t.Model_ID === car.Model_ID)) === i)
 
                         // console.log(unique)
-                        this.setState({modelEnabled: true})
+                        this.setState({modelEnabled: true, modelSelected: this.props.ComponentStore.selectedVehicle[0].Model})
                     }
                 })
                 .catch(error => {
@@ -239,16 +317,8 @@ class AddVehicle extends React.Component{
         }
     }
 
-    componentDidMount(){
-        this._isMounted = true;
-        
-         // Set Status Bar page info here!
-       this._navListener = this.props.navigation.addListener('didFocus', () => {
-        StatusBar.setBarStyle('dark-content', true);
-        Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
-      });
-       
-    }
+
+
 
     componentWillUnmount(){
         this._isMounted = false;
@@ -256,9 +326,11 @@ class AddVehicle extends React.Component{
          // Unmount status bar info
          this._navListener.remove();
     }
+
+
     
 
-    render(){
+    render(){ 
         var carObjArray = []
             for(var i = 0; i < Cars.length; i++){
                 carObjArray.push({key: i, label:Cars[i], });
@@ -276,10 +348,8 @@ class AddVehicle extends React.Component{
                       "Yellow",
                       "White"]
 
-
-        
         return(
-            <ScrollView style={[styles.container, {flex: 1, backgroundColor: 'white'}]}>
+            <ScrollView style={[styles.container, {backgroundColor: 'white'}]}>
                 <View style={{flexDirection: "row" }}>
                     <Input 
                         flex= {1}
@@ -287,6 +357,7 @@ class AddVehicle extends React.Component{
                         label="Year"
                         placeholder="YYYY"
                         maxLength={4}
+                        value={this.state.yearSelected}
                         error={this.state.error.year}
                         keyboardType="numeric"
                     />
@@ -297,7 +368,7 @@ class AddVehicle extends React.Component{
                             error={this.state.error.make}
                             style={{height: 28}}
                             onValueChange = {Platform.OS === "ios" ? (value) => this.setState({makeSelected: value.label}, () => {this.checkYearMake()}) 
-                            : (value) => this.setState({makeSelected: value}, () => {this.checkYearMake()})}   
+                                                                   : (value) => this.setState({makeSelected: value}, () => {this.checkYearMake()})}   
                         >
                             {Platform.OS === "android" ?
                                 carObjArray.map((carMake) => {
@@ -340,6 +411,7 @@ class AddVehicle extends React.Component{
                             editable={this.state.modelEnabled}
                             onChangeText = {(value) => this.setState({modelSelected: value})}
                             label="Model"
+                            value={this.state.modelSelected}
                             placeholder="Car Model..."
                             maxLength={30}
                             error={this.state.error.model}
@@ -356,10 +428,11 @@ class AddVehicle extends React.Component{
                             placeholder="XXX-1234"
                             maxLength={8}
                             error={this.state.error.licensePlate}
+                            value={this.state.licensePlateNum}
                             keyboardType="default"/>
                     </View>
                         <View style={{marginLeft: 16, flex: 2}}>
-                            <Dropdown
+                        <Dropdown
                                 flex = {2}
                                 selectedValue = {this.state.vehicleColor}
                                 label="Color"
@@ -375,10 +448,10 @@ class AddVehicle extends React.Component{
                                     return({label: res, key: i})
                                 })}                
                             </Dropdown> 
-                            
                         </View>  
                 </View> 
                 <Button style={{backgroundColor: Colors.tango900}} textStyle={{color: 'white'}} onPress={() => this.submitVehicle()}>Save Vehicle</Button>
+                <Button style={{backgroundColor: 'white', borderColor: Colors.hal300, borderWidth: 2}} textStyle={{color: Colors.hal300}} onPress={() => this.deleteVehicle()}>Delete Vehicle</Button>
             </ScrollView>
         )
     }
@@ -386,11 +459,11 @@ class AddVehicle extends React.Component{
 
 const styles = StyleSheet.create({
     container:{
-        // flex: 1,
+        flex: 1,
         // only use for emulator
         // marginTop: getStatusBarHeight(),
         padding: 20,
-    
+      
         // flexDirection: 'row'
     }
 })
