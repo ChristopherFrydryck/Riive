@@ -261,13 +261,6 @@ class Profile extends Component{
 
 
     pickImage = () => {
-        // let result = await launchImageLibrary({
-        //     mediaType: 'photo',
-        //     allowsEditing: true,
-        //     aspect: [3, 3],
-        //     quality: 0.1,
-        //     // base64: true,
-        //   });
 
         ImagePicker.openPicker({
             mediaType: "photo",
@@ -276,7 +269,6 @@ class Profile extends Component{
             compressImageQuality: 0.1,
             cropping: true
           }).then(image => {
-            console.log(image);
             this.setState({imageUploading: true})
             this.uploadImg(image.path)
             this.setState({imageUploading: false})
@@ -590,7 +582,7 @@ class Profile extends Component{
                             style={{marginVertical: 20, marginLeft: 8}}
                             color="#ffffff"
                         >
-                            <ActivityIndicator size="large" color={Colors.cosmos300}/>  
+                            <ActivityIndicator size="small" color={Colors.cosmos300}/>  
                         </Circle>
 
 
@@ -791,7 +783,7 @@ class Profile extends Component{
                             </Circle>
 
                    
-                    <ScrollView style={{marginTop: 40}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
+                    <ScrollView style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
                         
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
