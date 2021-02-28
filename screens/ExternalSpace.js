@@ -28,12 +28,6 @@ import {inject, observer} from 'mobx-react/native'
 
 
 
-
-
-
-
-
-
 @inject("UserStore", "ComponentStore")
 @observer
 class externalSpace extends React.Component {

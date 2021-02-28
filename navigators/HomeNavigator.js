@@ -3,7 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 
 import Home from '../screens/HomeScreen'
-// import ExternalProfile from '../screens/ExternalProfile'
+import ExternalProfile from '../screens/ExternalProfile'
 import ExternalSpace from '../screens/ExternalSpace'
 import ReserveSpace from '../screens/ReserveSpace'
 import ReservationConfirmed from '../screens/ReservationConfirmed'
@@ -21,12 +21,13 @@ const HomeNavigator = createStackNavigator({
             headerShown: false,
         }
     },
-    // ExternalProfile: {
-    //     screen: ExternalProfile, 
-    //     navigationOptions: {
-    //         headerShown: false,
-    //     }
-    // },
+    ExternalProfile: {
+        screen: ExternalProfile, 
+        navigationOptions: {
+            title: "Profile",
+            headerShown: false,
+        }
+    },
     ExternalSpace: {
         screen: ExternalSpace, 
     },
