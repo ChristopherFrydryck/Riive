@@ -13,11 +13,8 @@ import Times from '../constants/TimesAvailable'
 
 export default class SearchFilter extends React.PureComponent{
 
-
     constructor(props){
         super(props);
-
-
         var startTimes = [];
         for (var i = 0 ; i < Times[0].start.length; i++){
            startTimes.push({key: i, label: Times[0].start[i], labelFormatted: this.convertToCommonTime(Times[0].start[i])})
@@ -81,9 +78,7 @@ export default class SearchFilter extends React.PureComponent{
         
     }
 
-    componentWillUnmount(){
-   
-    }
+
 
    componentDidUpdate(prevProps, prevState) {
         // On opening of component
@@ -145,7 +140,7 @@ export default class SearchFilter extends React.PureComponent{
         return(
             <View key={index} style={{display: 'flex', flexDirection: 'column', flex: 1, alignItems: 'center', width: Dimensions.get('window').width * .16}}>
                 <Text style={styleDay}>{day.dayNameAbbr}</Text>
-                <Text style={[styleDay, {fontSize: 24}]}>{day.dateName}</Text>
+                <Text style={[{fontSize: 24, lineHeight: 32}, styleDay]}>{day.dateName}</Text>
                 <Text style={styleDay}>{day.monthNameAbbr}</Text>
             </View>
             
