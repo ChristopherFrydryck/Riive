@@ -19,9 +19,8 @@ import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
 
 
-import * as firebase from 'firebase'
-import 'firebase/firestore';
-import firebaseConfig from '../firebaseConfig'
+import * as firebase from 'firebase/app';
+import firestore from '@react-native-firebase/firestore';
 
 
 //MobX Imports
@@ -243,7 +242,7 @@ class reserveSpace extends Component {
         checkAvailability = async() => {
             let worksArray = [];
             let futureVisits = [];
-            const db = firebase.firestore()
+            const db = firestore()
             
             let {timeSearched, daySearched} = this.props.navigation.state.params.homeState;
 
@@ -366,7 +365,7 @@ class reserveSpace extends Component {
             const { region, searchedAddress, searchInputValue, daySearched, timeSearched, locationDifferenceWalking } = this.props.navigation.state.params.homeState;
             await this.setState({authenticatingReservation: true})
             await this.checkAvailability()
-            const db = firebase.firestore();
+            const db = firestore();
 
             if(this.state.selectedVehicle && this.state.selectedPayment && this.state.spaceAvailabilityWorks){
                 let card = this.state.selectedPayment;
@@ -416,7 +415,7 @@ class reserveSpace extends Component {
 
 
                             const ref = db.collection("trips").doc();
-                            var currentTime = firebase.firestore.Timestamp.now();
+                            var currentTime = firestore.Timestamp.now();
 
                             
 
@@ -474,10 +473,10 @@ class reserveSpace extends Component {
 
                             db.collection("trips").doc(ref.id).set(obj)
                             db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
-                                visits: firebase.firestore.FieldValue.arrayUnion(ref.id)
+                                visits: firestore.FieldValue.arrayUnion(ref.id)
                             });
                             db.collection("users").doc(this.props.UserStore.userID).update({
-                                trips: firebase.firestore.FieldValue.arrayUnion(ref.id)
+                                trips: firestore.FieldValue.arrayUnion(ref.id)
                             })
 
                             

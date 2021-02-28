@@ -17,9 +17,8 @@ import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 
-import * as firebase from 'firebase'
-import 'firebase/firestore';
-import firebaseConfig from '../firebaseConfig'
+import * as firebase from 'firebase/app';
+import firestore from '@react-native-firebase/firestore';
 
 
 //MobX Imports
@@ -85,13 +84,13 @@ class externalSpace extends React.Component {
 
     getHost = () => {
         let {selectedExternalSpot} = this.props.ComponentStore;
-        const db = firebase.firestore();
+        const db = firestore();
 
         
         // // if(doc.exists){
 
             if(selectedExternalSpot[0].listingID){
-                db.collection("users").where(firebase.firestore.FieldPath.documentId(), "==", selectedExternalSpot[0].hostID).get().then((qs) => {
+                db.collection("users").where(firestore.FieldPath.documentId(), "==", selectedExternalSpot[0].hostID).get().then((qs) => {
                     this.setState({host: qs.docs[0].data()})
                 })
             }else{
