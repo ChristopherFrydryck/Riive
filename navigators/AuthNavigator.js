@@ -1,6 +1,5 @@
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import Authentication from '../screens/Authentication'
-// import Navigator from '../screens/HomeScreen'
 import Navigator from './MainNavigator'
 
 
