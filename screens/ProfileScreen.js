@@ -132,12 +132,17 @@ class Profile extends Component{
 
     const user = auth().currentUser;
     
+    if(!user.emailVerified){
+        this.setState({verificationSnackbarVisible: true})
+    }else{
+        this.setState({verificationSnackbarVisible: false})
+    }
    
-    user.reload().then(() => {
-        user.emailVerified ? 
-        this.setState({verificationSnackbarVisible: false}) 
-        : this.setState({verificationSnackbarVisible: true}) 
-    })
+    // user.reload().then(() => {
+    //     user.emailVerified ? 
+    //     this.setState({verificationSnackbarVisible: false}) 
+    //     : this.setState({verificationSnackbarVisible: true}) 
+    // })
     
     
     }
@@ -833,7 +838,7 @@ class Profile extends Component{
                         onDismiss={() => this.setState({ verificationSnackbarVisible: false })}
                         action={{
                             label: 'Verify',
-                            onPress: () => {this.resendVerification},
+                            onPress: () => this.resendVerification(),
                         }}
                         >
                         Looks like your account needs verified at {this.props.UserStore.email}.
