@@ -85,7 +85,7 @@ export default class SearchFilter extends React.PureComponent{
         if(!prevProps.visible && this.props.visible){
             this.slideAnimate(true)
             this.setState({dayData: this.getDays()})
-            this.goToIndexDays(this.state.dayValue.index - 3, false)
+            this.goToIndexDays(this.state.dayValue, false)
             this.forceUpdate(); 
         }
         // Scrolling dates check current date
@@ -412,9 +412,10 @@ export default class SearchFilter extends React.PureComponent{
     }
 
     goToIndexDays = (i, animated) => {
+       
         const wait = new Promise((resolve) => setTimeout(resolve, 0));
         wait.then( () => {
-            this._dayFlatlist.scrollTo({x: i*Dimensions.get('window').width * .16, animated: animated}); 
+            this._dayFlatlist.scrollTo({x: i*Dimensions.get('window').width * .16 , animated: animated}); 
         });
     }
 
@@ -422,7 +423,7 @@ export default class SearchFilter extends React.PureComponent{
          const wait = new Promise((resolve) => setTimeout(resolve, 0));
         wait.then( () => {
             // this.arrivalFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2});
-            this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
+            this.timesList.scrollTo({x: i*this.timeWidth + i/2, animated: animated})
         });
     }
 
@@ -430,7 +431,7 @@ export default class SearchFilter extends React.PureComponent{
         const wait = new Promise((resolve) => setTimeout(resolve, 0));
        wait.then( () => {
         //    this.departureFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2}); 
-        this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
+        this.timesList.scrollTo({x: i*this.timeWidth + i/2, animated: animated})
        });
    }
 
@@ -467,8 +468,7 @@ export default class SearchFilter extends React.PureComponent{
             newIndexDeparture = this.state.endTimes.indexOf(this.state.departValue)
         }
 
-       
-        console.log(`getIndex: ${newIndexArrival}`)
+    
         await this.setState({arriveIndex: newIndexArrival, departIndex: newIndexDeparture})
 
 
@@ -485,6 +485,8 @@ export default class SearchFilter extends React.PureComponent{
 
         let availDays = this.state.dayData.filter(x => x.isEnabled)
         let day = availDays[0]
+
+        
 
         
 
