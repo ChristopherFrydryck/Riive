@@ -717,7 +717,8 @@ export default class SearchFilter extends React.PureComponent{
                             showsHorizontalScrollIndicator={false}
                             maxToRenderPerBatch={2}
                             scrollEventThrottle={7}
-                            onScrollEndDrag = {(event) => this._updateIndex(event)}
+                            // onScrollEndDrag = {(event) => this._updateIndex(event)}
+                            onScroll ={(event) => this._updateIndex(event)}
                             onMomentumScrollBegin={() => this.setState({scrollingDates: true})}
                             onMomentumScrollEnd={() => this.setState({scrollingDates: false})}
                             contentContainerStyle={{marginLeft: -20}}
