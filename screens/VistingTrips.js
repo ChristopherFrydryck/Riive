@@ -433,7 +433,7 @@ export default class VisitingTrips extends Component{
                                         <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                                         <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.price.total}</Text>
                                     </View>
-                                    <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at <Text style={{color: Colors.tango900}} onPress={() => Linking.openURL(`mailto:support@riive.net?subject=Booking Question&body=Hey Riive, I have a question about my visit to ${data.listing.address.full}. My order number is ${data.visit.tripID}`)}>support@riive.net.</Text></Text>
+                                    <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
                                 {data.isInPast ? 
                                 <View style={{flexDirection: 'row'}}>

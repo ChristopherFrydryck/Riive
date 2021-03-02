@@ -137,12 +137,7 @@ class Profile extends Component{
     }else{
         this.setState({verificationSnackbarVisible: false})
     }
-   
-    // user.reload().then(() => {
-    //     user.emailVerified ? 
-    //     this.setState({verificationSnackbarVisible: false}) 
-    //     : this.setState({verificationSnackbarVisible: true}) 
-    // })
+
     
     
     }

@@ -10,9 +10,7 @@ import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
 
-import * as firebase from 'firebase'
-import 'firebase/firestore';
-import firebaseConfig from '../firebaseConfig'
+
 
 
 //MobX Imports
@@ -141,7 +139,7 @@ class ReservationConfirmed extends Component {
                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{cost.total}</Text>
                             </View>
-                            <Text style={{fontSize: 12, lineHeight: 16}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TermsOfService")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at <Text style={{color: Colors.tango900}} onPress={() => Linking.openURL(`mailto:support@riive.net?subject=Booking Question&body=Hey Riive, I have a question about my visit to ${selectedSpace.address.full}. My order number is ${tripID}`)}>support@riive.net.</Text></Text>
+                            <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
                             <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Return to Map</Button>
