@@ -7040,6 +7040,11 @@
   dependencies:
     "prop-types" "^15.7.2"
 
+"react-native-device-info@^8.0.2":
+  "integrity" "sha512-5X5sMO2N9WpnqA4BXHlby0ml0WKlHconLhgf8fCiXDELf7DIjOMX8z6iYZ7WDgmn0E/6Psubq9yb5D2Qdc30Wg=="
+  "resolved" "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-8.0.2.tgz"
+  "version" "8.0.2"
+
 "react-native-dialog-input@^1.0.7":
   "integrity" "sha512-W9YNMt6r+rUUMDEkOR1WMuGfSJw97ujB8H1xp8TjJTOnYVSlsf4aEP6t+J8tVk3XZaDcTawXgDjxH6E1WVWRog=="
   "resolved" "https://registry.npmjs.org/react-native-dialog-input/-/react-native-dialog-input-1.0.8.tgz"

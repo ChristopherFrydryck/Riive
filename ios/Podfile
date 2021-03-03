@@ -32,6 +32,8 @@ target 'riive' do
 
   pod 'RNFBStorage', :path => '../node_modules/@react-native-firebase/storage'
 
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing
