@@ -1,5 +1,5 @@
 import React from "react"
-import { View, ScrollView, Picker, StatusBar, StyleSheet, ActivityIndicator, Platform} from 'react-native'
+import { View, ScrollView, Picker, StatusBar, StyleSheet, ActivityIndicator, Platform, LogBox} from 'react-native'
 import Input from '../components/Input'
 import Dropdown from '../components/Dropdown'
 import Button from '../components/Button'
@@ -241,6 +241,8 @@ class AddVehicle extends React.Component{
 
     componentDidMount(){
         this._isMounted = true;
+
+        LogBox.ignoreLogs(['Warning: Picker has been extracted from react-native core']);
         
          // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {

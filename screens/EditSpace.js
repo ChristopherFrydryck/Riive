@@ -153,6 +153,7 @@ class editSpace extends Component {
       const db = firestore();
       const ref = db.collection("spaces").doc();
 
+      
 
 
       this._isMounted = true;

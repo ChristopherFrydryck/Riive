@@ -1,5 +1,5 @@
 import React from "react"
-import { View, ScrollView, Platform, Picker, StatusBar, StyleSheet, ActivityIndicator} from 'react-native'
+import { View, ScrollView, Platform, Picker, StatusBar, StyleSheet, ActivityIndicator, LogBox} from 'react-native'
 import Input from '../components/Input'
 import Dropdown from '../components/Dropdown'
 import Button from '../components/Button'
@@ -89,6 +89,8 @@ class AddVehicle extends React.Component{
         this._isMounted = true;
 
         this.checkYearMake()
+
+        LogBox.ignoreLogs(['Warning: Picker has been extracted from react-native core']);
 
 
           // Set Status Bar page info here!
