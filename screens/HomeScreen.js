@@ -10,7 +10,7 @@ import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-import {getToken} from '../functions/in-app/notifications'
+import {getToken, notificationListener} from '../functions/in-app/notifications'
 
 import Button from '../components/Button'
 import Text from '../components/Txt'
@@ -182,6 +182,7 @@ export default class Home extends Component {
       await this.mapLocationFunction();
       await this.getCurrentLocation(true);
       await getToken();
+      await notificationListener();
 
       this.rippleAnimation();
 

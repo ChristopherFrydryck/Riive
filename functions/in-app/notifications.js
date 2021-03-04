@@ -42,7 +42,6 @@ let disabledWarningAlert = () => {
 
 export let getToken = async() => {
    let enabled = await notificationPermissions();
-
    let isEmulator = DeviceInfo.isEmulatorSync();
 
 
@@ -53,15 +52,27 @@ export let getToken = async() => {
             }
             
             let tok = await messaging().getToken();
+            console.log(tok)
+            return tok;
             
          
         }else{
             disabledWarningAlert();
+            return null
         }
-    }catch(e){
+    }catch(e){ 
         alert(e)
+        return null
     }
     
+}
+
+export let notificationListener = async() => {
+    return messaging().onMessage((payload) => {
+        const {title, body} = payload.notification;
+        const { data, messageId } = payload;
+        Alert.alert(title, body, [{text: 'Close'}])
+    })
 }
 
 
