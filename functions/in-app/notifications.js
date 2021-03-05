@@ -2,6 +2,7 @@ import React from 'react'
 import { Alert, Linking, Platform } from 'react-native'
 
 import DeviceInfo from 'react-native-device-info'
+import { withInAppNotification } from 'react-native-in-app-notification';
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -52,7 +53,6 @@ export let getToken = async() => {
             }
             
             let tok = await messaging().getToken();
-            console.log(tok)
             return tok;
             
          
@@ -71,8 +71,34 @@ export let notificationListener = async() => {
     return messaging().onMessage((payload) => {
         const {title, body} = payload.notification;
         const { data, messageId } = payload;
-        Alert.alert(title, body, [{text: 'Close'}])
+
     })
 }
+
+class NotificationComponent extends React.Component {
+    constructor(props){
+        super(props)
+    }
+
+    componentDidMount(){
+        this.props.showNotification({
+            title: 'You pressed it!',
+            message: 'The notification has been triggered',
+            onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
+            additionalProps: { type: 'error' },
+          });
+    }
+
+    render(){
+        
+
+          return( null )
+    }
+     
+}
+
+export default withInAppNotification( NotificationComponent )
+
+
 
 

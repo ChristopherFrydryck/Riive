@@ -34,6 +34,8 @@ target 'riive' do
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
+  pod 'react-native-in-app-message', :path => '../node_modules/react-native-in-app-message'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing

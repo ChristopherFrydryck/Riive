@@ -10,7 +10,9 @@ import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-import {getToken, notificationListener} from '../functions/in-app/notifications'
+import NotificationComponent, {getToken, notificationListener} from '../functions/in-app/notifications'
+import { withInAppNotification } from 'react-native-in-app-notification';
+
 
 import Button from '../components/Button'
 import Text from '../components/Txt'
@@ -60,7 +62,7 @@ const db = firestore();
 
 @inject("UserStore", "ComponentStore")
 @observer
-export default class Home extends Component {
+class Home extends Component {
   interval = 0;
 
   constructor(props){
@@ -179,6 +181,9 @@ export default class Home extends Component {
         clearInterval(this._interval)
       })
 
+  
+    
+
       await this.mapLocationFunction();
       await this.getCurrentLocation(true);
       await getToken();
@@ -186,6 +191,16 @@ export default class Home extends Component {
 
       this.rippleAnimation();
 
+  }
+
+  showNotification = () => {
+  this.props.showNotification({
+        title: 'You pressed it!',
+        message: 'The notification has been triggered',
+        onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
+        additionalProps: { type: 'error' },
+      });
+    
   }
 
   setLocationState = (isFirstTime, lat, lng) => {
@@ -820,6 +835,7 @@ goToReserveSpace = () => {
     if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
       return (
         <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
+            <NotificationComponent />
 
           {/* Search Filter component */}
           <View style={{opacity: this.state.searchFilterOpen ? 1 : 0,  marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, zIndex: 999, position: 'absolute'}}>
@@ -1135,7 +1151,7 @@ goToReserveSpace = () => {
                     </Animated.View>
           
 
-          
+          <Button onPress={() => this.showNotification()}>Hello</Button>
 
 
         </SafeAreaView>
@@ -1155,6 +1171,8 @@ goToReserveSpace = () => {
   
     }
 }
+
+export default Home
 
 const styles = StyleSheet.create({
   mapStyle:{

@@ -5,6 +5,10 @@ import {NavigationActions} from 'react-navigation'
 import Input from '../components/Input'
 import Button from '../components/Button'
 
+
+
+import { withInAppNotification } from 'react-native-in-app-notification';
+
 import ImagePicker from 'react-native-image-crop-picker';
 
 import ProfilePic from '../components/ProfilePic'
@@ -532,7 +536,7 @@ class Profile extends Component{
                 />
                     
                     <SafeAreaView style={{paddingTop: 10, marginHorizontal: 16, flex: 1}}>
-                        
+                                           
                     <ScrollView>
                         <TopBar>
                         <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8, marginLeft: 16}}>Edit Profile</Text>
@@ -812,6 +816,14 @@ class Profile extends Component{
                             </View>
                             
                         </View>
+                        <TouchableOpacity onPress={() => {
+            this.props.showNotification({
+              title: 'You pressed it!',
+              message: 'The notification has been triggered',
+              onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
+              additionalProps: { type: 'error' },
+            });
+          }}><Text>Hello</Text></TouchableOpacity>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>
                                 {payments == undefined || payments.length <= 1 ? <Text style={styles.categoryTitle}>My Payment</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Payments</Text>}
@@ -891,4 +903,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default Profile;
+export default withInAppNotification(Profile);

@@ -35,6 +35,8 @@ import { observer, Provider } from 'mobx-react/native'
 import UserStore from './stores/userStore'
 import ComponentStore from './stores/componentStore'
 
+import { InAppNotificationProvider } from 'react-native-in-app-notification';
+
 // Firebase imports
 import * as firebase from 'firebase'
 import firebaseConfig from './firebaseConfig'
@@ -59,27 +61,33 @@ const stores = {
   UserStore, ComponentStore
 }
 
-
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props){
     super(props);
     LogBox.ignoreLogs(['Setting a timer'])
     this.state ={
       fontLoaded: false
     }
+
   }
 
 
   async componentDidMount(){
     
+     
+
   }
 
   render() {
 
       return (        
         <Provider {...stores}>
-          <AuthNavigator />
+          <InAppNotificationProvider>
+            <AuthNavigator />
+          </InAppNotificationProvider>
         </Provider>
       )
     }
 }
+
+export default App;
