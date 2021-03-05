@@ -91,6 +91,7 @@ class Home extends Component {
 
 
     this.state ={
+      notify: false,
       rippleFadeAnimation: new Animated.Value(1),
       rippleScaleAnimation: new Animated.Value(0.8),
       slideUpAnimation: new Animated.Value(-100),
@@ -835,7 +836,7 @@ goToReserveSpace = () => {
     if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
       return (
         <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
-            <NotificationComponent />
+            <NotificationComponent visible={this.state.notify}/>
 
           {/* Search Filter component */}
           <View style={{opacity: this.state.searchFilterOpen ? 1 : 0,  marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, zIndex: 999, position: 'absolute'}}>
@@ -1151,7 +1152,10 @@ goToReserveSpace = () => {
                     </Animated.View>
           
 
-          <Button onPress={() => this.showNotification()}>Hello</Button>
+          <Button onPress={async() => {
+              await this.setState({notify: true})
+              this.setState({notify: false})
+            }}>Hello</Button>
 
 
         </SafeAreaView>

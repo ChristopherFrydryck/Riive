@@ -81,16 +81,18 @@ class NotificationComponent extends React.Component {
     }
 
     componentDidMount(){
-        this.props.showNotification({
-            title: 'You pressed it!',
-            message: 'The notification has been triggered',
-            onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
-            additionalProps: { type: 'error' },
-          });
+        
     }
 
     render(){
-        
+        if(this.props.visible){
+            this.props.showNotification({
+                title: 'You pressed it!',
+                message: 'The notification has been triggered',
+                onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
+                additionalProps: { type: 'error' },
+            });
+        }
 
           return( null )
     }
