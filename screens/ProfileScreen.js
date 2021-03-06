@@ -7,7 +7,7 @@ import Button from '../components/Button'
 
 
 
-import { withInAppNotification } from 'react-native-in-app-notification';
+
 
 import ImagePicker from 'react-native-image-crop-picker';
 
@@ -816,14 +816,6 @@ class Profile extends Component{
                             </View>
                             
                         </View>
-                        <TouchableOpacity onPress={() => {
-            this.props.showNotification({
-              title: 'You pressed it!',
-              message: 'The notification has been triggered',
-              onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
-              additionalProps: { type: 'error' },
-            });
-          }}><Text>Hello</Text></TouchableOpacity>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>
                                 {payments == undefined || payments.length <= 1 ? <Text style={styles.categoryTitle}>My Payment</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Payments</Text>}
@@ -837,7 +829,6 @@ class Profile extends Component{
                                 {payments == undefined ? null : <PaymentList/>}
                             </View>
                         </View>
-                        <SafeAreaView></SafeAreaView>
                     </ScrollView>
 
                     <Snackbar
@@ -903,4 +894,4 @@ const styles = StyleSheet.create({
       }
 })
 
-export default withInAppNotification(Profile);
+export default Profile;

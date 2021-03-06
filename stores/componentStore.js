@@ -18,6 +18,7 @@ class ComponentStore {
     @observable selectedSpot = [];
     @observable selectedExternalSpot = [];
     @observable selectedUser = [];
+    @observable listeningToNotifications = false;
 
 
 

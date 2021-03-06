@@ -64,6 +64,8 @@ const db = firestore();
 @observer
 class Home extends Component {
   interval = 0;
+  
+
 
   constructor(props){
     super(props);
@@ -187,22 +189,18 @@ class Home extends Component {
 
       await this.mapLocationFunction();
       await this.getCurrentLocation(true);
+      if(!this.props.ComponentStore.notificationsSetUp){
+        await notificationListener().then(() => this.props.ComponentStore.notificationsSetUp = true);
+      }
       await getToken();
-      await notificationListener();
+ 
 
       this.rippleAnimation();
 
   }
 
-  showNotification = () => {
-  this.props.showNotification({
-        title: 'You pressed it!',
-        message: 'The notification has been triggered',
-        onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
-        additionalProps: { type: 'error' },
-      });
-    
-  }
+
+ 
 
   setLocationState = (isFirstTime, lat, lng) => {
     try{
@@ -836,7 +834,7 @@ goToReserveSpace = () => {
     if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
       return (
         <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
-            <NotificationComponent visible={this.state.notify}/>
+            {/* <NotificationComponent visible={this.state.notify}/> */}
 
           {/* Search Filter component */}
           <View style={{opacity: this.state.searchFilterOpen ? 1 : 0,  marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, zIndex: 999, position: 'absolute'}}>
@@ -1152,10 +1150,10 @@ goToReserveSpace = () => {
                     </Animated.View>
           
 
-          <Button onPress={async() => {
+          {/* <Button onPress={async() => {
               await this.setState({notify: true})
               this.setState({notify: false})
-            }}>Hello</Button>
+            }}>Hello</Button> */}
 
 
         </SafeAreaView>

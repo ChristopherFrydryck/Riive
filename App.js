@@ -36,12 +36,14 @@ import UserStore from './stores/userStore'
 import ComponentStore from './stores/componentStore'
 
 import { InAppNotificationProvider } from 'react-native-in-app-notification';
+import NotificationComponent, {getToken, notificationListener} from './functions/in-app/notifications'
 
 // Firebase imports
 import * as firebase from 'firebase'
+import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 import firebaseConfig from './firebaseConfig'
-import 'firebase/firestore';
-import 'firebase/auth';
+
 
 import stripe from 'tipsi-stripe'
 
@@ -72,11 +74,7 @@ class App extends React.Component {
   }
 
 
-  async componentDidMount(){
-    
-     
 
-  }
 
   render() {
 

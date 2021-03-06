@@ -53,6 +53,7 @@ export let getToken = async() => {
             }
             
             let tok = await messaging().getToken();
+            // console.log(tok)
             return tok;
             
          
@@ -68,12 +69,15 @@ export let getToken = async() => {
 }
 
 export let notificationListener = async() => {
-    return messaging().onMessage((payload) => {
+    messaging().onMessage((payload) => {
         const {title, body} = payload.notification;
         const { data, messageId } = payload;
-
+        console.log(payload)
     })
+    
 }
+
+
 
 class NotificationComponent extends React.Component {
     constructor(props){
@@ -81,7 +85,7 @@ class NotificationComponent extends React.Component {
     }
 
     componentDidMount(){
-        
+ 
     }
 
     render(){
