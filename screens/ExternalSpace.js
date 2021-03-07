@@ -57,6 +57,7 @@ class externalSpace extends React.Component {
 
     async componentDidMount(){
        await this.getHost();
+       
 
        
 

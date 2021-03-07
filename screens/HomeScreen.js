@@ -10,7 +10,7 @@ import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-import NotificationComponent, {getToken, notificationListener} from '../functions/in-app/notifications'
+import NotificationComponent, {getToken} from '../functions/in-app/notifications'
 import { withInAppNotification } from 'react-native-in-app-notification';
 
 
@@ -39,6 +39,7 @@ import ComponentStore from '../stores/componentStore'
 // Firebase imports
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
+import messaging from '@react-native-firebase/messaging'
 import firestore from '@react-native-firebase/firestore';
 import 'firebase/firestore';
 import 'firebase/auth';
@@ -164,7 +165,6 @@ class Home extends Component {
   }
 
   async componentDidMount(){
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
@@ -184,13 +184,14 @@ class Home extends Component {
         clearInterval(this._interval)
       })
 
+
   
     
 
       await this.mapLocationFunction();
       await this.getCurrentLocation(true);
       if(!this.props.ComponentStore.notificationsSetUp){
-        await notificationListener().then(() => this.props.ComponentStore.notificationsSetUp = true);
+        await this.notificationListener().then(() => this.props.ComponentStore.notificationsSetUp = true);
       }
       await getToken();
  
@@ -198,6 +199,27 @@ class Home extends Component {
       this.rippleAnimation();
 
   }
+
+ notificationListener = async() => {
+    messaging().onMessage((payload) => {
+        const {title, body} = payload.notification;
+        const { data, messageId } = payload;
+        
+        console.log(title)
+
+        // alert(title)
+
+        this.props.showNotification({
+            title: title,
+            message: body,
+            onPress: () => null,
+            additionalProps: { type: 'error' },
+        });
+        
+
+    })
+    
+}
 
 
  
@@ -1174,7 +1196,7 @@ goToReserveSpace = () => {
     }
 }
 
-export default Home
+export default withInAppNotification(Home)
 
 const styles = StyleSheet.create({
   mapStyle:{

@@ -68,32 +68,35 @@ export let getToken = async() => {
     
 }
 
-export let notificationListener = async() => {
-    messaging().onMessage((payload) => {
-        const {title, body} = payload.notification;
-        const { data, messageId } = payload;
-        console.log(payload)
-    })
+// export let notificationListener = async() => {
+//     messaging().onMessage((payload) => {
+//         const {title, body} = payload.notification;
+//         const { data, messageId } = payload;
+        
+//         console.log(title)
+        
+//         // props.showNotification({
+//         //     title: props.title,
+//         //     message: props.message,
+//         //     onPress: props.onPress,
+//         //     additionalProps: { type: 'error' },
+//         // });
+
+
+//     })
     
-}
+// }
 
 
 
-class NotificationComponent extends React.Component {
-    constructor(props){
-        super(props)
-    }
-
-    componentDidMount(){
- 
-    }
-
-    render(){
-        if(this.props.visible){
-            this.props.showNotification({
-                title: 'You pressed it!',
-                message: 'The notification has been triggered',
-                onPress: () => Alert.alert('Alert', 'You clicked the notification!'),
+let NotificationComponent = (props) => {
+  
+  
+        if(props.visible){
+            props.showNotification({
+                title: props.title,
+                message: props.message,
+                onPress: props.onPress,
                 additionalProps: { type: 'error' },
             });
         }
@@ -101,9 +104,9 @@ class NotificationComponent extends React.Component {
           return( null )
     }
      
-}
 
-export default withInAppNotification( NotificationComponent )
+
+export default  NotificationComponent 
 
 
 

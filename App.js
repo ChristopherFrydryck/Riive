@@ -35,7 +35,7 @@ import { observer, Provider } from 'mobx-react/native'
 import UserStore from './stores/userStore'
 import ComponentStore from './stores/componentStore'
 
-import { InAppNotificationProvider } from 'react-native-in-app-notification';
+import { InAppNotificationProvider, withInAppNotification } from 'react-native-in-app-notification';
 import NotificationComponent, {getToken, notificationListener} from './functions/in-app/notifications'
 
 // Firebase imports
@@ -66,13 +66,21 @@ const stores = {
 class App extends React.Component {
   constructor(props){
     super(props);
-    LogBox.ignoreLogs(['Setting a timer'])
+    LogBox.ignoreLogs(['Setting a timer', 'Animated: `useNativeDriver`', 'Cannot update during an existing state transition'])
     this.state ={
-      fontLoaded: false
+      notificationVisible: false,
     }
 
   }
 
+  async componentDidMount(){
+    this.showNotification();
+  }
+
+  async showNotification() {
+    await this.setState({notificationVisible: true})
+    this.setState({notificationVisible: false})
+  }
 
 
 
@@ -81,11 +89,19 @@ class App extends React.Component {
       return (        
         <Provider {...stores}>
           <InAppNotificationProvider>
-            <AuthNavigator />
+            <View style={{flex: 1}}>
+              {/* <NotificationComponent 
+                visible={this.state.notificationVisible} 
+                title="Hello"
+                message="DKaslfkadsjklfaf"
+                onPress={() => null}
+              /> */}
+              <AuthNavigator />
+            </View>
           </InAppNotificationProvider>
         </Provider>
       )
     }
 }
 
-export default App;
+export default withInAppNotification(App);
