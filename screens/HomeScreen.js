@@ -10,8 +10,8 @@ import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-import NotificationComponent, {getToken} from '../functions/in-app/notifications'
-import { withInAppNotification } from 'react-native-in-app-notification';
+import {getToken, pushNotification} from '../functions/in-app/notifications'
+
 
 
 import Button from '../components/Button'
@@ -204,17 +204,13 @@ class Home extends Component {
     messaging().onMessage((payload) => {
         const {title, body} = payload.notification;
         const { data, messageId } = payload;
+        const imageUrl = Platform.OS === 'ios' ? data.fcm_options.image : payload.notification.android.imageUrl;
         
-        console.log(title)
+        // console.log(imageUrl)
 
-        // alert(title)
+       
+        pushNotification(title, body, data.screen || null)
 
-        this.props.showNotification({
-            title: title,
-            message: body,
-            onPress: () => null,
-            additionalProps: { type: 'error' },
-        });
         
 
     })
@@ -856,7 +852,6 @@ goToReserveSpace = () => {
     if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
       return (
         <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
-            {/* <NotificationComponent visible={this.state.notify}/> */}
 
           {/* Search Filter component */}
           <View style={{opacity: this.state.searchFilterOpen ? 1 : 0,  marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, zIndex: 999, position: 'absolute'}}>
@@ -1196,7 +1191,7 @@ goToReserveSpace = () => {
     }
 }
 
-export default withInAppNotification(Home)
+export default Home
 
 const styles = StyleSheet.create({
   mapStyle:{

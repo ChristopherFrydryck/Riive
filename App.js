@@ -35,8 +35,7 @@ import { observer, Provider } from 'mobx-react/native'
 import UserStore from './stores/userStore'
 import ComponentStore from './stores/componentStore'
 
-import { InAppNotificationProvider, withInAppNotification } from 'react-native-in-app-notification';
-import NotificationComponent, {getToken, notificationListener} from './functions/in-app/notifications'
+import FlashMessage from "react-native-flash-message";
 
 // Firebase imports
 import * as firebase from 'firebase'
@@ -73,14 +72,14 @@ class App extends React.Component {
 
   }
 
-  async componentDidMount(){
-    this.showNotification();
-  }
+  // async componentDidMount(){
+  //   this.showNotification();
+  // }
 
-  async showNotification() {
-    await this.setState({notificationVisible: true})
-    this.setState({notificationVisible: false})
-  }
+  // async showNotification() {
+  //   await this.setState({notificationVisible: true})
+  //   this.setState({notificationVisible: false})
+  // }
 
 
 
@@ -88,20 +87,13 @@ class App extends React.Component {
 
       return (        
         <Provider {...stores}>
-          <InAppNotificationProvider>
             <View style={{flex: 1}}>
-              {/* <NotificationComponent 
-                visible={this.state.notificationVisible} 
-                title="Hello"
-                message="DKaslfkadsjklfaf"
-                onPress={() => null}
-              /> */}
               <AuthNavigator />
+              <FlashMessage position="top" />
             </View>
-          </InAppNotificationProvider>
         </Provider>
       )
     }
 }
 
-export default withInAppNotification(App);
+export default App;

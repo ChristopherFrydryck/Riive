@@ -2,7 +2,8 @@ import React from 'react'
 import { Alert, Linking, Platform } from 'react-native'
 
 import DeviceInfo from 'react-native-device-info'
-import { withInAppNotification } from 'react-native-in-app-notification';
+
+import { showMessage, hideMessage, renderFlashMessageIcon } from "react-native-flash-message";
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -68,6 +69,19 @@ export let getToken = async() => {
     
 }
 
+
+
+export let pushNotification = (title, body, screen) => {
+    
+    return showMessage({
+        titleStyle: {fontFamily: 'Poppins-SemiBold'},
+        message: title,
+        description: body,
+        type: "default",
+        onPress: () => {screen ? this.props.navigation.navigate(screen) : null},
+      });
+}
+
 // export let notificationListener = async() => {
 //     messaging().onMessage((payload) => {
 //         const {title, body} = payload.notification;
@@ -89,24 +103,24 @@ export let getToken = async() => {
 
 
 
-let NotificationComponent = (props) => {
+// let NotificationComponent = (props) => {
   
   
-        if(props.visible){
-            props.showNotification({
-                title: props.title,
-                message: props.message,
-                onPress: props.onPress,
-                additionalProps: { type: 'error' },
-            });
-        }
+//         if(props.visible){
+//             props.showNotification({
+//                 title: props.title,
+//                 message: props.message,
+//                 onPress: props.onPress,
+//                 additionalProps: { type: 'error' },
+//             });
+//         }
 
-          return( null )
-    }
+//           return( null )
+//     }
      
 
 
-export default  NotificationComponent 
+// export default  NotificationComponent 
 
 
 
