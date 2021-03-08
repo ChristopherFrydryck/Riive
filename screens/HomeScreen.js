@@ -193,7 +193,19 @@ class Home extends Component {
       if(!this.props.ComponentStore.notificationsSetUp){
         await this.notificationListener().then(() => this.props.ComponentStore.notificationsSetUp = true);
       }
-      await getToken();
+      await getToken().then(tok => {
+          if(!this.props.UserStore.pushTokens.includes(tok)){
+            try{
+                firestore().collection("users").doc(this.props.UserStore.userID).update({
+                    pushTokens: firestore.FieldValue.arrayUnion(tok)
+                })
+                this.props.UserStore.pushTokens.push(tok);
+            }catch(e){
+                alert(e)
+            }
+          }
+          return tok
+      })
  
 
       this.rippleAnimation();
@@ -207,12 +219,8 @@ class Home extends Component {
         // const imageUrl = Platform.OS === 'ios' ? data.fcm_options.image : payload.notification.android.imageUrl;
         
         // console.log(imageUrl)
-
-       
+               
         pushNotification(title, body, data.screen ? () => this.props.navigation.navigate(data.screen) : null)
-
-        
-
     })
     
 }
