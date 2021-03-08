@@ -71,16 +71,18 @@ export let getToken = async() => {
 
 
 
-export let pushNotification = (title, body, screen) => {
-    
+export let pushNotification = (title, body, onPress) => {
+
     return showMessage({
         titleStyle: {fontFamily: 'Poppins-SemiBold'},
         message: title,
         description: body,
         type: "default",
-        onPress: () => {screen ? this.props.navigation.navigate(screen) : null},
+        onPress: onPress,
       });
 }
+
+
 
 // export let notificationListener = async() => {
 //     messaging().onMessage((payload) => {

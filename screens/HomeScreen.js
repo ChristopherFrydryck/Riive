@@ -10,7 +10,7 @@ import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-import {getToken, pushNotification} from '../functions/in-app/notifications'
+import { pushNotification, getToken } from '../functions/in-app/notifications'
 
 
 
@@ -204,12 +204,12 @@ class Home extends Component {
     messaging().onMessage((payload) => {
         const {title, body} = payload.notification;
         const { data, messageId } = payload;
-        const imageUrl = Platform.OS === 'ios' ? data.fcm_options.image : payload.notification.android.imageUrl;
+        // const imageUrl = Platform.OS === 'ios' ? data.fcm_options.image : payload.notification.android.imageUrl;
         
         // console.log(imageUrl)
 
        
-        pushNotification(title, body, data.screen || null)
+        pushNotification(title, body, data.screen ? () => this.props.navigation.navigate(data.screen) : null)
 
         
 
