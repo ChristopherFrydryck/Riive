@@ -241,7 +241,7 @@ export default class SearchFilter extends React.PureComponent{
                         {item.key % 2 === 0 ? 
                             <View style={{flexDirection: 'row', position: 'absolute', width: this.timeWidth, zIndex: 999, bottom: 0,}}>
                                 <Text style={textStyle}>{this.convertToCommonTime(item.label).split(":")[0]}</Text>
-                                <Text style={textStyle.length > 1 ? styles.timeTextActive : null}>{item.labelFormatted.slice(-2)}</Text>
+                                <Text style={textStyle.length > 1 ? [styles.timeTextActive, { bottom: 8 } ]: null}>{item.labelFormatted.slice(-2)}</Text>
                             </View>
                         : null}
                 </View>
@@ -254,7 +254,7 @@ export default class SearchFilter extends React.PureComponent{
                         {item.key % 2 === 0 ? 
                             <View style={{flexDirection: 'row', position: 'absolute', width: this.timeWidth, zIndex: 999, bottom: 0,}}>
                                 <Text style={textStyle}>{this.convertToCommonTime(item.label).split(":")[0]}</Text>
-                                <Text style={textStyle.length > 1 ? styles.timeTextActive : null}>{item.labelFormatted.slice(-2)}</Text>
+                                <Text style={textStyle.length > 1 ? [styles.timeTextActive, { bottom: 8 }] : null}>{item.labelFormatted.slice(-2)}</Text>
                             </View>
                         : null}
                 </View>
@@ -280,7 +280,7 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = [styles.timeTextDepart, styles.timeTextActive];
                 // if first item in list
                 if(item.key === firstItemCurrentDay.key){
-                    hourStyle = [styles.wholeHour, styles.activeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 22}]
+                    hourStyle = [styles.wholeHour, styles.activeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 22,}]
                 // If a whole hour X:00
                 }else if(index % 2 != 0){
                     hourStyle = [styles.wholeHour, styles.activeHour]
@@ -354,7 +354,7 @@ export default class SearchFilter extends React.PureComponent{
                             {item.key % 2 != 0 ? 
                                 <View style={{flexDirection: 'row', position: 'absolute', width: 60, zIndex: 999, bottom: 0,}}>
                                     <Text style={textStyle}>{this.convertToCommonTime(item.label).split(" ")[0]}</Text>
-                                    <Text style={textStyle.length > 1 ? styles.timeTextActive : null}>{item.labelFormatted.slice(-2)}</Text>
+                                    <Text style={textStyle.length > 1 ? [styles.timeTextActive, { bottom: 4 }] : null}>{item.labelFormatted.slice(-2)}</Text>
                                 </View>
                             : null}
                     </View>
@@ -367,7 +367,7 @@ export default class SearchFilter extends React.PureComponent{
                             {item.key % 2 != 0 ? 
                                 <View style={{flexDirection: 'row', position: 'absolute', width: 60, zIndex: 999, bottom: 0,}}>
                                     <Text style={textStyle}>{this.convertToCommonTime(item.label).split(" ")[0]}</Text>
-                                    <Text style={textStyle.length > 1 ? styles.timeTextActive : null}>{item.labelFormatted.slice(-2)}</Text>
+                                    <Text style={textStyle.length > 1 ? [styles.timeTextActive, { bottom: 4 }] : null}>{item.labelFormatted.slice(-2)}</Text>
                                 </View>
                             : null}
                     </View>
@@ -716,7 +716,7 @@ export default class SearchFilter extends React.PureComponent{
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
                             maxToRenderPerBatch={2}
-                            scrollEventThrottle={7}
+                            scrollEventThrottle={14}
                             // onScrollEndDrag = {(event) => this._updateIndex(event)}
                             onScroll ={(event) => this._updateIndex(event)}
                             onMomentumScrollBegin={() => this.setState({scrollingDates: true})}
@@ -846,7 +846,7 @@ const styles = StyleSheet.create({
         borderLeftWidth: 24, 
         borderRightWidth: 24, 
         borderColor: 'white',
-        zIndex: 99,
+        zIndex: 999,
     },
     activeHour:{
         backgroundColor: Colors.tango500,
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
             fontSize: 20,
         },
         android:{
-            fontSize: 15,
+            fontSize: 20,
         },
         }),
         // position: 'absolute',
