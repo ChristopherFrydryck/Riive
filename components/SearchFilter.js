@@ -236,7 +236,7 @@ export default class SearchFilter extends React.PureComponent{
         if(this.state.dayValue === 0){
             if(parseInt(item.label) >= parseInt((hour+""+minutes)- 30)){
             return(
-                <View key={item.index} style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View key={item.key} style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
                     <View style={hourStyle}/>
                         {item.key % 2 === 0 ? 
                             <View style={{flexDirection: 'row', position: 'absolute', width: this.timeWidth, zIndex: 999, bottom: 0,}}>
@@ -249,7 +249,7 @@ export default class SearchFilter extends React.PureComponent{
         // If any day but today
         }else{
             return(
-                <View key={item.index} style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View key={item.key} style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
                     <View style={hourStyle}/>
                         {item.key % 2 === 0 ? 
                             <View style={{flexDirection: 'row', position: 'absolute', width: this.timeWidth, zIndex: 999, bottom: 0,}}>
@@ -349,7 +349,7 @@ export default class SearchFilter extends React.PureComponent{
         if(this.state.dayValue === 0){
             if(parseInt(item.label) > parseInt(hour+""+minutes) - 30){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
+                    <View key={item.key} style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
                         <View style={hourStyle}/>
                             {item.key % 2 != 0 ? 
                                 <View style={{flexDirection: 'row', position: 'absolute', width: 60, zIndex: 999, bottom: 0,}}>
@@ -362,7 +362,7 @@ export default class SearchFilter extends React.PureComponent{
             }
         }else{
             return(
-                <View style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View key={item.key} style={{display: 'flex', flexDirection: 'column', flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start'}}>
                         <View style={hourStyle}/>
                             {item.key % 2 != 0 ? 
                                 <View style={{flexDirection: 'row', position: 'absolute', width: 60, zIndex: 999, bottom: 0,}}>
