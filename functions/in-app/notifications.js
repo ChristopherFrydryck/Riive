@@ -79,5 +79,6 @@ export let pushNotification = (title, body, onPress) => {
         description: body,
         type: "default",
         onPress: onPress,
+        duration: 3500,
       });
 }
