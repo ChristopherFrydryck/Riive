@@ -26,7 +26,8 @@ const HomeNavigator = createStackNavigator({
         navigationOptions: {
             title: "Profile",
             headerShown: false,
-        }
+        },
+        headerTintColor: 'black'
     },
     ExternalSpace: {
         screen: ExternalSpace, 
@@ -38,7 +39,8 @@ const HomeNavigator = createStackNavigator({
             headerTitleStyle:{
                 fontWeight: "300",
                 fontSize: 18,
-            }
+            },
+            headerTintColor: 'black'
         }
     },
     ReservationConfirmed: {
@@ -55,7 +57,8 @@ const HomeNavigator = createStackNavigator({
             headerTitleStyle:{
                 fontWeight: "300",
                 fontSize: 18,
-            }
+            },
+            headerTintColor: 'black'
         }
     },
     AddVehicle: {
