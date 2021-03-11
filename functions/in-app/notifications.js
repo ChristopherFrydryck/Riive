@@ -26,7 +26,7 @@ let notificationPermissions = async() => {
     }
 }
 
-let disabledWarningAlert = () => {
+export let disabledWarningAlert = () => {
     Alert.alert(
         'Warning',
         'You will be unable to see reminders and up to date information on your trips without push notifications. Please enable push notifications for Riive in your settings.',
@@ -46,6 +46,7 @@ export let getToken = async() => {
    let enabled = await notificationPermissions();
    let isEmulator = DeviceInfo.isEmulatorSync();
 
+   console.log(`${enabled} on ${Platform.OS}`)
 
     try{
         if(enabled){

@@ -129,9 +129,6 @@ class Profile extends Component{
     const doc = db.collection('users').doc(this.props.UserStore.userID);
 
 
-    
-
-    this.getPermissionAsync();
     this.updateProfile();
 
     const user = auth().currentUser;
@@ -231,15 +228,7 @@ class Profile extends Component{
     }
 
 
-    getPermissionAsync = async () => {
-        // if (Platform.OS === 'ios') {
-        //   const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-        //   if (status !== 'granted') {
-        //     alert('Sorry, we need camera roll permissions to make this work!');
-        //   }
-        // }
-        
-      }
+  
 
       onShare = async () => {
         try{
@@ -698,7 +687,7 @@ class Profile extends Component{
                                     /> 
                                 }
                             >
-                                <Menu.Item onPress={() => {}} title="Settings" />
+                                <Menu.Item onPress={() => {this.props.navigation.navigate('Settings')}} title="Settings" />
                                 <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
                                 <Menu.Item onPress={() => {}} title="Promo code" />
                                 <Divider />
