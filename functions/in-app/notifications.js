@@ -46,8 +46,6 @@ export let getToken = async() => {
    let enabled = await notificationPermissions();
    let isEmulator = DeviceInfo.isEmulatorSync();
 
-   console.log(`${enabled} on ${Platform.OS}`)
-
     try{
         if(enabled){
             if(isEmulator){

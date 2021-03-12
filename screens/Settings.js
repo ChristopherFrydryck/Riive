@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Linking } from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Linking, Alert } from 'react-native';
 import Text from '../components/Txt'
 import Input from '../components/Input'
 import Icon from '../components/Icon'
@@ -8,7 +8,7 @@ import Colors from '../constants/Colors'
 
 import { version } from '../package.json'
 
-import {requestLocationAccuracy, checkMultiple, checkNotifications, PERMISSIONS, openSettings, check, request} from 'react-native-permissions';
+import {requestLocationAccuracy, checkMultiple, checkNotifications, requestNotifications, PERMISSIONS, openSettings, check, request} from 'react-native-permissions';
 import { getToken, disabledWarningAlert } from '../functions/in-app/notifications'
 
 import { Switch } from 'react-native-paper';
@@ -60,24 +60,41 @@ class Settings extends React.Component{
 
     changeNotificationPermissions = async(currentStatus, stateName) => {
         if(currentStatus === false){
-            await getToken().then(tok => {
-                if(!this.props.UserStore.pushTokens.includes(tok)){
-                  try{
-                      firestore().collection("users").doc(this.props.UserStore.userID).update({
-                          pushTokens: firestore.FieldValue.arrayUnion(tok)
-                      })
-                      this.props.UserStore.pushTokens.push(tok);
-                  }catch(e){
-                      alert(e)
-                  }
+            requestNotifications(['alert', 'sound']).then(async({status, settings}) => {
+                if(status === 'granted'){
+                    await getToken().then(tok => {
+                        if(!this.props.UserStore.pushTokens.includes(tok)){
+                          try{
+                              firestore().collection("users").doc(this.props.UserStore.userID).update({
+                                  pushTokens: firestore.FieldValue.arrayUnion(tok)
+                              })
+                              this.props.UserStore.pushTokens.push(tok);
+                          }catch(e){
+                              alert(e)
+                          }
+                        }
+                        return tok
+                    }).then(() => {
+                        this.setState({[stateName]: true})
+                    })
+                }else{
+                    Linking.openSettings();
                 }
-                return tok
-            }).then(() => {
-                this.setState({[stateName]: true})
             })
+            
         }else{
-            await disabledWarningAlert;
-            Linking.openSettings();
+            await Alert.alert('Warning',
+            'You will be unable to see reminders and up to date information on your trips without push notifications.',
+            [
+                { text: 'Cancel' },
+                // If they said no initially and want to change their mind,
+                // we can automatically open our app in their settings
+                // so there's less friction in turning notifications on
+                { text: 'Manage Notifications', onPress: () =>{
+                    Linking.openSettings();
+                }}
+            ])
+          
         }
     }
 
