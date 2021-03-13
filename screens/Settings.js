@@ -269,7 +269,7 @@ class Settings extends React.Component{
         />
       <View style={{flex: 1, justifyContent: 'space-between'}}>
         <View>
-            <Text type="SemiBold" style={{ fontSize: 18, marginTop: 16}}>Permissions</Text>
+            <Text type="SemiBold" style={{ fontSize: 18, marginTop: 16, marginBottom: 8}}>Permissions</Text>
             <View style={styles.contentRow}>
                 <Text>Camera</Text>
                 <Switch value={this.state.cameraAccess} onValueChange={() => this.changePermission("CAMERA", this.state.cameraAccess, "cameraAccess")}/>
@@ -287,13 +287,31 @@ class Settings extends React.Component{
                 <Switch value={this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
             </View>
 
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity style={{marginTop: 16}} onPress={() => {
                this.setState({reportIssueModalVisible: true})
             }}>
-                <Text type="SemiBold" style={{ fontSize: 18, marginTop: 16}}>Report Issue</Text>
+                <View style={styles.contentRowNoIndent}>
+                    <Text numberOfLines={1} type="SemiBold" style={{ fontSize: 18}}>Report Issue</Text>
+                    <Icon 
+                        iconName="chevron-right"
+                        iconColor={Colors.cosmos500}
+                        iconSize={28}       
+                    />
+                </View>
             </TouchableOpacity>
-            
-            
+
+            <TouchableOpacity style={{marginTop: 16}} onPress={() => {
+               this.props.navigation.navigate("TOS")
+            }}>
+                <View style={styles.contentRowNoIndent}>
+                    <Text numberOfLines={1} type="SemiBold" style={{ fontSize: 18}}>Terms of Service & Privacy Policy</Text>
+                    <Icon 
+                        iconName="chevron-right"
+                        iconColor={Colors.cosmos500}
+                        iconSize={28}        
+                    />
+                </View>
+            </TouchableOpacity>           
         </View>
         <Text style={{textAlign: 'center', fontSize: 12, paddingBottom: 8}}>Version {version}</Text>
       </View>
@@ -315,6 +333,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 4,
     marginLeft: 16
+  },
+  contentRowNoIndent:{
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center',
+    paddingVertical: 4,
   }
 })
 
