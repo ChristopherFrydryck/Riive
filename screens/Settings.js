@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Linking, Alert } from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Linking, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import Text from '../components/Txt'
 import Input from '../components/Input'
 import Icon from '../components/Icon'
@@ -12,6 +12,8 @@ import {requestLocationAccuracy, checkMultiple, checkNotifications, requestNotif
 import { getToken, disabledWarningAlert } from '../functions/in-app/notifications'
 
 import { Switch } from 'react-native-paper';
+import DialogInput from 'react-native-dialog-input';
+import DeviceInfo from 'react-native-device-info'
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
@@ -19,7 +21,7 @@ import {inject, observer} from 'mobx-react/native'
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import Dropdown from '../components/Dropdown';
+
 
 
 @inject("UserStore", "ComponentStore")
@@ -35,6 +37,7 @@ class Settings extends React.Component{
             cameraAccess: false,
             cameraRollAccess: false,
             notificationAccess: false,
+            reportIssueModalVisible: false,
 
         }
     }
@@ -96,6 +99,77 @@ class Settings extends React.Component{
             ])
           
         }
+    }
+
+    reportIssue = async ( reportText ) => {
+
+    //    console.log(DeviceInfo.getDevice())
+    let ipAddr = null;
+    let macAddr = null;
+
+    await DeviceInfo.getIpAddress().then((res) => {
+        ipAddr = res
+    })
+
+    await DeviceInfo.getMacAddress().then((res) => {
+        macAddr = res
+    })
+
+
+
+
+
+
+        if(!reportText || reportText.replace(/\s/g,"") == ""){
+            this.setState({reportIssueModalVisible: false})
+            Alert.alert(
+                "Failed to submit issue",
+                "Try inputting valid text into the report text input."
+            )
+        }else{
+         let db = firestore()
+         let reportRef = db.collection("reports").doc().id
+         let userRef = db.collection("users").doc(this.props.UserStore.userID).id
+
+         let createdTime = new Date().getTime();
+         
+
+
+         try{
+            db.collection("reports").doc(reportRef).set({
+                reportType: "APP_ISSUE",
+                reportID: reportRef,
+                reportText: reportText,
+                userReport: this.props.UserStore.userID,
+                reportDate: createdTime,
+                resolved: false,
+                resolvedTime: null,
+                resolvedBy: null,
+                buildDetails:{
+                    appName: DeviceInfo.getApplicationName(),
+                    bundleID: DeviceInfo.getBundleId(),
+                    version: version,
+                    deviceOS: Platform.OS,
+                    brand: DeviceInfo.getBrand(),
+                    buildNumber: DeviceInfo.getBuildNumber(),
+                    osVersion: DeviceInfo.getSystemVersion(),
+                    ipAddress: ipAddr,
+                    macAddress: macAddr 
+                },
+            }).then(() => {
+                db.collection("users").doc(userRef).collection('reports').doc(reportRef).set({
+                    reportType: "APP_ISSUE",
+                    reportID: reportRef,
+                    reportDate: createdTime,
+                })
+            }).then(() => alert("Thank you for reporting an issue. We will solve it as soon as possible."))
+         }catch(e){
+             console.log(e)
+         }
+
+         this.setState({reportIssueModalVisible: false})
+        }
+         
     }
 
     checkPermissionsStatus = async() => {
@@ -184,10 +258,18 @@ class Settings extends React.Component{
             //     <Text>{this.props.ComponentStore.selectedPayment[0].PaymentID}</Text>
             // </View>
       <ScrollView contentContainerStyle={styles.container}>
-      <SafeAreaView style={{flex: 0}} />
+      <SafeAreaView />
+        <DialogInput 
+            isDialogVisible={this.state.reportIssueModalVisible}
+            title={"Report an Issue"}
+            message={"Type below the issue you are facing in the app."}
+            hintInput ={"I discovered a bug that..."}
+            submitInput={ (inputText) =>  this.reportIssue(inputText)}
+            closeDialog={() => this.setState({reportIssueModalVisible: false})}
+        />
       <View style={{flex: 1, justifyContent: 'space-between'}}>
         <View>
-            <Text type="SemiBold" style={{ fontSize: 18}}>Permissions</Text>
+            <Text type="SemiBold" style={{ fontSize: 18, marginTop: 16}}>Permissions</Text>
             <View style={styles.contentRow}>
                 <Text>Camera</Text>
                 <Switch value={this.state.cameraAccess} onValueChange={() => this.changePermission("CAMERA", this.state.cameraAccess, "cameraAccess")}/>
@@ -204,9 +286,16 @@ class Settings extends React.Component{
                 <Text>Notifications</Text>
                 <Switch value={this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
             </View>
+
+            <TouchableOpacity onPress={() => {
+               this.setState({reportIssueModalVisible: true})
+            }}>
+                <Text type="SemiBold" style={{ fontSize: 18, marginTop: 16}}>Report Issue</Text>
+            </TouchableOpacity>
+            
             
         </View>
-        <Text style={{textAlign: 'center'}}>Riive Version {version}</Text>
+        <Text style={{textAlign: 'center', fontSize: 12, paddingBottom: 8}}>Version {version}</Text>
       </View>
       
       </ScrollView>
@@ -216,7 +305,7 @@ class Settings extends React.Component{
 
 const styles = StyleSheet.create({
   container:{
-    flex: 1, 
+    minHeight: '100%',
     backgroundColor: "white",
     paddingHorizontal: 16,
   },
@@ -225,6 +314,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     alignItems: 'center',
     paddingVertical: 4,
+    marginLeft: 16
   }
 })
 
