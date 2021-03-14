@@ -192,7 +192,7 @@ class editSpace extends Component {
         mediaType: "photo",
         width: Dimensions.get("window").width,
         height: Dimensions.get("window").width / 1.78,
-        compressImageQuality: 0.5,
+        compressImageQuality: 0.8,
         cropping: true
       }).then(image => {
         this.setState({imageUploading: true, photo: image.path})
@@ -209,70 +209,19 @@ class editSpace extends Component {
 
 
       launchCamera = async () => {
-      const permissions = [Permissions.CAMERA, Permissions.CAMERA_ROLL];
-      let isGranted = false;
-
-      
-        
-      for(let i = 0; i < permissions.length; i++){
-        let perms = await Permissions.askAsync(permissions[i]);
-        // console.log(permissions[i], perms.status)
-
-        if(perms.status != 'granted'){
-          isGranted = false;
-          break;
-        }else{
-          isGranted = true;
-          continue;
-        }
-      }
-
-      
-      
-
-      if(isGranted === true){
-       
-        try{
-          ImagePicker.openCamera({
-            width: 300,
-            height: 400,
-            cropping: true,
-          }).then(image => {
-            console.log(image);
-          });
-        }catch(e){
-          console.log(e)
-        }
-        
-        // let result = await ImagePicker.launchCameraAsync({
-        //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        //   allowsEditing: true,
-        //   aspect: [16, 9],
-        //   quality: 0.5,
-        //   // base64: true,
-        // });
-
-        // this.setState({imageUploading: true, photo: result.uri})
-    
-    
-        // if (!result.cancelled) {
-            
-        //           try {
-        //               alert("Success!")
-        //               this.setState({imageUploading: false})
-        //           }
-        //           catch {
-        //               alert("Failed to upload image. Please try again.")
-        //               this.setState({imageUploading: false})
-        //           }
-          
-        // }else{
-        //     console.log("No result.")
-        //     this.setState({imageUploading: false})
-        // }
-      }else{
-        this.getPermissionAsync(Permissions.CAMERA_ROLL, Permissions.CAMERA)
-      }
+        ImagePicker.openCamera({
+          width: Dimensions.get("window").width,
+          height: Dimensions.get("window").width / 1.78,
+          compressImageQuality: 0.8,
+          cropping: true
+        }).then(image => {
+          this.setState({imageUploading: true, photo: image.path})
+        }).then(() => {
+          this.setState({imageUploading: false, changesMade: true})
+        }).catch(e => {
+          alert(e)
+          this.setState({imageUploading: false})
+        })
     }
 
 

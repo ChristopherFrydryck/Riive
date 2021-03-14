@@ -161,7 +161,7 @@ class addSpace extends Component {
         mediaType: "photo",
         width: Dimensions.get("window").width,
         height: Dimensions.get("window").width / 1.78,
-        compressImageQuality: 0.5,
+        compressImageQuality: 0.8,
         cropping: true
       }).then(image => {
         this.setState({imageUploading: true, photo: image.path})
@@ -174,6 +174,23 @@ class addSpace extends Component {
 
       
     }
+
+
+    launchCamera = async () => {
+      ImagePicker.openCamera({
+        width: Dimensions.get("window").width,
+        height: Dimensions.get("window").width / 1.78,
+        compressImageQuality: 0.8,
+        cropping: true
+      }).then(image => {
+        this.setState({imageUploading: true, photo: image.path})
+      }).then(() => {
+        this.setState({imageUploading: false, changesMade: true})
+      }).catch(e => {
+        alert(e)
+        this.setState({imageUploading: false})
+      })
+  }
 
 
 
