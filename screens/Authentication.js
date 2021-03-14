@@ -45,6 +45,9 @@ export default class Authentication extends React.Component {
   constructor(){
     super();
 
+    
+    
+
     this.state = {
       email: '',
       password: '',
@@ -65,9 +68,18 @@ export default class Authentication extends React.Component {
 
   async componentDidMount(){
     // Remove after testing!!
-    this.setState({email: 'admin@riive.net', password: 'Fallon430'})
-    this.props.UserStore.email = 'admin@riive.net'
-    this.props.UserStore.password = "Fallon430"
+    // this.setState({email: 'admin@riive.net', password: 'Fallon430'})
+    // this.props.UserStore.email = 'admin@riive.net'
+    // this.props.UserStore.password = "Fallon430"
+
+    if (auth().currentUser !== null) {
+      console.log(auth().currentUser)
+      // this.onPressSignIn();
+      this.getCurrentUserInfo();
+
+
+    } 
+    
 
       // Set Status Bar page info here!
    this._navListener = this.props.navigation.addListener('didFocus', () => {
@@ -128,6 +140,110 @@ export default class Authentication extends React.Component {
       phoneError: '',
     
     })
+  }
+
+
+  getCurrentUserInfo = async() => {
+    const db = firestore();
+
+    const doc = db.collection('users').doc(auth().currentUser.uid);
+
+    const searchHistoryRef = db.collection('users').doc(auth().currentUser.uid).collection('searchHistory');
+    let searchHistory = new Array();
+
+      this.props.UserStore.userID = auth().currentUser.uid;
+      this.props.UserStore.email = auth().currentUser.email;
+      this.props.UserStore.password = null;
+
+
+   await searchHistoryRef.get().then((doc) => {
+     if(!doc.empty){
+        doc.forEach(doc =>{
+          searchHistory.push(doc.data())
+        })
+      }
+   })
+
+
+    doc.get().then((doc) => {
+      if (doc.exists){
+              // alert(`${doc.id} => ${doc.data().fullname}`);
+              this.props.UserStore.fullname = doc.data().fullname;
+              this.props.UserStore.phone = doc.data().phone;
+              this.props.UserStore.userID = doc.data().id;
+              this.props.UserStore.stripeID = doc.data().stripeID;
+              this.props.UserStore.photo = doc.data().photo;
+              this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
+              this.props.UserStore.last_update = doc.data().last_update;
+              this.props.UserStore.vehicles = doc.data().vehicles;
+              this.props.UserStore.listings = [];
+              this.props.UserStore.trips = doc.data().trips;
+              this.props.UserStore.payments = doc.data().payments;
+              this.props.UserStore.searchHistory = searchHistory;
+              this.props.UserStore.disabled = doc.data().disabled.isDisabled;
+              this.props.UserStore.deleted = doc.data().deleted.toBeDeleted
+              this.props.UserStore.pushTokens = doc.data().pushTokens || [];
+
+              // ID if user signed in via email or google
+              this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
+              
+            
+              var currentTime = firestore.Timestamp.now();
+
+              // in case a user reverts their email change via profile update
+              db.collection("users").doc(auth().currentUser.uid).update({
+                last_update: currentTime,
+                email: this.props.UserStore.email,
+              })
+              // Upon setting the MobX State Observer, navigate to home
+              this.props.navigation.navigate('Home')
+          
+              return doc;
+
+
+    }else{
+      throw("No user found")
+    }
+  }).then((doc) => {
+  const length = doc.data().listings.length;
+    if( length > 0 && length <= 10){
+      db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
+        let listingsData = [];
+        for(let i = 0; i < qs.docs.length; i++){
+          listingsData.push(qs.docs[i].data())
+        }
+        this.props.UserStore.listings = listingsData;
+    }).then(() => this.props.navigation.navigate("Home"))
+
+
+    }else if(length > 0 && length > 10){
+    let listings = doc.data().listings;
+    let allArrs = [];
+    var listingsData = [];
+    while(listings.length > 0){
+      allArrs.push(listings.splice(0, 10))
+    }
+
+    for(let i = 0; i < allArrs.length; i++){
+      db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+        for(let i = 0; i < qs.docs.length; i++){
+          listingsData.push(qs.docs[i].data())
+        }
+      }).then(() => {
+        this.props.UserStore.listings = listingsData;
+        this.props.navigation.navigate('Home')
+      })
+    }
+
+  }else{
+    this.props.navigation.navigate('Home')
+  }
+  
+  }).catch((e) => {
+    alert("Failed to grab user data. Please try again. " + e)
+  })
+
+
   }
 
 
@@ -415,10 +531,6 @@ onPressSignIn = async() => {
     alert("Failed to grab user data. Please try again. " + e)
   })
 
-  
-  // auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-    // alert('Persisted!')
-  // })
 
 
   }).catch( async (error) => {

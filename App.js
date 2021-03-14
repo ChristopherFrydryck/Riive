@@ -39,6 +39,7 @@ import FlashMessage from "react-native-flash-message";
 
 // Firebase imports
 import * as firebase from 'firebase'
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import firebaseConfig from './firebaseConfig'
@@ -71,16 +72,6 @@ class App extends React.Component {
     }
 
   }
-
-  // async componentDidMount(){
-  //   this.showNotification();
-  // }
-
-  // async showNotification() {
-  //   await this.setState({notificationVisible: true})
-  //   this.setState({notificationVisible: false})
-  // }
-
 
 
   render() {
