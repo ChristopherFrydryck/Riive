@@ -26,34 +26,52 @@ class Img extends React.Component{
         const style = [styles.img,  this.props.style || {}]
         const allProps = Object.assign({}, this.props,{style:style}) 
 
-        return(
-            <TouchableOpacity
-
-                onPress={this.props.onPress}
-                disabled={this.props.onPress ? false : true}
-                {...allProps}
-            >
-                
-                <ImageBackground
-                    source={this.props.backupSource ? this.props.backupSource : backupImage}
-                    style={{width: this.props.width, height: this.props.height,}}
-                    imageStyle={{aspectRatio: this.props.aspectRatio, resizeMode: this.props.resizeMode,  borderRadius: this.props.borderRadius}}
-                    
-                    // {...allProps}
+        if(this.props.localImage){
+            return (
+                <TouchableOpacity
+                    onPress={this.props.onPress}
+                    disabled={this.props.onPress ? false : true}
+                    {...allProps}
                 >
                     <Image 
-                        
-                        underlayColor = {this.props.underlayColor}
+                        // underlayColor = {this.props.underlayColor}
                         style={{aspectRatio: this.props.aspectRatio, resizeMode: this.props.resizeMode, width: this.props.width, height: this.props.height, borderRadius: this.props.borderRadius}}
                         source={this.props.source}
                         defaultSource = {this.props.backupSource}
                         onLoad = {() => this.setState({imgReady: true})}
-                        // {...allProps}
                     />
-                </ImageBackground>
-                
-            </TouchableOpacity>
-        )
+                </TouchableOpacity>
+            )
+        }else{
+            return(
+                <TouchableOpacity
+
+                    onPress={this.props.onPress}
+                    disabled={this.props.onPress ? false : true}
+                    {...allProps}
+                >
+                    
+                    <ImageBackground
+                        source={this.props.backupSource ? this.props.backupSource : backupImage}
+                        style={{width: this.props.width, height: this.props.height,}}
+                        imageStyle={{aspectRatio: this.props.aspectRatio, resizeMode: this.props.resizeMode,  borderRadius: this.props.borderRadius}}
+                        
+                        // {...allProps}
+                    >
+                        <Image 
+                            
+                            underlayColor = {this.props.underlayColor}
+                            style={{aspectRatio: this.props.aspectRatio, resizeMode: this.props.resizeMode, width: this.props.width, height: this.props.height, borderRadius: this.props.borderRadius}}
+                            source={this.props.source}
+                            defaultSource = {this.props.backupSource}
+                            onLoad = {() => this.setState({imgReady: true})}
+                            // {...allProps}
+                        />
+                    </ImageBackground>
+                    
+                </TouchableOpacity>
+            )
+        }
     }    
 }
 

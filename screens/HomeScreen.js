@@ -12,7 +12,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
 import { pushNotification, getToken } from '../functions/in-app/notifications'
 
-
+import logo from '../assets/img/Logo_Abbreviated_001.png'
 
 import Button from '../components/Button'
 import Text from '../components/Txt'
@@ -177,6 +177,8 @@ class Home extends Component {
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
         }
+
+        console.log(logo)
        
       });
 
@@ -870,7 +872,13 @@ goToReserveSpace = () => {
           </View>
 
           <View style={{paddingHorizontal: 16, paddingBottom: this.state.searchFilterOpen ? 0 : 36, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between"}}>
-            <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text>
+            {/* <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text> */}
+            <Image 
+                localImage={true} 
+                source={require('../assets/img/Logo_Abbreviated_001.png')} 
+                width={48}
+                height={48}
+                style={styles.img} />
             <FilterButton 
               onPress={() => this.filterResults()}
               disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}
@@ -1206,6 +1214,10 @@ const styles = StyleSheet.create({
       zIndex: -999,
       position: "relative",
       flex: 1,
+  },
+  img:{
+    resizeMode: 'contain',
+    alignSelf: 'center'
   },
   circleMarker:{
       position: 'absolute',

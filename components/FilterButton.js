@@ -25,7 +25,7 @@ export default class FilterButton extends Component{
 
 const styles = StyleSheet.create({
     filterButtonClosed:{
-        flex: 2,
+        flex: 0,
         alignItems: 'flex-end',
         borderLeftWidth: 5, 
         borderLeftColor: Colors.tango900, 

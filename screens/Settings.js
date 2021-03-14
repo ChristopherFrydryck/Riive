@@ -115,11 +115,6 @@ class Settings extends React.Component{
         macAddr = res
     })
 
-
-
-
-
-
         if(!reportText || reportText.replace(/\s/g,"") == ""){
             this.setState({reportIssueModalVisible: false})
             Alert.alert(
@@ -151,6 +146,7 @@ class Settings extends React.Component{
                     version: version,
                     deviceOS: Platform.OS,
                     brand: DeviceInfo.getBrand(),
+                    model: DeviceInfo.getModel(),
                     buildNumber: DeviceInfo.getBuildNumber(),
                     osVersion: DeviceInfo.getSystemVersion(),
                     ipAddress: ipAddr,
