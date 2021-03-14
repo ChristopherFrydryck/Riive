@@ -44,7 +44,7 @@ let phoneValid = false;
 export default class Authentication extends React.Component {
   constructor(){
     super();
-
+    this._isMounted = false;
     
     
 
@@ -73,11 +73,7 @@ export default class Authentication extends React.Component {
     // this.props.UserStore.password = "Fallon430"
 
     if (auth().currentUser !== null) {
-      console.log(auth().currentUser)
-      // this.onPressSignIn();
-      this.getCurrentUserInfo();
-
-
+      await this.getCurrentUserInfo();
     } 
     
 
@@ -87,6 +83,8 @@ export default class Authentication extends React.Component {
     Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 
   });
+
+  this._isMounted = true;
 
   }
 
@@ -643,11 +641,13 @@ onPressSignIn = async() => {
 }
 
 renderCurrentState() {
-  if(this.state.authenticating){
+  if(this.state.authenticating || this._isMounted === false){
     return(
       <View style={styles.form}>
         <ActivityIndicator size="large" color={Colors.cosmos300} />
+        {this._isMounted ? 
         <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.setState({ authenticating: false})}>Cancel</Button>
+        : null}
       </View>
     )
   }else if(this.state.toggleLogIn){
