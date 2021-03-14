@@ -72,19 +72,32 @@ export default class Authentication extends React.Component {
     // this.props.UserStore.email = 'admin@riive.net'
     // this.props.UserStore.password = "Fallon430"
 
+    
     if (auth().currentUser !== null) {
       await this.getCurrentUserInfo();
-    } 
+      await this.forceUpdate();
+    } else{
+      this._isMounted = true;
+      this.forceUpdate();
+    }
     
 
       // Set Status Bar page info here!
-   this._navListener = this.props.navigation.addListener('didFocus', () => {
+   this._navListener = this.props.navigation.addListener('disdFocus', async() => {
     StatusBar.setBarStyle('dark-content', true);
     Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 
+
+    if (auth().currentUser !== null) {
+      await this.getCurrentUserInfo();
+      await this.forceUpdate();
+    } else{
+      this._isMounted = true;
+      this.forceUpdate();
+    }
   });
 
-  this._isMounted = true;
+ 
 
   }
 
@@ -237,6 +250,8 @@ export default class Authentication extends React.Component {
     this.props.navigation.navigate('Home')
   }
   
+  }).then(() => {
+    this._isMounted = true;
   }).catch((e) => {
     alert("Failed to grab user data. Please try again. " + e)
   })
