@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox} from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox, Alert, Linking} from 'react-native';
 import Text from '../components/Txt'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, {Marker} from 'react-native-maps';
@@ -146,15 +146,6 @@ class addSpace extends Component {
        
     }
 
-    getPermissionAsync = async (...perms) => {
-      if (Platform.OS == 'ios') {
-        const { status } = await Permissions.askAsync(...perms);
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
-      }
-    };
-
     pickImage = async () => {
       
       ImagePicker.openPicker({
@@ -168,12 +159,17 @@ class addSpace extends Component {
       }).then(() => {
         this.setState({imageUploading: false, changesMade: true})
       }).catch(e => {
-        alert(e)
+        Alert.alert('Photo Permission Required',
+        "Allow access to photos in settings to upload a new photo",
+            [
+                { text: 'Manage Photo Permissions', onPress: () =>{
+                    Linking.openSettings();
+                }},
+                { text: 'Cancel' },
+            ])
         this.setState({imageUploading: false})
       })
-
-      
-    }
+    };
 
 
     launchCamera = async () => {
@@ -187,7 +183,14 @@ class addSpace extends Component {
       }).then(() => {
         this.setState({imageUploading: false, changesMade: true})
       }).catch(e => {
-        alert(e)
+        Alert.alert('Camera Permission Required',
+            "Allow access to camera in settings to upload a new photo",
+            [
+                { text: 'Manage Camera Permissions', onPress: () =>{
+                    Linking.openSettings();
+                }},
+                { text: 'Cancel' }
+            ])
         this.setState({imageUploading: false})
       })
   }

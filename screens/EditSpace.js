@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, Animated, TouchableOpacity, KeyboardAvoidingView, FlatList, Switch, Modal, Picker} from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, Animated, TouchableOpacity, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, Alert, Linking} from 'react-native';
 import Text from '../components/Txt'
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
@@ -199,7 +199,14 @@ class editSpace extends Component {
       }).then(() => {
         this.setState({imageUploading: false, changesMade: true})
       }).catch(e => {
-        alert(e)
+        Alert.alert('Photo Permission Required',
+        "Allow access to photos in settings to upload a new photo",
+            [
+                { text: 'Manage Photo Permissions', onPress: () =>{
+                    Linking.openSettings();
+                }},
+                { text: 'Cancel' },
+            ])
         this.setState({imageUploading: false})
       })
 
@@ -208,21 +215,28 @@ class editSpace extends Component {
     };
 
 
-      launchCamera = async () => {
-        ImagePicker.openCamera({
-          width: Dimensions.get("window").width,
-          height: Dimensions.get("window").width / 1.78,
-          compressImageQuality: 0.8,
-          cropping: true
-        }).then(image => {
-          this.setState({imageUploading: true, photo: image.path})
-        }).then(() => {
-          this.setState({imageUploading: false, changesMade: true})
-        }).catch(e => {
-          alert(e)
-          this.setState({imageUploading: false})
-        })
-    }
+    launchCamera = async () => {
+      ImagePicker.openCamera({
+        width: Dimensions.get("window").width,
+        height: Dimensions.get("window").width / 1.78,
+        compressImageQuality: 0.8,
+        cropping: true
+      }).then(image => {
+        this.setState({imageUploading: true, photo: image.path})
+      }).then(() => {
+        this.setState({imageUploading: false, changesMade: true})
+      }).catch(e => {
+        Alert.alert('Camera Permission Required',
+            "Allow access to camera in settings to upload a new photo",
+            [
+                { text: 'Manage Camera Permissions', onPress: () =>{
+                    Linking.openSettings();
+                }},
+                { text: 'Cancel' }
+            ])
+        this.setState({imageUploading: false})
+      })
+  }
 
 
 
