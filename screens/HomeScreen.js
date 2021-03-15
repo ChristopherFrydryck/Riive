@@ -177,8 +177,6 @@ class Home extends Component {
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
         }
-
-        console.log(logo)
        
       });
 
@@ -877,7 +875,7 @@ goToReserveSpace = () => {
                 localImage={true} 
                 source={require('../assets/img/Logo_Abbreviated_001.png')} 
                 width={48}
-                height={48}
+                aspectRatio={1/1}
                 style={styles.img} />
             <FilterButton 
               onPress={() => this.filterResults()}

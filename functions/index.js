@@ -80,6 +80,24 @@ const fs = require('fs');
 
     } )
 
+    exports.sendBookingNotification = functions.https.onRequest((request, response) => {
+        let tokenArray = request.body.tokens;
+        let payload = {
+            notification: {
+              title: request.body.title,
+              body: request.body.message,
+            },
+            data:{
+                screen: "HostedTrips"
+            }
+          };
+
+     
+        admin.messaging().sendToDevice(tokenArray, payload).catch(err => {
+            console.log("Error sending message: ", err)
+        })
+    })
+
     exports.addSource = functions.https.onRequest((request, response) => {
       
         // Payment method created. Still needs set up and confirmed

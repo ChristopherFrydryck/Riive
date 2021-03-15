@@ -479,6 +479,24 @@ class reserveSpace extends Component {
                                 trips: firestore.FieldValue.arrayUnion(ref.id)
                             })
 
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                  Accept: 'application/json',
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    tokens: hostDoc.pushTokens.filter(x => x !== null),
+                                    title: `You have a new booking`,
+                                    message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space at ${timeSearched[0].labelFormatted}.`
+                                })
+                              }
+                          
+                                
+                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendBookingNotification', settings)
+                                
+                               
+                            
                             
                            
                             await this.setState({authenticatingReservation: false})
@@ -504,7 +522,7 @@ class reserveSpace extends Component {
                             throw e
                         }
                     }).catch(e => {
-                        alert(e)
+                        console.log(e)
                     })
 
 
