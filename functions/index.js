@@ -80,7 +80,7 @@ const fs = require('fs');
 
     } )
 
-    exports.sendBookingNotification = functions.https.onRequest((request, response) => {
+    exports.sendNotification = functions.https.onRequest((request, response) => {
         let tokenArray = request.body.tokens;
         let payload = {
             notification: {
@@ -88,7 +88,7 @@ const fs = require('fs');
               body: request.body.message,
             },
             data:{
-                screen: "HostedTrips"
+                screen: request.body.screen
             }
           };
 

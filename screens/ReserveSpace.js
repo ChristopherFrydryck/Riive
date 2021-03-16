@@ -488,12 +488,13 @@ class reserveSpace extends Component {
                                 body: JSON.stringify({
                                     tokens: hostDoc.pushTokens.filter(x => x !== null),
                                     title: `You have a new booking`,
-                                    message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space at ${timeSearched[0].labelFormatted}.`
+                                    message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space at ${timeSearched[0].labelFormatted}.`,
+                                    screen: "HostedTrips"
                                 })
                               }
                           
                                 
-                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendBookingNotification', settings)
+                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
                                 
                                
                             
