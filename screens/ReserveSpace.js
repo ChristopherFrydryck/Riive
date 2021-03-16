@@ -471,6 +471,8 @@ class reserveSpace extends Component {
                                 },
                             }
 
+                            
+
                             db.collection("trips").doc(ref.id).set(obj)
                             db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
                                 visits: firestore.FieldValue.arrayUnion(ref.id)
@@ -478,6 +480,9 @@ class reserveSpace extends Component {
                             db.collection("users").doc(this.props.UserStore.userID).update({
                                 trips: firestore.FieldValue.arrayUnion(ref.id)
                             })
+
+                            
+                            let isToday = this.isToday(startDate);
 
                             const settings = {
                                 method: 'POST',
@@ -488,7 +493,7 @@ class reserveSpace extends Component {
                                 body: JSON.stringify({
                                     tokens: hostDoc.pushTokens.filter(x => x !== null),
                                     title: `You have a new booking`,
-                                    message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space at ${timeSearched[0].labelFormatted}.`,
+                                    message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space ${isToday ? "today" : daySearched.dayName} at ${timeSearched[0].labelFormatted}.`,
                                     screen: "HostedTrips"
                                 })
                               }
@@ -534,6 +539,13 @@ class reserveSpace extends Component {
 
             
         }
+
+        isToday = (someDate) => {
+            const today = new Date()
+            return someDate.getDate() == today.getDate() &&
+              someDate.getMonth() == today.getMonth() &&
+              someDate.getFullYear() == today.getFullYear()
+          }
 
         payForSpace = async (hostStripeID) => {
             // console.log(this.props.ComponentStore.selectedExternalSpot[0].hostID)
