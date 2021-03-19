@@ -595,7 +595,6 @@ onPressSignIn = async() => {
           const doc = db.collection('users').doc(body.uid)
           return doc.get()
         }).then((user) => {
-          console.log(user.exists)
           if(user.exists){
             if(user.data().disabled.numTimesDisabled < 3){
               var date = new Date(user.data().disabled.disabledEnds * 1000 + (24*60*60*1000));
@@ -621,33 +620,6 @@ onPressSignIn = async() => {
           alert(e)
         })
        
-      // console.log(this.props.UserStore.email)
-      // const db = firebase.firestore();
-      // const doc = db
-      // doc.get().then((doc) => {
-      //   console.log(doc)
-        // if(doc.exists){
-        //   if(doc.data().disabled.numTimesDisabled < 3){
-        //     var date = new Date(doc.data().disabled.disabledEnds * 1000);
-        //     var daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        //     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        //     this.setState({
-        //       passwordError: '',
-        //       emailError: `This account has been suspended until ${daysOfWeek[date.getDay()]} ${months[date.getMonth()]} ${date.getDate()}`,
-        //     })
-        //   }else{
-        //     this.setState({
-        //       passwordError: 'Reach out to support@riive.net for assistance',
-        //       emailError: `This account has been banned`,
-        //     })
-        //   }
-        // }else{
-        //   this.setState({
-        //     passwordError: '',
-        //     emailError: `This account has been suspended`,
-        //   })
-        // }
-      // })
     }else{
       alert(errorCode + ': ' + errorMessage);
     }
