@@ -307,14 +307,28 @@ export default class Authentication extends React.Component {
       let day = this.props.UserStore.dob.split("/")[1]
       let year = this.props.UserStore.dob.split("/")[2]
 
-      if(month <= 12 && day <= this.getDaysInMonth(year, month) && year > 1900 && year < new Date().getFullYear()){
+      if(month <= 12 && month.toString() !== "00" && day <= this.getDaysInMonth(year, month) && day.toString() !== "00" && year > 1900 && year < new Date().getFullYear()){
         this.setState({dobError: ''})
         dobValid = true;
       }else{
-        this.setState({
-          dobError: 'Please provide a proper date of birth (MM/DD/YYYY).',
-          authenticating: false
-        });
+        if(year < 1900 || year > new Date().getFullYear()){
+          this.setState({
+            dobError: 'Please ensure your year is valid.',
+          })
+        }else if(day > this.getDaysInMonth(year, month) || day.toString() == "00"){
+          this.setState({
+            dobError: 'Please ensure your day is valid.',
+          })
+        }else if(month > 12 || month.toString() == "00"){
+          this.setState({
+            dobError: 'Please ensure your month is valid.',
+          })
+        }else{
+          this.setState({
+            dobError: 'Please ensure your date is in the proper format (MM/DD/YYYY).',
+          })
+        }
+        this.setState({authenticating: false})
         phoneValid = false;
       }
       
