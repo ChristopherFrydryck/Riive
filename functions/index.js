@@ -49,14 +49,43 @@ const fs = require('fs');
                         throw new Error("User does not exist")
                     }else{
                         return stripe.accounts.create({
-                            type: 'express',
+                            type: 'custom',
                             email: request.body.email,
                             business_type: "individual",
+                            business_profile: {
+                                mcc: "7523",
+                                product_description: request.body.FBID, 
+                                support_email: request.body.email,
+                                support_phone: request.body.phone,
+                            },
+                            capabilities: {
+                                card_payments: {requested: true},
+                                transfers: {requested: true},
+                                // tax_reporting_us_1099_k: {requested: true},
+                            },
+                            tos_acceptance: {
+                                date: Math.floor(Date.now() / 1000),
+                                ip: request.socket.remoteAddress,
+                              },
                             individual: {
+                                dob: {
+                                    day: 1,
+                                    month: 1,
+                                    year: 1996
+                                },
+                                address: {
+                                    line1: "430 Partridge Run Road",
+                                    line2: "",
+                                    postal_code: 15044,
+                                    city: "Gibsonia",
+                                    state: "Pennsylvania",
+                                    country: "US"
+                                },
                                 email: request.body.email,
                                 phone: request.body.phone,
                                 first_name: request.body.name.split(' ', 1).toString(),
                                 last_name: request.body.name.split(' ').slice(-1).join(),
+                                id_number: 190769953,
                             }
                         }).then((account) => {
                             db.collection('users').doc(request.body.FBID).update({
@@ -99,7 +128,7 @@ const fs = require('fs');
     })
 
     exports.addSource = functions.https.onRequest((request, response) => {
-      
+
         // Payment method created. Still needs set up and confirmed
         return stripe.paymentMethods.create({
                 type: 'card',
