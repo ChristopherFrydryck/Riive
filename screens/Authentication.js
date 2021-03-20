@@ -38,6 +38,7 @@ const regexPhone = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4
 // Vars that prevent continuing since this is not built into firebase natively
 let nameValid = false;
 let phoneValid = false;
+let dobValid = false;
 
 @inject("UserStore")
 @observer
@@ -61,6 +62,7 @@ export default class Authentication extends React.Component {
       emailError: '',
       passwordError: '',
       fullnameError: '',
+      dobError: '',
       phoneError: '',
     }
   }
@@ -259,6 +261,10 @@ export default class Authentication extends React.Component {
 
   }
 
+  getDaysInMonth = (year, month) => {
+    return new Date(year, month, 0).getDate();
+  }
+
 
   // Sign up authorization with email and password
   // also sends an email verification to the user
@@ -294,10 +300,27 @@ export default class Authentication extends React.Component {
         });
         phoneValid = false;
       }  
+
+
+      // Checks DOB for valid format
+      let month = this.props.UserStore.dob.split("/")[0]
+      let day = this.props.UserStore.dob.split("/")[1]
+      let year = this.props.UserStore.dob.split("/")[2]
+
+      if(month <= 12 && day <= this.getDaysInMonth(year, month) && year > 1900 && year < new Date().getFullYear()){
+        this.setState({dobError: ''})
+        dobValid = true;
+      }else{
+        this.setState({
+          dobError: 'Please provide a proper date of birth (MM/DD/YYYY).',
+          authenticating: false
+        });
+        phoneValid = false;
+      }
       
 
     // If vars are true and valid beguin creating user
-    if(nameValid && phoneValid){
+    if(nameValid && phoneValid && dobValid){
     
      auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then((userCredentials) => {
         // RETURN ALL THIS IF EMAIL AND PASSWORD ARE TRUE
@@ -680,6 +703,18 @@ renderCurrentState() {
         error={this.state.fullnameError}
         />
         <Input 
+        placeholder='05/31/1996'
+        mask="mm/dd/yyyy"
+        label="Date of Birth"
+        name="DOB"
+        secureTextEntry
+        onChangeText = {(dob) => this.props.UserStore.dob = dob}
+        value={this.props.UserStore.dob}
+        maxLength = {9}
+        keyboardType='phone-pad'
+        error={this.state.dobError}
+        />
+        <Input 
         placeholder='000-000-0000'
         mask='phone'
         label="Phone"
@@ -697,7 +732,7 @@ renderCurrentState() {
         name="email"
         onChangeText= {(email) => this.props.UserStore.email = email}
         value={this.props.UserStore.email}
-        keyboardType='email-address'
+        keyboardType='default'
         maxLength = {55}
         error={this.state.emailError}
         />

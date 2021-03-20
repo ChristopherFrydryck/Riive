@@ -7,6 +7,7 @@ class UserStore {
     @observable stripeID = '';
     @observable fullname = '';
     @observable email = '';
+    @observable dob = '';
     @observable phone = '';
     @observable password = '';
     @observable photo = '';

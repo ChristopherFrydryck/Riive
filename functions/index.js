@@ -73,19 +73,19 @@ const fs = require('fs');
                                     month: 1,
                                     year: 1996
                                 },
-                                address: {
-                                    line1: "430 Partridge Run Road",
-                                    line2: "",
-                                    postal_code: 15044,
-                                    city: "Gibsonia",
-                                    state: "Pennsylvania",
-                                    country: "US"
-                                },
+                                // address: {
+                                //     line1: "430 Partridge Run Road",
+                                //     line2: "",
+                                //     postal_code: 15044,
+                                //     city: "Gibsonia",
+                                //     state: "Pennsylvania",
+                                //     country: "US"
+                                // },
                                 email: request.body.email,
                                 phone: request.body.phone,
                                 first_name: request.body.name.split(' ', 1).toString(),
                                 last_name: request.body.name.split(' ').slice(-1).join(),
-                                id_number: 190769953,
+                                // id_number: ,
                             }
                         }).then((account) => {
                             db.collection('users').doc(request.body.FBID).update({
