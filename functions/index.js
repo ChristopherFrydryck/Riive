@@ -29,6 +29,58 @@ const fs = require('fs');
        
     })
 
+    exports.addCustomerAddress = functions.https.onRequest((request, response) => {
+        stripe.customers.update(
+            request.body.customerID,
+            {
+                address: {
+                    line1: request.body.lineOne,
+                    line2: request.body.lineTwo || null,
+                    postal_code: request.body.zipCode,
+                    city: request.body.city,
+                    state: request.body.state,
+                    country: "US"
+                },
+            }
+        ).then(() => {
+            return stripe.accounts.update(
+                request.body.accountID,
+                {
+                    individual: {
+                        address: {
+                            line1: request.body.lineOne,
+                            line2: request.body.lineTwo || null,
+                            postal_code: request.body.zipCode,
+                            city: request.body.city,
+                            state: request.body.state,
+                            country: "US"
+                        },
+                    },
+                    // id_number: request.body.ssn,
+                }
+            )
+        }).then(() => {
+            db.collection('users').doc(request.body.FBID).get()
+            .then(doc => {
+                if(!doc.exists){
+                    throw new Error("User does not exist")
+                }else{
+                    return db.collection('users').doc(request.body.FBID).update({
+                        primaryAddress: {
+                            line1: request.body.lineOne,
+                            line2: request.body.lineTwo || null,
+                            postal_code: request.body.zipCode,
+                            city: request.body.city,
+                            state: request.body.state,
+                            country: "US"
+                        },
+                        // ssnProvided: true
+                    })
+                }
+            })
+        })
+    })
+
 
     exports.addCustomer = functions.https.onRequest((request, response) => {
         stripe.customers.create(
@@ -48,6 +100,7 @@ const fs = require('fs');
                     if(!doc.exists){
                         throw new Error("User does not exist")
                     }else{
+
                         return stripe.accounts.create({
                             type: 'custom',
                             email: request.body.email,
@@ -61,7 +114,7 @@ const fs = require('fs');
                             capabilities: {
                                 card_payments: {requested: true},
                                 transfers: {requested: true},
-                                // tax_reporting_us_1099_k: {requested: true},
+                                tax_reporting_us_1099_k: {requested: true},
                             },
                             tos_acceptance: {
                                 date: Math.floor(Date.now() / 1000),
@@ -69,9 +122,9 @@ const fs = require('fs');
                               },
                             individual: {
                                 dob: {
-                                    day: 1,
-                                    month: 1,
-                                    year: 1996
+                                    day: request.body.dob.split("/")[1],
+                                    month: request.body.dob.split("/")[0],
+                                    year: request.body.dob.split("/")[2]
                                 },
                                 // address: {
                                 //     line1: "430 Partridge Run Road",
@@ -85,7 +138,7 @@ const fs = require('fs');
                                 phone: request.body.phone,
                                 first_name: request.body.name.split(' ', 1).toString(),
                                 last_name: request.body.name.split(' ').slice(-1).join(),
-                                // id_number: ,
+                                // id_number: token.id,
                             }
                         }).then((account) => {
                             db.collection('users').doc(request.body.FBID).update({

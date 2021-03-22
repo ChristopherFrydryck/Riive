@@ -121,6 +121,7 @@ export default class Authentication extends React.Component {
         email: this.props.UserStore.email,
         phone: this.props.UserStore.phone,
         FBID: auth().currentUser.uid,
+        dob: this.props.UserStore.dob,
       })
     }
     try{
@@ -183,6 +184,7 @@ export default class Authentication extends React.Component {
               // alert(`${doc.id} => ${doc.data().fullname}`);
               this.props.UserStore.fullname = doc.data().fullname;
               this.props.UserStore.phone = doc.data().phone;
+              this.props.UserStore.dob = doc.data().dob || null,
               this.props.UserStore.userID = doc.data().id;
               this.props.UserStore.stripeID = doc.data().stripeID;
               this.props.UserStore.photo = doc.data().photo;
@@ -370,6 +372,7 @@ export default class Authentication extends React.Component {
                       lastname: this.props.UserStore.lastname,
                       email: this.props.UserStore.email,
                       phone: this.props.UserStore.phone,
+                      dob: this.props.UserStore.dob,
                       totalNumTimesParked: 0,
                       numTimesOpenedApp: 1,
                       listings: [],
@@ -396,6 +399,7 @@ export default class Authentication extends React.Component {
                     // console.log(doc.data())
                     this.props.UserStore.fullname = this.props.UserStore.fullname;
                     this.props.UserStore.phone = this.props.UserStore.phone;
+                    this.props.UserStore.dob = this.props.UserStore.dob,
                     this.props.UserStore.stripeID = "";
                     this.props.UserStore.photo = "";
                     this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
@@ -509,6 +513,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.fullname = doc.data().fullname;
                 this.props.UserStore.phone = doc.data().phone;
                 this.props.UserStore.userID = doc.data().id;
+                this.props.UserStore.dob = doc.data().dob || null,
                 this.props.UserStore.stripeID = doc.data().stripeID;
                 this.props.UserStore.photo = doc.data().photo;
                 this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
@@ -721,7 +726,6 @@ renderCurrentState() {
         mask="mm/dd/yyyy"
         label="Date of Birth"
         name="DOB"
-        secureTextEntry
         onChangeText = {(dob) => this.props.UserStore.dob = dob}
         value={this.props.UserStore.dob}
         maxLength = {9}

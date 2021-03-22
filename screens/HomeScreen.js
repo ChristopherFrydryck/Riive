@@ -280,12 +280,13 @@ class Home extends Component {
 }
 
   getCurrentLocation = async(isFirstTime) => {
-  
+    // console.log("Getting location")
     try{
-      const permission = check(
+      const permission = await check(
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
       )
 
+     
       if(permission !== "granted"){
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
@@ -306,11 +307,10 @@ class Home extends Component {
           );}
         );
       }else{
-        await Geolocation.watchPosition((position) => {
-          this.setLocationState(isFirstTime, pos.coords.latitude, pos.coords.longitude)
-          // console.log(`Lat is ${position.coords.latitude}`)
-         
-      })
+        //   console.log("has permission")
+        await Geolocation.getCurrentPosition((position) => {
+            this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
+        })
       }
 
      
@@ -318,7 +318,7 @@ class Home extends Component {
         
     
     }catch(e){
-     
+  
           Alert.alert(
           "Location Unavailable",
           "Enable location permissions and restart Riive to discover parking nearby.",
@@ -975,7 +975,7 @@ goToReserveSpace = () => {
                             
                autofocus={false}
               ref={(instance) => { this.GooglePlacesRef = instance }}
-                            currentLocation={false}
+               currentLocation={false}
                minLength={2}
                listViewDisplayed={false}
                fetchDetails={true}
