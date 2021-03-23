@@ -100,7 +100,7 @@ export default class Authentication extends React.Component {
    this._navListener.remove();
   }
 
-  createStripeCustomer = async () => {
+  createStripeCustomer = () => {
 
     const settings = {
       method: 'POST',
@@ -116,13 +116,18 @@ export default class Authentication extends React.Component {
         dob: this.props.UserStore.dob,
       })
     }
-    try{
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomer', settings)
-      const data = await fetchResponse.json();
-      return data;
-    }catch(e){
-      alert(e);
-    }    
+
+    console.log("Starting fetch...")
+ 
+      fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomer', settings).then((res) => {
+        console.log("Successfully fetched!")
+        res.json();
+      }).then(resJson => {
+        console.log("Successfully converted to JSON!")
+        return resJson
+      }).catch(e => {
+        alert(e);
+      })    
   }
 
   // Resets the password of the state with email
@@ -334,15 +339,10 @@ export default class Authentication extends React.Component {
     // If vars are true and valid beguin creating user
     if(nameValid && phoneValid && dobValid){
     
-     auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then((userCredentials) => {
+     auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async(userCredentials) => {
         // RETURN ALL THIS IF EMAIL AND PASSWORD ARE TRUE
 
-        try{
-          this.createStripeCustomer()
-        }catch(e){
-          throw new Error(e)
-        }
-
+       
         this.setState({
           emailError: '',
           passwordError: '',
@@ -429,7 +429,7 @@ export default class Authentication extends React.Component {
                   
                
      
-              })
+              }).then(() => this.createStripeCustomer())
               .then(() =>  {
                 // Sends email to valid user
                 auth().currentUser.sendEmailVerification()
@@ -470,7 +470,8 @@ export default class Authentication extends React.Component {
 
         })
       }else{
-        alert(errorCode + ': ' + errorMessage);
+        console.log(e)
+        // alert(e);
       }
     })
   }

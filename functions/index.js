@@ -92,8 +92,7 @@ const fs = require('fs');
             },
             function(err, customer) {
               if (err){
-                  response.send(err)
-                  return null
+                  return response.status(500).send(err)
               }else{
                   return db.collection('users').doc(request.body.FBID).get()
                   .then(doc => {
@@ -145,14 +144,14 @@ const fs = require('fs');
                                 stripeID: customer.id,
                                 stripeConnectID: account.id,
                             })
-                            return [customer.id, account.id]
+                            return response.send("")
                         })
                         .catch(err => {
-                            console.log("ERROR! " + err)
+                            return response.status(500).send(err)
                         })
                     }
                   }).catch(err => {
-                      console.log("ERROR! " + err)
+                    return response.status(500).send(err)
                   })
                   
                   
