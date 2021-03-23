@@ -123,11 +123,11 @@ export default class Authentication extends React.Component {
         console.log("Successfully fetched!")
         res.json();
       }).then(resJson => {
-        console.log("Successfully converted to JSON!")
+        console.log(resJson)
         return resJson
       }).catch(e => {
         alert(e);
-      })    
+      })
   }
 
   // Resets the password of the state with email
