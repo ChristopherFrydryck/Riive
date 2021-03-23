@@ -296,25 +296,28 @@ export default class Authentication extends React.Component {
         phoneValid = false;
       }  
 
+      
 
       // Checks DOB for valid format
-      let month = this.props.UserStore.dob.split("/")[0]
-      let day = this.props.UserStore.dob.split("/")[1]
-      let year = this.props.UserStore.dob.split("/")[2]
+      let month = parseInt(this.props.UserStore.dob.split("/")[0]) || 0
+      let day = parseInt(this.props.UserStore.dob.split("/")[1]) || 0
+      let year = parseInt(this.props.UserStore.dob.split("/")[2]) || 0
 
-      if(month <= 12 && month.toString() !== "00" && day <= this.getDaysInMonth(year, month) && day.toString() !== "00" && year > 1900 && year < new Date().getFullYear()){
+
+
+      if(month <= 12 && month.toString() !== "00" && day <= this.getDaysInMonth(year, month) && day.toString() !== "00" && year > 1900 && year < new Date().getFullYear() - 17){
         this.setState({dobError: ''})
         dobValid = true;
       }else{
-        if(year < 1900 || year > new Date().getFullYear()){
+        if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 17){
           this.setState({
-            dobError: 'Please ensure your year is valid.',
+            dobError: 'Please ensure your year is valid and you are 18 or older',
           })
-        }else if(day > this.getDaysInMonth(year, month) || day.toString() == "00"){
+        }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "00"){
           this.setState({
             dobError: 'Please ensure your day is valid.',
           })
-        }else if(month > 12 || month.toString() == "00"){
+        }else if(month !== 0 && month > 12 || month.toString() == "00"){
           this.setState({
             dobError: 'Please ensure your month is valid.',
           })
