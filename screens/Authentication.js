@@ -74,18 +74,10 @@ export default class Authentication extends React.Component {
     // this.props.UserStore.email = 'admin@riive.net'
     // this.props.UserStore.password = "Fallon430"
 
-    
-    if (auth().currentUser !== null) {
-      await this.getCurrentUserInfo();
-      await this.forceUpdate();
-    } else{
-      this._isMounted = true;
-      this.forceUpdate();
-    }
-    
+
 
       // Set Status Bar page info here!
-   this._navListener = this.props.navigation.addListener('disdFocus', async() => {
+   this._navListener = this.props.navigation.addListener('didFocus', async() => {
     StatusBar.setBarStyle('dark-content', true);
     Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 
@@ -187,6 +179,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.dob = doc.data().dob || null,
               this.props.UserStore.userID = doc.data().id;
               this.props.UserStore.stripeID = doc.data().stripeID;
+              this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
               this.props.UserStore.photo = doc.data().photo;
               this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
               this.props.UserStore.last_update = doc.data().last_update;
@@ -257,7 +250,7 @@ export default class Authentication extends React.Component {
   }).then(() => {
     this._isMounted = true;
   }).catch((e) => {
-    alert("Failed to grab user data. Please try again. " + e)
+    alert("Failed to grab user data. " + e)
   })
 
 
@@ -341,6 +334,12 @@ export default class Authentication extends React.Component {
      auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then((userCredentials) => {
         // RETURN ALL THIS IF EMAIL AND PASSWORD ARE TRUE
 
+        try{
+          this.createStripeCustomer()
+        }catch(e){
+          throw new Error(e)
+        }
+
         this.setState({
           emailError: '',
           passwordError: '',
@@ -401,6 +400,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.phone = this.props.UserStore.phone;
                     this.props.UserStore.dob = this.props.UserStore.dob,
                     this.props.UserStore.stripeID = "";
+                    this.props.UserStore.stripeConnectID = "";
                     this.props.UserStore.photo = "";
                     this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
                     this.props.UserStore.last_update = auth().currentUser.metadata.creationTime;
@@ -415,8 +415,7 @@ export default class Authentication extends React.Component {
                   }).then(() => {
                     // alert('Welcome to Riive ' + this.props.UserStore.firstname + '!')
      
-                  this.setState({ authenticating: false});
-                  this.props.navigation.navigate('Home')
+                  
      
                   // ID if user signed in via email or google
                   this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
@@ -427,15 +426,17 @@ export default class Authentication extends React.Component {
                   
                
      
-              }).then(() => this.createStripeCustomer())
+              })
               .then(() =>  {
                 // Sends email to valid user
                 auth().currentUser.sendEmailVerification()
+                this.setState({ authenticating: false});
+                this.props.navigation.navigate('Home')
               })
-                .catch((e) => {
+              .catch((e) => {
                 alert('Whoops! We accidently lost connection. Try signing up again.' + e)
                 auth().currentUser.delete();
-                })
+              })
         
                   
           
@@ -515,6 +516,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.userID = doc.data().id;
                 this.props.UserStore.dob = doc.data().dob || null,
                 this.props.UserStore.stripeID = doc.data().stripeID;
+                this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
                 this.props.UserStore.photo = doc.data().photo;
                 this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
                 this.props.UserStore.last_update = doc.data().last_update;
@@ -584,6 +586,7 @@ onPressSignIn = async() => {
      
   }).catch((e) => {
     alert("Failed to grab user data. Please try again. " + e)
+    auth().signOut();
   })
 
 

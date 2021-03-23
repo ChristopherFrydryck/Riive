@@ -5,6 +5,7 @@ var today = new Date();
 class UserStore {
     @observable userID = '';
     @observable stripeID = '';
+    @observable stripeConnectID = '';
     @observable fullname = '';
     @observable email = '';
     @observable dob = '';
