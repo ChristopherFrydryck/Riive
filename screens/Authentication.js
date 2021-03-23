@@ -305,13 +305,13 @@ export default class Authentication extends React.Component {
 
 
 
-      if(month <= 12 && month.toString() !== "00" && day <= this.getDaysInMonth(year, month) && day.toString() !== "00" && year > 1900 && year < new Date().getFullYear() - 17){
+      if(month <= 12 && month.toString() !== "00" && day <= this.getDaysInMonth(year, month) && day.toString() !== "00" && year > 1900 && year < new Date().getFullYear() - 15){
         this.setState({dobError: ''})
         dobValid = true;
       }else{
-        if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 17){
+        if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
           this.setState({
-            dobError: 'Please ensure your year is valid and you are 18 or older',
+            dobError: 'Please ensure your year is valid and you are 16 or older',
           })
         }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "00"){
           this.setState({
