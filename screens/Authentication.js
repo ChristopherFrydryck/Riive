@@ -116,17 +116,20 @@ export default class Authentication extends React.Component {
         dob: this.props.UserStore.dob,
       })
     }
-
-    console.log("Starting fetch...")
- 
+    
       fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomer', settings).then((res) => {
-        console.log("Successfully fetched!")
-        res.json();
-      }).then(resJson => {
-        console.log(resJson)
-        return resJson
+        console.log(res)
+        if(res.status === 200){
+          return res.json()
+        }else{
+          throw new Error("Failure to create Stripe account")
+        }
+      }).then(body => {
+        // console.log(body.stripeConnectID)
+        this.props.UserStore.stripeID = body.stripeID;
+        this.props.UserStore.stripeConnectID = body.stripeConnectID;
       }).catch(e => {
-        alert(e);
+        throw new Error(e)
       })
   }
 

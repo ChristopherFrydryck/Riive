@@ -83,81 +83,68 @@ const fs = require('fs');
 
 
     exports.addCustomer = functions.https.onRequest((request, response) => {
-        stripe.customers.create(
-            {
+        return stripe.customers.create({
               name: request.body.name,
               email: request.body.email,
               phone: request.body.phone,
               description: "FB ID = " + request.body.FBID,
-            },
-            function(err, customer) {
-              if (err){
-                  return response.status(500).send(err)
-              }else{
-                  return db.collection('users').doc(request.body.FBID).get()
-                  .then(doc => {
-                    if(!doc.exists){
-                        throw new Error("User does not exist")
-                    }else{
+        }).then(async(customer) => {
+            // console.log(`Customer: ${customer.id}`)
+            let account = await stripe.accounts.create({
+                type: 'custom',
+                email: request.body.email,
+                business_type: "individual",
+                business_profile: {
+                    mcc: "7523",
+                    product_description: request.body.FBID, 
+                    support_email: request.body.email,
+                    support_phone: request.body.phone,
+                },
+                capabilities: {
+                    card_payments: {requested: true},
+                    transfers: {requested: true},
+                    tax_reporting_us_1099_k: {requested: true},
+                },
+                tos_acceptance: {
+                    date: Math.floor(Date.now() / 1000),
+                    ip: request.socket.remoteAddress,
+                  },
+                individual: {
+                    dob: {
+                        day: request.body.dob.split("/")[1],
+                        month: request.body.dob.split("/")[0],
+                        year: request.body.dob.split("/")[2]
+                    },
+                    // address: {
+                    //     line1: "430 Partridge Run Road",
+                    //     line2: "",
+                    //     postal_code: 15044,
+                    //     city: "Gibsonia",
+                    //     state: "Pennsylvania",
+                    //     country: "US"
+                    // },
+                    email: request.body.email,
+                    phone: request.body.phone,
+                    first_name: request.body.name.split(' ', 1).toString(),
+                    last_name: request.body.name.split(' ').slice(-1).join(),
+                    // id_number: token.id,
+                }
+            })
 
-                        return stripe.accounts.create({
-                            type: 'custom',
-                            email: request.body.email,
-                            business_type: "individual",
-                            business_profile: {
-                                mcc: "7523",
-                                product_description: request.body.FBID, 
-                                support_email: request.body.email,
-                                support_phone: request.body.phone,
-                            },
-                            capabilities: {
-                                card_payments: {requested: true},
-                                transfers: {requested: true},
-                                tax_reporting_us_1099_k: {requested: true},
-                            },
-                            tos_acceptance: {
-                                date: Math.floor(Date.now() / 1000),
-                                ip: request.socket.remoteAddress,
-                              },
-                            individual: {
-                                dob: {
-                                    day: request.body.dob.split("/")[1],
-                                    month: request.body.dob.split("/")[0],
-                                    year: request.body.dob.split("/")[2]
-                                },
-                                // address: {
-                                //     line1: "430 Partridge Run Road",
-                                //     line2: "",
-                                //     postal_code: 15044,
-                                //     city: "Gibsonia",
-                                //     state: "Pennsylvania",
-                                //     country: "US"
-                                // },
-                                email: request.body.email,
-                                phone: request.body.phone,
-                                first_name: request.body.name.split(' ', 1).toString(),
-                                last_name: request.body.name.split(' ').slice(-1).join(),
-                                // id_number: token.id,
-                            }
-                        }).then((account) => {
-                            db.collection('users').doc(request.body.FBID).update({
-                                stripeID: customer.id,
-                                stripeConnectID: account.id,
-                            })
-                            return response.send("")
-                        })
-                        .catch(err => {
-                            return response.status(500).send(err)
-                        })
-                    }
-                  }).catch(err => {
-                    return response.status(500).send(err)
-                  })
-                  
-                  
-              }
-            }            
-        )
+            // console.log(`Account: ${account.id}`)
+
+            return [customer, account]
+        }).then((account) => {
+            let data = {
+                stripeID: account[0].id,
+                stripeConnectID: account[1].id
+            };
+            db.collection('users').doc(request.body.FBID).update(data)
+            return response.send(data)
+        }).catch(err => {
+            console.log(err)
+            return response.status(500).send(err)
+        })
 
     } )
 
