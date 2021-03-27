@@ -122,7 +122,24 @@ export default class Authentication extends React.Component {
         if(res.status === 200){
           return res.json()
         }else{
-          throw new Error("Failure to create Stripe account")
+          switch(res.status) {
+            case 400: 
+              throw new Error(`Error ${res.status}: One or more of your credentials needs resolved. If all your information is correct, contact us at support@riive.net`)
+            case 401:
+              throw new Error(`Error ${res.status}: Stripe API error. Contact support@riive.net for more help.`);
+            case 402:
+              throw new Error(`Error ${res.status}: Request failed to contact Stripe servers.`)
+            case 403:
+              throw new Error(`Error ${res.status}: Permissions forbidden for API key. Please contact support@riive.net for more help.`)
+            case 404:
+              throw new Error(`Error ${res.status}: Requested resource does not exist`)
+            case 409:
+              throw new Error(`Error ${res.status}: There was a conflict with another request from the same user`)
+            case 429:
+              throw new Error(`Error ${res.status}: Too many requests made. Please try again soon.`)
+            default:
+              throw new Error(`Error ${res.status}: Something went wrong on Stripe's end. Please contact us at support@riive.net for more help.`)
+          }
         }
       }).then(body => {
         // console.log(body.stripeConnectID)

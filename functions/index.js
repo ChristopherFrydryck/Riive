@@ -142,8 +142,8 @@ const fs = require('fs');
             db.collection('users').doc(request.body.FBID).update(data)
             return response.send(data)
         }).catch(err => {
-            console.log(err)
-            return response.status(500).send(err)
+            // console.log(JSON.stringify(err))
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to create Stripe user.")
         })
 
     } )
