@@ -83,14 +83,7 @@ const fs = require('fs');
 
 
     exports.addCustomer = functions.https.onRequest((request, response) => {
-        return stripe.customers.create({
-              name: request.body.name,
-              email: request.body.email,
-              phone: request.body.phone,
-              description: "FB ID = " + request.body.FBID,
-        }).then(async(customer) => {
-            // console.log(`Customer: ${customer.id}`)
-            let account = await stripe.accounts.create({
+       return stripe.accounts.create({
                 type: 'custom',
                 email: request.body.email,
                 business_type: "individual",
@@ -129,11 +122,19 @@ const fs = require('fs');
                     last_name: request.body.name.split(' ').slice(-1).join(),
                     // id_number: token.id,
                 }
-            })
+            // })
 
             // console.log(`Account: ${account.id}`)
 
-            return [customer, account]
+            // return [customer, account]
+        }).then(async(account) => {
+            let customer = await stripe.customers.create({
+                name: request.body.name,
+                email: request.body.email,
+                phone: request.body.phone,
+                description: "FB ID = " + request.body.FBID,
+          })
+          return [account, customer]
         }).then((account) => {
             let data = {
                 stripeID: account[0].id,

@@ -86,11 +86,13 @@ class Profile extends Component{
             fullNameUpdate: this.props.UserStore.fullname,
             emailUpdate: this.props.UserStore.email,
             phoneUpdate: this.props.UserStore.phone,
+            dobUpdate: this.props.UserStore.dob,
             inputTextModal: "",
             editableTextInput: false,
             fullnameError: "",
             phoneError: "",
             emailError: "",
+            dobError: "",
             submitted: false,
             resetPW: false,
             imageUploading: false,
@@ -405,6 +407,10 @@ class Profile extends Component{
         });
     }
 
+    getDaysInMonth = (year, month) => {
+        return new Date(year, month, 0).getDate();
+      }
+
     updateAccountInfo = () => {
         const db = firestore();
         const doc = db.collection('users').doc(this.props.UserStore.userID);
@@ -437,6 +443,40 @@ class Profile extends Component{
             }else{
                 this.setState({fullnameError: "Please provide first and last name with a space."})
             }           
+        }
+        if (this.state.dobUpdate != this.props.UserStore.dob){
+            // Checks DOB for valid format
+            let month = parseInt(this.state.dobUpdate.split("/")[0]) || 0
+            let day = parseInt(this.state.dobUpdate.split("/")[1]) || 0
+            let year = parseInt(this.state.dobUpdate.split("/")[2]) || 0
+
+            if(month <= 12 && month.toString() !== "0" && day <= this.getDaysInMonth(year, month) && day.toString() !== "0" && year > 1900 && year < new Date().getFullYear() - 15){
+                this.props.UserStore.dob = this.state.dobUpdate;
+                doc.update({
+                    dob: this.state.dobUpdate
+                })
+                this.setState({dobError: "", submitted: true}) 
+                setTimeout(() => this.setState({submitted: false}), 3000)
+            }else{
+                if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
+                this.setState({
+                    dobError: 'Please ensure your year is valid and you are 16 or older',
+                })
+                }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
+                this.setState({
+                    dobError: 'Please ensure your day is valid.',
+                })
+                }else if(month !== 0 && month > 12 || month.toString() == "0"){
+                this.setState({
+                    dobError: 'Please ensure your month is valid.',
+                })
+                }else{
+                this.setState({
+                    dobError: 'Please ensure your date is in the proper format (MM/DD/YYYY).',
+                })
+                }
+                
+            }      
         }
         if (this.state.emailUpdate !== this.props.UserStore.email){
             if (this.state.emailUpdate.match(regexEmail)){
@@ -492,6 +532,7 @@ class Profile extends Component{
             this.props.UserStore.password = ""
             this.props.UserStore.phone = ""
             this.props.UserStore.userID = ""
+            this.props.UserStore.dob = ""
         })
     }   
 
@@ -637,7 +678,17 @@ class Profile extends Component{
                              keyboardType='phone-pad'
                              error={this.state.phoneError}
                         />
-                         
+                        <Input 
+                            placeholder='05/31/1996'
+                            mask="mm/dd/yyyy"
+                            label="Date of Birth"
+                            name="DOB"
+                            onChangeText = {(dobUpdate) => this.setState({dobUpdate})}
+                            value={this.state.dobUpdate}
+                            maxLength = {9}
+                            keyboardType='phone-pad'
+                            error={this.state.dobError}
+                        />
                          <ClickableChip
                                 style={{marginTop: 20, paddingTop: 10, paddingBottom: 10,}}
                                 onPress={() => this.updateAccountInfo()}
