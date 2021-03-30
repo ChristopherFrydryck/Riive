@@ -100,8 +100,9 @@ export default class Authentication extends React.Component {
    this._navListener.remove();
   }
 
-  createStripeCustomer = () => {
-
+  createStripeCustomer = async() => {
+    let res = null;
+    let error = null;
     const settings = {
       method: 'POST',
       headers: {
@@ -117,37 +118,55 @@ export default class Authentication extends React.Component {
       })
     }
     
-      fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomer', settings).then((res) => {
-        console.log(res)
+    await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomer', settings).then((res) => {
+        let data = res.json()
+        // console.log(`fnRes: ${JSON.stringify(res)}`)
+        // console.log(`fnResStatus: ${res.status}`)
         if(res.status === 200){
-          return res.json()
+          return data
         }else{
           switch(res.status) {
             case 400: 
-              throw new Error(`Error ${res.status}: One or more of your credentials needs resolved. If all your information is correct, contact us at support@riive.net`)
+              error = new Error(`One or more of your credentials needs resolved. If all your information is correct, contact us at support@riive.net`)
+              error.code = res.status;
+              console.log(error.code)
             case 401:
-              throw new Error(`Error ${res.status}: Stripe API error. Contact support@riive.net for more help.`);
+              error = new Error(`Stripe API error. Contact support@riive.net for more help.`);
+              error.code = res.status;
             case 402:
-              throw new Error(`Error ${res.status}: Request failed to contact Stripe servers.`)
+              error = new Error(`Request failed to contact Stripe servers.`)
+              error.code = res.status;
             case 403:
-              throw new Error(`Error ${res.status}: Permissions forbidden for API key. Please contact support@riive.net for more help.`)
+              error = new Error(`Permissions forbidden for API key. Please contact support@riive.net for more help.`);
+              error.code = res.status;
             case 404:
-              throw new Error(`Error ${res.status}: Requested resource does not exist`)
+              error = new Error(`Requested resource does not exist`)
+              error.code = res.status;
             case 409:
-              throw new Error(`Error ${res.status}: There was a conflict with another request from the same user`)
+              error = new Error(`There was a conflict with another request from the same user`);
+              error.code = res.status;
             case 429:
-              throw new Error(`Error ${res.status}: Too many requests made. Please try again soon.`)
+              error = new Error(`Too many requests made. Please try again soon.`);
+              error.code = res.status;
             default:
-              throw new Error(`Error ${res.status}: Something went wrong on Stripe's end. Please contact us at support@riive.net for more help.`)
+              error = new Error(`Something went wrong on Stripe's end. Please contact us at support@riive.net for more help.`);
+              error.code = res.status;
           }
+          throw error
         }
       }).then(body => {
         // console.log(body.stripeConnectID)
         this.props.UserStore.stripeID = body.stripeID;
         this.props.UserStore.stripeConnectID = body.stripeConnectID;
+        res = body;
+        return body
       }).catch(e => {
-        throw new Error(e)
+        res = error;
+        throw error
       })
+
+      return res
+      
   }
 
   // Resets the password of the state with email
@@ -449,15 +468,18 @@ export default class Authentication extends React.Component {
                   
                
      
-              }).then(() => this.createStripeCustomer())
-              .then(() =>  {
+              }).then(async() => {
+                return await this.createStripeCustomer()
+
+              }).then((res) =>  {
+                console.log(`res is: ${res}`)
                 // Sends email to valid user
                 auth().currentUser.sendEmailVerification()
                 this.setState({ authenticating: false});
                 this.props.navigation.navigate('Home')
               })
               .catch((e) => {
-                alert('Whoops! We accidently lost connection. Try signing up again.' + e)
+                alert('Whoops! We accidently lost connection. Try signing up again.' + e.message)
                 auth().currentUser.delete();
               })
         

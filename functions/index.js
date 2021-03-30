@@ -141,7 +141,7 @@ const fs = require('fs');
                 stripeConnectID: account[1].id
             };
             db.collection('users').doc(request.body.FBID).update(data)
-            return response.send(data)
+            return response.status(200).send(data)
         }).catch(err => {
             // console.log(JSON.stringify(err))
             return response.status(err.statusCode || 500).send(err.raw.message || "Failure to create Stripe user.")
