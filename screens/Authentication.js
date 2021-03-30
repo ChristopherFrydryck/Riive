@@ -127,32 +127,38 @@ export default class Authentication extends React.Component {
         }else{
           switch(res.status) {
             case 400: 
-              error = new Error(`One or more of your credentials needs resolved. If all your information is correct, contact us at support@riive.net`)
+              error = new Error(`One or more of your account details is wrong. Please ensure your phone number, date of birth and email are correct. Contact us at support@riive.net for more information.`)
               error.code = res.status;
-              console.log(error.code)
+              throw error
             case 401:
               error = new Error(`Stripe API error. Contact support@riive.net for more help.`);
               error.code = res.status;
+              throw error
             case 402:
               error = new Error(`Request failed to contact Stripe servers.`)
               error.code = res.status;
+              throw error
             case 403:
               error = new Error(`Permissions forbidden for API key. Please contact support@riive.net for more help.`);
               error.code = res.status;
+              throw error
             case 404:
               error = new Error(`Requested resource does not exist`)
               error.code = res.status;
+              throw error
             case 409:
               error = new Error(`There was a conflict with another request from the same user`);
               error.code = res.status;
+              throw error
             case 429:
               error = new Error(`Too many requests made. Please try again soon.`);
               error.code = res.status;
+              throw error
             default:
               error = new Error(`Something went wrong on Stripe's end. Please contact us at support@riive.net for more help.`);
               error.code = res.status;
+              throw error
           }
-          throw error
         }
       }).then(body => {
         // console.log(body.stripeConnectID)
@@ -472,14 +478,14 @@ export default class Authentication extends React.Component {
                 return await this.createStripeCustomer()
 
               }).then((res) =>  {
-                console.log(`res is: ${res}`)
+                // console.log(`res is: ${res}`)
                 // Sends email to valid user
                 auth().currentUser.sendEmailVerification()
                 this.setState({ authenticating: false});
                 this.props.navigation.navigate('Home')
               })
               .catch((e) => {
-                alert('Whoops! We accidently lost connection. Try signing up again.' + e.message)
+                alert('Whoops! We ran into an issue creating your account. ' + e.message)
                 auth().currentUser.delete();
               })
         
