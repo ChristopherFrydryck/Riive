@@ -411,7 +411,7 @@ class Profile extends Component{
         return new Date(year, month, 0).getDate();
       }
 
-    updateAccountInfo = () => {
+    updateAccountInfo = async() => {
         const db = firestore();
         const doc = db.collection('users').doc(this.props.UserStore.userID);
         const user = auth().currentUser;
@@ -421,11 +421,38 @@ class Profile extends Component{
         
         if (this.state.phoneUpdate !== this.props.UserStore.phone){
             if (this.state.phoneUpdate.match(regexPhone) || this.state.phoneUpdate == ""){
-                this.props.UserStore.phone = this.state.phoneUpdate;
+                const settings = {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      "Access-Control-Request-Method": "POST"
+                    },
+                    body: JSON.stringify({
+                      stripeID: this.props.UserStore.stripeID,
+                      stripeConnectID: this.props.UserStore.stripeConnectID,
+                      phone: this.state.phoneUpdate,
+                    })
+                  }
+                let error = null;
 
-                doc.update({ phone: this.props.UserStore.phone})
-                this.setState({phoneError: '', submitted: true})
-                setTimeout(() => this.setState({submitted: false}), 3000)
+                await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
+                    let data = res.json()
+
+                    if(res.status === 200){
+                        this.props.UserStore.phone = this.state.phoneUpdate;
+                        doc.update({ phone: this.props.UserStore.phone})
+                        this.setState({phoneError: '', submitted: true})
+                        setTimeout(() => this.setState({submitted: false}), 3000)
+                    }else{
+                        error = new Error(`Please ensure your phone number is valid.`)
+                        error.code = res.status;
+                        throw error
+                    }
+                    
+                }).catch(e => {
+                    this.setState({phoneError: e.message})
+                })
+                
             }else{
                 this.setState({phoneError: 'Please provide a proper 10 digit phone number.'})
             }

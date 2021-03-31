@@ -78,6 +78,79 @@ const fs = require('fs');
                     })
                 }
             })
+        }).catch(e => {
+            response.status(500).send(e)
+        })
+    })
+
+    exports.editFullName = functions.https.onRequest((request, response) => {
+        stripe.accounts.update({
+            first_name: request.body.name.split(' ', 1).toString(),
+            last_name: request.body.name.split(' ').slice(-1).join(),
+        }).then(async(account) => {
+            let customer = await stripe.customers.update({
+                name: request.body.name,
+            })
+            return[account, customer]
+        }).then(res => {
+            return response.status(200).send(res)
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user name")
+        })
+    })
+
+    exports.editFullName = functions.https.onRequest((request, response) => {
+        stripe.accounts.update({
+            individual: {
+                first_name: request.body.name.split(' ', 1).toString(),
+                last_name: request.body.name.split(' ').slice(-1).join(),
+            }
+        }).then(async(account) => {
+            let customer = await stripe.customers.update({
+                name: request.body.name,
+            })
+            return[account, customer]
+        }).then(res => {
+            return response.status(200).send(res)
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user name")
+        })
+    })
+
+    exports.editPhoneNumber = functions.https.onRequest((request, response) => {
+        stripe.accounts.update(
+            request.body.stripeID,
+            {
+            individual: {
+                phone: request.body.phone,
+            }
+        }).then(async() => {
+            await stripe.customers.update(
+                request.body.stripeConnectID ,{
+                phone: request.body.phone,
+            })
+            return null
+        }).then((res) => {
+            return response.status(200).send(res)
+        }).catch(err => {
+            console.log(err)
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update your phone number. Try again soon.")
+        })
+    })
+
+    exports.editDOB = functions.https.onRequest((request, response) => {
+        stripe.accounts.update({
+            individual: {
+                dob: {
+                    day: request.body.dob.split("/")[1],
+                    month: request.body.dob.split("/")[0],
+                    year: request.body.dob.split("/")[2]
+                },
+            }
+        }).then(() => {
+            return response.status(200).send("Successfully saved date of birth")
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user date of birth")
         })
     })
 

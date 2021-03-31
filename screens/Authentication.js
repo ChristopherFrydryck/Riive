@@ -468,11 +468,6 @@ export default class Authentication extends React.Component {
                   // ID if user signed in via email or google
                   this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
      
-                
-     
-                  
-                  
-               
      
               }).then(async() => {
                 return await this.createStripeCustomer()
