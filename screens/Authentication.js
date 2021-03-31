@@ -486,6 +486,7 @@ export default class Authentication extends React.Component {
               })
               .catch((e) => {
                 alert('Whoops! We ran into an issue creating your account. ' + e.message)
+                firestore().collection("users").doc(auth().currentUser.uid).delete()
                 auth().currentUser.delete();
               })
         
