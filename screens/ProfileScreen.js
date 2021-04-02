@@ -94,6 +94,8 @@ class Profile extends Component{
             emailError: "",
             dobError: "",
             submitted: false,
+            failed: false,
+            savingChanges: false,
             resetPW: false,
             imageUploading: false,
             selectedImageURI: "",
@@ -416,103 +418,114 @@ class Profile extends Component{
         const doc = db.collection('users').doc(this.props.UserStore.userID);
         const user = auth().currentUser;
 
+        this.setState({savingChanges: true})
+
         user.reload();
         
-        
-        if (this.state.phoneUpdate !== this.props.UserStore.phone){
-            if (this.state.phoneUpdate.match(regexPhone) || this.state.phoneUpdate == ""){
-                const settings = {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      "Access-Control-Request-Method": "POST"
-                    },
-                    body: JSON.stringify({
-                      stripeID: this.props.UserStore.stripeID,
-                      stripeConnectID: this.props.UserStore.stripeConnectID,
-                      phone: this.state.phoneUpdate,
+        try{
+            if (this.state.phoneUpdate !== this.props.UserStore.phone){
+                if (this.state.phoneUpdate.match(regexPhone) || this.state.phoneUpdate == ""){
+                    const settings = {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Request-Method": "POST"
+                        },
+                        body: JSON.stringify({
+                        stripeID: this.props.UserStore.stripeID,
+                        stripeConnectID: this.props.UserStore.stripeConnectID,
+                        phone: this.state.phoneUpdate,
+                        })
+                    }
+                    let error = null;
+
+                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
+                        let data = res.json()
+
+                        if(res.status === 200){
+                            this.props.UserStore.phone = this.state.phoneUpdate;
+                            doc.update({ phone: this.props.UserStore.phone})
+                            this.setState({phoneError: '', submitted: true})
+                            setTimeout(() => this.setState({submitted: false}), 3000)
+                        }else{
+                            error = new Error(`Please ensure your phone number is valid.`)
+                            error.code = 401
+                            throw error
+                        }
+                        
+                    }).catch(e => {
+                        throw e
                     })
-                  }
-                let error = null;
+                    
+                }else{
+                    this.setState({phoneError: 'Please provide a proper 10 digit phone number.'})
+                    throw new Error('Please provide a proper 10 digit phone number.')
+                }
+            }
+            if (this.state.fullNameUpdate != this.props.UserStore.fullname){
+                if (this.state.fullNameUpdate.match(regexFullname)){
+                    this.props.UserStore.fullname = this.state.fullNameUpdate
+                    doc.update({ 
+                        fullname: this.props.UserStore.fullname,
+                        firstname: this.props.UserStore.firstname,
+                        lastname: this.props.UserStore.lastname
+                    })
+                    this.setState({fullnameError: "", submitted: true}) 
+                    setTimeout(() => this.setState({submitted: false}), 3000)
+                }else{
+                    this.setState({fullnameError: "Please provide first and last name with a space."})
+                }           
+            }
+            if (this.state.dobUpdate != this.props.UserStore.dob){
+                // Checks DOB for valid format
+                let month = parseInt(this.state.dobUpdate.split("/")[0]) || 0
+                let day = parseInt(this.state.dobUpdate.split("/")[1]) || 0
+                let year = parseInt(this.state.dobUpdate.split("/")[2]) || 0
 
-                await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
-                    let data = res.json()
-
-                    if(res.status === 200){
-                        this.props.UserStore.phone = this.state.phoneUpdate;
-                        doc.update({ phone: this.props.UserStore.phone})
-                        this.setState({phoneError: '', submitted: true})
-                        setTimeout(() => this.setState({submitted: false}), 3000)
+                if(month <= 12 && month.toString() !== "0" && day <= this.getDaysInMonth(year, month) && day.toString() !== "0" && year > 1900 && year < new Date().getFullYear() - 15){
+                    this.props.UserStore.dob = this.state.dobUpdate;
+                    doc.update({
+                        dob: this.state.dobUpdate
+                    })
+                    this.setState({dobError: "", submitted: true}) 
+                    setTimeout(() => this.setState({submitted: false}), 3000)
+                }else{
+                    if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
+                    this.setState({
+                        dobError: 'Please ensure your year is valid and you are 16 or older',
+                    })
+                    }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
+                    this.setState({
+                        dobError: 'Please ensure your day is valid.',
+                    })
+                    }else if(month !== 0 && month > 12 || month.toString() == "0"){
+                    this.setState({
+                        dobError: 'Please ensure your month is valid.',
+                    })
                     }else{
-                        error = new Error(`Please ensure your phone number is valid.`)
-                        error.code = res.status;
-                        throw error
+                    this.setState({
+                        dobError: 'Please ensure your date is in the proper format (MM/DD/YYYY).',
+                    })
                     }
                     
-                }).catch(e => {
-                    this.setState({phoneError: e.message})
-                })
-                
-            }else{
-                this.setState({phoneError: 'Please provide a proper 10 digit phone number.'})
+                }      
             }
-        }
-        if (this.state.fullNameUpdate != this.props.UserStore.fullname){
-            if (this.state.fullNameUpdate.match(regexFullname)){
-                this.props.UserStore.fullname = this.state.fullNameUpdate
-                doc.update({ 
-                    fullname: this.props.UserStore.fullname,
-                    firstname: this.props.UserStore.firstname,
-                    lastname: this.props.UserStore.lastname
-                })
-                this.setState({fullnameError: "", submitted: true}) 
-                setTimeout(() => this.setState({submitted: false}), 3000)
-            }else{
-                this.setState({fullnameError: "Please provide first and last name with a space."})
-            }           
-        }
-        if (this.state.dobUpdate != this.props.UserStore.dob){
-            // Checks DOB for valid format
-            let month = parseInt(this.state.dobUpdate.split("/")[0]) || 0
-            let day = parseInt(this.state.dobUpdate.split("/")[1]) || 0
-            let year = parseInt(this.state.dobUpdate.split("/")[2]) || 0
-
-            if(month <= 12 && month.toString() !== "0" && day <= this.getDaysInMonth(year, month) && day.toString() !== "0" && year > 1900 && year < new Date().getFullYear() - 15){
-                this.props.UserStore.dob = this.state.dobUpdate;
-                doc.update({
-                    dob: this.state.dobUpdate
-                })
-                this.setState({dobError: "", submitted: true}) 
-                setTimeout(() => this.setState({submitted: false}), 3000)
-            }else{
-                if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
-                this.setState({
-                    dobError: 'Please ensure your year is valid and you are 16 or older',
-                })
-                }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
-                this.setState({
-                    dobError: 'Please ensure your day is valid.',
-                })
-                }else if(month !== 0 && month > 12 || month.toString() == "0"){
-                this.setState({
-                    dobError: 'Please ensure your month is valid.',
-                })
+            if (this.state.emailUpdate !== this.props.UserStore.email){
+                if (this.state.emailUpdate.match(regexEmail)){
+                // See requirePasswordAuthentication function for more detail!
+                this.setState({passwordAlert: true, emailError: ""})
                 }else{
-                this.setState({
-                    dobError: 'Please ensure your date is in the proper format (MM/DD/YYYY).',
-                })
+                    this.setState({emailError: 'Email format must be name@domain.com'})
                 }
-                
-            }      
-        }
-        if (this.state.emailUpdate !== this.props.UserStore.email){
-            if (this.state.emailUpdate.match(regexEmail)){
-            // See requirePasswordAuthentication function for more detail!
-            this.setState({passwordAlert: true, emailError: ""})
-            }else{
-                this.setState({emailError: 'Email format must be name@domain.com'})
+            }
+        }catch(e){
+            if(e.code === 401){
+                this.setState({phoneError: e.message, failed: true})
+                setTimeout(() => this.setState({failed: false}), 3000)
             }
         }
+
+        this.setState({savingChanges: false})
         
     }
 
@@ -719,9 +732,10 @@ class Profile extends Component{
                          <ClickableChip
                                 style={{marginTop: 20, paddingTop: 10, paddingBottom: 10,}}
                                 onPress={() => this.updateAccountInfo()}
-                                bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%
-                                textColor={this.state.submitted ? Colors.fortune700 : Colors.tango700}
-                        >{this.state.submitted ? "Submitted " : "Save Changes"}</ClickableChip>
+                                disabled={this.state.savingChanges || this.state.failed || this.state.submitted}
+                                bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : this.state.failed ? 'rgba(190, 55, 55, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%
+                                textColor={this.state.submitted ? Colors.fortune700 : this.state.failed ? Colors.hal700 : Colors.tango700}
+                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? "Saving Changes..." : "Save Changes"}</ClickableChip>
 
                         
                     
