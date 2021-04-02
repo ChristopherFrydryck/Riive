@@ -131,7 +131,7 @@ const fs = require('fs');
             })
             return null
         }).then((res) => {
-            return response.status(200).send(res)
+            return response.status(200).send("Successfully saved phone number")
         }).catch(err => {
             console.log(err)
             return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update your phone number. Try again soon.")

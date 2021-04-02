@@ -441,7 +441,7 @@ class Profile extends Component{
 
                     await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
                         let data = res.json()
-
+                        console.log(`Res is: ${res.status}`)
                         if(res.status === 200){
                             this.props.UserStore.phone = this.state.phoneUpdate;
                             doc.update({ phone: this.props.UserStore.phone})
@@ -449,17 +449,22 @@ class Profile extends Component{
                             setTimeout(() => this.setState({submitted: false}), 3000)
                         }else{
                             error = new Error(`Please ensure your phone number is valid.`)
-                            error.code = 401
+                            error.code = res.status
+                            error.name = "Phone/StripeInvalid"
                             throw error
                         }
                         
                     }).catch(e => {
+                        console.log(e.code)
                         throw e
                     })
                     
                 }else{
                     this.setState({phoneError: 'Please provide a proper 10 digit phone number.'})
-                    throw new Error('Please provide a proper 10 digit phone number.')
+                    error = new Error(`Please ensure your phone number is valid.`)
+                            error.code = 410
+                            error.name = "Phone/NumberTooShort"
+                            throw error
                 }
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
@@ -519,8 +524,13 @@ class Profile extends Component{
                 }
             }
         }catch(e){
-            if(e.code === 401){
+            console.log(e.code)
+            if(e.code === 410){
                 this.setState({phoneError: e.message, failed: true})
+                setTimeout(() => this.setState({failed: false}), 3000)
+            }else{
+                alert(e.message)
+                this.setState({failed: true})
                 setTimeout(() => this.setState({failed: false}), 3000)
             }
         }
