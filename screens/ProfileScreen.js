@@ -432,22 +432,22 @@ class Profile extends Component{
                         "Access-Control-Request-Method": "POST"
                         },
                         body: JSON.stringify({
-                        stripeID: this.props.UserStore.stripeID,
-                        stripeConnectID: this.props.UserStore.stripeConnectID,
-                        phone: this.state.phoneUpdate,
+                            stripeID: this.props.UserStore.stripeID,
+                            stripeConnectID: this.props.UserStore.stripeConnectID,
+                            phone: this.state.phoneUpdate,
                         })
                     }
                     let error = null;
 
                     await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
-                        let data = res.json()
-                        console.log(`Res is: ${res.status}`)
+                        console.log(res.status)
                         if(res.status === 200){
                             this.props.UserStore.phone = this.state.phoneUpdate;
                             doc.update({ phone: this.props.UserStore.phone})
                             this.setState({phoneError: '', submitted: true})
                             setTimeout(() => this.setState({submitted: false}), 3000)
                         }else{
+                            // If response is not 200
                             error = new Error(`Please ensure your phone number is valid.`)
                             error.code = res.status
                             error.name = "Phone/StripeInvalid"
@@ -455,12 +455,12 @@ class Profile extends Component{
                         }
                         
                     }).catch(e => {
-                        console.log(e.code)
+                        // If fetch is not 200 or function fails
                         throw e
                     })
                     
                 }else{
-                    this.setState({phoneError: 'Please provide a proper 10 digit phone number.'})
+                    // If phone number is not long enough
                     error = new Error(`Please ensure your phone number is valid.`)
                             error.code = 410
                             error.name = "Phone/NumberTooShort"
@@ -468,17 +468,49 @@ class Profile extends Component{
                 }
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
+                let error = null;
                 if (this.state.fullNameUpdate.match(regexFullname)){
-                    this.props.UserStore.fullname = this.state.fullNameUpdate
-                    doc.update({ 
-                        fullname: this.props.UserStore.fullname,
-                        firstname: this.props.UserStore.firstname,
-                        lastname: this.props.UserStore.lastname
+                    const settings = {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Request-Method": "POST"
+                        },
+                        body: JSON.stringify({
+                            stripeID: this.props.UserStore.stripeID,
+                            stripeConnectID: this.props.UserStore.stripeConnectID,
+                            name: this.state.fullNameUpdate
+                        })
+                    }
+
+                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editFullName', settings).then((res) => {
+                        console.log(res.status)
+                        if(res.status === 200){
+                            this.props.UserStore.fullname = this.state.fullNameUpdate
+                            doc.update({ 
+                                fullname: this.props.UserStore.fullname,
+                                firstname: this.props.UserStore.firstname,
+                                lastname: this.props.UserStore.lastname
+                            })
+                            this.setState({fullnameError: "", submitted: true}) 
+                            setTimeout(() => this.setState({submitted: false}), 3000)
+                        }else{
+                            // If response is not 200
+                            error = new Error(`Please ensure your name includes a first and last name.`)
+                            error.code = res.status
+                            error.name = "Name/StripeFailure"
+                            throw error
+                        }
+                    }).catch(e => {
+                        throw e
                     })
-                    this.setState({fullnameError: "", submitted: true}) 
-                    setTimeout(() => this.setState({submitted: false}), 3000)
+
+                   
                 }else{
-                    this.setState({fullnameError: "Please provide first and last name with a space."})
+                    error = new Error("Please provide first and last name with a space.")
+                    error.code = 410
+                    error.name = "Name/Invalid"
+                    throw error
                 }           
             }
             if (this.state.dobUpdate != this.props.UserStore.dob){
@@ -487,32 +519,66 @@ class Profile extends Component{
                 let day = parseInt(this.state.dobUpdate.split("/")[1]) || 0
                 let year = parseInt(this.state.dobUpdate.split("/")[2]) || 0
 
+                let error = null;
+
                 if(month <= 12 && month.toString() !== "0" && day <= this.getDaysInMonth(year, month) && day.toString() !== "0" && year > 1900 && year < new Date().getFullYear() - 15){
-                    this.props.UserStore.dob = this.state.dobUpdate;
-                    doc.update({
-                        dob: this.state.dobUpdate
+
+                    const settings = {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        "Access-Control-Request-Method": "POST"
+                        },
+                        body: JSON.stringify({
+                            stripeID: this.props.UserStore.stripeID,
+                            dob: this.state.dobUpdate
+                        })
+                    }
+             
+
+                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editDOB', settings).then((res) => {
+                        console.log(res.status)
+                        if(res.status === 200){
+                            this.props.UserStore.dob = this.state.dobUpdate;
+                            doc.update({
+                                dob: this.state.dobUpdate
+                            })
+                            this.setState({dobError: "", submitted: true}) 
+                            setTimeout(() => this.setState({submitted: false}), 3000)
+                        }else{
+                            // If response is not 200
+                            error = new Error(`Please ensure your date of birth is valid.`)
+                            error.code = res.status
+                            error.name = "DOB/StripeInvalid"
+                            throw error
+                        }
+                    }).catch(e => {
+                        throw e
                     })
-                    this.setState({dobError: "", submitted: true}) 
-                    setTimeout(() => this.setState({submitted: false}), 3000)
+              
+                    
                 }else{
                     if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
-                    this.setState({
-                        dobError: 'Please ensure your year is valid and you are 16 or older',
-                    })
+                        error = new Error('Please ensure your year is valid and you are 16 or older')
+                        error.code = 410
+                        error.name = "DOB/UserTooYoung"
+                        throw error
                     }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
-                    this.setState({
-                        dobError: 'Please ensure your day is valid.',
-                    })
+                        error = new Error('Please ensure your day is valid.')
+                        error.code = 411
+                        error.name = "DOB/DayInvalid"
+                        throw error
                     }else if(month !== 0 && month > 12 || month.toString() == "0"){
-                    this.setState({
-                        dobError: 'Please ensure your month is valid.',
-                    })
+                        error = new Error('Please ensure your month is valid.')
+                        error.code = 412
+                        error.name = "DOB/MonthInvalid"
+                        throw error
                     }else{
-                    this.setState({
-                        dobError: 'Please ensure your date is in the proper format (MM/DD/YYYY).',
-                    })
+                        error = new Error('Please ensure your date is in the proper format (MM/DD/YYYY).')
+                        error.code = 413
+                        error.name = "DOB/FormatInvalid"
+                        throw error
                     }
-                    
                 }      
             }
             if (this.state.emailUpdate !== this.props.UserStore.email){
@@ -524,15 +590,22 @@ class Profile extends Component{
                 }
             }
         }catch(e){
-            console.log(e.code)
-            if(e.code === 410){
-                this.setState({phoneError: e.message, failed: true})
-                setTimeout(() => this.setState({failed: false}), 3000)
-            }else{
-                alert(e.message)
-                this.setState({failed: true})
-                setTimeout(() => this.setState({failed: false}), 3000)
-            }
+           
+                if(e.name.split("/")[0] === "Phone"){
+                    this.setState({phoneError: e.message, failed: true})
+                    setTimeout(() => this.setState({failed: false}), 3000)
+                }else if(e.name.split("/")[0] === "DOB"){
+                    this.setState({dobError: e.message, failed: true})
+                    setTimeout(() => this.setState({failed: false}), 3000)
+                }else if(e.name.split("/")[0] === "Name"){
+                    this.setState({fullnameError: e.message, failed: true})
+                    setTimeout(() => this.setState({failed: false}), 3000)
+                }else{
+                    alert(e.message)
+                    this.setState({failed: true})
+                    setTimeout(() => this.setState({failed: false}), 3000)
+                }
+            
         }
 
         this.setState({savingChanges: false})

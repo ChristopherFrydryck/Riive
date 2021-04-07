@@ -84,34 +84,23 @@ const fs = require('fs');
     })
 
     exports.editFullName = functions.https.onRequest((request, response) => {
-        stripe.accounts.update({
-            first_name: request.body.name.split(' ', 1).toString(),
-            last_name: request.body.name.split(' ').slice(-1).join(),
-        }).then(async(account) => {
-            let customer = await stripe.customers.update({
-                name: request.body.name,
-            })
-            return[account, customer]
-        }).then(res => {
-            return response.status(200).send(res)
-        }).catch(err => {
-            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user name")
-        })
-    })
-
-    exports.editFullName = functions.https.onRequest((request, response) => {
-        stripe.accounts.update({
+        stripe.accounts.update(
+            request.body.stripeID,
+            {
             individual: {
                 first_name: request.body.name.split(' ', 1).toString(),
                 last_name: request.body.name.split(' ').slice(-1).join(),
             }
         }).then(async(account) => {
-            let customer = await stripe.customers.update({
-                name: request.body.name,
-            })
+            let customer = await stripe.customers.update(
+                request.body.stripeConnectID,
+                {
+                    name: request.body.name,
+                }
+            )
             return[account, customer]
         }).then(res => {
-            return response.status(200).send(res)
+            return response.status(200).send("Successfully saved user full name")
         }).catch(err => {
             return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user name")
         })
@@ -133,13 +122,14 @@ const fs = require('fs');
         }).then((res) => {
             return response.status(200).send("Successfully saved phone number")
         }).catch(err => {
-            console.log(err)
             return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update your phone number. Try again soon.")
         })
     })
 
     exports.editDOB = functions.https.onRequest((request, response) => {
-        stripe.accounts.update({
+        stripe.accounts.update(
+            request.body.stripeID,
+            {
             individual: {
                 dob: {
                     day: request.body.dob.split("/")[1],
