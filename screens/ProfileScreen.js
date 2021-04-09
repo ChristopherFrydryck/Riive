@@ -414,6 +414,8 @@ class Profile extends Component{
       }
 
     updateAccountInfo = async() => {
+
+        // console.log(`Customer: ${this.props.UserStore.stripeID}, connect acct: ${this.props.UserStore.stripeConnectID}`)
         const db = firestore();
         const doc = db.collection('users').doc(this.props.UserStore.userID);
         const user = auth().currentUser;
@@ -528,7 +530,7 @@ class Profile extends Component{
                         "Access-Control-Request-Method": "POST"
                         },
                         body: JSON.stringify({
-                            stripeID: this.props.UserStore.stripeID,
+                            stripeConnectID: this.props.UserStore.stripeConnectID,
                             dob: this.state.dobUpdate
                         })
                     }

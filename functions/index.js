@@ -85,7 +85,7 @@ const fs = require('fs');
 
     exports.editFullName = functions.https.onRequest((request, response) => {
         stripe.accounts.update(
-            request.body.stripeID,
+            request.body.stripeConnectID,
             {
             individual: {
                 first_name: request.body.name.split(' ', 1).toString(),
@@ -93,7 +93,7 @@ const fs = require('fs');
             }
         }).then(async(account) => {
             let customer = await stripe.customers.update(
-                request.body.stripeConnectID,
+                request.body.stripeID,
                 {
                     name: request.body.name,
                 }
@@ -108,14 +108,14 @@ const fs = require('fs');
 
     exports.editPhoneNumber = functions.https.onRequest((request, response) => {
         stripe.accounts.update(
-            request.body.stripeID,
+            request.body.stripeConnectID,
             {
             individual: {
                 phone: request.body.phone,
             }
         }).then(async() => {
             await stripe.customers.update(
-                request.body.stripeConnectID ,{
+                request.body.stripeID ,{
                 phone: request.body.phone,
             })
             return null
@@ -128,7 +128,7 @@ const fs = require('fs');
 
     exports.editDOB = functions.https.onRequest((request, response) => {
         stripe.accounts.update(
-            request.body.stripeID,
+            request.body.stripeConnectID,
             {
             individual: {
                 dob: {
@@ -200,8 +200,8 @@ const fs = require('fs');
           return [account, customer]
         }).then((account) => {
             let data = {
-                stripeID: account[0].id,
-                stripeConnectID: account[1].id
+                stripeID: account[1].id,
+                stripeConnectID: account[0].id
             };
             db.collection('users').doc(request.body.FBID).update(data)
             return response.status(200).send(data)

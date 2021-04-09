@@ -558,7 +558,7 @@ class reserveSpace extends Component {
               },
               body: JSON.stringify({
                 amount: this.state.totalCents,
-                customer: this.props.UserStore.stripeID,
+                customer: this.props.UserStore.stripeConnectID,
                 cardID: this.state.selectedPayment.StripePMID,
                 customerEmail: this.props.UserStore.email,
                 transactionFee: this.state.serviceFeeCents + this.state.processingFeeCents,
