@@ -25,6 +25,7 @@ import Timezones from '../constants/Timezones'
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth'
 import storage from '@react-native-firebase/storage'
 import * as geofirestore from 'geofirestore'
 
@@ -382,6 +383,15 @@ class addSpace extends Component {
   availabilityCallbackFunction = (data) => {
     this.setState({daily: data})
   }
+
+  resendVerification = () => {
+    const user = auth().currentUser;
+    user.sendEmailVerification().then(() => {
+        setTimeout(() => this.setState({verificationSnackbarVisible: false}), 500)
+    }).catch((e) => {
+        alert(e)
+    })
+}
    
 
 
@@ -563,8 +573,8 @@ clearAddress = () => {
 
   render() {
 
-    var numSpacesArray = Array.from(Array(10), (_, i) => i + 1)
-
+    // var numSpacesArray = Array.from(Array(10), (_, i) => i + 1)
+    if(auth().currentUser.emailVerified){
     return (
       <KeyboardAwareScrollView
       keyboardShouldPersistTaps="handled"
@@ -891,6 +901,24 @@ clearAddress = () => {
             
       </KeyboardAwareScrollView>
     );
+    }else{
+      return(
+        <ScrollView 
+          style={{backgroundColor: "white", paddingHorizontal: 16}} 
+          contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+        > 
+          <Icon 
+            iconName="alternate-email"
+            iconLib="MaterialIcons"
+            iconColor={Colors.cosmos500}
+            iconSize={120}
+            style={{marginBottom: 16}}
+          />
+          <Text>To list a space, you must verify your email.</Text>
+          <Button style={{backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.resendVerification()}>Resend Verification Email</Button>
+        </ScrollView>
+      )
+    }
   }
 }
 
