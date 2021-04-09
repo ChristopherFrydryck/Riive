@@ -440,7 +440,6 @@ class Profile extends Component{
                     let error = null;
 
                     await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
-                        console.log(res.status)
                         if(res.status === 200){
                             this.props.UserStore.phone = this.state.phoneUpdate;
                             doc.update({ phone: this.props.UserStore.phone})
@@ -484,7 +483,6 @@ class Profile extends Component{
                     }
 
                     await fetch('https://us-central1-riive-parking.cloudfunctions.net/editFullName', settings).then((res) => {
-                        console.log(res.status)
                         if(res.status === 200){
                             this.props.UserStore.fullname = this.state.fullNameUpdate
                             doc.update({ 
@@ -537,7 +535,6 @@ class Profile extends Component{
              
 
                     await fetch('https://us-central1-riive-parking.cloudfunctions.net/editDOB', settings).then((res) => {
-                        console.log(res.status)
                         if(res.status === 200){
                             this.props.UserStore.dob = this.state.dobUpdate;
                             doc.update({
