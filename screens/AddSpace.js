@@ -125,6 +125,7 @@ class addSpace extends Component {
              toBeDeleted: false,
              visits: 0,
             
+             verificationSent: false,
         }
     }
 
@@ -387,7 +388,7 @@ class addSpace extends Component {
   resendVerification = () => {
     const user = auth().currentUser;
     user.sendEmailVerification().then(() => {
-        setTimeout(() => this.setState({verificationSnackbarVisible: false}), 500)
+        this.setState({verificationSent: true})
     }).catch((e) => {
         alert(e)
     })
@@ -914,8 +915,8 @@ clearAddress = () => {
             iconSize={120}
             style={{marginBottom: 16}}
           />
-          <Text>To list a space, you must verify your email.</Text>
-          <Button style={{backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.resendVerification()}>Resend Verification Email</Button>
+          <Text style={{textAlign: "center"}}>To list a space, you must verify your email at {this.props.UserStore.email}.</Text>
+          <Button disabled={this.state.verificationSent} style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.resendVerification()}>{this.state.verificationSent ? "Email Sent" : "Resend Verification Email"}</Button>
         </ScrollView>
       )
     }
