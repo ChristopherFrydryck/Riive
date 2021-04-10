@@ -30,8 +30,9 @@ const fs = require('fs');
     })
 
     exports.addCustomerAddress = functions.https.onRequest((request, response) => {
+        let error = null;
         stripe.customers.update(
-            request.body.customerID,
+            request.body.stripeID,
             {
                 address: {
                     line1: request.body.lineOne,
@@ -44,7 +45,7 @@ const fs = require('fs');
             }
         ).then(() => {
             return stripe.accounts.update(
-                request.body.accountID,
+                request.body.stripeConnectID,
                 {
                     individual: {
                         address: {
@@ -63,7 +64,10 @@ const fs = require('fs');
             db.collection('users').doc(request.body.FBID).get()
             .then(doc => {
                 if(!doc.exists){
-                    throw new Error("User does not exist")
+                    error = new Error("User does not exist")
+                    error.statusCode = 401;
+                    error.name = 'Stripe/PaymentMethodFailure'
+                    throw error
                 }else{
                     return db.collection('users').doc(request.body.FBID).update({
                         primaryAddress: {
@@ -79,7 +83,7 @@ const fs = require('fs');
                 }
             })
         }).catch(e => {
-            response.status(500).send(e)
+            response.status(e.statusCode || 500).send("Failure to add address")
         })
     })
 

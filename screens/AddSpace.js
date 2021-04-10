@@ -609,13 +609,14 @@ clearAddress = () => {
               clearButtonMode: 'never'
             }}
             renderRightButton={() => 
-            <Icon 
-              iconName="x"
-              iconColor={Colors.cosmos500}
-              iconSize={24}
-              onPress={() => this.clearAddress()}
-              style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
-            />}
+              <Icon 
+                iconName="x"
+                iconColor={Colors.cosmos500}
+                iconSize={24}
+                onPress={() => this.clearAddress()}
+                style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
+              />
+            }
             query={{
               key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
               language: 'en'
