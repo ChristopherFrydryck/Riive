@@ -473,13 +473,13 @@ class reserveSpace extends Component {
 
                             
 
-                            // db.collection("trips").doc(ref.id).set(obj)
-                            // db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
-                            //     visits: firestore.FieldValue.arrayUnion(ref.id)
-                            // });
-                            // db.collection("users").doc(this.props.UserStore.userID).update({
-                            //     trips: firestore.FieldValue.arrayUnion(ref.id)
-                            // })
+                            db.collection("trips").doc(ref.id).set(obj)
+                            db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
+                                visits: firestore.FieldValue.arrayUnion(ref.id)
+                            });
+                            db.collection("users").doc(this.props.UserStore.userID).update({
+                                trips: firestore.FieldValue.arrayUnion(ref.id)
+                            })
 
 
                             let isToday = this.isToday(startDate);
@@ -504,7 +504,7 @@ class reserveSpace extends Component {
                                
                             
                             
-                            this.payForSpace(hostDoc.stripeID)
+                            // this.payForSpace(hostDoc.stripeID)
                             await this.setState({authenticatingReservation: false})
                             await this.props.navigation.navigate("ReservationConfirmed", {
                                 homeState: {

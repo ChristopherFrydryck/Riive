@@ -78,7 +78,6 @@ class addPayment extends Component {
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
        });
 
-       this.addAddress();
     }
 
    
@@ -162,23 +161,7 @@ setCardParams = async() => {
   
 }
 
-addAddress = async () => {
-  const settings = {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      FBID: auth().currentUser.uid,
-      stripeID: this.props.UserStore.stripeID,
-      accountID: null,
-    })
-  }
 
-  console.log(this.props.UserStore.stripeID)
-  console.log(this.props.UserStore.stripeConnectID)
-}
 
 
 addSource = async () => {
