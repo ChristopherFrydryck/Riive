@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, LogBox } from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, LogBox, Dimensions } from 'react-native';
 import Text from '../components/Txt'
 import Input from '../components/Input'
 import Icon from '../components/Icon'
+import Dropdown from '../components/Dropdown'
+import DropdownItem from '../components/DropdownItem'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
+import AddressTypes from '../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
@@ -74,12 +77,13 @@ class addPayment extends Component {
             address: {
               line1: "",
               line2: "",
+              line2Prefix: "Apartment",
               zipCode: "",
               city: "",
               state: "",
               country: ""
             },
-            addressError: "Testing",
+            addressError: "",
         }
     }
 
@@ -393,17 +397,27 @@ onSelectAddress = (det) => {
   var zip = det.address_components.filter(x => x.types.includes('postal_code'))[0]
 
   if(number && street && city && county && state){
-    console.log(number)
-    console.log(street)
-    console.log(city)
-    console.log(county)
-    console.log(state)
-    console.log(country)
-    console.log(zip)
+    // console.log(number)
+    // console.log(street)
+    // console.log(city)
+    // console.log(county)
+    // console.log(state)
+    // console.log(country)
+    // console.log(zip)
     this.setState({
       searchedAddress: true,
       addressError: "",
+      address:{
+        ...this.state.address,
+        line1: `${number.long_name} ${street.short_name}`,
+        zipCode: zip.short_name,
+        city: city.long_name,
+        state: state.short_name,
+        country: country.short_name
+      }
     })
+
+    console.log(this.state.address)
     // this.setState(prevState => ({
     //   searchedAddress: true,
     //   timezone: timeZoneDB,
@@ -658,103 +672,150 @@ verifyInput = () => {
           keyboardShouldPersistTaps='always'
         >
           <Text style={{color: Colors.cosmos900, fontSize: 18}}>Before we add a card, we need a few more things...</Text>
-          <View style={{flex: 1, paddingBottom: 16}}>
-            <Text style={styles.label}>Address</Text>
-            <GooglePlacesAutocomplete
-              placeholder='Your Address...'
-              returnKeyType={'search'}
-              ref={(instance) => { this.GooglePlacesRef = instance }}
-              currentLocation={false}
-              minLength={2}
-              autoFocus={true}
-              listViewDisplayed={false}
-              fetchDetails={true}
-              onPress={(data, details = null) => {
-                this.onSelectAddress(details)
-              }}
-              textInputProps={{
-                clearButtonMode: 'never'
-              }}
-              renderRightButton={() => 
-              <Icon 
-                iconName="x"
-                iconColor={Colors.cosmos500}
-                iconSize={24}
-                onPress={() => this.clearAddress()}
-                style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
-              />}
-              query={{
-                key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
-                language: 'en'
-              }}
-              GooglePlacesSearchQuery={{
-                rankby: 'distance',
-                types: 'address',
-                components: "country:us"
-              }}
-              // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-              nearbyPlacesAPI={'GoogleReverseGeocoding'}
-              debounce={200}
-              predefinedPlacesAlwaysVisible={true}
-              enablePoweredByContainer={false}
-              
-              
-              styles={{
-                container: {
-                  border: 'none',
-                  marginBottom: 8,
-                },
-                textInputContainer: {
-                  width: '100%',
-                  display: 'flex',
-                  alignSelf: 'center',
-                  backgroundColor: "white",
-                  marginTop: -6,
-                  borderColor: '#eee',
-                  borderBottomWidth: 2,
-                  borderTopWidth: 0,
-                  backgroundColor: "none"
-                },
-                textInput: {
-                  paddingRight: 0,
-                  paddingLeft: 0,
-                  paddingBottom: 0,
-                  color: '#333',
-                  fontSize: 18,
-                  width: '100%'
-                },
-                description: {
-                  fontWeight: 'bold'
-                },
-                predefinedPlacesDescription: {
-                  color: '#1faadb'
-                },
-                listView:{
-                 backgroundColor: 'white',
-                 position: 'absolute',
-                 top: 40,
-                 zIndex: 99
-              },
-                
-              }}
-            />
-              <Text style={styles.error}>{this.state.addressError}</Text>
-            </View>
+          <View style={{flex: 1, paddingBottom: 16, zIndex: 99999}}>
             
-
-          {/* <Input 
-                placeholder={"123 Cherry Lane"}
-                label="Street Address"
-                name="street-address"
-                onChangeText={(addr) => this.setState({address:{
-                  ...this.state.address,
-                  line1: addr,
-                }})}
-                value={this.state.address.line1}
-                maxLength={50}
-                // error={this.state.CCVError}
-            />
-            <Button onPress={() => this.verifyAddress()}>Check Address</Button> */}
+              <Text style={styles.label}>Address</Text>
+              <GooglePlacesAutocomplete
+                placeholder='Your Address...'
+                returnKeyType={'search'}
+                ref={(instance) => { this.GooglePlacesRef = instance }}
+                currentLocation={false}
+                minLength={2}
+                autoFocus={true}
+                listViewDisplayed={false}
+                fetchDetails={true}
+                onPress={(data, details = null) => {
+                  this.onSelectAddress(details)
+                }}
+                textInputProps={{
+                  clearButtonMode: 'never'
+                }}
+                renderRightButton={() => 
+                <Icon 
+                  iconName="x"
+                  iconColor={Colors.cosmos500}
+                  iconSize={24}
+                  onPress={() => this.clearAddress()}
+                  style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
+                />}
+                query={{
+                  key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+                  language: 'en'
+                }}
+                GooglePlacesSearchQuery={{
+                  rankby: 'distance',
+                  types: 'address',
+                  components: "country:us"
+                }}
+                // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
+                nearbyPlacesAPI={'GoogleReverseGeocoding'}
+                debounce={200}
+                predefinedPlacesAlwaysVisible={true}
+                enablePoweredByContainer={false}
+                
+                
+                styles={{
+                  container: {
+                    border: 'none',
+                    marginBottom: 8,
+                    
+                  },
+                  textInputContainer: {
+                    width: '100%',
+                    display: 'flex',
+                    alignSelf: 'center',
+                    backgroundColor: "white",
+                    marginTop: -6,
+                    borderColor: '#eee',
+                    borderBottomWidth: 2,
+                    borderTopWidth: 0,
+                    backgroundColor: "none"
+                  },
+                  textInput: {
+                    paddingRight: 0,
+                    paddingLeft: 0,
+                    paddingBottom: 0,
+                    color: '#333',
+                    fontSize: 18,
+                    width: '100%'
+                  },
+                  description: {
+                    fontWeight: 'bold'
+                  },
+                  predefinedPlacesDescription: {
+                    color: '#1faadb'
+                  },
+                  listView:{
+                    backgroundColor: 'white',
+                    position: 'absolute',
+                    top: 40,
+                    width: Dimensions.get("window").width - 32,
+                    zIndex: 999999
+                  },
+                  
+                }}
+              />
+                <Text style={styles.error}>{this.state.addressError}</Text>
+              </View>
+              
+              {/* <Input
+                flex={1}
+                placeholder='107'        
+                label= "Apt # (optional)"
+                name="Apartment number" 
+                style={{marginRight: 16}}                
+                onChangeText= {(number) => this.setState(prevState => ({
+                  address:{
+                    ...prevState.address,
+                    line2: number,
+                  }
+                }))}
+                value={this.state.address.line2}
+                maxLength = {6}
+                keyboardType='number-pad'
+              /> */}
+            
+            <View style={{flex: 1, zIndex: 9999, marginRight: 8, flexDirection: 'row'}}>
+              <Dropdown
+                flex={2}
+                selectedValue = {this.state.address.line2Prefix}
+                label="Line 2 (optional)"
+                // error={this.state.error.make}
+                style={{}}
+                onValueChange = {(res) => Platform.OS == 'ios' ? this.setState({address: {...this.state.address, line2Prefix: res.baseValue}}) : this.setState({address: {...this.state.address, line2Prefix: res}})}
+              >
+                {
+                  AddressTypes.map((x, i) => {
+                  if(Platform.OS === 'ios'){
+                    return(
+                      {key: i, label: x, baseValue: x}
+                    )
+                  }
+                  else{
+                      return(
+                        <DropdownItem key={i} label={x} value={x}/>
+                      )
+                  }
+                })
+                }
+              </Dropdown>
+            <Input
+              flex={2}
+              placeholder='107'        
+              label= ""
+              name="Apartment number"   
+              style={{marginTop: 1.5}}
+              onChangeText= {(number) => this.setState(prevState => ({
+                address:{
+                  ...prevState.address,
+                  line2: number,
+                }
+              }))}
+              value={this.state.address.line2}
+              maxLength = {6}
+              keyboardType='number-pad'/>
+            </View>
+            <Button style={{zIndex: -99}} onPress={() => console.log(this.state.address)}>Check Address</Button>
         </ScrollView>
       )
     }
