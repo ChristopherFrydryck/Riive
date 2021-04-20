@@ -456,8 +456,8 @@ clearAddress = () => {
   this.setState({
     searchedAddress: false,
     address: {
+      ...this.state.address,
       line1: "",
-      line2: "",
       zipCode: "",
       city: "",
       state: "",
@@ -672,7 +672,7 @@ verifyInput = () => {
           keyboardShouldPersistTaps='always'
         >
           <Text style={{color: Colors.cosmos900, fontSize: 18}}>Before we add a card, we need a few more things...</Text>
-          <View style={{flex: 1, paddingBottom: 16, zIndex: 99999}}>
+          {/* <View style={{flex: 1, paddingBottom: 0, zIndex: 99999, backgroundColor: 'orange',}}> */}
             
               <Text style={styles.label}>Address</Text>
               <GooglePlacesAutocomplete
@@ -696,7 +696,7 @@ verifyInput = () => {
                   iconColor={Colors.cosmos500}
                   iconSize={24}
                   onPress={() => this.clearAddress()}
-                  style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
+                  style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none",}}
                 />}
                 query={{
                   key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
@@ -717,8 +717,6 @@ verifyInput = () => {
                 styles={{
                   container: {
                     border: 'none',
-                    marginBottom: 8,
-                    
                   },
                   textInputContainer: {
                     width: '100%',
@@ -729,7 +727,7 @@ verifyInput = () => {
                     borderColor: '#eee',
                     borderBottomWidth: 2,
                     borderTopWidth: 0,
-                    backgroundColor: "none"
+                    backgroundColor: "none",
                   },
                   textInput: {
                     paddingRight: 0,
@@ -737,7 +735,7 @@ verifyInput = () => {
                     paddingBottom: 0,
                     color: '#333',
                     fontSize: 18,
-                    width: '100%'
+                    width: '100%',
                   },
                   description: {
                     fontWeight: 'bold'
@@ -750,13 +748,16 @@ verifyInput = () => {
                     position: 'absolute',
                     top: 40,
                     width: Dimensions.get("window").width - 32,
-                    zIndex: 999999
+                    zIndex: 999999,
                   },
+                  // row: {
+                  //   backgroundColor: 'white'
+                  // },
                   
                 }}
               />
                 <Text style={styles.error}>{this.state.addressError}</Text>
-              </View>
+              {/* </View> */}
               
               {/* <Input
                 flex={1}
@@ -775,13 +776,13 @@ verifyInput = () => {
                 keyboardType='number-pad'
               /> */}
             
-            <View style={{flex: 1, zIndex: 9999, marginRight: 8, flexDirection: 'row'}}>
+            <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
               <Dropdown
                 flex={2}
                 selectedValue = {this.state.address.line2Prefix}
                 label="Line 2 (optional)"
                 // error={this.state.error.make}
-                style={{}}
+                style={{height: 32}}
                 onValueChange = {(res) => Platform.OS == 'ios' ? this.setState({address: {...this.state.address, line2Prefix: res.baseValue}}) : this.setState({address: {...this.state.address, line2Prefix: res}})}
               >
                 {
@@ -804,7 +805,7 @@ verifyInput = () => {
               placeholder='107'        
               label= ""
               name="Apartment number"   
-              style={{marginTop: 1.5}}
+              style={{marginTop: 1.5, marginLeft: 8}}
               onChangeText= {(number) => this.setState(prevState => ({
                 address:{
                   ...prevState.address,
@@ -813,8 +814,25 @@ verifyInput = () => {
               }))}
               value={this.state.address.line2}
               maxLength = {6}
-              keyboardType='number-pad'/>
+              />
             </View>
+      
+            <Input
+              flex={2}
+              placeholder='XXXXXXXXX'        
+              label= {"SSN"}
+              secureTextEntry
+              name="Apartment number"   
+              style={{marginTop: 1.5, zIndex: -9}}
+              onChangeText= {(number) => this.setState(prevState => ({
+                address:{
+                  ...prevState.address,
+                  line2: number,
+                }
+              }))}
+              value={this.state.address.line2}
+              maxLength = {9}
+              keyboardType='number-pad'/>
             <Button style={{zIndex: -99}} onPress={() => console.log(this.state.address)}>Check Address</Button>
         </ScrollView>
       )
