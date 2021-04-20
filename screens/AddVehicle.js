@@ -284,15 +284,18 @@ class AddVehicle extends React.Component{
             <ScrollView style={[styles.container, {flex: 1, backgroundColor: 'white'}]}>
                 <View style={{flexDirection: "row" }}>
                     <Input 
-                        flex= {1}
+                        flex= {4}
                         onChangeText = {(value) => this.setState({yearSelected: value}, () => {this.checkYearMake()})}
+                        mask={"number"}
+                        style={{height: 48}}
+                        value={this.state.yearSelected}
                         label="Year"
                         placeholder="YYYY"
                         maxLength={4}
                         error={this.state.error.year}
                         keyboardType="numeric"
                     />
-                    <View style={{marginLeft: 16, flex: 3}}>
+                    <View style={{marginLeft: 16, flex: 16}}>
                         <Dropdown
                             selectedValue = {this.state.makeSelected}
                             label="Make"

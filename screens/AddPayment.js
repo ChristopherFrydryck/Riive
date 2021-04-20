@@ -84,6 +84,8 @@ class addPayment extends Component {
               country: ""
             },
             addressError: "",
+
+            ssn:""
         }
     }
 
@@ -819,18 +821,16 @@ verifyInput = () => {
       
             <Input
               flex={2}
-              placeholder='XXXXXXXXX'        
+              placeholder='XXXXXXXXX'   
+              mask={"number"}     
               label= {"SSN"}
               secureTextEntry
               name="Apartment number"   
               style={{marginTop: 1.5, zIndex: -9}}
-              onChangeText= {(number) => this.setState(prevState => ({
-                address:{
-                  ...prevState.address,
-                  line2: number,
-                }
-              }))}
-              value={this.state.address.line2}
+              onChangeText= {(number) => this.setState({
+                ssn: number
+              })}
+              value={this.state.ssn}
               maxLength = {9}
               keyboardType='number-pad'/>
             <Button style={{zIndex: -99}} onPress={() => console.log(this.state.address)}>Check Address</Button>

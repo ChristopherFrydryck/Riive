@@ -78,7 +78,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
         return (
             <View {...allProps}>
                 <View style={styles.container}>
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
                      </View>
@@ -100,11 +100,35 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
                 <Text style={styles.error}>{error}</Text>
             </View>    
         )
+    }if(props.mask == 'number'){
+        return (
+            <View {...allProps}>
+                <View style={styles.container}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
+                            <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
+                            <Text style={styles.label_disabled}>{rightText}</Text>
+                    </View>
+                    
+                    <TextInputMask
+                        type={'only-numbers'}
+                        secureTextEntry={secureTextEntry}
+                        value={value}
+                        style={editable ? styles.input : styles.input_disabled}
+                        onChangeText={onChangeText}
+                        placeholder={placeholder}
+                        keyboardType='numeric' 
+                        maxLength={maxLength}
+                        rightText = {rightText}
+                    />
+                </View>
+                <Text style={styles.error}>{error}</Text>
+            </View>    
+        )
     }if(props.mask == 'phone'){
         return (
             <View {...allProps}>
                 <View style={styles.container}>
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                             <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                             <Text style={styles.label_disabled}>{rightText}</Text>
                     </View>
@@ -129,7 +153,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
         return (
             <View {...allProps}>
                 <View style={styles.container}>
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
                     </View>
@@ -154,7 +178,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
         return (
             <View {...allProps}>
                 <View style={styles.container}>
-                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                             <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                             <Text style={styles.label_disabled}>{rightText}</Text>
                         </View>
@@ -179,7 +203,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
         return(
             <View {...allProps}>
                     <View style={styles.container}>
-                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                             <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                             <Text style={styles.label_disabled}>{rightText}</Text>
                         </View>
@@ -213,8 +237,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         width: '100%',
         borderColor: '#adadad',
-        borderBottomWidth: 2
-
+        borderBottomWidth: 2,
     },
     
     label: {
