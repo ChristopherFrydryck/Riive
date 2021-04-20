@@ -42,7 +42,7 @@ class AddVehicle extends React.Component{
         super(props);
 
         this.state = {
-            yearSelected: 0,
+            yearSelected: null,
             makeSelected: "Choose a Manufacturer...",
             modelSelected: "Car Model...",
             modelEnabled: false,
@@ -210,7 +210,7 @@ class AddVehicle extends React.Component{
 
     checkYearMake = () => {
        
-        if (this.state.yearSelected.length == 4
+        if (this.state.yearSelected !== null && this.state.yearSelected.length == 4
             && this.state.makeSelected !== "Choose a Manufacturer..."){
                 this.setState({loadingVehicleAPI: true})
                 axios.get('https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/' + this.state.makeSelected + '/modelyear/' + this.state.yearSelected + '/vehicleType/c?format=json')
@@ -284,7 +284,7 @@ class AddVehicle extends React.Component{
             <ScrollView style={[styles.container, {flex: 1, backgroundColor: 'white'}]}>
                 <View style={{flexDirection: "row" }}>
                     <Input 
-                        flex= {4}
+                        flex= {6}
                         onChangeText = {(value) => this.setState({yearSelected: value}, () => {this.checkYearMake()})}
                         mask={"number"}
                         style={{height: 48}}
