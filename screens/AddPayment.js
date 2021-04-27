@@ -197,19 +197,75 @@ addAddress = async () => {
       stripeConnectID: this.props.UserStore.stripeConnectID,
 
       lineOne: this.state.address.line1,
-      lineTwo: this.state.address.line2,
+      lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
       zipCode: this.state.address.zipCode,
       city: this.state.address.city,
       state: this.state.address.state,
     })
   }
-  try{  
-    const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
-    const data = await fetchResponse.json();
-    return data;
+
+  if(this.state.address.line1 != ""){
+    try{  
+      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
+      const data = await fetchResponse;
+      this.props.UserStore.address = {
+        lineOne: this.state.address.line1,
+        lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
+        zipCode: this.state.address.zipCode,
+        city: this.state.address.city,
+        state: this.state.address.state,
+      }
+      return data;
+    }catch(e){
+      alert(e);
+    }  
+  }else{
+    throw "Failure to save address."
+  }
+    
+}
+
+
+addSSN = async () => {
+
+  const settings = {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      FBID: auth().currentUser.uid,
+      stripeConnectID: this.props.UserStore.stripeConnectID,
+
+      ssn: this.state.ssn
+    })
+  }
+
+  if(this.state.ssn != ""){
+    try{  
+      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerSSN', settings)
+      const data = await fetchResponse;
+      this.props.UserStore.ssnProvided = true;
+      return data;
+    }catch(e){
+      alert(e);
+    }  
+  }else{
+   throw "Failure to save ssn.";
+  }
+    
+}
+
+
+addPreData = async() => {
+  try{
+    await this.addAddress();
+    await this.addSSN();
   }catch(e){
-    alert(e);
-  }    
+    alert(e)
+  }
+  
 }
 
 
@@ -314,81 +370,11 @@ submitPayment = async() => {
 }
 
 
-onSelectAddress = (det) => {
+onSelectAddress = async(det) => {
   // console.log(det.formatted_address)
   // console.log(det.geometry.location.lat);
   // console.log(det.address_c omponents)
 
-  
-  // let gmtValue = null;
-  
-  // // If it is not UTC 0
-  // if(det.utc_offset !== 0){
-  //   let gmtOffset = det.utc_offset/60;
-  //   let gmtAbs = Math.abs(gmtOffset)
-  //   // If the GMT offset is one whole number
-  //   if(gmtAbs.toString().length == 1){
-  //     // If ahead of GMT
-  //     if(gmtOffset > 0){
-  //       gmtValue = `GMT+0${gmtAbs}:00`
-  //       // If behind GMT
-  //     }else{
-  //       gmtValue = `GMT-0${gmtAbs}:00`
-  //     }
-  //   // If GMT offset is longer than one whole number
-  //   }else{
-  //     // Check if whole number
-  //     if(gmtOffset % 1 == 0){
-  //       // If ahead of GMT
-  //       if(gmtOffset > 0){
-  //         gmtValue = `GMT+${gmtAbs}:00`
-  //         // If behind GMT
-  //       }else{
-  //         gmtValue = `GMT-${gmtAbs}:00`
-  //       }
-  //     // Offset it not a whole number
-  //     }else{
-  //         let gmtSplit = gmtOffset.toString().split(".")
-  //         let hours = parseInt(gmtSplit[0])
-  //         let minutes = parseFloat(gmtOffset - hours) * 60
-          
-  //         if(hours.toString().length == 1){
-  //           // If ahead of GMT
-  //           if(gmtOffset > 0){
-  //             gmtValue = `GMT+0${hours}:${minutes}`
-  //             // If behind GMT
-  //           }else{
-  //             gmtValue = `GMT-0${hours}:${minutes}`
-  //           }
-  //         }else{
-  //            // If ahead of GMT
-  //            if(gmtOffset > 0){
-  //             gmtValue = `GMT+${hours}:${minutes}`
-  //             // If behind GMT
-  //           }else{
-  //             gmtValue = `GMT-${hours}:${minutes}`
-  //           }
-  //         }
-  //      }   
-  //   }
-  // }else{
-  //   gmtValue = `GMT`
-  // }
-
-  // let deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-  // let tzdbArray = Timezones.filter(x => x.offset === gmtValue)
-  // let tzDB = tzdbArray.filter(x => x.name === deviceTimeZone)
-  // let timeZoneDB;
-  
-  // if(tzDB.length > 0){
-  //   timeZoneDB = tzDB[0]
-  // }else{
-  //   timeZoneDB = tzdbArray[0]
-  // }
-
-
-
- 
   
   var number = det.address_components.filter(x => x.types.includes('street_number'))[0]
   var street = det.address_components.filter(x => x.types.includes('route'))[0]
@@ -419,30 +405,8 @@ onSelectAddress = (det) => {
       }
     })
 
-    console.log(this.state.address)
-    // this.setState(prevState => ({
-    //   searchedAddress: true,
-    //   timezone: timeZoneDB,
-    //   region:{
-    //     latitude: det.geometry.location.lat,
-    //     longitude: det.geometry.location.lng,
-    //     latitudeDelta: .006,
-    //     longitudeDelta: .006
-    //   },
-    //   address:{
-    //     ...prevState.address,
-    //     full: det.formatted_address,
-    //     number: number.long_name,
-    //     street: street.long_name,
-    //     city: city.long_name,
-    //     county: county.long_name,
-    //     state: state.long_name,
-    //     state_abbr: state.short_name,
-    //     country: country.long_name,
-    //     zip: zip.long_name,
-    //   }
-    // }))
-    // this.setState({addressError: ""})
+    
+   
   }else{
     this.setState({addressError: "Select a valid street address"})
     this.clearAddress();
@@ -467,6 +431,7 @@ clearAddress = () => {
     }
   })
 }
+
 
 
 
@@ -785,7 +750,7 @@ verifyInput = () => {
                 label="Line 2 (optional)"
                 // error={this.state.error.make}
                 style={{height: 32}}
-                onValueChange = {(res) => Platform.OS == 'ios' ? this.setState({address: {...this.state.address, line2Prefix: res.baseValue}}) : this.setState({address: {...this.state.address, line2Prefix: res}})}
+                onValueChange = {(res) => Platform.OS == 'ios' ? this.setState(prevState => ({address: {...this.state.address, line2Prefix: res.baseValue || prevState.address.line2Prefix}})) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
               >
                 {
                   AddressTypes.map((x, i) => {
@@ -833,7 +798,7 @@ verifyInput = () => {
               value={this.state.ssn}
               maxLength = {9}
               keyboardType='number-pad'/>
-            <Button style={{zIndex: -99}} onPress={() => console.log(this.state.address)}>Check Address</Button>
+            <Button style={{zIndex: -99}} onPress={() => this.addPreData()}>Check Address</Button>
         </ScrollView>
       )
     }

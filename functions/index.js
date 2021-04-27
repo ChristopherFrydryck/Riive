@@ -82,8 +82,41 @@ const fs = require('fs');
                     })
                 }
             })
+        }).then(() => {
+            return response.status(200).send()
         }).catch(e => {
-            response.status(e.statusCode || 500).send("Failure to add address")
+            return response.status(e.statusCode || 500).send("Failure to add address")
+        })
+    })
+
+    exports.addCustomerSSN = functions.https.onRequest((request, response) => {
+        let error = null;
+        stripe.accounts.update(
+                request.body.stripeConnectID,
+                {
+                    individual: {
+                        id_number: request.body.ssn,
+                    },
+                    
+                }
+        ).then(() => {
+            db.collection('users').doc(request.body.FBID).get()
+            .then(doc => {
+                if(!doc.exists){
+                    error = new Error("User does not exist")
+                    error.statusCode = 401;
+                    error.name = 'Stripe/SSNFailure'
+                    throw error
+                }else{
+                    return db.collection('users').doc(request.body.FBID).update({
+                        ssnProvided: true
+                    })
+                }
+            })
+        }).then(() => {
+            return response.status(200).send()
+        }).catch(e => {
+            return response.status(e.statusCode || 500).send("Failure to add address")
         })
     })
 
@@ -142,7 +175,7 @@ const fs = require('fs');
                 },
             }
         }).then(() => {
-            return response.status(200).send("Successfully saved date of birth")
+            return response.status(200).send()
         }).catch(err => {
             return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user date of birth")
         })

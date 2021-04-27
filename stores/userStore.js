@@ -10,6 +10,8 @@ class UserStore {
     @observable email = '';
     @observable dob = '';
     @observable phone = '';
+    @observable address = {};
+    @observable ssnProvided = false;
     @observable password = '';
     @observable photo = '';
     @observable joinedDate = null;
