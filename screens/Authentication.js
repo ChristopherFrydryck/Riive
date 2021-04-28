@@ -242,6 +242,8 @@ export default class Authentication extends React.Component {
               this.props.UserStore.disabled = doc.data().disabled.isDisabled;
               this.props.UserStore.deleted = doc.data().deleted.toBeDeleted
               this.props.UserStore.pushTokens = doc.data().pushTokens || [];
+              this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
+              this.props.UserStore.address = doc.data().primaryAddress || {};
 
               // ID if user signed in via email or google
               this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
@@ -442,6 +444,8 @@ export default class Authentication extends React.Component {
                         deletedStarts: new Date().getTime() / 1000,
                       },
                       pushTokens: [],
+                      ssnProvided: false,
+                      primaryAddress: {}
                     })
                 return docData
               }).then((doc) => {
@@ -463,6 +467,8 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.disabled = false;
                     this.props.UserStore.deleted = false;
                     this.props.UserStore.pushTokens = [];
+                    this.props.UserStore.ssnProvided = false;
+                    this.props.UserStore.address = {};
                   }).then(() => {
                     // alert('Welcome to Riive ' + this.props.UserStore.firstname + '!')
      
@@ -580,6 +586,8 @@ onPressSignIn = async() => {
                 this.props.UserStore.disabled = doc.data().disabled.isDisabled;
                 this.props.UserStore.deleted = doc.data().deleted.toBeDeleted
                 this.props.UserStore.pushTokens = doc.data().pushTokens || [];
+                this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
+                this.props.UserStore.address = doc.data().primaryAddress || {};
 
                 // ID if user signed in via email or google
                 this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;

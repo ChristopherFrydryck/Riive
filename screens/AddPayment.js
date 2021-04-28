@@ -7,6 +7,7 @@ import Dropdown from '../components/Dropdown'
 import DropdownItem from '../components/DropdownItem'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
+import FloatingCircles from '../components/FloatingCircles'
 import AddressTypes from '../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -73,15 +74,16 @@ class addPayment extends Component {
             allValid: false,
             authenticating: false,
 
+            savingAddrAndSSN: false,
             searchedAddress: false,
             address: {
-              line1: "",
-              line2: "",
-              line2Prefix: "Apartment",
-              zipCode: "",
-              city: "",
-              state: "",
-              country: ""
+              line1: this.props.UserStore.address.line1,
+              line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
+              line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
+              zipCode: this.props.UserStore.address.postal_code,
+              city: this.props.UserStore.address.city,
+              state: this.props.UserStore.address.state,
+              country: this.props.UserStore.address.country
             },
             addressError: "",
 
@@ -92,13 +94,17 @@ class addPayment extends Component {
     async componentDidMount(){
       // Set Status Bar page info here!
       this._isMounted = true;
-     this._navListener = this.props.navigation.addListener('didFocus', () => {
+      this._navListener = this.props.navigation.addListener('didFocus', () => {
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
        });
 
        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
+       if(this.state.address.line1 !== ""){
+         this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}, ${this.state.address.country}`)
+       }
+       
     }
 
    
@@ -208,16 +214,21 @@ addAddress = async () => {
     try{  
       const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
       const data = await fetchResponse;
+      if(data.status !== 200){
+        throw "Failure to link address."
+      }
+      console.log(this.state.address.line1)
       this.props.UserStore.address = {
-        lineOne: this.state.address.line1,
-        lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-        zipCode: this.state.address.zipCode,
+        line1: this.state.address.line1,
+        line2: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
+        postal_code: this.state.address.zipCode,
         city: this.state.address.city,
         state: this.state.address.state,
+        country: this.state.address.country
       }
       return data;
     }catch(e){
-      alert(e);
+      throw e
     }  
   }else{
     throw "Failure to save address."
@@ -246,10 +257,13 @@ addSSN = async () => {
     try{  
       const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerSSN', settings)
       const data = await fetchResponse;
+      if(data.status !== 200){
+        throw "Failure to link ssn."
+      }
       this.props.UserStore.ssnProvided = true;
       return data;
     }catch(e){
-      alert(e);
+      throw e
     }  
   }else{
    throw "Failure to save ssn.";
@@ -260,9 +274,12 @@ addSSN = async () => {
 
 addPreData = async() => {
   try{
+    this.setState({savingAddrAndSSN: true})
     await this.addAddress();
     await this.addSSN();
+    await this.setState({savingAddrAndSSN: false})
   }catch(e){
+    this.setState({savingAddrAndSSN: false})
     alert(e)
   }
   
@@ -432,6 +449,12 @@ clearAddress = () => {
   })
 }
 
+setLocation(text) {
+  this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
+  // console.log("Set location")
+  // console.log(this.state.address)
+}
+
 
 
 
@@ -549,7 +572,7 @@ verifyInput = () => {
 
 
   render() {
-    if(this.props.UserStore.address !== null){
+    if(this.props.UserStore.address !== {} && this.props.UserStore.ssnProvided){
       return (
         
         <ScrollView style={{backgroundColor: 'white'}}>
@@ -651,6 +674,7 @@ verifyInput = () => {
                 autoFocus={true}
                 listViewDisplayed={false}
                 fetchDetails={true}
+                onChangeText= {(text) => this.setLocation(text)}
                 onPress={(data, details = null) => {
                   this.onSelectAddress(details)
                 }}
@@ -663,7 +687,7 @@ verifyInput = () => {
                   iconColor={Colors.cosmos500}
                   iconSize={24}
                   onPress={() => this.clearAddress()}
-                  style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none",}}
+                  style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
                 />}
                 query={{
                   key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
@@ -742,7 +766,7 @@ verifyInput = () => {
                 maxLength = {6}
                 keyboardType='number-pad'
               /> */}
-            
+            <FloatingCircles numCircles={3} delay={100000}/>
             <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
               <Dropdown
                 flex={2}
@@ -798,7 +822,7 @@ verifyInput = () => {
               value={this.state.ssn}
               maxLength = {9}
               keyboardType='number-pad'/>
-            <Button style={{zIndex: -99}} onPress={() => this.addPreData()}>Check Address</Button>
+            <Button style={{zIndex: -99}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <View style={{width: 16, height: 16, backgroundColor: 'green', borderRadius: 8}}></View> : "Update Profile"}</Button>
         </ScrollView>
       )
     }
