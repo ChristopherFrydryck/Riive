@@ -766,7 +766,6 @@ verifyInput = () => {
                 maxLength = {6}
                 keyboardType='number-pad'
               /> */}
-            <FloatingCircles numCircles={3} delay={100000}/>
             <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
               <Dropdown
                 flex={2}
@@ -822,7 +821,7 @@ verifyInput = () => {
               value={this.state.ssn}
               maxLength = {9}
               keyboardType='number-pad'/>
-            <Button style={{zIndex: -99}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <View style={{width: 16, height: 16, backgroundColor: 'green', borderRadius: 8}}></View> : "Update Profile"}</Button>
+            <Button style={{zIndex: -99, backgroundColor: 'green', height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/>: "Update Profile"}</Button>
         </ScrollView>
       )
     }

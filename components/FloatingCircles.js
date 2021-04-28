@@ -54,11 +54,11 @@ export default class FloatingCircles extends React.Component{
     render(){
        
         return(
-            <View style={{display: 'flex', flexDirection: "row", justifyContent: 'space-between'}}>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: this.props.width, height: this.props.height}}>
                 {
                     
                     this.circles.map((value, i) => {
-                        return <Animated.View key={i} style={{width: this.props.size, height: this.props.size, backgroundColor: this.props.color, borderRadius: this.props.size/2, top: value, position: 'absolute', left: this.props.spacing*(i-1)}}/>
+                        return <Animated.View key={i} style={{width: this.props.size, height: this.props.size, backgroundColor: this.props.color, borderRadius: this.props.size/2, top: value, position: 'relative', }}/>
                     })
                 }
                 {/* <Animated.View style={{width: 12, height: 12, backgroundColor: 'green', borderRadius: 6, marginTop: this.state.yTranslation}}/>
@@ -73,10 +73,11 @@ export default class FloatingCircles extends React.Component{
 FloatingCircles.defaultProps = {
     numCircles: 3,
     color: Colors.cosmos900,
-    spacing: 16,
     size: 12,
     duration: 1000,
     movement: 8,
+    width: 3 * 16,
+    height: (8+12)
 };
 
 
