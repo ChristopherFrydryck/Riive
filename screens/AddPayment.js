@@ -299,6 +299,7 @@ addSource = async () => {
     body: JSON.stringify({
       FBID: auth().currentUser.uid,
       stripeID: this.props.UserStore.stripeID,
+      stripeConnectID: this.props.UserStore.stripeConnectID,
 
 
       number: this.state.creditCardNum,
@@ -651,7 +652,7 @@ verifyInput = () => {
                 />
             </View>  
             </View>
-          <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? "Saving Card" : "Save Card"}</Button>
+          <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Card"}</Button>
         </View>
         </ScrollView>
       );
@@ -821,7 +822,7 @@ verifyInput = () => {
               value={this.state.ssn}
               maxLength = {9}
               keyboardType='number-pad'/>
-            <Button style={{zIndex: -99, backgroundColor: 'green', height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/>: "Update Profile"}</Button>
+            <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
         </ScrollView>
       )
     }

@@ -7,6 +7,7 @@ import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 import Input from '../components/Input'
 import Button from '../components/Button'
+import FloatingCircles from '../components/FloatingCircles'
 
 import logo from '../assets/img/Logo_001.png'
 
@@ -735,8 +736,9 @@ onPressSignIn = async() => {
 renderCurrentState() {
   if(this.state.authenticating || this._isMounted === false){
     return(
-      <View style={styles.form}>
-        <ActivityIndicator size="large" color={Colors.cosmos300} />
+      <View style={[styles.form, {alignItems: 'center'}]}>
+        {/* <ActivityIndicator size="large" color={Colors.cosmos300} /> */}
+        <FloatingCircles color={Colors.tango500}/>
         {this._isMounted ? 
         <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.setState({ authenticating: false})}>Cancel</Button>
         : null}
@@ -847,7 +849,7 @@ renderCurrentState() {
             enabled 
           >
             <View style={styles.primaryView}>
-             {!this.state.authenticating ?<Image source={logo} style={styles.img}/> : null}
+             {!this.state.authenticating ? <Image source={logo} style={styles.img}/> : null}
              {this.renderCurrentState()}
              {/* <View style={{height: 60}}/> */}
              </View>

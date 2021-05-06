@@ -6,6 +6,7 @@ import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import LinearGradient from 'react-native-linear-gradient'
+import FloatingCircles from '../components/FloatingCircles'
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
@@ -216,7 +217,7 @@ class EditPayment extends React.Component{
               />
           </View>  
           </View> */}
-        <Button style={{backgroundColor: 'white', borderColor: Colors.hal300, borderWidth: 2}} textStyle={{color: Colors.hal300}} disabled={this.state.authenticating} onPress={() => this.deletePayment()}>Delete Card</Button>
+        <Button style={{backgroundColor: 'white', borderColor: Colors.hal300, borderWidth: 2}} textStyle={{color: Colors.hal300}} disabled={this.state.authenticating} onPress={() => this.deletePayment()}>{this.state.authenticating ? <FloatingCircles color={Colors.hal300}/> : "Delete Card"}</Button>
       </View>
       </ScrollView>
     );

@@ -267,6 +267,152 @@ const fs = require('fs');
         })
     })
 
+    exports.addCCForDirectDeposit = functions.https.onRequest((request, response) => {
+
+        // Payment method created. Still needs set up and confirmed
+        return stripe.paymentMethods.create({
+                type: 'card',
+                card: {
+                  number: request.body.number,
+                  exp_month: request.body.expMonth,
+                  exp_year: request.body.expYear,
+                  cvc: request.body.cvc,
+                },
+                billing_details: {
+                    name: request.body.name
+                }
+              })
+        .then((result) => {
+            if(result.error){
+           
+                const error = new Error("Failed to create payment method")
+                error.statusCode = 401;
+                error.name = 'Stripe/PaymentMethodFailure'
+                throw error;
+                
+            }else{
+                return result
+            }
+        })    
+        .then( async(card) => {
+            // Set up and send to Stripe customer
+            const setupIntent = await stripe.setupIntents.create({
+                customer: request.body.stripeID,
+                payment_method: card.id,
+                payment_method_types: ["card"],
+                confirm: true,
+            });
+            // await console.log(`created setup intent with : ${setupIntent.id}`)
+           
+            return [setupIntent, card.id]
+            
+        })
+        .then((result) => {
+            if(result[0].error){
+                const error = new Error("Failed to confirm")
+                error.statusCode = 503;
+                error.name = 'Stripe/SetupIntentFailure'
+                throw error;
+            }else{
+                return result
+            }
+        }).then(async(result) => {
+            let card = await stripe.tokens.create({
+                card: {
+                    number: request.body.number,
+                    exp_month: request.body.expMonth,
+                    exp_year: request.body.expYear,
+                    cvc: request.body.cvc,
+                    currency: 'USD',
+                    name: request.body.name
+                },
+              });
+            
+            return [card.id, ...result]
+        }).then(async(result) => {
+            await stripe.accounts.createExternalAccount(
+                request.body.stripeConnectID,
+                {
+                    external_account: result[0]
+                    
+                }
+            )
+            return result
+        }).then(async(result) => {
+            // Get user info
+            const userData = await db.collection('users').doc(request.body.FBID).get();
+            return [userData, ...result]   
+        }).then((doc) => {
+            if(!doc[0].exists){
+                const error = new Error("Failed to get your information")
+                error.statusCode = 404;
+                error.name = 'Auth/UserDoesNotExist'
+                throw error;
+            }else{
+
+                
+                const ref = db.collection("users").doc();
+                  // add card to database
+                
+                    db.collection("users").doc(request.body.FBID).update({
+                        payments: admin.firestore.FieldValue.arrayUnion({
+                            PaymentID: ref.id,
+                            StripeID: doc[2].id,
+                            StripePMID: doc[3],
+                            CardConnectID: doc[1],
+                            Type: "Card",
+                            CardType: request.body.creditCardType !== "" ? request.body.creditCardType : "Credit",
+                            Name: request.body.name,
+                            Month: request.body.expMonth,
+                            Year: request.body.expYear,
+                            Number: request.body.number.slice(-4),
+                            CCV: request.body.cvc,
+                        })
+                    })
+           
+
+    
+                response.status(200).send({
+                    statusCode: 200,
+                    message: "Successfully saved card",
+                    card: {
+                        PaymentID: ref.id,
+                        StripeID: doc[2].id,
+                        StripePMID: doc[3],
+                        CardConnectID: doc[1],
+                        Type: "Card",
+                        CardType: request.body.creditCardType !== "" ? request.body.creditCardType : "Credit",
+                        Name: request.body.name,
+                        Month: request.body.expMonth,
+                        Year: request.body.expYear,
+                        Number: request.body.number.slice(-4),
+                        CCV: request.body.cvc,
+                    },
+                })
+                return doc[2];
+            }
+        }).catch(async(err) => {
+
+        
+
+
+            // If error is after mounting payment to stripe, detatch it
+            if(err.statusCode === 404){
+                await stripe.paymentMethods.detach(
+                    pmID
+                );
+            }
+            
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+            
+            
+        })
+    })
+
     exports.addSource = functions.https.onRequest((request, response) => {
 
         // Payment method created. Still needs set up and confirmed
