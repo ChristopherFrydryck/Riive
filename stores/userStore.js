@@ -6,6 +6,7 @@ class UserStore {
     @observable userID = '';
     @observable stripeID = '';
     @observable stripeConnectID = '';
+    @observable directDepositInfo = {}; 
     @observable fullname = '';
     @observable email = '';
     @observable dob = '';

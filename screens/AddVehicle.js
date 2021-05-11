@@ -4,6 +4,7 @@ import Input from '../components/Input'
 import Dropdown from '../components/Dropdown'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
+import FloatingCircles from '../components/FloatingCircles'
 import axios from 'axios'
 
 import * as firebase from 'firebase/app';

@@ -267,7 +267,7 @@ const fs = require('fs');
         })
     })
 
-    exports.addCCForDirectDeposit = functions.https.onRequest((request, response) => {
+    exports.addDebitCardForDirectDeposit = functions.https.onRequest((request, response) => {
 
         // Payment method created. Still needs set up and confirmed
         return stripe.paymentMethods.create({
@@ -330,14 +330,14 @@ const fs = require('fs');
             
             return [card.id, ...result]
         }).then(async(result) => {
-            await stripe.accounts.createExternalAccount(
+            const bankAccount = await stripe.accounts.createExternalAccount(
                 request.body.stripeConnectID,
                 {
                     external_account: result[0]
                     
                 }
             )
-            return result
+            return [bankAccount, ...result]
         }).then(async(result) => {
             // Get user info
             const userData = await db.collection('users').doc(request.body.FBID).get();
@@ -349,17 +349,18 @@ const fs = require('fs');
                 error.name = 'Auth/UserDoesNotExist'
                 throw error;
             }else{
-
-                
                 const ref = db.collection("users").doc();
+                if(request.body.addCardToPayments){
+               
                   // add card to database
                 
                     db.collection("users").doc(request.body.FBID).update({
                         payments: admin.firestore.FieldValue.arrayUnion({
                             PaymentID: ref.id,
-                            StripeID: doc[2].id,
-                            StripePMID: doc[3],
-                            CardConnectID: doc[1],
+                            StripeID: doc[3].id,
+                            StripePMID: doc[4],
+                            CardToken: doc[2],
+                            CardID: doc[1].id,
                             Type: "Card",
                             CardType: request.body.creditCardType !== "" ? request.body.creditCardType : "Credit",
                             Name: request.body.name,
@@ -367,8 +368,34 @@ const fs = require('fs');
                             Year: request.body.expYear,
                             Number: request.body.number.slice(-4),
                             CCV: request.body.cvc,
-                        })
+                        }),
+                        directDeposit: {
+                            StripeID: doc[3].id,
+                            StripePMID: doc[4],
+                            CardToken: doc[2],
+                            type: "card",
+                            cardType: doc[1].brand,
+                            number: doc[1].last4,
+                            id: doc[1].id,
+                            fingerprint: doc[1].fingerprint,
+                            payoutMethods: doc[1].available_payout_methods
+                        }
                     })
+                }else{
+                    db.collection("users").doc(request.body.FBID).update({
+                        directDeposit: {
+                            StripeID: doc[3].id,
+                            StripePMID: doc[4],
+                            CardToken: doc[2],
+                            type: "card",
+                            cardType: doc[1].brand,
+                            number: doc[1].last4,
+                            id: doc[1].id,
+                            fingerprint: doc[1].fingerprint,
+                            payoutMethods: doc[1].available_payout_methods
+                        }
+                    })
+                }
            
 
     
@@ -377,9 +404,10 @@ const fs = require('fs');
                     message: "Successfully saved card",
                     card: {
                         PaymentID: ref.id,
-                        StripeID: doc[2].id,
-                        StripePMID: doc[3],
-                        CardConnectID: doc[1],
+                        StripeID: doc[3].id,
+                        StripePMID: doc[4],
+                        CardToken: doc[2],
+                        BankInfo: doc[1],
                         Type: "Card",
                         CardType: request.body.creditCardType !== "" ? request.body.creditCardType : "Credit",
                         Name: request.body.name,
@@ -389,7 +417,7 @@ const fs = require('fs');
                         CCV: request.body.cvc,
                     },
                 })
-                return doc[2];
+                return doc[3];
             }
         }).catch(async(err) => {
 
