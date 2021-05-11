@@ -333,7 +333,8 @@ const fs = require('fs');
             const bankAccount = await stripe.accounts.createExternalAccount(
                 request.body.stripeConnectID,
                 {
-                    external_account: result[0]
+                    external_account: result[0],
+                    default_for_currency: true,
                     
                 }
             )
@@ -370,10 +371,11 @@ const fs = require('fs');
                             CCV: request.body.cvc,
                         }),
                         directDeposit: {
+                            default: true,
                             StripeID: doc[3].id,
                             StripePMID: doc[4],
                             CardToken: doc[2],
-                            type: "card",
+                            type: "Card",
                             cardType: doc[1].brand,
                             number: doc[1].last4,
                             id: doc[1].id,
@@ -384,10 +386,11 @@ const fs = require('fs');
                 }else{
                     db.collection("users").doc(request.body.FBID).update({
                         directDeposit: {
+                            default: true,
                             StripeID: doc[3].id,
                             StripePMID: doc[4],
                             CardToken: doc[2],
-                            type: "card",
+                            type: "Card",
                             cardType: doc[1].brand,
                             number: doc[1].last4,
                             id: doc[1].id,

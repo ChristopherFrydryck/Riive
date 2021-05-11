@@ -118,7 +118,7 @@ class addSpace extends Component {
             expError: "",
             allValid: false,
             authenticating: false,
-            addCardToPayments: true,
+            addCardToPayments: false,
 
     
             
@@ -172,13 +172,14 @@ class addSpace extends Component {
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
        });
 
-      
 
        if(Object.keys(this.props.UserStore.directDepositInfo).length === 0){
         this.setState({directDepositProvided: false})
       }else{
        this.setState({directDepositProvided: true})
       }
+
+      // this.props.navigation.navigate("BankLinkNavigator")
     }
 
  
@@ -437,7 +438,7 @@ class addSpace extends Component {
             await this.setState({authenticating: true})
       
             this.addDebitCardDD().then(async(result) => {
-              console.log(`result is: ${JSON.stringify(result)}`)
+         
               
     
               
@@ -596,7 +597,7 @@ class addSpace extends Component {
 
                 let createdTime = new Date().getTime();
                  
-                 console.log(this.state.photo)
+                 
                  await this.setState({savingSpace: true})
 
                  await db.collection("users").doc(this.props.UserStore.userID).update({
@@ -703,7 +704,7 @@ class addSpace extends Component {
 
       imageBrowserCallback = (callback) => {
         callback.then((photos) => {
-          console.log(photos)
+  
           this.setState({
             imageBrowserOpen: false,
             photos: photos,
@@ -862,7 +863,7 @@ clearAddress = () => {
   render() {
 
     // var numSpacesArray = Array.from(Array(10), (_, i) => i + 1)
-    if(auth().currentUser.emailVerified && this.state.directDepositProvided){
+    if(auth().currentUser.emailVerified && this.state.directDepositProvided && this.props.UserStore.ssnProvided && this.props.UserStore.address !== {}){
     return (
       <KeyboardAwareScrollView
       keyboardShouldPersistTaps="handled"
@@ -1196,16 +1197,9 @@ clearAddress = () => {
          style={{backgroundColor: "white", paddingHorizontal: 16}} 
          contentContainerStyle={{flex: 1}}
         > 
-          {/* // <Icon 
-          //   iconName="bank-transfer"
-          //   iconLib="MaterialCommunityIcons"
-          //   iconColor={Colors.cosmos500}
-          //   iconSize={120}
-          //   style={{marginBottom: 16}}
-          // /> */}
-          {/* // <Text style={{textAlign: "center"}}>Let's add a bank account.</Text> */}
+   
           <View style={styles.container}>
-          <LinearGradient colors={[Colors.apollo500, Colors.apollo700]} style={styles.creditCard}>
+          {/* <LinearGradient colors={[Colors.apollo500, Colors.apollo700]} style={styles.creditCard}>
               <Icon 
                 iconName={this.state.creditCardType !== '' ? 'cc-' + this.state.creditCardType : 'credit-card'}
                 iconLib="FontAwesome"
@@ -1280,18 +1274,47 @@ clearAddress = () => {
             
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 8}}>
-              <Text style={{flex: 1}}>Add card to profile</Text>
+              <Text style={{flex: 1, color: !this.props.UserStore.ssnProvided || this.props.UserStore.address === {} ? Colors.mist900 : Colors.cosmos900}}>Add card to profile</Text>
               <Switch
+                disabled={!this.props.UserStore.ssnProvided || this.props.UserStore.address === {}}
                 onValueChange={() => this.setState(prevState => ({addCardToPayments: !this.state.addCardToPayments}))}
                 value={this.state.addCardToPayments}
               />
             </View>
             
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button> */}
+
+
+          <Icon 
+            iconName="alternate-email"
+            iconLib="MaterialIcons"
+            iconColor={Colors.cosmos500}
+            iconSize={120}
+            style={{marginBottom: 16}}
+          />
+          <Text style={{textAlign: "center"}}>Let's link a bank account.</Text>
+          <Button style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("BankLinkNavigator")}>Link Bank Account</Button>    
             
           </View>
           
          
+        </ScrollView>
+      )
+    }else if(!this.props.UserStore.ssnProvided || this.props.UserStore.address === {}){
+      return(
+        <ScrollView 
+          style={{backgroundColor: "white", paddingHorizontal: 16}} 
+          contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+        > 
+          <Icon 
+            iconName="alternate-email"
+            iconLib="MaterialIcons"
+            iconColor={Colors.cosmos500}
+            iconSize={120}
+            style={{marginBottom: 16}}
+          />
+          <Text style={{textAlign: "center"}}>You must add an address, SSN and payment method before creating your first parking space.</Text>
+          <Button disabled={this.state.verificationSent} style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("AddPayment")}>Complete Profile</Button>
         </ScrollView>
       )
     }else{

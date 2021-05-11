@@ -862,8 +862,8 @@ class Profile extends Component{
                                 }
                             >
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('Settings')}} title="Settings" />
+                                <Menu.Item onPress={() => {this.props.navigation.navigate('Settings')}} title="Bank Information" />
                                 <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
-                                <Menu.Item onPress={() => {}} title="Promo code" />
                                 <Divider />
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" />
                                 <Menu.Item onPress={this.signOut} title="Sign out" />

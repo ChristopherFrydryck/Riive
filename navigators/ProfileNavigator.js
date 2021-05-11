@@ -1,6 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from 'react-navigation-stack'
 import LegalNavigator from './LegalNavigator'
+import BankLinkNavigator from './BankLinkNavigator'
 
 import Profile from '../screens/ProfileScreen'
 import AddVehicle from '../screens/AddVehicle'
@@ -27,6 +28,7 @@ const ProfileNavigator = createStackNavigator({
     AddSpace: AddSpace,
     EditSpace: EditSpace,
     LegalNavigator: LegalNavigator,
+    BankLinkNavigator: BankLinkNavigator,
     Settings: Settings
 },
 {

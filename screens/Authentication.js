@@ -232,6 +232,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.userID = doc.data().id;
               this.props.UserStore.stripeID = doc.data().stripeID;
               this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
+              this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
               this.props.UserStore.photo = doc.data().photo;
               this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
               this.props.UserStore.last_update = doc.data().last_update;
@@ -446,7 +447,8 @@ export default class Authentication extends React.Component {
                       },
                       pushTokens: [],
                       ssnProvided: false,
-                      primaryAddress: {}
+                      primaryAddress: {},
+                      directDeposit: {},
                     })
                 return docData
               }).then((doc) => {
@@ -457,6 +459,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.address = null,
                     this.props.UserStore.stripeID = "";
                     this.props.UserStore.stripeConnectID = "";
+                    this.props.UserStore.directDepositInfo = {};
                     this.props.UserStore.photo = "";
                     this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
                     this.props.UserStore.last_update = auth().currentUser.metadata.creationTime;
@@ -576,6 +579,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.address = doc.data().primaryAddress || null,
                 this.props.UserStore.stripeID = doc.data().stripeID;
                 this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
+                this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
                 this.props.UserStore.photo = doc.data().photo;
                 this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
                 this.props.UserStore.last_update = doc.data().last_update;
