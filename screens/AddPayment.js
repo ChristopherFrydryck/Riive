@@ -101,8 +101,10 @@ class addPayment extends Component {
 
        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-       if(this.state.address.line1 !== ""){
+       if(this.state.address.line1){
          this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}, ${this.state.address.country}`)
+       }else{
+        this.setLocation("")
        }
        
     }
@@ -217,7 +219,6 @@ addAddress = async () => {
       if(data.status !== 200){
         throw "Failure to link address."
       }
-      console.log(this.state.address.line1)
       this.props.UserStore.address = {
         line1: this.state.address.line1,
         line2: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
