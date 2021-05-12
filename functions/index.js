@@ -267,8 +267,76 @@ const fs = require('fs');
         })
     })
 
-    exports.addDebitCardForDirectDeposit = functions.https.onRequest((request, response) => {
+    exports.addBankForDirectDeposit = functions.https.onRequest((request, response) => {
+        return stripe.tokens.create({
+            bank_account: {
+                country: 'US',
+                currency: 'usd',
+                account_holder_name: request.body.name,
+                routing_number: request.body.routingNumber,
+                account_number: request.body.accountNumber,
+            },
+          }).then( async(bankAccount) => {
+            const ba = await stripe.accounts.createExternalAccount(
+                request.body.stripeConnectID,
+                {
+                    external_account: bankAccount.id,
+                    default_for_currency: true,
+                    
+                }
+            )
+            return([ba, bankAccount.id])
+          }).then( async(bankAccount) => {
+            const userData = await db.collection('users').doc(request.body.FBID).get();
+            return [userData, ...bankAccount]  
+          }).then( async(doc) => {
+            if(!doc[0].exists){
+                const error = new Error("Failed to get your information")
+                error.statusCode = 404;
+                error.name = 'Auth/UserDoesNotExist'
+                throw error;
+            }else{
+                db.collection("users").doc(request.body.FBID).update({
+                    directDeposit: {
+                        default: true,
+                        BankToken: doc[2],
+                        type: "Bank Account",
+                        bankProvider: doc[1].bank_name,
+                        number: doc[1].last4,
+                        id: doc[1].id,
+                        fingerprint: doc[1].fingerprint,
+                        currency: doc[1].currency,
+                        country: doc[1].country
+                    }
+                })
+            }
+            response.status(200).send({
+                statusCode: 200,
+                message: "Successfully saved bank account",
+                bank: {
+                    default: true,
+                    BankToken: doc[2],
+                    type: "Bank Account",
+                    bankProvider: doc[1].bank_name,
+                    number: doc[1].last4,
+                    id: doc[1].id,
+                    fingerprint: doc[1].fingerprint,
+                    currency: doc[1].currency,
+                    country: doc[1].country
+                }
+            })
+            return doc[1];
+          }).catch(async(err) => {
+            if(err.statusCode === 404){
+                await stripe.paymentMethods.detach(
+                    pmID
+                );
+            }
+          })
+    })
 
+    exports.addDebitCardForDirectDeposit = functions.https.onRequest((request, response) => {
+        
         // Payment method created. Still needs set up and confirmed
         return stripe.paymentMethods.create({
                 type: 'card',
@@ -424,23 +492,12 @@ const fs = require('fs');
             }
         }).catch(async(err) => {
 
-        
-
-
-            // If error is after mounting payment to stripe, detatch it
-            if(err.statusCode === 404){
-                await stripe.paymentMethods.detach(
-                    pmID
-                );
-            }
-            
             return response.status(err.statusCode || 500).send({
                 statusCode: err.statusCode,
                 message: err.message,
                 name: err.name
-            })
-            
-            
+            })  
+                       
         })
     })
 

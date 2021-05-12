@@ -66,40 +66,6 @@ class addDebitCard extends Component {
         super(props)
 
         this.state = {
-            postID: null,
-            region: {
-              latitude: null,
-              longitude: null,
-              latitudeDelta: null,
-              longitudeDelta: null,
-            },
-            address: {
-              full: null,
-              number: null,
-              street: null,
-              box: null,
-              city: null,
-              county: null,
-              state: null,
-              state_abbr: null,
-              country: null,
-              country_abbr: null,
-              zip: null,
-              spaceNumber: null,
-            },
-            timezone: null,
-            
-            searchedAddress: false,
-            addressValid: false,
-            nameValid: false,
-            bioValid: true,
-            priceValid: false,
-
-            addressError: '',
-            nameError: '',
-            bioError: '',
-            priceError: '',
-
             creditCardNum: null,
             creditCardType: '',
             creditCardFormat: 'visa-or-mastercard',
@@ -119,39 +85,6 @@ class addDebitCard extends Component {
             authenticating: false,
             addCardToPayments: false,
 
-    
-            
-
-
-            imageBrowserOpen: false,
-            uploadingImage: false,
-            photo: null,
-
-            savingSpace: false,
-            
-
-            spaceName: '',
-            spaceBio: '',
-            spacePrice: null,
-            numSpaces: 1,
-
-            daily: [
-              {dayName: "Sunday",  abbrName:"Sun",dayValue: 0, data: [{available: true, id: 100, start: '0000', end: '2359'}]},
-              {dayName: "Monday", abbrName:"Mon", dayValue: 1, data: [{available: true, id: 200, start: '0000', end: '2359'}]},
-              {dayName: "Tuesday", abbrName:"Tue", dayValue: 2, data: [{available: true, id: 300, start: '0000', end: '2359'}]},
-              {dayName: "Wednesday", abbrName:"Wed", dayValue: 3, data: [{available: true, id: 400, start: '0000', end: '2359'}]},
-              {dayName: "Thursday", abbrName:"Thu", dayValue: 4, data: [{available: true, id: 500, start: '0000', end: '2359'}]},
-              {dayName: "Friday", abbrName:"Fri", dayValue: 5, data: [{available: true, id: 600, start: '0000', end: '2359'}]},
-              {dayName: "Saturday", abbrName:"Sat", dayValue: 6, data: [{available: true, id: 700, start: '0000', end: '2359'}]},
-            ],
-
-             // Integrated version 1.0.0
-             hidden: false,
-             toBeDeleted: false,
-             visits: 0,
-            
-             verificationSent: false,
-             directDepositProvided: false,
         }
     }
 
@@ -654,7 +587,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     marginBottom: 20,
-    marginTop: 10,
+    marginTop: 0,
     // backgroundColor: Colors.apollo500,
     borderRadius: 0,
     justifyContent: "space-between",

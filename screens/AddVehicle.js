@@ -216,6 +216,7 @@ class AddVehicle extends React.Component{
                 this.setState({loadingVehicleAPI: true})
                 axios.get('https://vpic.nhtsa.dot.gov/api/vehicles/getmodelsformakeyear/make/' + this.state.makeSelected + '/modelyear/' + this.state.yearSelected + '/vehicleType/c?format=json')
                 .then(response => {
+            
                     if (this._isMounted){
                         this.setState({loadingVehicleAPI: false})
                         var arr = response.data.Results.filter(function(car){
