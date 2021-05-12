@@ -3,7 +3,7 @@ import Colors from '../constants/Colors'
 
 
 import DebitLink from '../screens/BankLinking/AddDebitCard'
-import BankLink from '../screens/BankLinking/AddDebitCard'
+import BankLink from '../screens/BankLinking/AddBankNumber'
 
 const BankLinkNavigator = createMaterialTopTabNavigator({
     DebitLink: {

@@ -1191,6 +1191,23 @@ clearAddress = () => {
             
       </KeyboardAwareScrollView>
     );
+    }else if(!this.props.UserStore.ssnProvided || this.props.UserStore.address === {}){
+      return(
+        <ScrollView 
+          style={{backgroundColor: "white", paddingHorizontal: 16}} 
+          contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+        > 
+          <Icon 
+            iconName="alternate-email"
+            iconLib="MaterialIcons"
+            iconColor={Colors.cosmos500}
+            iconSize={120}
+            style={{marginBottom: 16}}
+          />
+          <Text style={{textAlign: "center"}}>You must add an address, SSN and payment method before creating your first parking space.</Text>
+          <Button disabled={this.state.verificationSent} style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("AddressAndSSN")}>Complete Profile</Button>
+        </ScrollView>
+      )
     }else if(!this.state.directDepositProvided){
       return(
         <ScrollView 
@@ -1298,23 +1315,6 @@ clearAddress = () => {
           </View>
           
          
-        </ScrollView>
-      )
-    }else if(!this.props.UserStore.ssnProvided || this.props.UserStore.address === {}){
-      return(
-        <ScrollView 
-          style={{backgroundColor: "white", paddingHorizontal: 16}} 
-          contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
-        > 
-          <Icon 
-            iconName="alternate-email"
-            iconLib="MaterialIcons"
-            iconColor={Colors.cosmos500}
-            iconSize={120}
-            style={{marginBottom: 16}}
-          />
-          <Text style={{textAlign: "center"}}>You must add an address, SSN and payment method before creating your first parking space.</Text>
-          <Button disabled={this.state.verificationSent} style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("AddPayment")}>Complete Profile</Button>
         </ScrollView>
       )
     }else{

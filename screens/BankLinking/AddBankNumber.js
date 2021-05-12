@@ -13,7 +13,7 @@ import {Card, ThemeProvider} from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 
 
-
+import CheckImage from '../../assets/img/CheckAnatomy.png'
 
 import Input from '../../components/Input'
 import Icon from '../../components/Icon'
@@ -66,6 +66,39 @@ class addDebitCard extends Component {
         super(props)
 
         this.state = {
+            postID: null,
+            region: {
+              latitude: null,
+              longitude: null,
+              latitudeDelta: null,
+              longitudeDelta: null,
+            },
+            address: {
+              full: null,
+              number: null,
+              street: null,
+              box: null,
+              city: null,
+              county: null,
+              state: null,
+              state_abbr: null,
+              country: null,
+              country_abbr: null,
+              zip: null,
+              spaceNumber: null,
+            },
+            timezone: null,
+            
+            searchedAddress: false,
+            addressValid: false,
+            nameValid: false,
+            bioValid: true,
+            priceValid: false,
+
+            addressError: '',
+            nameError: '',
+            bioError: '',
+            priceError: '',
 
             creditCardNum: null,
             creditCardType: '',
@@ -87,7 +120,37 @@ class addDebitCard extends Component {
             addCardToPayments: false,
 
     
-        
+            
+
+
+            imageBrowserOpen: false,
+            uploadingImage: false,
+            photo: null,
+
+            savingSpace: false,
+            
+
+            spaceName: '',
+            spaceBio: '',
+            spacePrice: null,
+            numSpaces: 1,
+
+            daily: [
+              {dayName: "Sunday",  abbrName:"Sun",dayValue: 0, data: [{available: true, id: 100, start: '0000', end: '2359'}]},
+              {dayName: "Monday", abbrName:"Mon", dayValue: 1, data: [{available: true, id: 200, start: '0000', end: '2359'}]},
+              {dayName: "Tuesday", abbrName:"Tue", dayValue: 2, data: [{available: true, id: 300, start: '0000', end: '2359'}]},
+              {dayName: "Wednesday", abbrName:"Wed", dayValue: 3, data: [{available: true, id: 400, start: '0000', end: '2359'}]},
+              {dayName: "Thursday", abbrName:"Thu", dayValue: 4, data: [{available: true, id: 500, start: '0000', end: '2359'}]},
+              {dayName: "Friday", abbrName:"Fri", dayValue: 5, data: [{available: true, id: 600, start: '0000', end: '2359'}]},
+              {dayName: "Saturday", abbrName:"Sat", dayValue: 6, data: [{available: true, id: 700, start: '0000', end: '2359'}]},
+            ],
+
+             // Integrated version 1.0.0
+             hidden: false,
+             toBeDeleted: false,
+             visits: 0,
+            
+             verificationSent: false,
              directDepositProvided: false,
         }
     }
@@ -403,7 +466,84 @@ class addDebitCard extends Component {
           // /> */}
           {/* // <Text style={{textAlign: "center"}}>Let's add a bank account.</Text> */}
           <View style={styles.container}>
-          <LinearGradient colors={[Colors.apollo500, Colors.apollo700]} style={styles.creditCard}>
+          <Image 
+            // aspectRatio={21/9}
+            localImage={true}
+            height={200}
+            width={"100%"}
+            source={CheckImage}
+            resizeMode={'contain'}
+            style={styles.check}
+          /> 
+          <View style={{flexDirection: 'row'}}>
+             <View style={{marginRight: 16, flex: 5}}>
+              <Input 
+                placeholder='XXXXXXXXXXXX'
+                mask='number'
+                label="Routing Number"
+                name="Routing Number"
+                maxLength={9}
+                onChangeText = {cc => {this.setState({creditCardNum: cc}); this.getCardType(cc)}}
+                value={this.state.creditCardNum}
+                error={this.state.creditCardNumError}
+              />
+              </View>
+            </View>
+            <View style={{flexDirection: "row"}}>
+            <View style={{marginRight: 16, flex: 5}}>
+              <Input 
+                placeholder='XXXXXXXXXXXX'
+                mask='number'
+                label="Account Number"
+                name="Account Number"
+                maxLength={12}
+                onChangeText = {cc => {this.setState({creditCardNum: cc}); this.getCardType(cc)}}
+                value={this.state.creditCardNum}
+                error={this.state.creditCardNumError}
+              />
+            </View>
+            </View>
+            <View style={{flexDirection: "row"}}>
+            <View style={{marginRight: 16, flex: 5}}>
+              <Input 
+                placeholder="Your name..."
+                label="Name"
+                name="name"
+                onChangeText={(n) => this.setState({name: n})}
+                value={this.state.name}
+                maxLength={40}
+                error={this.state.nameError}
+              />
+            </View>
+            </View>
+            <View style={{flexDirection: "row"}}>
+            <View style={{marginRight: 16, flex: 5}}>
+              <Input 
+                placeholder="United States"
+                label="Country"
+                name="country"
+                editable={false}
+                // onChangeText={(n) => this.setState({name: n})}
+                value="United States"
+                maxLength={40}
+                // error={this.state.nameError}
+              />
+            </View>
+            <View style={{marginRight: 16, flex: 5}}>
+              <Input 
+                placeholder="USD"
+                label="Currency"
+                name="currency"
+                editable={false}
+                // onChangeText={(n) => this.setState({name: n})}
+                value="USD"
+                maxLength={3}
+                // error={this.state.nameError}
+              />
+            </View>
+            </View>
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
+          {/* <View style={styles.check}>
               <Icon 
                 iconName={this.state.creditCardType !== '' ? 'cc-' + this.state.creditCardType : 'credit-card'}
                 iconLib="FontAwesome"
@@ -422,7 +562,7 @@ class addDebitCard extends Component {
                 <Text style={styles.creditCardText}>{this.state.exp == "" ? "MM/YY" : this.state.exp}</Text>
               </View>
               </View>
-          </LinearGradient>
+          </View>
           <View style={{flexDirection: 'row'}}>
             <View style={{marginRight: 16, flex: 5}}>
               <Input 
@@ -486,7 +626,7 @@ class addDebitCard extends Component {
               />
             </View>
             
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button> */}
             
           </View>
           
@@ -504,13 +644,13 @@ const styles = StyleSheet.create({
     alignItems: 'center'
 
   },
-  creditCard: {
+  check: {
     width: "100%",
     height: 200,
     marginBottom: 20,
+    marginTop: 10,
     // backgroundColor: Colors.apollo500,
-    borderRadius: 10,
-    padding: 15,
+    borderRadius: 0,
     justifyContent: "space-between",
   },
   creditCardText: {
