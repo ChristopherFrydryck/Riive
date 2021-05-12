@@ -390,9 +390,15 @@ class addDebitCard extends Component {
 
     
       return(
-        <ScrollView 
+        <KeyboardAwareScrollView 
          style={{backgroundColor: "white", paddingHorizontal: 16}} 
          contentContainerStyle={{flex: 1}}
+         keyboardShouldPersistTaps="handled"
+          automaticallyAdjustContentInsets={false}
+          scrollEnabled
+          enableOnAndroid={true}
+          extraScrollHeight={150} //iOS
+          extraHeight={135} //Android
         > 
           {/* // <Icon 
           //   iconName="bank-transfer"
@@ -491,7 +497,7 @@ class addDebitCard extends Component {
           </View>
           
          
-        </ScrollView>
+        </KeyboardAwareScrollView>
       )
   }
 }
