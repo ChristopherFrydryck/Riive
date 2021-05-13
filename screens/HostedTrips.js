@@ -45,8 +45,8 @@ export default class HostedTrips extends Component{
     this._navListener = this.props.navigation.addListener('didFocus', () => {
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+            this.updateVisits();
         });
-        this.updateVisits(); 
     }
 
     updateVisits = () => {

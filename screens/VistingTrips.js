@@ -44,9 +44,10 @@ export default class VisitingTrips extends Component{
         // Set Status Bar page info here!
     this._navListener = this.props.navigation.addListener('didFocus', () => {
             StatusBar.setBarStyle('dark-content', true);
-            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');     
+            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');   
+            this.updateVisits();  
         });
-        this.updateVisits();
+        
 
     }
 
