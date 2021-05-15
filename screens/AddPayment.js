@@ -21,9 +21,6 @@ import firestore from '@react-native-firebase/firestore';
 import {inject, observer} from 'mobx-react/native'
 import { requireNativeViewManager } from '@unimodules/core';
 
-// Stripe Payments
-import stripe from 'tipsi-stripe'
-
 
 
 const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/i;

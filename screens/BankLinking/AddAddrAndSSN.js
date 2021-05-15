@@ -21,8 +21,7 @@ import firestore from '@react-native-firebase/firestore';
 import {inject, observer} from 'mobx-react/native'
 import { requireNativeViewManager } from '@unimodules/core';
 
-// Stripe Payments
-import stripe from 'tipsi-stripe'
+
 
 
 

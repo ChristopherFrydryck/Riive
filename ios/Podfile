@@ -34,6 +34,8 @@ target 'riive' do
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
+  pod 'Stripe', :git => 'https://github.com/stripe/stripe-ios.git', :tag => 'v19.4.1'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing

@@ -45,14 +45,6 @@ import messaging from '@react-native-firebase/messaging';
 import firebaseConfig from './firebaseConfig'
 
 
-import stripe from 'tipsi-stripe'
-
-stripe.setOptions({
-  publishableKey: 'pk_test_lojsrOCvzrsIiGQFXSUquLHX00pzpkST7r',
-  // merchantId: 'MERCHANT_ID', // Optional
-  androidPayMode: 'test', // Android only
-})
-
 if (!firebase.apps.length) {
   // Initlialized FB Vars
   firebase.initializeApp(firebaseConfig);

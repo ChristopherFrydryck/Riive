@@ -61,8 +61,7 @@
     "react-navigation-stack": "^2.10.0",
     "react-navigation-tabs": "^2.10.1",
     "rn-fetch-blob": "0.10.16",
-    "stripe": "^7.13.1",
-    "tipsi-stripe": "^7.5.3"
+    "stripe": "^7.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
