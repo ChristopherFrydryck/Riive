@@ -337,6 +337,7 @@ const fs = require('fs');
 
     exports.addDebitCardForDirectDeposit = functions.https.onRequest((request, response) => {
         
+        if(request.body.addCardToPayments){
         // Payment method created. Still needs set up and confirmed
         return stripe.paymentMethods.create({
                 type: 'card',
@@ -499,6 +500,82 @@ const fs = require('fs');
             })  
                        
         })
+        // If user not saving to card list on profile
+        }else{
+            
+            return stripe.tokens.create({
+                    card: {
+                        number: request.body.number,
+                        exp_month: request.body.expMonth,
+                        exp_year: request.body.expYear,
+                        cvc: request.body.cvc,
+                        currency: 'USD',
+                        name: request.body.name
+                    },
+                
+            }).then(async(result) => {
+                const bankAccount = await stripe.accounts.createExternalAccount(
+                    request.body.stripeConnectID,
+                    {
+                        external_account: result.id,
+                        default_for_currency: true,
+                        
+                    }
+                )
+                return [bankAccount, result]
+            }).then(async(result) => {
+                // Get user info
+                const userData = await db.collection('users').doc(request.body.FBID).get();
+                return [userData, ...result]   
+            }).then((doc) => {
+                if(!doc[0].exists){
+                    const error = new Error("Failed to get your information")
+                    error.statusCode = 404;
+                    error.name = 'Auth/UserDoesNotExist'
+                    throw error;
+                }else{
+                        db.collection("users").doc(request.body.FBID).update({
+                            directDeposit: {
+                                default: true,
+                                CardToken: doc[2].id,
+                                type: "Card",
+                                cardType: doc[1].brand,
+                                number: doc[1].last4,
+                                id: doc[1].id,
+                                fingerprint: doc[1].fingerprint,
+                                payoutMethods: doc[1].available_payout_methods
+                            }
+                        })
+                    }
+            
+
+
+                    response.status(200).send({
+                        statusCode: 200,
+                        message: "Successfully saved card",
+                        card: {
+                            CardToken: doc[2],
+                            BankInfo: doc[1],
+                            Type: "Card",
+                            CardType: request.body.creditCardType !== "" ? request.body.creditCardType : "Credit",
+                            Name: request.body.name,
+                            Month: request.body.expMonth,
+                            Year: request.body.expYear,
+                            Number: request.body.number.slice(-4),
+                            CCV: request.body.cvc,
+                        },
+                    })
+                    return doc[1];
+                
+            }).catch(async(err) => {
+                return response.status(err.statusCode || 500).send({
+                    statusCode: err.statusCode,
+                    message: err.message,
+                    name: err.name
+                })  
+                        
+            })
+        }
     })
 
     exports.addSource = functions.https.onRequest((request, response) => {
