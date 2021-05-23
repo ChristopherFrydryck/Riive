@@ -327,11 +327,12 @@ const fs = require('fs');
             })
             return doc[1];
           }).catch(async(err) => {
-            if(err.statusCode === 404){
-                await stripe.paymentMethods.detach(
-                    pmID
-                );
-            }
+            
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            }) 
           })
     })
 

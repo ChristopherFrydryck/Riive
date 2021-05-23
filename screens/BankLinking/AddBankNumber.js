@@ -66,25 +66,19 @@ class addDebitCard extends Component {
         super(props)
 
         this.state = {
-            creditCardNum: null,
-            creditCardType: '',
-            creditCardFormat: 'visa-or-mastercard',
+            // creditCardNum: null,
+            // creditCardType: '',
+            // creditCardFormat: 'visa-or-mastercard',
             name: this.props.UserStore.fullname,
-            CCV: null,
-            type: "",
-            exp: "",
-            expMonth: "",
-            expYear: "",
-            StripecardId: null,
-            StripecardTok: null,
-            CCVError: "",
-            creditCardNumError: "",
-            nameError: "",
-            expError: "",
             allValid: false,
             authenticating: false,
             addCardToPayments: false,
 
+
+            routingNumber: null,
+            accountNumber: null,
+            routingError: "",
+            accountError: "",
         }
     }
 
@@ -114,226 +108,8 @@ class addDebitCard extends Component {
 
 
 
-     // Debit Card Functions
 
-     getCardType = (cardNum) => {
-      if(cardNum !== null){
-        if(cardNum.length >= 2){
-            if(cardNum.charAt(0) == 4){
-                // console.log('visa  -  length: 16')
-                this.setState({creditCardType: 'visa', creditCardFormat:'visa-or-mastercard'})
-            }else if(cardNum.charAt(0) == 5){
-                // console.log('mastercard  -  length: 16')
-                this.setState({creditCardType: 'mastercard', creditCardFormat:'visa-or-mastercard'})
-            }else if(cardNum.charAt(0) == 6){
-              // console.log('discover  -  length: 16')
-              this.setState({creditCardType: 'discover', creditCardFormat:'visa-or-mastercard'})
-            }else if(cardNum.charAt(0) == 3 && cardNum.charAt(1) == 4 || cardNum.charAt(1) == 7){
-                // console.log('amex  -  length: 15')
-                this.setState({creditCardType: 'amex', creditCardFormat:'amex'})
-            }else if(cardNum.charAt(0) == 3 && cardNum.charAt(1) == 0 || cardNum.charAt(1) == 6 || cardNum.charAt(1) == 8){
-                // console.log('diners international  -  length: 14')
-                this.setState({creditCardType: 'diners-club', creditCardFormat:'diners'})
-            }else if(cardNum.charAt(0) == 3 && cardNum.charAt(1) == 5 ){
-              // console.log('jcb  -  length: 16')
-              this.setState({creditCardType: 'jcb', creditCardFormat:'visa-or-mastercard'})
-            }else{
-                // console.log('card not supported by Riive yet.')
-                this.setState({creditCardType: '', creditCardFormat: 'visa-or-mastercard'})
-            }
-        }else{}
-      }else{
-        console.log('Debit card null')
-      }
-    
-    
-    }
-
-    cardExpirationDate = async(mmyy) => {
-      await this.setState({
-        exp: mmyy,
-        expMonth: Number(mmyy.split('/')[0]),
-        expYear: Number(mmyy.split('/')[1]),
-      })
-    
-      // console.log(this.state.expMonth + 1)
-    }
-
-    verifyCardInput = () => {
-      //set a variable to check if name is valid (returns true or false...)
-      var nameValid = regexFullname.test(this.state.name)
-    
-      // itialize length values for card type
-      var ccLength = -1;
-      var CCVLength = -1;
-      var expLength = 5;
-    
-      // Set variable values for length requirements for debit card.
-      if(this.state.creditCardFormat == 'visa-or-mastercard'){
-        ccLength = 19;
-        CCVLength = 3;
-      }else if(this.state.creditCardFormat == 'amex'){
-        ccLength = 17;
-        CCVLength = 4;
-      }else if(this.state.creditCardFormat == 'diners'){
-        ccLength = 16;
-        CCVLength = 3;
-      }else{
-        ccLength = 19;
-        CCVLength = 3;
-      }
-    
-      // debit card number and ccv are entered...
-      if(this.state.creditCardNum && this.state.CCV){
-         
-        //Checking if everything is valid for a year that is not the current year
-        if(this.state.creditCardNum.length == ccLength
-          && this.state.CCV.length == CCVLength
-          && !isNaN(this.state.CCV)
-          && this.state.exp.length == expLength
-          && this.state.expYear > lastTwoYear
-          && this.state.expMonth < 13 
-          && nameValid){
-          this.setState({
-            creditCardNumError: "",
-            expError: "",
-            CCVError: "",
-            nameError: "",
-          })
-          this.state.allValid = true;
-          // alert("Success future year!!!")
-          
-    
-          // Checking if valid for a year that is the current year
-        }else if(this.state.creditCardNum.length == ccLength
-          && this.state.CCV.length == CCVLength
-          && this.state.exp.length == expLength 
-          && this.state.expYear == lastTwoYear
-          && this.state.expMonth >= month 
-          && nameValid){
-            this.setState({
-              creditCardNumError: "",
-              expError: "",
-              CCVError: "",
-              nameError: "",
-            })
-            this.state.allValid = true;
-            // alert("Success current year!!!")
-            
-    
-        // Begin error checking....
-        }else{
-          this.state.allValid = false;
-    
-          // Debit card value check
-          if(this.state.creditCardNum.length !== ccLength ){
-            // console.log('debit card number fail...')
-            this.setState({creditCardNumError: "Number too short"})
-          }else{this.setState({creditCardNumError: ""})}
-    
-          // CCV value check
-          if(this.state.CCV.length !== CCVLength){
-            // console.log('CCV fail...')
-            this.setState({CCVError: "CCV too short"})
-          }else if(isNaN(this.state.CCV)){
-            this.setState({CCVError: "CCV should be numbers"})
-          }else{this.setState({CCVError: ""})}
-    
-          // expiration date value check
-          if(this.state.exp.length !== expLength || this.state.expMonth >= 13 || this.state.expYear <= lastTwoYear || this.state.expMonth < month){
-            if(this.state.exp.length !== expLength){this.setState({expError: "MM/YY"})}
-            else if(this.state.expMonth >= 13){this.setState({expError: "Choose a month 1-12"})}
-            else if(this.state.expYear <= lastTwoYear && this.state.expMonth < month || this.state.expYear < lastTwoYear){this.setState({expError: "Date in past"})}
-            else{this.setState({expError: ""})}
-          }else{this.setState({expError: ""})}
-    
-          // Name value check
-          if (!nameValid){
-            // console.log("provide the full name on your debit card")
-            this.setState({nameError: "First and last name required"})
-          }else{this.setState({nameError: ""})}
-        }
-    
-      }else{
-        if(this.state.creditCardNum == null){
-          this.setState({creditCardNumError: 'Debit card required'})
-        }else{this.setState({creditCardNumError: ''})}
-        
-        if(this.state.CCV == null){
-          this.setState({CCVError: "CCV required"})
-        }else{this.setState({CCVError:""})}
-        
-      }
-    }
-
-    submitPayment = async() => {
-      const db = firestore();
-      const ref = db.collection("users").doc(); // creates unique ID
-    
-      if(this._isMounted){
-        
-    
-    
-        
-        
-          await this.verifyCardInput();
-     
-        
-        
-        if(this.state.allValid){
-          
-            await this.setState({authenticating: true})
-      
-            this.addDebitCardDD().then(async(result) => {
-         
-              
-    
-              
-              if(result.statusCode !== 200){
-                throw result
-              }else{
-                   // add card to mobx UserStore
-                  this.props.UserStore.payments.push({
-                    PaymentID: result.card.PaymentID,
-                    StripeID: result.card.StripeID,
-                    StripePMID: result.card.StripePMID,
-                    Type: "Card",
-                    CardType: this.state.creditCardType !== "" ? this.state.creditCardType : "Debit",
-                    Name: this.state.name,
-                    Month: this.state.expMonth,
-                    Year: this.state.expYear,
-                    Number: this.state.creditCardNum.slice(-4),
-                    CCV: this.state.CCV,
-                })
-
-                this.props.UserStore.directDepositInfo = {
-                  type: result.card.BankInfo.object,
-                  id: result.card.BankInfo.id,
-                  fingerprint: result.card.BankInfo.fingerprint,
-                  payoutMethods: result.card.BankInfo.available_payout_methods,
-                  number: result.card.BankInfo.last4,
-                  CardType: result.card.BankInfo.brand,
-                }
-              
-                // navigate back to profile
-                this.props.navigation.goBack(null)
-              }
-            }).catch(async(err) => {
-                  await this.setState({authenticating: false})
-                  // console.log(`Error: ${JSON.stringify(err)}`)
-                  // console.log(err)
-                  alert(err.message)
-                
-            })
-     
-        
-          }else{
-            this.setState({creditCardNumError: 'Debit card type is not supported'})
-          }
-      }
-    }
-
-  addDebitCardDD = async () => {
+  addBankRoutingDD = async () => {
 
     const settings = {
       method: 'POST',
@@ -345,26 +121,62 @@ class addDebitCard extends Component {
         FBID: auth().currentUser.uid,
         stripeID: this.props.UserStore.stripeID,
         stripeConnectID: this.props.UserStore.stripeConnectID,
-        addCardToPayments: this.state.addCardToPayments,
-  
-  
-        number: this.state.creditCardNum,
-        expMonth: this.state.expMonth,
-        expYear: this.state.expYear,
-        cvc: this.state.CCV,
-        name: this.state.name,
-        creditCardType: this.state.creditCardType
+        
+        routingNumber: this.state.routingNumber,
+        accountNumber: this.state.accountNumber,
       })
     }
     try{
       
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addDebitCardForDirectDeposit', settings)
+      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addBankForDirectDeposit', settings)
       const data = await fetchResponse.json();
       return data;
     }catch(e){
       alert(e);
     }    
   }
+
+  submitBankInfo = async() => {
+    await this.setState({authenticating: true})
+    var nameValid = regexFullname.test(this.state.name)
+    await this.addBankRoutingDD().then(result => {
+      console.log(result)
+      if(result.statusCode === 200){
+        if(nameValid){
+          this.setState({nameError: ""})
+        }else{
+          
+            this.setState({nameError: "Use a valid first and last name"})
+          
+        }
+        this.setState({authenticating: false, routingError: "", accountError: ""})
+      }else{
+        if(result.statusCode === 400){
+          let isRoutingFailing = this.state.routingNumber === null || this.state.routingNumber === "";
+          let isAccountNumFailing = this.state.accountNumber === null || this.state.accountNumber === "";
+          if(isRoutingFailing){
+            this.setState({routingError: "Add a routing number to your Riive account"})
+          }else{
+            this.setState({routingError: ""})
+          }
+
+          if(isAccountNumFailing){
+            this.setState({accountError: "Add an account number to your Riive account"})
+          }else{
+            this.setState({accountError: ""})
+          }
+
+          if(!isRoutingFailing && !isAccountNumFailing){
+            alert(result.message)
+          }
+
+        this.setState({authenticating: false})
+      }else{
+        alert(result.message)
+      }
+      
+    
+  }})}
 
 
     
@@ -422,9 +234,9 @@ class addDebitCard extends Component {
                 label="Routing Number"
                 name="Routing Number"
                 maxLength={9}
-                onChangeText = {cc => {this.setState({creditCardNum: cc}); this.getCardType(cc)}}
-                value={this.state.creditCardNum}
-                error={this.state.creditCardNumError}
+                onChangeText = {val => {this.setState({routingNumber: val});}}
+                value={this.state.routingNumber}
+                error={this.state.routingError}
               />
               </View>
             </View>
@@ -436,9 +248,9 @@ class addDebitCard extends Component {
                 label="Account Number"
                 name="Account Number"
                 maxLength={12}
-                onChangeText = {cc => {this.setState({creditCardNum: cc}); this.getCardType(cc)}}
-                value={this.state.creditCardNum}
-                error={this.state.creditCardNumError}
+                onChangeText = {val => {this.setState({accountNumber: val});}}
+                value={this.state.accountNumber}
+                error={this.state.accountError}
               />
             </View>
             </View>
@@ -465,6 +277,7 @@ class addDebitCard extends Component {
                 // onChangeText={(n) => this.setState({name: n})}
                 value="United States"
                 maxLength={40}
+                // style={{}}
                 // error={this.state.nameError}
               />
             </View>
@@ -481,92 +294,7 @@ class addDebitCard extends Component {
               />
             </View>
             </View>
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
-          {/* <View style={styles.check}>
-              <Icon 
-                iconName={this.state.creditCardType !== '' ? 'cc-' + this.state.creditCardType : 'credit-card'}
-                iconLib="FontAwesome"
-                iconColor={Colors.mist300}
-                iconSize={28}
-                style={{ marginLeft: "auto"}}
-              />
-              <View style={{justifyContent: 'flex-end'}}>
-              <Text style={{color: Colors.mist300, fontSize: 18}}>{this.state.creditCardNum ? this.state.creditCardNum : 'XXXX XXXX XXXX XXXX'}</Text>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{color: Colors.mist300, fontSize: 10, marginBottom: 20, marginLeft: 5}}>{this.state.CCV ? this.state.CCV : 'CCV'}</Text>
-                <Text style={{color: Colors.mist300, fontSize: 10}}>GOOD {"\n"} THRU {"\n"}</Text>
-              </View>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={styles.creditCardText}>{this.state.name == "" ? 'Firstname Lastname' : this.state.name}</Text>               
-                <Text style={styles.creditCardText}>{this.state.exp == "" ? "MM/YY" : this.state.exp}</Text>
-              </View>
-              </View>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{marginRight: 16, flex: 5}}>
-              <Input 
-                placeholder='XXXXXXXXXXXXXXXX'
-                mask='credit-card'
-                ccType = {this.state.creditCardFormat}
-                label="Debit Card Number"
-                name="CCNum"
-                onChangeText = {cc => {this.setState({creditCardNum: cc}); this.getCardType(cc)}}
-                value={this.state.creditCardNum}
-                error={this.state.creditCardNumError}
-              />
-            </View>
-            <View style={{flex: 2}}>
-                  <Input 
-                      placeholder='MM/YY'
-                      mask='mm/yy'
-                      label="Expiration"
-                      name="expiration"
-                      onChangeText = {i => this.cardExpirationDate(i)}
-                      value={this.state.exp}
-                      keyboardType='numeric' 
-                      error={this.state.expError}
-                    />
-              </View>
-            
-          </View>
-          <View style={{flexDirection: 'row'}}>
-              
-            <View style={{marginRight: 16, flex: 3}}>
-              <Input 
-                placeholder="Your name..."
-                label="Name"
-                name="name"
-                onChangeText={(n) => this.setState({name: n})}
-                value={this.state.name}
-                maxLength={40}
-                error={this.state.nameError}
-              />
-            </View> 
-            <View  style={{flex: 1}}>
-              <Input 
-                placeholder={this.state.creditCardType == 'amex' ? '0000' : '000'}
-                label="CCV"
-                name="ccv"
-                onChangeText={(ccv) => this.setState({CCV: ccv})}
-                value={this.state.CCV}
-                maxLength={this.state.creditCardType == 'amex' ? 4 : 3}
-                keyboardType='numeric' 
-                error={this.state.CCVError}
-                />
-            </View>  
-            
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: 8}}>
-              <Text style={{flex: 1, color: !this.props.UserStore.ssnProvided || this.props.UserStore.address === {} ? Colors.mist900 : Colors.cosmos900}}>Add card to profile</Text>
-              <Switch
-                disabled={!this.props.UserStore.ssnProvided || this.props.UserStore.address === {}}
-                onValueChange={() => this.setState(prevState => ({addCardToPayments: !this.state.addCardToPayments}))}
-                value={this.state.addCardToPayments}
-              />
-            </View>
-            
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button> */}
-            
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitBankInfo()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
           </View>
           
          
