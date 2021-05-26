@@ -139,44 +139,48 @@ class addDebitCard extends Component {
   submitBankInfo = async() => {
     await this.setState({authenticating: true})
     var nameValid = regexFullname.test(this.state.name)
-    await this.addBankRoutingDD().then(result => {
-      console.log(result)
-      if(result.statusCode === 200){
-        if(nameValid){
-          this.setState({nameError: ""})
+    if(nameValid){
+      this.setState({nameError: ""})
+      await this.addBankRoutingDD().then(result => {
+        console.log(result)
+        if(result.statusCode === 200){
+          this.setState({authenticating: false, routingError: "", accountError: ""})
         }else{
-          
-            this.setState({nameError: "Use a valid first and last name"})
-          
+          if(result.statusCode === 400){
+            let isRoutingFailing = this.state.routingNumber === null || this.state.routingNumber === "";
+            let isAccountNumFailing = this.state.accountNumber === null || this.state.accountNumber === "";
+            if(isRoutingFailing){
+              this.setState({routingError: "Add a routing number to your Riive account"})
+            }else{
+              this.setState({routingError: ""})
+            }
+  
+            if(isAccountNumFailing){
+              this.setState({accountError: "Add an account number to your Riive account"})
+            }else{
+              this.setState({accountError: ""})
+            }
+  
+            if(!isRoutingFailing && !isAccountNumFailing){
+              alert(result.message)
+            }
+  
+          this.setState({authenticating: false})
+        }else{
+          alert(result.message)
         }
-        this.setState({authenticating: false, routingError: "", accountError: ""})
-      }else{
-        if(result.statusCode === 400){
-          let isRoutingFailing = this.state.routingNumber === null || this.state.routingNumber === "";
-          let isAccountNumFailing = this.state.accountNumber === null || this.state.accountNumber === "";
-          if(isRoutingFailing){
-            this.setState({routingError: "Add a routing number to your Riive account"})
-          }else{
-            this.setState({routingError: ""})
-          }
+    }
+  })
+  }else{
+              
+    this.setState({nameError: "Use a valid first and last name", authenticating: false})
 
-          if(isAccountNumFailing){
-            this.setState({accountError: "Add an account number to your Riive account"})
-          }else{
-            this.setState({accountError: ""})
-          }
-
-          if(!isRoutingFailing && !isAccountNumFailing){
-            alert(result.message)
-          }
-
-        this.setState({authenticating: false})
-      }else{
-        alert(result.message)
-      }
+  }
+  }
+    
       
     
-  }})}
+  
 
 
     
@@ -226,6 +230,19 @@ class addDebitCard extends Component {
             resizeMode={'contain'}
             style={styles.check}
           /> 
+          <View style={{flexDirection: "row"}}>
+            <View style={{marginRight: 16, flex: 5}}>
+              <Input 
+                placeholder="Your name..."
+                label="Name"
+                name="name"
+                onChangeText={(n) => this.setState({name: n})}
+                value={this.state.name}
+                maxLength={40}
+                error={this.state.nameError}
+              />
+            </View>
+            </View>
           <View style={{flexDirection: 'row'}}>
              <View style={{marginRight: 16, flex: 5}}>
               <Input 
@@ -254,19 +271,7 @@ class addDebitCard extends Component {
               />
             </View>
             </View>
-            <View style={{flexDirection: "row"}}>
-            <View style={{marginRight: 16, flex: 5}}>
-              <Input 
-                placeholder="Your name..."
-                label="Name"
-                name="name"
-                onChangeText={(n) => this.setState({name: n})}
-                value={this.state.name}
-                maxLength={40}
-                error={this.state.nameError}
-              />
-            </View>
-            </View>
+            
             <View style={{flexDirection: "row"}}>
             <View style={{marginRight: 16, flex: 5}}>
               <Input 

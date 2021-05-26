@@ -172,6 +172,8 @@ class addSpace extends Component {
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
        });
 
+       this.clearAddress();
+
 
        if(Object.keys(this.props.UserStore.directDepositInfo).length === 0){
         this.setState({directDepositProvided: false})

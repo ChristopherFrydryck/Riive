@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, TouchableOpacity} from 'react-native'
+import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import {NavigationActions} from 'react-navigation'
 import Input from '../components/Input'
@@ -107,7 +107,7 @@ class Profile extends Component{
 
 
 
-            searchedAddress: false,
+            searchedAddress: this.props.UserStore.address.line1 ? true : false,
             address: {
               line1: this.props.UserStore.address.line1,
               line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
@@ -141,17 +141,12 @@ class Profile extends Component{
             this.updateProfile()
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
+
           });
 
-          
+          LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-        //   if(this.state.address.line1){
-            this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}, ${this.state.address.country}`)
-        //   }else{
-        //    this.setLocation("")
-        //   }
-          
-
+      
       
 
 
@@ -173,6 +168,20 @@ class Profile extends Component{
 
     
     
+    }
+
+    componentDidUpdate(prevState){
+        if(!prevState.editAccountModalVisible && this.state.editAccountModalVisible){
+            let {line1, line2, line2Prefix, zipCode, city, state, country} = this.state.address
+            if(this.state.searchedAddress){
+                this.GooglePlacesRef.setAddressText(`${line1}, ${city} ${state}, ${zipCode} ${country}`)
+            }else{
+                this.GooglePlacesRef.setAddressText(``)
+            }
+           
+            // console.log("Updated")
+            console.log(this.state.searchedAddress)
+        }
     }
 
    
@@ -263,6 +272,8 @@ class Profile extends Component{
               country: country.short_name
             }
           })
+
+        
       
           
          
@@ -293,8 +304,9 @@ class Profile extends Component{
       
       setLocation = (text) => {
         this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
+        // console.log(text)
         // console.log("Set location")
-        console.log(this.state.address)
+        // console.log(this.state.address)
       }
 
     updateProfile = () => {
@@ -808,6 +820,7 @@ class Profile extends Component{
     }   
 
     render(){
+
         const initals = this.props.UserStore.firstname.charAt(0).toUpperCase() + "" + this.props.UserStore.lastname.charAt(0).toUpperCase()
         const {firstname, lastname, vehicles, payments, listings} = this.props.UserStore 
         var {height, width} = Dimensions.get('window');
