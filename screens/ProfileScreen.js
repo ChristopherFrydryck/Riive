@@ -118,6 +118,7 @@ class Profile extends Component{
               country: this.props.UserStore.address.country
             },
             addressError: "",
+            addressSaveReady: false,
 
 
             
@@ -165,22 +166,21 @@ class Profile extends Component{
     }else{
         this.setState({verificationSnackbarVisible: false})
     }
-
     
     
     }
 
     componentDidUpdate(prevState){
+        // Update when modal appears for edit profile
         if(!prevState.editAccountModalVisible && this.state.editAccountModalVisible){
             let {line1, line2, line2Prefix, zipCode, city, state, country} = this.state.address
+            // If an address is searched
             if(this.state.searchedAddress){
                 this.GooglePlacesRef.setAddressText(`${line1}, ${city} ${state}, ${zipCode} ${country}`)
             }else{
                 this.GooglePlacesRef.setAddressText(``)
             }
            
-            // console.log("Updated")
-            console.log(this.state.searchedAddress)
         }
     }
 
@@ -263,6 +263,7 @@ class Profile extends Component{
           this.setState({
             searchedAddress: true,
             addressError: "",
+            addressSaveReady: true,
             address:{
               ...this.state.address,
               line1: `${number.long_name} ${street.short_name}`,
@@ -278,7 +279,7 @@ class Profile extends Component{
           
          
         }else{
-          this.setState({addressError: "Select a valid street address"})
+          this.setState({addressError: "Select a valid street address", addressSaveReady: false})
           this.clearAddress();
         }
       
@@ -291,6 +292,7 @@ class Profile extends Component{
         this.GooglePlacesRef.setAddressText("")
         this.setState({
           searchedAddress: false,
+          addressSaveReady: false,
           address: {
             ...this.state.address,
             line1: "",
@@ -624,7 +626,13 @@ class Profile extends Component{
                 }
             }
             // Check if address is updated
+            let checkLine2 = this.state.address.line2 !== "" && !this.props.UserStore.address.line2 ? true : false;
+            console.log(this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2)
+            // && this.state.address.line2 == this.props.UserStore.address.line2.split(" ")[1] && this.state.address.line2Prefix == this.props.UserStore.address.line2.split(" ")[0]
             if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode){
+            
+
+                console.log("Address ready")
                 this.addAddress()
                 this.setState({fullnameError: "", submitted: true}) 
                 setTimeout(() => this.setState({submitted: false}), 3000)
