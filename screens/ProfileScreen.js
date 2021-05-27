@@ -626,14 +626,14 @@ class Profile extends Component{
                 }
             }
             // Check if address is updated
-            let checkLine2 = this.state.address.line2 !== "" && !this.props.UserStore.address.line2 ? true : false;
-            console.log(this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2)
+            let checkLine2 = this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
+            console.log(checkLine2)
             // && this.state.address.line2 == this.props.UserStore.address.line2.split(" ")[1] && this.state.address.line2Prefix == this.props.UserStore.address.line2.split(" ")[0]
-            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode){
+            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode || checkLine2){
             
 
-                console.log("Address ready")
-                this.addAddress()
+         
+                await this.addAddress()
                 this.setState({fullnameError: "", submitted: true}) 
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
