@@ -24,6 +24,7 @@ import SpacesList from '../components/SpacesList'
 import ClickableChip from '../components/ClickableChip'
 import DialogInput from 'react-native-dialog-input'
 import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 // import Dialog from 'react-native-dialog'
 // import * as ImagePicker from 'expo-image-picker'
 // import * as Permissions from 'expo-permissions'
@@ -859,7 +860,14 @@ class Profile extends Component{
                     
                     <SafeAreaView style={{paddingTop: 10, marginHorizontal: 16, flex: 1}}>
                                            
-                    <ScrollView keyboardShouldPersistTaps="always">
+                    <KeyboardAwareScrollView
+                        keyboardShouldPersistTaps="handled"
+                        automaticallyAdjustContentInsets={false}
+                        contentContainerStyle={{ }} scrollEnabled
+                        enableOnAndroid={true}
+                        extraScrollHeight={150} //iOS
+                        extraHeight={135} //Android
+                        >  
                         <TopBar>
                         <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8, marginLeft: 16}}>Edit Profile</Text>
                             <Icon 
@@ -1025,7 +1033,7 @@ class Profile extends Component{
                             styles={{
                             container: {
                                 border: 'none',
-                                zIndex: 99999
+                                zIndex: 99999,
                             },
                             textInputContainer: {
                                 width: '100%',
@@ -1063,6 +1071,9 @@ class Profile extends Component{
                               backgroundColor: 'white',
                               
                             },
+                            poweredContainer:{
+                                backgroundColor: 'orange',
+                            }
                             
                             }}
                         />
@@ -1135,7 +1146,7 @@ class Profile extends Component{
 
                         
                     
-                    </ScrollView>
+                    </KeyboardAwareScrollView>
                     </SafeAreaView>
                 </Modal>
 

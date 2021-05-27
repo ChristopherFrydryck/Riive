@@ -296,6 +296,7 @@ class addDebitCard extends Component {
               if(result.statusCode !== 200){
                 throw result
               }else{
+                if(this.state.addCardToPayments){
                    // add card to mobx UserStore
                   this.props.UserStore.payments.push({
                     PaymentID: result.card.PaymentID,
@@ -309,6 +310,7 @@ class addDebitCard extends Component {
                     Number: this.state.creditCardNum.slice(-4),
                     CCV: this.state.CCV,
                 })
+              }
 
                 this.props.UserStore.directDepositInfo = {
                   type: result.card.BankInfo.object,
@@ -320,7 +322,7 @@ class addDebitCard extends Component {
                 }
               
                 // navigate back to profile
-                this.props.navigation.goBack(null)
+                this.props.navigation.navigate("Profile")
               }
             }).catch(async(err) => {
                   await this.setState({authenticating: false})

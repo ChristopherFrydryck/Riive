@@ -243,7 +243,7 @@ onSelectAddress = async(det) => {
       }
     })
 
-    this.GooglePlacesRef.setAddressText("HELLOOOOO")
+    
    
   }else{
     this.setState({addressError: "Select a valid street address"})

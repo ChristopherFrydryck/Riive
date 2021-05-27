@@ -89,7 +89,6 @@ class addDebitCard extends Component {
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-      LogBox.ignoreLogs([]);
 
       this.setState({postID: ref.id})
       this._isMounted = true;
@@ -142,9 +141,19 @@ class addDebitCard extends Component {
     if(nameValid){
       this.setState({nameError: ""})
       await this.addBankRoutingDD().then(result => {
-        console.log(result)
         if(result.statusCode === 200){
           this.setState({authenticating: false, routingError: "", accountError: ""})
+          this.props.UserStore.directDepositInfo = {
+            type: result.bank.type,
+            id: result.bank.id,
+            fingerprint: result.bank.fingerprint,
+            bankToken: result.bank.BankToken,
+            number: result.bank.number,
+            bankProvider: result.bank.bankProvider,
+          }
+        
+          // navigate back to profile
+          this.props.navigation.navigate("Profile")
         }else{
           if(result.statusCode === 400){
             let isRoutingFailing = this.state.routingNumber === null || this.state.routingNumber === "";

@@ -163,8 +163,6 @@ class addSpace extends Component {
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-      LogBox.ignoreLogs([]);
-
       this.setState({postID: ref.id})
       this._isMounted = true;
       this._navListener = this.props.navigation.addListener('didFocus', () => {
@@ -172,7 +170,7 @@ class addSpace extends Component {
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
        });
 
-       this.clearAddress();
+
 
 
        if(Object.keys(this.props.UserStore.directDepositInfo).length === 0){
