@@ -39,7 +39,7 @@ export default class BankLinking extends Component {
       }
 
       render(){
-          let {type, number, bankProvider, bankToken, CardType, fingerprint, id} = this.props.UserStore.directDepositInfo
+          let {type, number, bankProvider, bankToken, cardType, fingerprint, id} = this.props.UserStore.directDepositInfo
           return(
               <ScrollView style={{flex: 1, backgroundColor: 'white', paddingTop: 16,}}>
                   <View style={styles.container}>
@@ -75,7 +75,7 @@ export default class BankLinking extends Component {
                         style={styles.icon}          
                     />}
                     <View>
-                        <Text style={{fontSize: 12,}}>{type.toUpperCase() === "CARD" ? CardType : bankProvider}</Text>
+                        <Text style={{fontSize: 12}}>{type.toUpperCase() === "CARD" ? cardType : bankProvider}</Text>
                         <Text>{type.toUpperCase() === "CARD" ? `•••• •••• •••• ${number}` : `•••••••• ${number}`}</Text>
                     </View>
                     </View>

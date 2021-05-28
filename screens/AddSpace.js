@@ -1111,7 +1111,7 @@ clearAddress = () => {
                 maxLength = {6}
                 keyboardType='default'
                 suffix="/hr"
-                rightText="Estimated $1.50/hr"
+                rightText={`Deposited to ${this.props.UserStore.directDepositInfo.type.toUpperCase() == "BANK ACCOUNT" ? "Bank" : "Card"} ${this.props.UserStore.directDepositInfo.number}`}
                 error={this.state.priceError}
               />
             </View>

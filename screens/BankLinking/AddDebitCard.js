@@ -318,7 +318,7 @@ class addDebitCard extends Component {
                   fingerprint: result.card.BankInfo.fingerprint,
                   payoutMethods: result.card.BankInfo.available_payout_methods,
                   number: result.card.BankInfo.last4,
-                  CardType: result.card.BankInfo.brand,
+                  cardType: result.card.BankInfo.brand,
                 }
               
                 // navigate back
