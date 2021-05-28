@@ -152,8 +152,8 @@ class addDebitCard extends Component {
             bankProvider: result.bank.bankProvider,
           }
         
-          // navigate back to profile
-          this.props.navigation.navigate("Profile")
+          // navigate back
+          this.props.navigation.navigate("BankInfo")
         }else{
           if(result.statusCode === 400){
             let isRoutingFailing = this.state.routingNumber === null || this.state.routingNumber === "";

@@ -626,10 +626,10 @@ class Profile extends Component{
                             throw error
                 }
             }
-            // Check if address is updated
+            // Variable to check if line 2 has changed
             let checkLine2 = this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
-            console.log(checkLine2)
-            // && this.state.address.line2 == this.props.UserStore.address.line2.split(" ")[1] && this.state.address.line2Prefix == this.props.UserStore.address.line2.split(" ")[0]
+
+            // Check if address is updated
             if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode || checkLine2){
             
 
@@ -1187,7 +1187,7 @@ class Profile extends Component{
                                 }
                             >
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('Settings')}} title="Settings" />
-                                <Menu.Item onPress={() => {this.props.navigation.navigate('BankLinkNavigator')}} title="Bank Information" />
+                                <Menu.Item onPress={() => {this.props.navigation.navigate('BankInfo')}} title="Bank Information" />
                                 <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
                                 <Divider />
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" />

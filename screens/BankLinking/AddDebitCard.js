@@ -321,8 +321,8 @@ class addDebitCard extends Component {
                   CardType: result.card.BankInfo.brand,
                 }
               
-                // navigate back to profile
-                this.props.navigation.navigate("Profile")
+                // navigate back
+                this.props.navigation.navigate("BankInfo")
               }
             }).catch(async(err) => {
                   await this.setState({authenticating: false})

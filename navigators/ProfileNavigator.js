@@ -4,6 +4,7 @@ import LegalNavigator from './LegalNavigator'
 import BankLinkNavigator from './BankLinkNavigator'
 
 import Profile from '../screens/ProfileScreen'
+import BankInfo from '../screens/BankLinking/LinkedBankInfo'
 import AddressAndSSN from '../screens/BankLinking/AddAddrAndSSN'
 import AddVehicle from '../screens/AddVehicle'
 import EditVehicle from '../screens/EditVehicle'
@@ -29,6 +30,7 @@ const ProfileNavigator = createStackNavigator({
     AddSpace: AddSpace,
     EditSpace: EditSpace,
     LegalNavigator: LegalNavigator,
+    BankInfo: BankInfo,
     BankLinkNavigator: BankLinkNavigator,
     Settings: Settings,
     AddressAndSSN: AddressAndSSN,
