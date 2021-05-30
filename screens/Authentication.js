@@ -228,7 +228,6 @@ export default class Authentication extends React.Component {
               this.props.UserStore.fullname = doc.data().fullname;
               this.props.UserStore.phone = doc.data().phone;
               this.props.UserStore.dob = doc.data().dob || null,
-              this.props.UserStore.address = doc.data().primaryAddress || null,
               this.props.UserStore.userID = doc.data().id;
               this.props.UserStore.stripeID = doc.data().stripeID;
               this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
@@ -456,7 +455,6 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.fullname = this.props.UserStore.fullname;
                     this.props.UserStore.phone = this.props.UserStore.phone;
                     this.props.UserStore.dob = this.props.UserStore.dob,
-                    this.props.UserStore.address = null,
                     this.props.UserStore.stripeID = "";
                     this.props.UserStore.stripeConnectID = "";
                     this.props.UserStore.directDepositInfo = {};
@@ -576,7 +574,6 @@ onPressSignIn = async() => {
                 this.props.UserStore.phone = doc.data().phone;
                 this.props.UserStore.userID = doc.data().id;
                 this.props.UserStore.dob = doc.data().dob || null,
-                this.props.UserStore.address = doc.data().primaryAddress || null,
                 this.props.UserStore.stripeID = doc.data().stripeID;
                 this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
                 this.props.UserStore.directDepositInfo = doc.data().directDeposit; 

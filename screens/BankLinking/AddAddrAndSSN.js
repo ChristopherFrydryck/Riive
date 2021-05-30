@@ -191,12 +191,12 @@ addSSN = async () => {
 }
 
 
-addPreData = async() => {
+addPreData = () => {
   try{
     this.setState({savingAddrAndSSN: true})
-    await this.addAddress();
-    await this.addSSN();
-    await this.setState({savingAddrAndSSN: false})
+    this.addAddress();
+    this.addSSN();
+    this.setState({savingAddrAndSSN: false})
     this.props.navigation.goBack(null)
   }catch(e){
     this.setState({savingAddrAndSSN: false})

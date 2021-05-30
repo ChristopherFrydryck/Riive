@@ -43,7 +43,7 @@ export default class BankLinking extends Component {
           return(
               <ScrollView style={{flex: 1, backgroundColor: 'white', paddingTop: 16,}}>
                   <View style={styles.container}>
-                    <Text style={{fontSize: 20}} type="SemiBold">Payments & Payouts</Text>
+                    <Text style={{fontSize: 20, marginBottom: 4}} type="SemiBold">Payments & Payouts</Text>
                     <Text style={{marginBottom: 8}}>In order for hosts to get payment for sharing their space, or for guests to get a refund, we need to link a payment method to the account to allow for a safe and secure transfer of funds.</Text>
                     <Text>Accounts can have one connected bank account to have all transfers go to.</Text>
                   </View>

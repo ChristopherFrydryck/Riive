@@ -143,7 +143,7 @@ class Profile extends Component{
             this.updateProfile()
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
-
+            this.resetAddress();
           });
 
           LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
@@ -152,7 +152,7 @@ class Profile extends Component{
       
 
 
-    //    console.log(auth().currentUser.photoURL);
+       
     // alert(this.props.UserStore.memberTime)
     const db = firestore();
     const doc = db.collection('users').doc(this.props.UserStore.userID);
@@ -236,6 +236,23 @@ class Profile extends Component{
           throw "Failure to save address."
         }
           
+      }
+
+      resetAddress = () => {
+        this.setState({
+            searchedAddress: this.props.UserStore.address.line1 ? true : false,
+            address: {
+            line1: this.props.UserStore.address.line1,
+            line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
+            line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
+            zipCode: this.props.UserStore.address.postal_code,
+            city: this.props.UserStore.address.city,
+            state: this.props.UserStore.address.state,
+            country: this.props.UserStore.address.country
+            },
+            addressError: "",
+            addressSaveReady: false,
+        })
       }
 
 
@@ -634,7 +651,7 @@ class Profile extends Component{
             
 
          
-                await this.addAddress()
+                await this.addAddress()                
                 this.setState({fullnameError: "", submitted: true}) 
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
