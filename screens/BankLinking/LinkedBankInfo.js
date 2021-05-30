@@ -41,8 +41,14 @@ export default class BankLinking extends Component {
       render(){
           let {type, number, bankProvider, bankToken, cardType, fingerprint, id} = this.props.UserStore.directDepositInfo
           return(
-              <ScrollView style={{flex: 1, backgroundColor: 'white', paddingTop: 16,}}>
+              <ScrollView style={{backgroundColor: 'white', paddingTop: 16}} contentContainerStyle={{flex: 1, justifyContent: 'center'}}>
                   <View style={styles.container}>
+                    <Icon 
+                        iconName="coins"
+                        iconLib="FontAwesome5"
+                        iconSize={28}
+                        style={{marginBottom: 12}}
+                    />
                     <Text style={{fontSize: 20, marginBottom: 4}} type="SemiBold">Payments & Payouts</Text>
                     <Text style={{marginBottom: 8}}>In order for hosts to get payment for sharing their space, or for guests to get a refund, we need to link a payment method to the account to allow for a safe and secure transfer of funds.</Text>
                     <Text>Accounts can have one connected bank account to have all transfers go to.</Text>

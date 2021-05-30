@@ -875,7 +875,7 @@ class Profile extends Component{
                     submitText={"Verify"}
                 />
                     
-                    <SafeAreaView style={{paddingTop: 10, marginHorizontal: 16, flex: 1}}>
+                    <SafeAreaView style={{paddingTop: 10, marginHorizontal: 16, flex: 1}} >
                                            
                     <KeyboardAwareScrollView
                         keyboardShouldPersistTaps="handled"
@@ -884,8 +884,9 @@ class Profile extends Component{
                         enableOnAndroid={true}
                         extraScrollHeight={150} //iOS
                         extraHeight={135} //Android
+                        stickyHeaderIndices={[0]}
                         >  
-                        <TopBar>
+                        <TopBar style={{backgroundColor: 'white'}}>
                         <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8, marginLeft: 16}}>Edit Profile</Text>
                             <Icon 
                                 iconName="x"

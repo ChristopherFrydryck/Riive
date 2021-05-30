@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, LogBox, Dimensions } from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, LogBox, Dimensions, KeyboardAvoidingView } from 'react-native';
 import Text from '../../components/Txt'
 import Input from '../../components/Input'
 import Icon from '../../components/Icon'
@@ -11,6 +11,7 @@ import FloatingCircles from '../../components/FloatingCircles'
 import AddressTypes from '../../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
@@ -191,11 +192,11 @@ addSSN = async () => {
 }
 
 
-addPreData = () => {
+addPreData = async() => {
   try{
     this.setState({savingAddrAndSSN: true})
-    this.addAddress();
-    this.addSSN();
+    await this.addAddress();
+    await this.addSSN();
     this.setState({savingAddrAndSSN: false})
     this.props.navigation.goBack(null)
   }catch(e){
@@ -279,11 +280,26 @@ setLocation(text) {
   render() {
     
       return(
-        <ScrollView 
-          style={{backgroundColor: 'white', paddingHorizontal: 16}}
-          keyboardShouldPersistTaps='always'
+        <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        // contentContainerStyle={{ backgroundColor: 'white'}} 
+        scrollEnabled
+        enableOnAndroid={true}
+        extraScrollHeight={150} //iOS
+        extraHeight={135} //Android
+        style={{backgroundColor: 'white', paddingHorizontal: 16}}
+          contentContainerStyle={{flex: 1,}}
         >
-          <Text style={{color: Colors.cosmos900, fontSize: 18}}>Before we add a card, we need a few more things...</Text>
+    
+         <View style={{flex: 1, justifyContent: "center"}}>
+          <Icon 
+                        iconName="card-account-details"
+                        iconLib="MaterialCommunityIcons"
+                        iconSize={28}
+                        style={{marginBottom: 12}}
+                    />
+          <Text style={{fontSize: 20, marginBottom: 4,}} type="SemiBold">Address & SSN</Text>
+          <Text style={{marginBottom: 8}}>In order for you to add a card once and charge it for future parking, we need a few more details.</Text>
           {/* <View style={{flex: 1, paddingBottom: 0, zIndex: 99999, backgroundColor: 'orange',}}> */}
             
               <Text style={styles.label}>Address</Text>
@@ -330,6 +346,7 @@ setLocation(text) {
                 styles={{
                   container: {
                     border: 'none',
+                    flex: 0,
                   },
                   textInputContainer: {
                     width: '100%',
@@ -388,13 +405,13 @@ setLocation(text) {
                 maxLength = {6}
                 keyboardType='number-pad'
               /> */}
-            <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
+            <View style={{flex: 0, zIndex: -9, flexDirection: 'row'}}>
               <Dropdown
                 flex={2}
                 selectedValue = {this.state.address.line2Prefix}
                 label="Line 2 (optional)"
                 // error={this.state.error.make}
-                style={{height: 32}}
+                style={{height:32}}
                 onValueChange = {(res) => Platform.OS == 'ios' ? this.setState(prevState => ({address: {...this.state.address, line2Prefix: res.baseValue || prevState.address.line2Prefix}})) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
               >
                 {
@@ -430,7 +447,7 @@ setLocation(text) {
             </View>
       
             <Input
-              flex={2}
+              flex={0}
               placeholder='XXXXXXXXX'   
               mask={"number"}     
               label= {"SSN"}
@@ -444,7 +461,8 @@ setLocation(text) {
               maxLength = {9}
               keyboardType='number-pad'/>
             <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
-        </ScrollView>
+            </View>
+        </KeyboardAwareScrollView>
       )
   }
 }

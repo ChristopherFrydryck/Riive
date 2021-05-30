@@ -94,6 +94,7 @@ class addPayment extends Component {
       this._navListener = this.props.navigation.addListener('didFocus', () => {
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+         this.forceUpdate();
        });
 
        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
@@ -655,174 +656,189 @@ verifyInput = () => {
         </ScrollView>
       );
     }else{
-      return(
-        <ScrollView 
-          style={{backgroundColor: 'white', paddingHorizontal: 16}}
-          keyboardShouldPersistTaps='always'
-        >
-          <Text style={{color: Colors.cosmos900, fontSize: 18}}>Before we add a card, we need a few more things...</Text>
-          {/* <View style={{flex: 1, paddingBottom: 0, zIndex: 99999, backgroundColor: 'orange',}}> */}
+      // return(
+      //   <ScrollView 
+      //     style={{backgroundColor: 'white', paddingHorizontal: 16}}
+      //     keyboardShouldPersistTaps='always'
+      //   >
+      //     <Text style={{color: Colors.cosmos900, fontSize: 18}}>Before we add a card, we need a few more things...</Text>
+      //     {/* <View style={{flex: 1, paddingBottom: 0, zIndex: 99999, backgroundColor: 'orange',}}> */}
             
-              <Text style={styles.label}>Address</Text>
-              <GooglePlacesAutocomplete
-                placeholder='Your Address...'
-                returnKeyType={'search'}
-                ref={(instance) => { this.GooglePlacesRef = instance }}
-                currentLocation={false}
-                minLength={2}
-                autoFocus={true}
-                listViewDisplayed={false}
-                fetchDetails={true}
-                onChangeText= {(text) => this.setLocation(text)}
-                onPress={(data, details = null) => {
-                  this.onSelectAddress(details)
-                }}
-                textInputProps={{
-                  clearButtonMode: 'never'
-                }}
-                renderRightButton={() => 
-                <Icon 
-                  iconName="x"
-                  iconColor={Colors.cosmos500}
-                  iconSize={24}
-                  onPress={() => this.clearAddress()}
-                  style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
-                />}
-                query={{
-                  key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
-                  language: 'en'
-                }}
-                GooglePlacesSearchQuery={{
-                  rankby: 'distance',
-                  types: 'address',
-                  components: "country:us"
-                }}
-                // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-                nearbyPlacesAPI={'GoogleReverseGeocoding'}
-                debounce={200}
-                predefinedPlacesAlwaysVisible={true}
-                enablePoweredByContainer={false}
+      //         <Text style={styles.label}>Address</Text>
+      //         <GooglePlacesAutocomplete
+      //           placeholder='Your Address...'
+      //           returnKeyType={'search'}
+      //           ref={(instance) => { this.GooglePlacesRef = instance }}
+      //           currentLocation={false}
+      //           minLength={2}
+      //           autoFocus={true}
+      //           listViewDisplayed={false}
+      //           fetchDetails={true}
+      //           onChangeText= {(text) => this.setLocation(text)}
+      //           onPress={(data, details = null) => {
+      //             this.onSelectAddress(details)
+      //           }}
+      //           textInputProps={{
+      //             clearButtonMode: 'never'
+      //           }}
+      //           renderRightButton={() => 
+      //           <Icon 
+      //             iconName="x"
+      //             iconColor={Colors.cosmos500}
+      //             iconSize={24}
+      //             onPress={() => this.clearAddress()}
+      //             style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
+      //           />}
+      //           query={{
+      //             key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+      //             language: 'en'
+      //           }}
+      //           GooglePlacesSearchQuery={{
+      //             rankby: 'distance',
+      //             types: 'address',
+      //             components: "country:us"
+      //           }}
+      //           // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
+      //           nearbyPlacesAPI={'GoogleReverseGeocoding'}
+      //           debounce={200}
+      //           predefinedPlacesAlwaysVisible={true}
+      //           enablePoweredByContainer={false}
                 
                 
-                styles={{
-                  container: {
-                    border: 'none',
-                  },
-                  textInputContainer: {
-                    width: '100%',
-                    display: 'flex',
-                    alignSelf: 'center',
-                    backgroundColor: "white",
-                    marginTop: -6,
-                    borderColor: '#eee',
-                    borderBottomWidth: 2,
-                    borderTopWidth: 0,
-                    backgroundColor: "none",
-                  },
-                  textInput: {
-                    paddingRight: 0,
-                    paddingLeft: 0,
-                    paddingBottom: 0,
-                    color: '#333',
-                    fontSize: 18,
-                    width: '100%',
-                  },
-                  description: {
-                    fontWeight: 'bold'
-                  },
-                  predefinedPlacesDescription: {
-                    color: '#1faadb'
-                  },
-                  listView:{
-                    backgroundColor: 'white',
-                    position: 'absolute',
-                    top: 40,
-                    width: Dimensions.get("window").width - 32,
-                    zIndex: 999999,
-                  },
-                  // row: {
-                  //   backgroundColor: 'white'
-                  // },
+      //           styles={{
+      //             container: {
+      //               border: 'none',
+      //             },
+      //             textInputContainer: {
+      //               width: '100%',
+      //               display: 'flex',
+      //               alignSelf: 'center',
+      //               backgroundColor: "white",
+      //               marginTop: -6,
+      //               borderColor: '#eee',
+      //               borderBottomWidth: 2,
+      //               borderTopWidth: 0,
+      //               backgroundColor: "none",
+      //             },
+      //             textInput: {
+      //               paddingRight: 0,
+      //               paddingLeft: 0,
+      //               paddingBottom: 0,
+      //               color: '#333',
+      //               fontSize: 18,
+      //               width: '100%',
+      //             },
+      //             description: {
+      //               fontWeight: 'bold'
+      //             },
+      //             predefinedPlacesDescription: {
+      //               color: '#1faadb'
+      //             },
+      //             listView:{
+      //               backgroundColor: 'white',
+      //               position: 'absolute',
+      //               top: 40,
+      //               width: Dimensions.get("window").width - 32,
+      //               zIndex: 999999,
+      //             },
+      //             // row: {
+      //             //   backgroundColor: 'white'
+      //             // },
                   
-                }}
-              />
-                <Text style={styles.error}>{this.state.addressError}</Text>
-              {/* </View> */}
+      //           }}
+      //         />
+      //           <Text style={styles.error}>{this.state.addressError}</Text>
+      //         {/* </View> */}
               
-              {/* <Input
-                flex={1}
-                placeholder='107'        
-                label= "Apt # (optional)"
-                name="Apartment number" 
-                style={{marginRight: 16}}                
-                onChangeText= {(number) => this.setState(prevState => ({
-                  address:{
-                    ...prevState.address,
-                    line2: number,
-                  }
-                }))}
-                value={this.state.address.line2}
-                maxLength = {6}
-                keyboardType='number-pad'
-              /> */}
-            <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
-              <Dropdown
-                flex={2}
-                selectedValue = {this.state.address.line2Prefix}
-                label="Line 2 (optional)"
-                // error={this.state.error.make}
-                style={{height: 32}}
-                onValueChange = {(res) => Platform.OS == 'ios' ? this.setState(prevState => ({address: {...this.state.address, line2Prefix: res.baseValue || prevState.address.line2Prefix}})) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
-              >
-                {
-                  AddressTypes.map((x, i) => {
-                  if(Platform.OS === 'ios'){
-                    return(
-                      {key: i, label: x, baseValue: x}
-                    )
-                  }
-                  else{
-                      return(
-                        <DropdownItem key={i} label={x} value={x}/>
-                      )
-                  }
-                })
-                }
-              </Dropdown>
-            <Input
-              flex={2}
-              placeholder='107'        
-              label= ""
-              name="Apartment number"   
-              style={{marginTop: 1.5, marginLeft: 8}}
-              onChangeText= {(number) => this.setState(prevState => ({
-                address:{
-                  ...prevState.address,
-                  line2: number,
-                }
-              }))}
-              value={this.state.address.line2}
-              maxLength = {6}
-              />
-            </View>
+      //         {/* <Input
+      //           flex={1}
+      //           placeholder='107'        
+      //           label= "Apt # (optional)"
+      //           name="Apartment number" 
+      //           style={{marginRight: 16}}                
+      //           onChangeText= {(number) => this.setState(prevState => ({
+      //             address:{
+      //               ...prevState.address,
+      //               line2: number,
+      //             }
+      //           }))}
+      //           value={this.state.address.line2}
+      //           maxLength = {6}
+      //           keyboardType='number-pad'
+      //         /> */}
+      //       <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
+      //         <Dropdown
+      //           flex={2}
+      //           selectedValue = {this.state.address.line2Prefix}
+      //           label="Line 2 (optional)"
+      //           // error={this.state.error.make}
+      //           style={{height: 32}}
+      //           onValueChange = {(res) => Platform.OS == 'ios' ? this.setState(prevState => ({address: {...this.state.address, line2Prefix: res.baseValue || prevState.address.line2Prefix}})) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
+      //         >
+      //           {
+      //             AddressTypes.map((x, i) => {
+      //             if(Platform.OS === 'ios'){
+      //               return(
+      //                 {key: i, label: x, baseValue: x}
+      //               )
+      //             }
+      //             else{
+      //                 return(
+      //                   <DropdownItem key={i} label={x} value={x}/>
+      //                 )
+      //             }
+      //           })
+      //           }
+      //         </Dropdown>
+      //       <Input
+      //         flex={2}
+      //         placeholder='107'        
+      //         label= ""
+      //         name="Apartment number"   
+      //         style={{marginTop: 1.5, marginLeft: 8}}
+      //         onChangeText= {(number) => this.setState(prevState => ({
+      //           address:{
+      //             ...prevState.address,
+      //             line2: number,
+      //           }
+      //         }))}
+      //         value={this.state.address.line2}
+      //         maxLength = {6}
+      //         />
+      //       </View>
       
-            <Input
-              flex={2}
-              placeholder='XXXXXXXXX'   
-              mask={"number"}     
-              label= {"SSN"}
-              secureTextEntry
-              name="Apartment number"   
-              style={{marginTop: 1.5, zIndex: -9}}
-              onChangeText= {(number) => this.setState({
-                ssn: number
-              })}
-              value={this.state.ssn}
-              maxLength = {9}
-              keyboardType='number-pad'/>
-            <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
-        </ScrollView>
-      )
+      //       <Input
+      //         flex={2}
+      //         placeholder='XXXXXXXXX'   
+      //         mask={"number"}     
+      //         label= {"SSN"}
+      //         secureTextEntry
+      //         name="Apartment number"   
+      //         style={{marginTop: 1.5, zIndex: -9}}
+      //         onChangeText= {(number) => this.setState({
+      //           ssn: number
+      //         })}
+      //         value={this.state.ssn}
+      //         maxLength = {9}
+      //         keyboardType='number-pad'/>
+      //       <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
+      //   </ScrollView>
+      // )
+      return( 
+        <ScrollView 
+          style={{backgroundColor: "white", paddingHorizontal: 16}} 
+          contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+        > 
+          <Icon 
+            iconName="alternate-email"
+            iconLib="MaterialIcons"
+            iconColor={Colors.cosmos500}
+            iconSize={120}
+            style={{marginBottom: 16}}
+          />
+          <Text style={{textAlign: "center"}}>You must add an address, SSN and payment method before adding your first card.</Text>
+          <Button disabled={this.state.verificationSent} style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("AddressAndSSN")}>Add Details</Button>
+        </ScrollView>)
     }
   }
 }
