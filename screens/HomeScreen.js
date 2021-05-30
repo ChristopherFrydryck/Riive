@@ -212,6 +212,8 @@ class Home extends Component {
 
   }
 
+  
+
  notificationListener = async() => {
     messaging().onMessage((payload) => {
         const {title, body} = payload.notification;
@@ -290,24 +292,27 @@ class Home extends Component {
       if(permission !== "granted"){
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
-            // console.log(`Lat is ${position.coords.latitude}`)
           },
-          error => {Alert.alert(
-            "Location Services Disabled",
-            "Enable location permissions and restart Riive to discover parking nearby.",
-            [
-              {
-                text: "No thanks",
-                onPress: () => {},
-                style: "cancel"
-              },
-              { text: "Enable location services", onPress: () => Linking.openSettings()}
-            ],
-            { cancelable: false }
-          );}
+          error => {
+            if(isFirstTime){
+                Alert.alert(
+                    "Location Services Disabled",
+                    "Enable location permissions and restart Riive to discover parking nearby.",
+                    [
+                    {
+                        text: "No thanks",
+                        onPress: () => {},
+                        style: "cancel"
+                    },
+                    { text: "Enable location services", onPress: () => Linking.openSettings()}
+                    ],
+                    { cancelable: false }
+                );
+            }
+                
+            }
         );
       }else{
-        //   console.log("has permission")
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
         })
