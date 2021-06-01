@@ -1340,6 +1340,7 @@ class Profile extends Component{
                     <Snackbar
                         visible={this.state.verificationSnackbarVisible}
                         onDismiss={() => this.setState({ verificationSnackbarVisible: false })}
+                        theme={{ colors: { accent: "#1eeb7a" }}}
                         action={{
                             label: 'Verify',
                             onPress: () => this.resendVerification(),

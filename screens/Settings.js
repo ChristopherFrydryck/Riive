@@ -38,6 +38,8 @@ class Settings extends React.Component{
             cameraRollAccess: false,
             notificationAccess: false,
             reportIssueModalVisible: false,
+            tripsAndHostingAccess: false,
+            discountsAndNewsAccess: false,
 
         }
     }
@@ -89,13 +91,14 @@ class Settings extends React.Component{
             await Alert.alert('Warning',
             'You will be unable to see reminders and up to date information on your trips without push notifications.',
             [
-                { text: 'Cancel' },
+                { text: 'Manage Notifications', onPress: () =>{
+                    Linking.openSettings();
+                }},
+                { text: 'Cancel' }
                 // If they said no initially and want to change their mind,
                 // we can automatically open our app in their settings
                 // so there's less friction in turning notifications on
-                { text: 'Manage Notifications', onPress: () =>{
-                    Linking.openSettings();
-                }}
+                
             ])
           
         }
@@ -194,7 +197,7 @@ class Settings extends React.Component{
                         if(res.status === 'granted'){
                             this.setState({notificationAccess: true})
                         }else{
-                            this.setState({notificationAccess: false})
+                            this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
                         }
                     })
     
@@ -224,7 +227,7 @@ class Settings extends React.Component{
                         if(res.status === 'granted'){
                             this.setState({notificationAccess: true})
                         }else{
-                            this.setState({notificationAccess: false})
+                            this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
                         }
                     })
                     
@@ -241,9 +244,11 @@ class Settings extends React.Component{
         this._navListener = this.props.navigation.addListener('didFocus', () => {
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+         
        });
 
-       this.checkPermissionsStatus();
+      
+         this.checkPermissionsStatus();
        
     }
 
@@ -258,6 +263,8 @@ class Settings extends React.Component{
         <DialogInput 
             isDialogVisible={this.state.reportIssueModalVisible}
             title={"Report an Issue"}
+            textInputProps={{autoCorrect:true, autoCapitalize: true}}
+            dialogStyle={{position: 'absolute', top: 150}}
             message={"Type below the issue you are facing in the app."}
             hintInput ={"I discovered a bug that..."}
             submitInput={ (inputText) =>  this.reportIssue(inputText)}
@@ -265,46 +272,67 @@ class Settings extends React.Component{
         />
       <View style={{flex: 1, justifyContent: 'space-between'}}>
         <View>
-            <Text type="SemiBold" style={{ fontSize: 18, marginTop: 16, marginBottom: 8}}>Permissions</Text>
-            <View style={styles.contentRow}>
-                <Text>Camera</Text>
-                <Switch value={this.state.cameraAccess} onValueChange={() => this.changePermission("CAMERA", this.state.cameraAccess, "cameraAccess")}/>
-            </View>
-            <View style={styles.contentRow}>
-                <Text>Camera Roll</Text>
-                <Switch value={this.state.cameraRollAccess} onValueChange={() => this.changePermission(Platform.OS ==='ios' ? "PHOTO_LIBRARY" : "WRITE_EXTERNAL_STORAGE", this.state.cameraRollAccess, "cameraRollAccess")}/>
-            </View>
-            <View style={styles.contentRow}>
-                <Text>Location Services</Text>
-                <Switch value={this.state.locationAccess} onValueChange={() => this.changePermission(Platform.OS === 'ios' ? "LOCATION_WHEN_IN_USE" : "ACCESS_FINE_LOCATION", this.state.cameraAccess, "cameraAccess")}/>
-            </View>
-            <View style={styles.contentRow}>
-                <Text>Notifications</Text>
-                <Switch value={this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+           
+                <Text numberOfLines={1} style={{ fontSize: 14, marginTop: 16, paddingHorizontal: 16}}>Permissions</Text>
+                <View style={styles.category}>
+                <View style={styles.contentRow}>
+                    <Text style={styles.contentLabel}>Camera</Text>
+                    <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.cameraAccess} onValueChange={() => this.changePermission("CAMERA", this.state.cameraAccess, "cameraAccess")}/>
+                </View>
+                <View style={styles.contentRow}>
+                    <Text style={styles.contentLabel}>Camera Roll</Text>
+                    <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.cameraRollAccess} onValueChange={() => this.changePermission(Platform.OS ==='ios' ? "PHOTO_LIBRARY" : "WRITE_EXTERNAL_STORAGE", this.state.cameraRollAccess, "cameraRollAccess")}/>
+                </View>
+                <View style={styles.contentRow}>
+                    <Text style={styles.contentLabel}>Location Services</Text>
+                    <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.locationAccess} onValueChange={() => this.changePermission(Platform.OS === 'ios' ? "LOCATION_WHEN_IN_USE" : "ACCESS_FINE_LOCATION", this.state.cameraAccess, "cameraAccess")}/>
+                </View>
+                {/* <View style={styles.contentRow}>
+                    <Text style={styles.contentLabel}>Notifications</Text>
+                    <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+                </View> */}
             </View>
 
-            <TouchableOpacity style={{marginTop: 16}} onPress={() => {
+            <Text numberOfLines={1} style={{ fontSize: 14, marginTop: 16, paddingHorizontal: 16}}>App Notifications</Text>
+                <View style={styles.category}>
+                    <View style={styles.contentRow}>
+                        <Text type="SemiBold" style={[styles.contentLabel, {marginLeft: 12}]}>Notifications</Text>
+                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+                    </View>
+                    <View style={styles.contentRow}>
+                        <Text style={this.state.notificationAccess ? styles.contentLabel : [styles.contentLabel, styles.disabledLabel]}>Trips and Hosting</Text>
+                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.tripsAndHostingAccess} disabled={!this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+                    </View>
+                    <View style={styles.contentRow}>
+                        <Text style={this.state.notificationAccess ? styles.contentLabel : [styles.contentLabel, styles.disabledLabel]}>Discounts & News</Text>
+                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.discountsAndNewsAccess} disabled={!this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+                    </View>
+                </View>
+
+           
+            <TouchableOpacity style={styles.category} onPress={() => {
                this.setState({reportIssueModalVisible: true})
             }}>
                 <View style={styles.contentRowNoIndent}>
-                    <Text numberOfLines={1} type="SemiBold" style={{ fontSize: 18}}>Report Issue</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 14, paddingHorizontal: 16}}>Report Issue</Text>
                     <Icon 
                         iconName="chevron-right"
                         iconColor={Colors.cosmos500}
-                        iconSize={28}       
+                        iconSize={24}       
                     />
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{marginTop: 16}} onPress={() => {
+
+            <TouchableOpacity style={styles.category} onPress={() => {
                this.props.navigation.navigate("TOS")
             }}>
                 <View style={styles.contentRowNoIndent}>
-                    <Text numberOfLines={1} type="SemiBold" style={{ fontSize: 18}}>Terms of Service & Privacy Policy</Text>
+                    <Text numberOfLines={1} style={{ fontSize: 14, paddingHorizontal: 16}}>Terms of Service & Privacy Policy</Text>
                     <Icon 
                         iconName="chevron-right"
                         iconColor={Colors.cosmos500}
-                        iconSize={28}        
+                        iconSize={24}        
                     />
                 </View>
             </TouchableOpacity>           
@@ -320,15 +348,28 @@ class Settings extends React.Component{
 const styles = StyleSheet.create({
   container:{
     minHeight: '100%',
-    backgroundColor: "white",
-    paddingHorizontal: 16,
+    backgroundColor: Colors.mist500,
+    
+  },
+  category:{
+      backgroundColor: "white",
+      paddingHorizontal: 16,
+      marginTop: 8,
+      paddingVertical: 8
   },
   contentRow: {
     flexDirection: 'row', 
     justifyContent: 'space-between', 
     alignItems: 'center',
     paddingVertical: 4,
-    marginLeft: 16
+    
+  },
+  contentLabel:{
+      fontSize: 14,
+      marginLeft: 24,
+  },
+  disabledLabel:{
+      color: Colors.mist900
   },
   contentRowNoIndent:{
     flexDirection: 'row', 

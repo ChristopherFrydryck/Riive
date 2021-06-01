@@ -1,6 +1,7 @@
 
 import React, {Component, createRef} from 'react'
 import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking} from 'react-native'
+import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 import axios from 'axios'
 import ActionSheet from "react-native-actions-sheet";
@@ -93,7 +94,7 @@ class Home extends Component {
         let filteredEnds = endTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
 
 
-    this.state ={
+    this.state = {
       notify: false,
       rippleFadeAnimation: new Animated.Value(1),
       rippleScaleAnimation: new Animated.Value(0.8),
@@ -130,7 +131,9 @@ class Home extends Component {
       locationDifferenceDriving: {
           distance: null,
           duration: null,
-      }
+      },
+
+      locationSnackbarVisible: false,
     }
 
     this.mapScrolling = false;
@@ -295,13 +298,14 @@ class Home extends Component {
           },
           error => {
             if(isFirstTime){
+                console.log(error)
                 Alert.alert(
                     "Location Services Disabled",
                     "Enable location permissions and restart Riive to discover parking nearby.",
                     [
                     {
                         text: "No thanks",
-                        onPress: () => {},
+                        onPress: () => { this.setState({locationSnackbarVisible: true})},
                         style: "cancel"
                     },
                     { text: "Enable location services", onPress: () => Linking.openSettings()}
@@ -316,6 +320,7 @@ class Home extends Component {
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
         })
+        this.setState({locationSnackbarVisible: false})
       }
 
      
@@ -1197,12 +1202,25 @@ goToReserveSpace = () => {
     }else{
       return(
           <SafeAreaView style={{flex: 1}}>
+              
               <SvgAnimatedLinearGradient width={width} height={height}>
                       <Rect x="16" width={width / 2} height={40} rx="0" ry="0" />
                       <Rect x={width / 2 + 24}  width={width / 2 - 40} height="40" rx="0" ry="0" />
                       <Rect x="16" y="64" width={width -32} height="48" rx="24" ry="24"/>
                       <Rect x="0" y="48" width={width} height={height} />
               </SvgAnimatedLinearGradient>
+              <Snackbar
+                    visible={this.state.locationSnackbarVisible}
+                    onDismiss={() => this.setState({ verificationSnackbarVisible: false })}
+                    theme={{ colors: { accent: "#1eeb7a" }}}
+                    action={{
+                        label: "Turn On",
+                        
+                        onPress: () => this.props.navigation.navigate("Settings"),
+                    }}
+                >
+                    You must turn on location services to view parking nearby.
+                </Snackbar>
            </SafeAreaView>
       )
     }
