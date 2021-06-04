@@ -87,7 +87,7 @@ export default class Authentication extends React.Component {
 
     if (auth().currentUser !== null) {
       await this.getCurrentUserInfo();
-      await this.checkPermissionsStatus(auth().currentUser.uid);
+      await this.checkPermissionsStatus();
       await this.forceUpdate();
       
     } else{
@@ -205,12 +205,12 @@ export default class Authentication extends React.Component {
     })
   }
 
-  checkPermissionsStatus = async(uid) => {
+  checkPermissionsStatus = async() => {
     let {permissions} = this.props.UserStore
 
 
       const db = firestore();
-      const doc = db.collection('users').doc(uid);
+      const doc = db.collection('users').doc(auth().currentUser.uid);
       doc.get().then((doc) => {
         if (doc.exists){
               permissions.notifications.tripsAndHosting = doc.data().permissions.notifications.tripsAndHosting;
@@ -537,7 +537,6 @@ export default class Authentication extends React.Component {
         // Updates user's displayName in firebase auth
         if(userCredentials.user){
           this.props.UserStore.userID = auth().currentUser.uid;
-          this.checkPermissionsStatus(auth().currentUser.uid);
            userCredentials.user.updateProfile({
             displayName: this.props.UserStore.fullname
            })
@@ -621,7 +620,7 @@ export default class Authentication extends React.Component {
                     
                   }).then(() => {
                     // alert('Welcome to Riive ' + this.props.UserStore.firstname + '!')
-     
+                    this.checkPermissionsStatus();
                   
      
                   // ID if user signed in via email or google
@@ -690,7 +689,7 @@ onPressSignIn = async() => {
   auth().signInWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async() => {
     // define user id before calling the db from it
     this.props.UserStore.userID = auth().currentUser.uid;
-    this.checkPermissionsStatus(auth().currentUser.uid);
+    this.checkPermissionsStatus();
     this.setState({
       emailError: '',
       passwordError: '',
