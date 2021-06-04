@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ActivityIndicator, StyleSheet, StatusBar, Platform, View, ScrollView, SafeAreaView, Dimensions, KeyboardAvoidingView, Image, LogBox} from 'react-native';
+import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
@@ -83,14 +84,19 @@ export default class Authentication extends React.Component {
     Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 
 
+
     if (auth().currentUser !== null) {
       await this.getCurrentUserInfo();
+      await this.checkPermissionsStatus(auth().currentUser.uid);
       await this.forceUpdate();
+      
     } else{
       this._isMounted = true;
       this.forceUpdate();
     }
   });
+
+
 
  
 
@@ -199,6 +205,124 @@ export default class Authentication extends React.Component {
     })
   }
 
+  checkPermissionsStatus = async(uid) => {
+    let {permissions} = this.props.UserStore
+
+
+      const db = firestore();
+      const doc = db.collection('users').doc(uid);
+      doc.get().then((doc) => {
+        if (doc.exists){
+              permissions.notifications.tripsAndHosting = doc.data().permissions.notifications.tripsAndHosting;
+              permissions.notifications.discountsAndNews = doc.data().permissions.notifications.discountsAndNews;
+        }else{
+          alert("Failure to get doc data to gather notification permissions")
+          permissions.notifications.tripsAndHosting = false;
+          permissions.notifications.discountsAndNews = false;
+        }
+      })
+
+
+    try{
+        if(Platform.OS === 'ios'){
+            await checkMultiple(['ios.permission.LOCATION_WHEN_IN_USE', 'ios.permission.PHOTO_LIBRARY', 'ios.permission.CAMERA']).then(res => {
+                if(res['ios.permission.CAMERA'] === 'granted'){
+                    // this.setState({cameraAccess: true})
+                    permissions.camera = true;
+                }else{
+                    // this.setState({cameraAccess: false})
+                    permissions.camera = false;
+                }
+
+                if(res['ios.permission.PHOTO_LIBRARY'] === 'granted'){
+                    // this.setState({cameraRollAccess: true})
+                    permissions.cameraRoll = true;
+                }else{
+                    // this.setState({cameraRollAccess: false})
+                    permissions.cameraRoll = false;
+                }
+
+                if(res['ios.permission.LOCATION_WHEN_IN_USE'] === 'granted'){
+                    // this.setState({locationAccess: true})
+                    permissions.locationServices = true;
+                }else{
+                    // this.setState({locationAccess: false})
+                    permissions.locationServices = false;
+                }
+
+                checkNotifications().then(res => {
+                  
+                    if(res.status === 'granted'){
+                        // this.setState({notificationAccess: true})
+                        permissions.notifications.notifications = true;
+                       
+                    }else{
+                        // this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
+                        permissions.notifications.notifications = false;
+                        
+                    }
+
+                    
+                })
+                return permissions
+              })
+        }else{
+            await checkMultiple(['android.permission.ACCESS_FINE_LOCATION', 'android.permission.CAMERA', 'android.permission.WRITE_EXTERNAL_STORAGE']).then(res => {
+                if(res['android.permission.CAMERA'] === 'granted'){
+                    // this.setState({cameraAccess: true})
+                    permissions.camera = true;
+                }else{
+                    // this.setState({cameraAccess: false})
+                    permissions.camera = true;
+                }
+
+                if(res['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'){
+                    // this.setState({cameraRollAccess: true})
+                    permissions.cameraRoll = true;
+                }else{
+                    // this.setState({cameraRollAccess: false})
+                    permissions.cameraRoll = true;
+                }
+
+                if(res['android.permission.ACCESS_FINE_LOCATION'] === 'granted'){
+                    // this.setState({locationAccess: true})
+                    permissions.locationServices = true;
+                }else{
+                    // this.setState({locationAccess: false})
+                    permissions.locationServices = false;
+                }
+
+
+                checkNotifications().then(res => {
+                    if(res.status === 'granted'){
+                        // this.setState({notificationAccess: true})
+                        permissions.notifications.notifications = true;
+
+                        if(permissions.notifications.tripsAndHosting){
+                            // this.setState({tripsAndHostingAccess: true})
+                         }else{
+                            // this.setState({tripsAndHostingAccess: false})
+                         }
+
+                         if(permissions.notifications.discountsAndNews){
+                            // this.setState({discountsAndNewsAccess: true})
+                         }else{
+                            // this.setState({discountsAndNewsAccess: false})
+                         }
+                    }else{
+                        // this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
+                        permissions.notifications.notifications = false;
+                    }
+                })
+                
+            })
+        }
+        
+       }catch(e){
+           alert(e)
+       }
+}
+
 
   getCurrentUserInfo = async() => {
     const db = firestore();
@@ -245,6 +369,12 @@ export default class Authentication extends React.Component {
               this.props.UserStore.pushTokens = doc.data().pushTokens || [];
               this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
               this.props.UserStore.address = doc.data().primaryAddress || {};
+              // this.props.UserStore.permissions = doc.data().pemissions || {
+              //   notifications: {
+              //     discountsAndNews: false,
+              //     tripsAndHosting: false,
+              //   }
+              // }
 
               // ID if user signed in via email or google
               this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;
@@ -387,6 +517,8 @@ export default class Authentication extends React.Component {
 
     // If vars are true and valid beguin creating user
     if(nameValid && phoneValid && dobValid){
+
+     
     
      auth().createUserWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async(userCredentials) => {
         // RETURN ALL THIS IF EMAIL AND PASSWORD ARE TRUE
@@ -400,9 +532,12 @@ export default class Authentication extends React.Component {
         })  
 
         
+
+        
         // Updates user's displayName in firebase auth
         if(userCredentials.user){
           this.props.UserStore.userID = auth().currentUser.uid;
+          this.checkPermissionsStatus(auth().currentUser.uid);
            userCredentials.user.updateProfile({
             displayName: this.props.UserStore.fullname
            })
@@ -448,6 +583,12 @@ export default class Authentication extends React.Component {
                       ssnProvided: false,
                       primaryAddress: {},
                       directDeposit: {},
+                      permissions: {
+                        notifications: {
+                          discountsAndNews: true,
+                          tripsAndHosting: true,
+                        }
+                      }
                     })
                 return docData
               }).then((doc) => {
@@ -471,6 +612,13 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.pushTokens = [];
                     this.props.UserStore.ssnProvided = false;
                     this.props.UserStore.address = {};
+                    // this.props.UserStore.permissions = {
+                    //   notifications: {
+                    //     discountsAndNews: true,
+                    //     tripsAndHosting: true,
+                    //   }
+                    // }
+                    
                   }).then(() => {
                     // alert('Welcome to Riive ' + this.props.UserStore.firstname + '!')
      
@@ -536,10 +684,13 @@ onPressSignIn = async() => {
 
   this.setState ({ authenticating: true})
 
+  
+
 
   auth().signInWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async() => {
     // define user id before calling the db from it
     this.props.UserStore.userID = auth().currentUser.uid;
+    this.checkPermissionsStatus(auth().currentUser.uid);
     this.setState({
       emailError: '',
       passwordError: '',
@@ -590,6 +741,8 @@ onPressSignIn = async() => {
                 this.props.UserStore.pushTokens = doc.data().pushTokens || [];
                 this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
                 this.props.UserStore.address = doc.data().primaryAddress || {};
+                // Don't pull from data. we want all permissions, not just account level perms
+                // this.props.UserStore.permissions = this.props.UserStore.permissions;
 
                 // ID if user signed in via email or google
                 this.props.UserStore.signInProvider = auth().currentUser.providerData[0].providerId;

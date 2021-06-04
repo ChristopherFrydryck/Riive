@@ -22,6 +22,12 @@ class UserStore {
     @observable payments = [];
     @observable searchHistory = [];
     @observable pushTokens = [];
+    @observable permissions = {
+        notifications: {
+          discountsAndNews: false,
+          tripsAndHosting: false,
+        }
+    }
 
     @observable disabled = false;
     @observable deleted = false;

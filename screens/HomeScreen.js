@@ -10,7 +10,7 @@ import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import Geolocation from '@react-native-community/geolocation';
-import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
+import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 import { pushNotification, getToken } from '../functions/in-app/notifications'
 
 import logo from '../assets/img/Logo_Abbreviated_001.png'
@@ -171,7 +171,7 @@ class Home extends Component {
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
-        
+    
         
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);
@@ -185,6 +185,7 @@ class Home extends Component {
 
       this._navListener = this.props.navigation.addListener('didBlur', () => {
         clearInterval(this._interval)
+        console.log(this.props.UserStore.permissions)
       })
 
 
@@ -193,6 +194,7 @@ class Home extends Component {
 
       await this.mapLocationFunction();
       await this.getCurrentLocation(true);
+    
       if(!this.props.ComponentStore.notificationsSetUp){
         await this.notificationListener().then(() => this.props.ComponentStore.notificationsSetUp = true);
       }
@@ -212,8 +214,10 @@ class Home extends Component {
  
 
       this.rippleAnimation();
+   
 
   }
+
 
   
 
