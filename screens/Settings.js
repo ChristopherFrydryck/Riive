@@ -10,6 +10,7 @@ import { version } from '../package.json'
 
 import {requestLocationAccuracy, checkMultiple, checkNotifications, requestNotifications, PERMISSIONS, openSettings, check, request} from 'react-native-permissions';
 import { getToken, disabledWarningAlert } from '../functions/in-app/notifications'
+import { checkPermissionsStatus } from '../functions/in-app/permissions'
 
 import { Switch } from 'react-native-paper';
 import DialogInput from 'react-native-dialog-input';
@@ -33,26 +34,27 @@ class Settings extends React.Component{
         super(props);
 
         this.state = {
-            locationAccess: false,
-            cameraAccess: false,
-            cameraRollAccess: false,
-            notificationAccess: false,
+            locationAccess: this.props.UserStore.permissions.locationServices,
+            cameraAccess: this.props.UserStore.permissions.camera,
+            cameraRollAccess: this.props.UserStore.permissions.cameraRoll,
+            notificationAccess: this.props.UserStore.permissions.notifications.notifications,
             reportIssueModalVisible: false,
-            tripsAndHostingAccess: false,
-            discountsAndNewsAccess: false,
+            tripsAndHosting: this.props.UserStore.permissions.notifications.tripsAndHosting,
+            discountsAndNews: this.props.UserStore.permissions.notifications.discountsAndNews,
 
         }
     }
 
     changePermission = (permissionName, currentStatus, stateName) => {
 
+        // console.log(`Permission name: ${permissionName}, currentStatus: ${currentStatus}, stateName: ${stateName}`)
+
         if(currentStatus === false){
             request(`${Platform.OS}.permission.${permissionName}`).then(res => {
-                
                 if(res === 'granted'){
-                    
                     this.setState({[stateName]: true})
                 }else if(res === 'blocked'){
+                    this.setState({[stateName]: false})
                     Linking.openSettings();
                 }
             })
@@ -64,43 +66,59 @@ class Settings extends React.Component{
     }
 
     changeNotificationPermissions = async(currentStatus, stateName) => {
-        if(currentStatus === false){
-            requestNotifications(['alert', 'sound']).then(async({status, settings}) => {
-                if(status === 'granted'){
-                    await getToken().then(tok => {
-                        if(!this.props.UserStore.pushTokens.includes(tok)){
-                          try{
-                              firestore().collection("users").doc(this.props.UserStore.userID).update({
-                                  pushTokens: firestore.FieldValue.arrayUnion(tok)
-                              })
-                              this.props.UserStore.pushTokens.push(tok);
-                          }catch(e){
-                              alert(e)
-                          }
-                        }
-                        return tok
-                    }).then(() => {
-                        this.setState({[stateName]: true})
-                    })
-                }else{
-                    Linking.openSettings();
-                }
-            })
-            
-        }else{
-            await Alert.alert('Warning',
-            'You will be unable to see reminders and up to date information on your trips without push notifications.',
-            [
-                { text: 'Manage Notifications', onPress: () =>{
-                    Linking.openSettings();
-                }},
-                { text: 'Cancel' }
-                // If they said no initially and want to change their mind,
-                // we can automatically open our app in their settings
-                // so there's less friction in turning notifications on
+        if(stateName === "notificationAccess"){
+            if(currentStatus === false){
+                requestNotifications(['alert', 'sound']).then(async({status, settings}) => {
+                    if(status === 'granted'){
+                        await getToken().then(tok => {
+                            if(!this.props.UserStore.pushTokens.includes(tok)){
+                            try{
+                                firestore().collection("users").doc(this.props.UserStore.userID).update({
+                                    pushTokens: firestore.FieldValue.arrayUnion(tok)
+                                })
+                                this.props.UserStore.pushTokens.push(tok);
+                            }catch(e){
+                                alert(e)
+                            }
+                            }
+                            return tok
+                        }).then(() => {
+                            this.setState({[stateName]: true})
+                        })
+                    }else{
+                        Linking.openSettings();
+                    }
+                })
                 
-            ])
-          
+            }else{
+                await Alert.alert('Warning',
+                'You will be unable to see reminders and up to date information on your trips without push notifications.',
+                [
+                    { text: 'Manage Notifications', onPress: () =>{
+                        Linking.openSettings();
+                    }},
+                    { text: 'Cancel' }
+                    // If they said no initially and want to change their mind,
+                    // we can automatically open our app in their settings
+                    // so there's less friction in turning notifications on
+                    
+                ])
+            
+            }
+        }else{
+            let db = firestore()
+            const doc = db.collection('users').doc(auth().currentUser.uid);
+            
+                let pathName = `permissions.notifications.${stateName}`
+                if(currentStatus === false){
+                    this.setState({[stateName]: true})
+                    
+                    doc.update({[pathName]: true })
+                }else{
+                    this.setState({[stateName]: false})
+                    doc.update({[pathName]: false })
+                }
+            
         }
     }
 
@@ -171,132 +189,34 @@ class Settings extends React.Component{
          
     }
 
-    checkPermissionsStatus = async() => {
-        let {permissions} = this.props.UserStore
-        try{
-            if(Platform.OS === 'ios'){
-                await checkMultiple(['ios.permission.LOCATION_WHEN_IN_USE', 'ios.permission.PHOTO_LIBRARY', 'ios.permission.CAMERA']).then(res => {
-                    if(res['ios.permission.CAMERA'] === 'granted'){
-                        this.setState({cameraAccess: true})
-                        permissions.camera = true;
-                    }else{
-                        this.setState({cameraAccess: false})
-                        permissions.camera = false;
-                    }
-    
-                    if(res['ios.permission.PHOTO_LIBRARY'] === 'granted'){
-                        this.setState({cameraRollAccess: true})
-                        permissions.cameraRoll = true;
-                    }else{
-                        this.setState({cameraRollAccess: false})
-                        permissions.cameraRoll = false;
-                    }
-    
-                    if(res['ios.permission.LOCATION_WHEN_IN_USE'] === 'granted'){
-                        this.setState({locationAccess: true})
-                        permissions.locationServices = true;
-                    }else{
-                        this.setState({locationAccess: false})
-                        permissions.locationServices = false;
-                    }
-    
-                    checkNotifications().then(res => {
-                        if(res.status === 'granted'){
-                            this.setState({notificationAccess: true})
-                            permissions.notifications.notifications = true;
 
-                            if(permissions.notifications.tripsAndHosting){
-                                this.setState({tripsAndHostingAccess: true})
-                             }else{
-                                this.setState({tripsAndHostingAccess: false})
-                             }
-
-                             if(permissions.notifications.discountsAndNews){
-                                this.setState({discountsAndNewsAccess: true})
-                             }else{
-                                this.setState({discountsAndNewsAccess: false})
-                             }
-                        }else{
-                            this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
-                            permissions.notifications.notifications = false;
-                        }
-                    })
-
-                    
-                    
-
-
-
-                    console.log(permissions)
-    
-                })
-            }else{
-                await checkMultiple(['android.permission.ACCESS_FINE_LOCATION', 'android.permission.CAMERA', 'android.permission.WRITE_EXTERNAL_STORAGE']).then(res => {
-                    if(res['android.permission.CAMERA'] === 'granted'){
-                        this.setState({cameraAccess: true})
-                        permissions.camera = true;
-                    }else{
-                        this.setState({cameraAccess: false})
-                        permissions.camera = true;
-                    }
-    
-                    if(res['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'){
-                        this.setState({cameraRollAccess: true})
-                        permissions.cameraRoll = true;
-                    }else{
-                        this.setState({cameraRollAccess: false})
-                        permissions.cameraRoll = true;
-                    }
-    
-                    if(res['android.permission.ACCESS_FINE_LOCATION'] === 'granted'){
-                        this.setState({locationAccess: true})
-                        permissions.locationServices = true;
-                    }else{
-                        this.setState({locationAccess: false})
-                        permissions.locationServices = false;
-                    }
-    
-    
-                    checkNotifications().then(res => {
-                        if(res.status === 'granted'){
-                            this.setState({notificationAccess: true})
-                            permissions.notifications.notifications = true;
-
-                            if(permissions.notifications.tripsAndHosting){
-                                this.setState({tripsAndHostingAccess: true})
-                             }else{
-                                this.setState({tripsAndHostingAccess: false})
-                             }
-
-                             if(permissions.notifications.discountsAndNews){
-                                this.setState({discountsAndNewsAccess: true})
-                             }else{
-                                this.setState({discountsAndNewsAccess: false})
-                             }
-                        }else{
-                            this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
-                            permissions.notifications.notifications = false;
-                        }
-                    })
-                    
-                })
-            }
-            
-           }catch(e){
-               alert(e)
-           }
-    }
+    setPermissions = () => {
+        checkPermissionsStatus().then(res => {
+          this.props.UserStore.permissions = res;
+        }).then(() => {
+            this.setState({
+                locationAccess: this.props.UserStore.permissions.locationServices,
+                cameraAccess: this.props.UserStore.permissions.camera,
+                cameraRollAccess: this.props.UserStore.permissions.cameraRoll,
+                notificationAccess: this.props.UserStore.permissions.notifications.notifications,
+                tripsAndHosting: this.props.UserStore.permissions.notifications.tripsAndHosting,
+                discountsAndNews: this.props.UserStore.permissions.notifications.discountsAndNews,
+            })
+        })
+      
+      }
 
     async componentDidMount(){
         this._isMounted = true;
         this._navListener = this.props.navigation.addListener('didFocus', () => {
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
-         
+         this.setPermissions();
+   
        });
 
       
-         this.checkPermissionsStatus();
+         
        
     }
 
@@ -335,7 +255,7 @@ class Settings extends React.Component{
                 </View>
                 <View style={styles.contentRow}>
                     <Text style={styles.contentLabel}>Location Services</Text>
-                    <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.locationAccess} onValueChange={() => this.changePermission(Platform.OS === 'ios' ? "LOCATION_WHEN_IN_USE" : "ACCESS_FINE_LOCATION", this.state.cameraAccess, "cameraAccess")}/>
+                    <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.locationAccess} onValueChange={() => this.changePermission(Platform.OS === 'ios' ? "LOCATION_WHEN_IN_USE" : "ACCESS_FINE_LOCATION", this.state.locationAccess, "locationAccess")}/>
                 </View>
                 {/* <View style={styles.contentRow}>
                     <Text style={styles.contentLabel}>Notifications</Text>
@@ -351,11 +271,11 @@ class Settings extends React.Component{
                     </View>
                     <View style={styles.contentRow}>
                         <Text style={this.state.notificationAccess ? styles.contentLabel : [styles.contentLabel, styles.disabledLabel]}>Trips and Hosting</Text>
-                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.tripsAndHostingAccess} disabled={!this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.notificationAccess ? this.state.tripsAndHosting : false} disabled={true} onValueChange={() => this.changeNotificationPermissions(this.state.tripsAndHosting, "tripsAndHosting")}/>
                     </View>
                     <View style={styles.contentRow}>
                         <Text style={this.state.notificationAccess ? styles.contentLabel : [styles.contentLabel, styles.disabledLabel]}>Discounts & News</Text>
-                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.discountsAndNewsAccess} disabled={!this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.notificationAccess, "notificationAccess")}/>
+                        <Switch style={{transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={this.state.notificationAccess ? this.state.discountsAndNews : false} disabled={!this.state.notificationAccess} onValueChange={() => this.changeNotificationPermissions(this.state.discountsAndNews, "discountsAndNews")}/>
                     </View>
                 </View>
 

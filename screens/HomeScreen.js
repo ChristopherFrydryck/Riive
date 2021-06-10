@@ -12,6 +12,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 import { pushNotification, getToken } from '../functions/in-app/notifications'
+import { checkPermissionsStatus } from '../functions/in-app/permissions'
 
 import logo from '../assets/img/Logo_Abbreviated_001.png'
 
@@ -171,7 +172,10 @@ class Home extends Component {
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
-    
+        
+        this.setPermissions();
+        this.mapLocationFunction();
+        this.getCurrentLocation(true);
         
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);
@@ -185,15 +189,14 @@ class Home extends Component {
 
       this._navListener = this.props.navigation.addListener('didBlur', () => {
         clearInterval(this._interval)
-        console.log(this.props.UserStore.permissions)
       })
 
 
   
-    
+      this.getCurrentLocation(true);
 
-      await this.mapLocationFunction();
-      await this.getCurrentLocation(true);
+     
+    
     
       if(!this.props.ComponentStore.notificationsSetUp){
         await this.notificationListener().then(() => this.props.ComponentStore.notificationsSetUp = true);
@@ -216,6 +219,12 @@ class Home extends Component {
       this.rippleAnimation();
    
 
+  }
+
+  setPermissions = () => {
+    checkPermissionsStatus().then(res => {
+      this.props.UserStore.permissions = res;
+    })
   }
 
 
@@ -280,6 +289,7 @@ class Home extends Component {
   }
 
   mapLocationFunction = () => {
+     
     this._interval = setInterval(() => {
         if(this.mapScrolling === false){
           this.getCurrentLocation(false)
@@ -302,7 +312,6 @@ class Home extends Component {
           },
           error => {
             if(isFirstTime){
-                console.log(error)
                 Alert.alert(
                     "Location Services Disabled",
                     "Enable location permissions and restart Riive to discover parking nearby.",
@@ -870,8 +879,8 @@ goToReserveSpace = () => {
   render() {
   
     const {width, height} = Dimensions.get('window')
-    const {firstname, email} = this.props.UserStore
-    if(this.currentLocation.geometry.location.lat && this.currentLocation.geometry.location.lng){
+    const {firstname, email, permissions} = this.props.UserStore
+    if(permissions.locationServices && this.region.current.latitude && this.region.current.longitude){
       return (
         <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
 
@@ -912,6 +921,12 @@ goToReserveSpace = () => {
                 longitude: this.currentLocation.geometry.location.lng,
                 latitudeDelta: this.region.current.latitudeDelta || 0.025,
                 longitudeDelta: this.region.current.longitudeDelta || 0.025
+              }}
+              region={{
+                  latitude: 0,
+                  longitude: 0,
+                  latitudeDelta: 0.025,
+                  longitudeDelta: 0.025
               }}
               region={Platform.OS == 'ios' ? {
                   latitude: this.region.searched.latitude && !this.state.mapScrolled ? this.region.searched.latitude : this.region.current.latitude,
