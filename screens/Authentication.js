@@ -87,16 +87,21 @@ export default class Authentication extends React.Component {
 
 
 
-    if (auth().currentUser !== null) {
-      await this.getCurrentUserInfo();
-      await this.setPermissions()
-      await this.forceUpdate();
-      
-    } else{
-      this._isMounted = true;
-      this.forceUpdate();
-    }
+   
   });
+
+  if (auth().currentUser !== null) {
+    await this.getCurrentUserInfo();
+    await this.setPermissions()
+    await this.forceUpdate();
+    
+  } else{
+    this._isMounted = true;
+    this.forceUpdate();
+  }
+
+  
+
 
 
 
@@ -213,130 +218,6 @@ export default class Authentication extends React.Component {
     })
   }
 
-//   checkPermissionsStatus = async() => {
-
-//     let perms = {
-//       notifications: {
-//         notifications: null,
-//         tripsAndHosting: null,
-//         discountsAndNews: null,
-//       },
-//       cameraRoll: null,
-//       camera: null,
-//       locationServices: null,
-//     }
-
-
-//       const db = firestore();
-//       const doc = db.collection('users').doc(auth().currentUser.uid);
-//       await doc.get().then((doc) => {
-//         if (doc.exists){
-//               perms.notifications.tripsAndHosting = doc.data().permissions.notifications.tripsAndHosting;
-//               perms.notifications.discountsAndNews = doc.data().permissions.notifications.discountsAndNews;
-//         }else{
-//           alert("Failure to gather account permissions.")
-//           perms.notifications.tripsAndHosting = false;
-//           perms.notifications.discountsAndNews = false;
-//         }
-//         return perms
-//       }).then(async() => {
-//         if(Platform.OS === 'ios'){
-//           let res = await checkMultiple(['ios.permission.LOCATION_WHEN_IN_USE', 'ios.permission.PHOTO_LIBRARY', 'ios.permission.CAMERA'])
-
-//               if(res['ios.permission.CAMERA'] === 'granted'){
-//                   // this.setState({cameraAccess: true})
-//                   perms.camera = true;
-//               }else{
-//                   // this.setState({cameraAccess: false})
-//                   perms.camera = false;
-//               }
-
-//               if(res['ios.permission.PHOTO_LIBRARY'] === 'granted'){
-//                   // this.setState({cameraRollAccess: true})
-//                   perms.cameraRoll = true;
-//               }else{
-//                   // this.setState({cameraRollAccess: false})
-//                   perms.cameraRoll = false;
-//               }
-
-//               if(res['ios.permission.LOCATION_WHEN_IN_USE'] === 'granted'){
-//                   // this.setState({locationAccess: true})
-//                   perms.locationServices = true;
-//               }else{
-//                   // this.setState({locationAccess: false})
-//                   perms.locationServices = false;
-//               }
-
-//               return res
-              
-           
-            
-//             // let notifs = await checkNotifications();
-                
-//             //   if(notifs.status === 'granted'){
-//             //       // this.setState({notificationAccess: true})
-//             //       perms.notifications.notifications = true;
-                 
-//             //   }else{
-//             //       // this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
-//             //       perms.notifications.notifications = false;
-                  
-//             //   }
-
-    
-//         }else{
-        
-//             let res = await checkMultiple(['android.permission.ACCESS_FINE_LOCATION', 'android.permission.CAMERA', 'android.permission.WRITE_EXTERNAL_STORAGE']);
-
-//                 if(res['android.permission.CAMERA'] === 'granted'){
-//                     // this.setState({cameraAccess: true})
-//                     perms.camera = true;
-//                 }else{
-//                     // this.setState({cameraAccess: false})
-//                     perms.camera = true;
-//                 }
-
-//                 if(res['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'){
-//                     // this.setState({cameraRollAccess: true})
-//                     perms.cameraRoll = true;
-//                 }else{
-//                     // this.setState({cameraRollAccess: false})
-//                     perms.cameraRoll = true;
-//                 }
-
-//                 if(res['android.permission.ACCESS_FINE_LOCATION'] === 'granted'){
-//                     // this.setState({locationAccess: true})
-//                     perms.locationServices = true;
-//                 }else{
-//                     // this.setState({locationAccess: false})
-//                     perms.locationServices = false;
-//                 }
-
-//                 return res
-//         }
-//       }).then(async() => {
-//         let notifs = await checkNotifications();
-                
-//               if(notifs.status === 'granted'){
-//                   // this.setState({notificationAccess: true})
-//                   perms.notifications.notifications = true;
-                 
-//               }else{
-//                   // this.setState({notificationAccess: false, tripsAndHostingAccess: false, discountsAndNewsAccess: false})
-//                   perms.notifications.notifications = false;
-                  
-//               }
-
-              
-
-//           return perms
-//       }).catch(e => {
-//         alert(e)
-//       })
-       
-//       return perms
-// }
-
 
   getCurrentUserInfo = async() => {
     const db = firestore();
@@ -450,7 +331,6 @@ export default class Authentication extends React.Component {
   }).catch((e) => {
     alert("Failed to grab user data. " + e)
   })
-
 
   }
 

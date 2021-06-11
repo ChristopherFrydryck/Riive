@@ -211,9 +211,9 @@ class addDebitCard extends Component {
 
     
       return(
+        <View style={{flex: 1, backgroundColor: 'white'}}>
         <KeyboardAwareScrollView 
-         style={{backgroundColor: "white", paddingHorizontal: 16}} 
-         contentContainerStyle={{flex: 1}}
+         style={{paddingHorizontal: 16}} 
          keyboardShouldPersistTaps="handled"
           automaticallyAdjustContentInsets={false}
           scrollEnabled
@@ -313,6 +313,7 @@ class addDebitCard extends Component {
           
          
         </KeyboardAwareScrollView >
+        </View>
       )
   }
 }
