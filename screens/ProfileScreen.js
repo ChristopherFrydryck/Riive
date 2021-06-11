@@ -141,7 +141,6 @@ class Profile extends Component{
         // Set Status Bar page info here!
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
-            console.log(this.props.UserStore.permissions)
             this.updateProfile()
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
