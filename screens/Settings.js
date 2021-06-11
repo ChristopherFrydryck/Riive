@@ -211,13 +211,22 @@ class Settings extends React.Component{
         this._navListener = this.props.navigation.addListener('didFocus', () => {
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+         console.log("MOUNTED")
          this.setPermissions();
    
        });
 
+
       
          
        
+    }
+
+    componentDidUpdate(prevProps, prevState){
+        if(prevState.locationAccess !== this.state.locationAccess || prevState.cameraAccess !== this.state.cameraAccess || prevState.cameraRollAccess !== this.state.cameraRollAccess || prevState.notificationAccess !== this.state.notificationAccess || prevState.tripsAndHosting !== this.state.tripsAndHosting || prevState.discountsAndNews !== this.state.discountsAndNews){
+            console.log("CHANGED")
+            this.setPermissions();
+        }
     }
 
 

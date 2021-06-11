@@ -80,13 +80,15 @@ import firestore from '@react-native-firebase/firestore';
             }else{
             
                 let res = await checkMultiple(['android.permission.ACCESS_FINE_LOCATION', 'android.permission.CAMERA', 'android.permission.WRITE_EXTERNAL_STORAGE']);
+
+                
     
                     if(res['android.permission.CAMERA'] === 'granted'){
                         // this.setState({cameraAccess: true})
                         perms.camera = true;
                     }else{
                         // this.setState({cameraAccess: false})
-                        perms.camera = true;
+                        perms.camera = false;
                     }
     
                     if(res['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted'){
@@ -94,7 +96,7 @@ import firestore from '@react-native-firebase/firestore';
                         perms.cameraRoll = true;
                     }else{
                         // this.setState({cameraRollAccess: false})
-                        perms.cameraRoll = true;
+                        perms.cameraRoll = false;
                     }
     
                     if(res['android.permission.ACCESS_FINE_LOCATION'] === 'granted'){
@@ -104,7 +106,8 @@ import firestore from '@react-native-firebase/firestore';
                         // this.setState({locationAccess: false})
                         perms.locationServices = false;
                     }
-    
+                    
+                 
                     return res
             }
           }).then(async() => {
