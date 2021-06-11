@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Linking, Alert, Dimensions, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Linking, Alert, Dimensions, TouchableOpacity, AppState } from 'react-native';
 import Text from '../components/Txt'
 import Input from '../components/Input'
 import Icon from '../components/Icon'
@@ -34,11 +34,13 @@ class Settings extends React.Component{
         super(props);
 
         this.state = {
+            appState: AppState.currentState,
+            reportIssueModalVisible: false,
+
             locationAccess: this.props.UserStore.permissions.locationServices,
             cameraAccess: this.props.UserStore.permissions.camera,
             cameraRollAccess: this.props.UserStore.permissions.cameraRoll,
             notificationAccess: this.props.UserStore.permissions.notifications.notifications,
-            reportIssueModalVisible: false,
             tripsAndHosting: this.props.UserStore.permissions.notifications.tripsAndHosting,
             discountsAndNews: this.props.UserStore.permissions.notifications.discountsAndNews,
 
@@ -53,7 +55,7 @@ class Settings extends React.Component{
             request(`${Platform.OS}.permission.${permissionName}`).then(res => {
                 if(res === 'granted'){
                     this.setState({[stateName]: true})
-                }else if(res === 'blocked'){
+                }else{
                     this.setState({[stateName]: false})
                     Linking.openSettings();
                 }
@@ -64,6 +66,19 @@ class Settings extends React.Component{
 
         this.forceUpdate();
     }
+
+
+    _handleAppStateChange = nextAppState => {
+        if (
+          this.state.appState.match(/inactive|background/) &&
+          nextAppState === "active"
+        ) {
+          this.setPermissions();
+        }
+        this.setState({ appState: nextAppState });
+      };
+
+
 
     changeNotificationPermissions = async(currentStatus, stateName) => {
         if(stateName === "notificationAccess"){
@@ -181,7 +196,7 @@ class Settings extends React.Component{
                 })
             }).then(() => alert("Thank you for reporting an issue. We will solve it as soon as possible."))
          }catch(e){
-             console.log(e)
+             alert(e)
          }
 
          this.setState({reportIssueModalVisible: false})
@@ -208,25 +223,25 @@ class Settings extends React.Component{
 
     async componentDidMount(){
         this._isMounted = true;
+        AppState.addEventListener("change", this._handleAppStateChange);
         this._navListener = this.props.navigation.addListener('didFocus', () => {
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
-         console.log("MOUNTED")
          this.setPermissions();
    
        });
-
-
-      
-         
        
     }
 
     componentDidUpdate(prevProps, prevState){
         if(prevState.locationAccess !== this.state.locationAccess || prevState.cameraAccess !== this.state.cameraAccess || prevState.cameraRollAccess !== this.state.cameraRollAccess || prevState.notificationAccess !== this.state.notificationAccess || prevState.tripsAndHosting !== this.state.tripsAndHosting || prevState.discountsAndNews !== this.state.discountsAndNews){
-            console.log("CHANGED")
             this.setPermissions();
         }
+    }
+
+    componentWillUnmount(){
+        AppState.removeEventListener("change", this._handleAppStateChange);
+        this.setPermissions();
     }
 
 
