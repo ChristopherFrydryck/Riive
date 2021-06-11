@@ -188,6 +188,7 @@ class Home extends Component {
       });
 
       this._navListener = this.props.navigation.addListener('didBlur', () => {
+        this.setPermissions();
         clearInterval(this._interval)
       })
 
@@ -305,6 +306,8 @@ class Home extends Component {
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
       )
 
+
+
      
       if(permission !== "granted"){
         await Geolocation.getCurrentPosition((position) => {
@@ -330,8 +333,14 @@ class Home extends Component {
             }
         );
       }else{
+       
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
+        },  error => alert(`There was an issue getting your location. ${error.message}`),
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 3600000
         })
         this.setState({locationSnackbarVisible: false})
       }
