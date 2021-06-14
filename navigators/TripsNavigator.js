@@ -1,5 +1,5 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, Text } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack'
 import Colors from '../constants/Colors'
 
@@ -15,12 +15,14 @@ const TripsNavigator = createStackNavigator({
   TripsTabNavigator: {
       screen: TripsTabNavigator,
       navigationOptions: {
-          headerShown: false,
+          headerShown: false
       }
   },
   EditTrip: EditTrip,
 }, 
 {initialRouteName: "TripsTabNavigator",})
+
+
   
 
 // const TripsNavigator = createMaterialTopTabNavigator({

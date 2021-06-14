@@ -10,7 +10,9 @@ class MaterialTopTabBarWrapper extends React.Component {
     render() {
       return (
         <SafeAreaView
-          forceInset={{ top: 'always', horizontal: 'never', bottom: 'never' }}>
+          forceInset={{ top: 'always', horizontal: 'never', bottom: 'never'}}
+          style={{backgroundColor: 'white'}}
+          >
           <MaterialTopTabBar {...this.props} />
         </SafeAreaView>
       );
@@ -37,7 +39,7 @@ const TripsTabNavigator = createMaterialTopTabNavigator({
     initialRouteName: "VisitingTrips",
     navigationOptions:{
         title: "Trips",
-        headerStyle: { borderBottomColor: 'transparent' },
+        headerStyle: { borderBottomColor: 'transparent',},
         
     },
     tabBarOptions: {

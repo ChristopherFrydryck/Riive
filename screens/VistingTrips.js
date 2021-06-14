@@ -24,6 +24,7 @@ import {inject, observer} from 'mobx-react/native'
 @inject("UserStore", "ComponentStore")
 @observer
 export default class VisitingTrips extends Component{
+
    constructor(props){
         super(props);
         this.state = {

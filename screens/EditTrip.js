@@ -31,6 +31,8 @@ import {inject, observer} from 'mobx-react/native'
 @inject("UserStore", "ComponentStore")
 @observer
 class externalSpace extends React.Component {
+    
+    _isMounted = false;
 
     static navigationOptions = ({navigation}) => {
         const { params = {} } = navigation.state;
@@ -49,7 +51,8 @@ class externalSpace extends React.Component {
 
         this.state = {
             visit: this.props.navigation.state.params.visit,
-            listing: this.props.navigation.state.params.listing
+            listing: this.props.navigation.state.params.listing,
+            currentActivePhoto: 0,
         }
 
 
@@ -57,7 +60,7 @@ class externalSpace extends React.Component {
 
     async componentDidMount(){
      
-       
+       this._isMounted = true;
 
        
 
@@ -66,9 +69,9 @@ class externalSpace extends React.Component {
         Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
       });
 
-    //   let {spaceName} = this.props.ComponentStore.selectedExternalSpot[0]
+    //   let {spaceName} = this.state.listing
 
-    //   console.log(this.state.listing)
+      console.log(this.state.visit.price.price)
     
 
       this.props.navigation.setParams({
@@ -93,31 +96,31 @@ class externalSpace extends React.Component {
     //         }         
     // }
 
-    // carouselUpdate = (xVal) => {
-    //     const {width} = Dimensions.get('window')
+    carouselUpdate = (xVal) => {
+        const {width} = Dimensions.get('window')
     
-    //     let newIndex = Math.round(xVal/width)
+        let newIndex = Math.round(xVal/width)
     
-    //     // console.log(newIndex)
+        // console.log(newIndex)
     
-    //     this.setState({currentActivePhoto: newIndex})
-    // }
+        this.setState({currentActivePhoto: newIndex})
+    }
     
     
-    // renderDotsView = (numItems, position) => {
-    //     var arr = [];
-    //     for(let i = 0; i <= numItems - 1; i++){
-    //         arr.push(
-    //             <Animated.View 
-    //                 key={i}
-    //                 style={{ opacity: position == i ? 1 : 0.3, height: 8, width: 8, backgroundColor: Colors.cosmos900, margin: 2, borderRadius: 8 }}
-    //               />
-    //         )
-    //     }
+    renderDotsView = (numItems, position) => {
+        var arr = [];
+        for(let i = 0; i <= numItems - 1; i++){
+            arr.push(
+                <Animated.View 
+                    key={i}
+                    style={{ opacity: position == i ? 1 : 0.3, height: 8, width: 8, backgroundColor: Colors.cosmos900, margin: 2, borderRadius: 8 }}
+                  />
+            )
+        }
     
-    //     return(arr)
+        return(arr)
         
-    //     }
+        }
 
     // goToHostProfile = () => {
     //     this.props.ComponentStore.selectedUser[0] = this.state.host ;
@@ -138,8 +141,70 @@ class externalSpace extends React.Component {
 
     render(){
         const {width, height} = Dimensions.get("window")
-        // if(this.state.host){
-       
+        if(this._isMounted){
+       return(
+                <View style={{flex: 1, backgroundColor: 'white'}}>
+                   <ScrollView >
+                    <View>
+                        <ScrollView
+                            horizontal={true}
+                            pagingEnabled={true}
+                            scrollEnabled={true}
+                            decelerationRate={0}
+                            snapToAlignment="start"
+                            snapToInterval={width}
+                            onScroll={data =>  this.carouselUpdate(data.nativeEvent.contentOffset.x)}
+                            scrollEventThrottle={1}
+                            showsHorizontalScrollIndicator={false}
+                            // persistentScrollbar={true}
+                        >
+                        <View>
+                        <Image 
+                                style={{width: width}}
+                                aspectRatio={16/9}
+                                source={{uri: this.state.listing.photo}}
+                                resizeMode={'cover'}
+                            /> 
+                            </View>
+                            <View>
+                            <View  style={{ position:'absolute', width: width, aspectRatio: 16/9, zIndex: 9}}/>
+                                <MapView
+                                provider={MapView.PROVIDER_GOOGLE}
+                                mapStyle={NightMap}
+                                style={{width: width, aspectRatio:16/9}}
+                                region={{
+                                latitude: this.state.listing.region.latitude,
+                                longitude: this.state.listing.region.longitude,
+                                latitudeDelta: this.state.listing.region.latitudeDelta,
+                                longitudeDelta: this.state.listing.region.longitudeDelta,
+                                }}
+                                pitchEnabled={false} 
+                                rotateEnabled={false} 
+                                zoomEnabled={false} 
+                                scrollEnabled={false}
+                                >
+                                    <Marker 
+                                        coordinate={{
+                                        latitude: this.state.listing.region.latitude,
+                                        longitude: this.state.listing.region.longitude
+                                        }}   
+                                    />
+                                </MapView>
+                            </View>
+                        </ScrollView>
+                        
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 8}}>
+                            {this.renderDotsView(2, this.state.currentActivePhoto)}
+                        </View>
+                    </View>
+                    </ScrollView>
+                    <View style={styles.contentBox}>
+                        <View style={{width: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, borderRadius: width, marginBottom: 8}}>
+                            <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.visit.price.price}</Text>
+                        </View>
+                    </View>
+                </View>
+       )
         // return(
         //     <View style={{flex: 1, backgroundColor: 'white'}}>
         //         <ScrollView >
@@ -160,7 +225,7 @@ class externalSpace extends React.Component {
         //                 <Image 
         //                         style={{width: width}}
         //                         aspectRatio={16/9}
-        //                         source={{uri: this.props.ComponentStore.selectedExternalSpot[0].photo}}
+        //                         source={{uri: this.state.listing.photo}}
         //                         resizeMode={'cover'}
         //                     /> 
         //                     </View>
@@ -171,10 +236,10 @@ class externalSpace extends React.Component {
         //                         mapStyle={NightMap}
         //                         style={{width: width, aspectRatio:16/9}}
         //                         region={{
-        //                         latitude: this.props.ComponentStore.selectedExternalSpot[0].region.latitude,
-        //                         longitude: this.props.ComponentStore.selectedExternalSpot[0].region.longitude,
-        //                         latitudeDelta: this.props.ComponentStore.selectedExternalSpot[0].region.latitudeDelta,
-        //                         longitudeDelta: this.props.ComponentStore.selectedExternalSpot[0].region.longitudeDelta,
+        //                         latitude: this.state.listing.region.latitude,
+        //                         longitude: this.state.listing.region.longitude,
+        //                         latitudeDelta: this.state.listing.region.latitudeDelta,
+        //                         longitudeDelta: this.state.listing.region.longitudeDelta,
         //                         }}
         //                         pitchEnabled={false} 
         //                         rotateEnabled={false} 
@@ -183,8 +248,8 @@ class externalSpace extends React.Component {
         //                         >
         //                             <Marker 
         //                                 coordinate={{
-        //                                 latitude: this.props.ComponentStore.selectedExternalSpot[0].region.latitude,
-        //                                 longitude: this.props.ComponentStore.selectedExternalSpot[0].region.longitude
+        //                                 latitude: this.state.listing.region.latitude,
+        //                                 longitude: this.state.listing.region.longitude
         //                                 }}   
         //                             />
         //                         </MapView>
@@ -198,10 +263,10 @@ class externalSpace extends React.Component {
 
         //             <View style={styles.contentBox}>
         //                 <View style={{width: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, borderRadius: width, marginBottom: 8}}>
-        //                             <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.props.ComponentStore.selectedExternalSpot[0].spacePrice}/hr</Text>
+        //                             <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.listing.spacePrice}/hr</Text>
         //                 </View>
                     
-        //                     <Text  style={{fontSize: 24, flexWrap: 'wrap'}}>{this.props.ComponentStore.selectedExternalSpot[0].spaceName}</Text>
+        //                     <Text  style={{fontSize: 24, flexWrap: 'wrap'}}>{this.state.listing.spaceName}</Text>
         //                     <Text style={{marginBottom: 8}}>No ratings yet</Text>
         //                     <View style={{flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8}}>
         //                         <Icon
@@ -214,7 +279,7 @@ class externalSpace extends React.Component {
         //                         <TouchableWithoutFeedback onPress={() => this.goToHostProfile()}><Text>Hosted by <Text style={{textDecorationLine: 'underline'}}>{this.state.host.firstname} {this.state.host.lastname.charAt(0).toUpperCase()}</Text>.</Text></TouchableWithoutFeedback>
         //                     </View>
                             
-        //                     {this.props.ComponentStore.selectedExternalSpot[0].spaceBio.split("").length > 0 ? 
+        //                     {this.state.listing.spaceBio.split("").length > 0 ? 
         //                     <View style={{flexDirection: 'row'}}>
         //                         <Icon
         //                             iconName="form"
@@ -223,7 +288,7 @@ class externalSpace extends React.Component {
         //                             iconSize={16}
         //                             style={{marginRight: 8, marginTop: 4}}
         //                         />
-        //                         <Text style={{flex: 1}}>{this.props.ComponentStore.selectedExternalSpot[0].spaceBio}</Text>
+        //                         <Text style={{flex: 1}}>{this.state.listing.spaceBio}</Text>
         //                     </View>
         //                     : null}
                             
@@ -233,7 +298,7 @@ class externalSpace extends React.Component {
                         
         //                     <View style={{marginTop: 32}}>
         //                         <DayAvailabilityPicker 
-        //                             availability={this.props.ComponentStore.selectedExternalSpot[0].availability}
+        //                             availability={this.state.listing.availability}
         //                             availabilityCallback={() => {}}
         //                             editable={false}
         //                         />
@@ -247,7 +312,7 @@ class externalSpace extends React.Component {
         //             </View>
         //           </View>
         // )
-        // }else{
+        }else{
             return(
                 <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height={height}>
                         <Rect x="0" width={width} height={width / 1.7777777} rx="0" ry="0" />
@@ -269,7 +334,7 @@ class externalSpace extends React.Component {
                         <Rect x="16" y={width / 1.77777777 + 332} width={width - 32} height="48" />
                 </SvgAnimatedLinearGradient>
             )
-        // }
+        }
     }
 
 
