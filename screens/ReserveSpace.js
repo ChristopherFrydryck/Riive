@@ -599,6 +599,17 @@ class reserveSpace extends Component {
 
        
           let paymentsArray = this.props.UserStore.payments.map(payment => {
+              let cardValid = false
+              let d = new Date();
+              // Validate card is not expired
+              if(payment.Year < parseInt(d.getFullYear().toString().slice(2))){
+                cardValid = false;
+            }else if(payment.Year == parseInt(d.getFullYear().toString().slice(2)) && payment.Month < d.getMonth() + 1){
+                cardValid = false;
+            }else{
+                cardValid = true;
+            }
+
               return(
                 <RadioButton key={payment.PaymentID} style={{paddingVertical: 6}} id={payment.PaymentID} selectItem={() => this.setActivePayment(payment, false)}>
                     <View style={{flex: 1, alignItems: 'flex-start'}}>
@@ -613,7 +624,7 @@ class reserveSpace extends Component {
                              />
                         </View>
                         
-                        <Text style={{fontSize: 12}} >{`Expires ${payment.Month}/${payment.Year}`}</Text>
+                        <Text style={cardValid ? {fontSize: 12} : {fontSize: 12, color: Colors.hal500}} >{cardValid ? `Expires ${payment.Month}/${payment.Year}` : "Expired"}</Text>
                     </View>
                 </RadioButton>
               )
@@ -700,7 +711,7 @@ class reserveSpace extends Component {
                                 {vehicleArray}
                             </RadioList>
                         : null}
-                        <Button onPress={() => this.props.navigation.navigate("AddVehicle")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40}} textStyle={{color: Colors.tango900, fontSize: 14}}>+ Add Vehicle</Button>
+                        <Button onPress={() => this.props.navigation.navigate("AddVehicle")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Vehicle</Button>
                     </View>
                     
 
@@ -713,7 +724,7 @@ class reserveSpace extends Component {
                                     {paymentsArray}
                                 </RadioList>
                             : null}
-                        <Button onPress={() => this.props.navigation.navigate("AddPayment")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40}} textStyle={{color: Colors.tango900, fontSize: 14}}>+ Add Payment</Button>
+                        <Button onPress={() => this.props.navigation.navigate("AddPayment")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Payment</Button>
                         </View>
                     
 

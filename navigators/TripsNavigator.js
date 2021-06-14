@@ -1,64 +1,69 @@
 import React from 'react'
 import { SafeAreaView } from 'react-native';
-import { createMaterialTopTabNavigator, MaterialTopTabBar } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack'
 import Colors from '../constants/Colors'
+
+import TripsTabNavigator from './TripsTabNavigator'
+import EditTrip from '../screens/EditTrip'
 
 import HostedTrips from './TripsPages/HostedTripsNavigator'
 import VisitingTrips from './TripsPages/VisitedTripsNavigator'
 
-class MaterialTopTabBarWrapper extends React.Component {
-    render() {
-      return (
-        <SafeAreaView
-          forceInset={{ top: 'always', horizontal: 'never', bottom: 'never' }}>
-          <MaterialTopTabBar {...this.props} />
-        </SafeAreaView>
-      );
-    }
-  }
+
+
+const TripsNavigator = createStackNavigator({
+  TripsTabNavigator: {
+      screen: TripsTabNavigator,
+      navigationOptions: {
+          headerShown: false,
+      }
+  },
+  EditTrip: EditTrip,
+}, 
+{initialRouteName: "TripsTabNavigator",})
   
 
-const TripsNavigator = createMaterialTopTabNavigator({
-    VisitingTrips: {
-        screen: VisitingTrips,
-        navigationOptions: {
-            tabBarLabel: 'Visiting Trips',
-        }
-    },
-    HostedTrips: {
-        screen: HostedTrips,
-        navigationOptions: {
-            tabBarLabel: 'Hosted Trips',
-        }
-    },    
-},
-{   
-    tabBarComponent: MaterialTopTabBarWrapper,
-    initialRouteName: "VisitingTrips",
-    navigationOptions:{
-        title: "Trips",
-        headerStyle: { borderBottomColor: 'transparent' },
+// const TripsNavigator = createMaterialTopTabNavigator({
+//     VisitingTrips: {
+//         screen: VisitingTrips,
+//         navigationOptions: {
+//             tabBarLabel: 'Visiting Trips',
+//         }
+//     },
+//     HostedTrips: {
+//         screen: HostedTrips,
+//         navigationOptions: {
+//             tabBarLabel: 'Hosted Trips',
+//         }
+//     },    
+// },
+// {   
+//     tabBarComponent: MaterialTopTabBarWrapper,
+//     initialRouteName: "VisitingTrips",
+//     navigationOptions:{
+//         title: "Trips",
+//         headerStyle: { borderBottomColor: 'transparent' },
         
-    },
-    tabBarOptions: {
-        labelStyle: {
-          fontSize: 14,
-          color: Colors.cosmos900,
-        },
-        indicatorStyle: {
-            backgroundColor: Colors.tango900,
+//     },
+//     tabBarOptions: {
+//         labelStyle: {
+//           fontSize: 14,
+//           color: Colors.cosmos900,
+//         },
+//         indicatorStyle: {
+//             backgroundColor: Colors.tango900,
 
-        },
-        tabStyle: {
+//         },
+//         tabStyle: {
           
-        },
-        style: {
-          backgroundColor: "white",
-          borderTop: 'transparent',
-        },
-      },
+//         },
+//         style: {
+//           backgroundColor: "white",
+//           borderTop: 'transparent',
+//         },
+//       },
     
-    headerMode: "none", 
-});
+//     headerMode: "none", 
+// });
 
 export default TripsNavigator;

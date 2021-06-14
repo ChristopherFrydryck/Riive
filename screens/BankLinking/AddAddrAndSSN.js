@@ -285,8 +285,8 @@ setLocation(text) {
         // contentContainerStyle={{ backgroundColor: 'white'}} 
         scrollEnabled
         enableOnAndroid={true}
-        extraScrollHeight={150} //iOS
-        extraHeight={135} //Android
+        extraScrollHeight={-150} //iOS
+        extraHeight={2000} //Android
         style={{backgroundColor: 'white', paddingHorizontal: 16}}
           contentContainerStyle={{flex: 1,}}
         >

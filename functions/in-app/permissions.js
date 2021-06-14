@@ -39,9 +39,8 @@ import firestore from '@react-native-firebase/firestore';
                   perms.notifications.tripsAndHosting = doc.data().permissions.notifications.tripsAndHosting;
                   perms.notifications.discountsAndNews = doc.data().permissions.notifications.discountsAndNews;
             }else{
-              alert("Failure to gather account permissions.")
               perms.notifications.tripsAndHosting = true;
-              perms.notifications.discountsAndNews = false;
+              perms.notifications.discountsAndNews = true;
             }
             return perms
           }).then(async() => {

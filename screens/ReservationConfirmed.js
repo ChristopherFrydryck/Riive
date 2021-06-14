@@ -139,7 +139,7 @@ class ReservationConfirmed extends Component {
                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{cost.total}</Text>
                             </View>
-                            <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
+                            <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                         </View>
                         <View style={{flexDirection: 'row'}}>
                             <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Return to Map</Button>

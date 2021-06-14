@@ -331,7 +331,6 @@ export default class VisitingTrips extends Component{
 
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
 
-
             return(
                 <Modal 
                     animationType="slide"
@@ -442,8 +441,10 @@ export default class VisitingTrips extends Component{
                                 </View>
                                 : 
                                 <View style={{flexDirection: 'row'}}>
-                                    <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Cancel Trip</Button>
-                                    <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Edit Trip Details</Button>
+                                    <Button onPress={() =>  {
+                                        this.setState({modalVisible: false})
+                                        this.props.navigation.navigate("EditTrip", {visit: data.visit, listing: data.listing})
+                                    }} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Edit Trip Details</Button>
                                 </View>
                                 }
                             </View>
