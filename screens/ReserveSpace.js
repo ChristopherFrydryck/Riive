@@ -89,7 +89,15 @@ class reserveSpace extends Component {
             this.setState({inSameTimezone: true})
         }
 
-        if(this.props.UserStore.vehicles.length > 0){
+        
+
+
+        this._isMounted = true;
+        this._navListener = this.props.navigation.addListener('didFocus', () => {
+           StatusBar.setBarStyle('dark-content', true);
+           Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+
+           if(this.props.UserStore.vehicles.length > 0){
             let vehicle = this.props.UserStore.vehicles[0]
             this.setState({selectedVehicle: {
                 Color: vehicle.Color,
@@ -115,12 +123,6 @@ class reserveSpace extends Component {
                 Year: payment.Year
             }})
         }
-
-
-        this._isMounted = true;
-        this._navListener = this.props.navigation.addListener('didFocus', () => {
-           StatusBar.setBarStyle('dark-content', true);
-           Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
          });
 
          
@@ -367,6 +369,9 @@ class reserveSpace extends Component {
             await this.checkAvailability()
             const db = firestore();
 
+            console.log(`Vehicle: ${JSON.stringify(this.state.selectedVehicle)}`)
+            console.log(`Card: ${JSON.stringify(this.state.selectedPayment)}`)
+
             if(this.state.selectedVehicle && this.state.selectedPayment && this.state.spaceAvailabilityWorks){
                 let card = this.state.selectedPayment;
                 let vehicle = this.state.selectedPayment;
@@ -535,6 +540,8 @@ class reserveSpace extends Component {
 
 
                 }
+            }else{
+                this.setState({authenticatingReservation: false})
             }
 
             

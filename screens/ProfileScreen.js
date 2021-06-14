@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox } from 'react-native'
+import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import {NavigationActions} from 'react-navigation'
 import Input from '../components/Input'
@@ -11,6 +11,7 @@ import AddressTypes from '../constants/AddressTypes'
 
 
 import ImagePicker from 'react-native-image-crop-picker';
+import { request } from 'react-native-permissions';
 
 import ProfilePic from '../components/ProfilePic'
 import TopBar from '../components/TopBar'
@@ -192,6 +193,7 @@ class Profile extends Component{
         // Unmount status bar info
         this._navListener.remove();
     }
+
 
     addAddress = async () => {
 
@@ -445,7 +447,37 @@ class Profile extends Component{
             this.setState({imageUploading: true})
             this.uploadImg(image.path)
             this.setState({imageUploading: false})
-          });
+          }).catch(e => {
+              if(e == "Error: User cancelled image selection"){
+
+              }else{
+                if(e = "Error: Cannot access images. Please allow access if you want to be able to select images."){
+                    request(`${Platform.OS}.permission.${Platform.OS ==='ios' ? "PHOTO_LIBRARY" : "WRITE_EXTERNAL_STORAGE"}`).then(res => {
+                        if(res === 'granted'){
+                            this.pickImage();
+                        }else{
+                            Alert.alert(
+                                "Cannot access images",
+                                "Enable camera roll access to add a profile picture.",
+                                [
+                                  {
+                                    text: "No thanks",
+                                    onPress: () => {},
+                                    style: "cancel"
+                                  },
+                                  { text: "Enable camera roll", onPress: () => Linking.openSettings()}
+                                ],
+                                { cancelable: false }
+                              );
+                        }
+                    })
+                    
+                }else{
+                    alert(e)
+                }
+              }
+              
+          })
 
           
       
@@ -1156,7 +1188,7 @@ class Profile extends Component{
                         />
                         </View>
                          <ClickableChip
-                                style={{marginTop: 20, paddingTop: 10, paddingBottom: 10,}}
+                                style={{marginTop: 20, paddingTop: 10, paddingBottom: 10, marginBottom: 32}}
                                 onPress={() => this.updateAccountInfo()}
                                 disabled={this.state.savingChanges || this.state.failed || this.state.submitted}
                                 bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : this.state.failed ? 'rgba(190, 55, 55, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%

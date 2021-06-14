@@ -350,7 +350,6 @@ class Home extends Component {
         
     
     }catch(e){
-  
           Alert.alert(
           "Location Unavailable",
           "Enable location permissions and restart Riive to discover parking nearby.",
