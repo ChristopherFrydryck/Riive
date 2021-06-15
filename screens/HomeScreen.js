@@ -137,7 +137,7 @@ class Home extends Component {
       locationSnackbarVisible: false,
     }
 
-    this.mapScrolling = false;
+    this.mapScrolling = true;
         this.results = [];
 
     this.region = {
@@ -506,6 +506,8 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
   let results = [];
   await this.setState({fetchingResults: true})
   await this.slideBottomPill();
+
+
   
    // Create a Firestore reference
    const db = firestore();
@@ -773,12 +775,16 @@ onSelectAddress = async(det) => {
   await this.getResults(this.region.current.latitude, this.region.current.longitude, this.region.current.longitudeDelta * 69, 99999.9999, 99999.9999)
 }
 
-onRegionChange = async (region) => {
+onRegionChange = (region) => {
+
+  
            
   let prevLat = this.region.current.latitude;
   let prevLng = this.region.current.longitude;
   let prevLatD = this.region.current.latitudeDelta;
   let prevLngD = this.region.current.longitudeDelta;
+
+
 
   // console.log(`prevLat: ${prevLat.toFixed(2)}. CurrentLat: ${region.latitude.toFixed(2)}`)
   // console.log(`prevLng: ${prevLng.toFixed(2)}. CurrentLng: ${region.longitude.toFixed(2)}`)
@@ -786,7 +792,7 @@ onRegionChange = async (region) => {
 
   if(this.mapScrolling){                
 
-      this.region = await{
+      this.region = {
           ...this.region,
           current: {
               latitudeDelta: region.latitudeDelta,
@@ -796,13 +802,15 @@ onRegionChange = async (region) => {
           }
       }
       
-      await this.setState(prevState => ({
+      this.setState(prevState => ({
           mapScrolled: true,
       }))
 
+      this.getResults(this.region.current.latitude, this.region.current.longitude, this.region.current.longitudeDelta * 69, prevLat, prevLng)
+
       
   }
-  await this.getResults(this.region.current.latitude, this.region.current.longitude, this.region.current.longitudeDelta * 69, prevLat, prevLng)
+  
   this.mapScrolling = false;
 
   
