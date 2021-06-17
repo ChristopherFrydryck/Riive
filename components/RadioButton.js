@@ -16,7 +16,7 @@ const radioButton = ({id, selectItem, ...props}) => {
 
     return(
          <View {...allProps} key={id}>
-            <RadioButton.Android value={id} color={Colors.tango900}/>
+            <RadioButton.Android disabled={props.disabled || false} value={id} color={Colors.tango900}/>
             <TouchableWithoutFeedback onPress={selectItem}>
                 {props.children}
             </TouchableWithoutFeedback>

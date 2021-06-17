@@ -218,6 +218,7 @@ export default class VisitingTrips extends Component{
         const {visit, listing, isInPast, current} = data;
         const {isCancelled} = visit
         const hostName = `${visit.hostName.split(" ")[0]} ${visit.hostName.split(" ")[1].slice(0,1)}.`
+
         return(
 
             <TouchableOpacity disabled={isCancelled} style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, modalVisible: true})}>
@@ -243,7 +244,7 @@ export default class VisitingTrips extends Component{
                  <View style={{flex: 1, marginHorizontal: 8}}>  
                     <Text numberOfLines={1} ellipsizeMode='tail' style={{fontSize: 18}}>{listing.spaceName}</Text>
                     {isCancelled ? 
-                      <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {data.cancelledBy === 'host' || 'you'}</Text>
+                      <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {visit.cancelledBy === 'host' ? 'host' : 'you'}</Text>
                     : 
                       <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Hosted by {hostName}</Text>
                     }
@@ -331,6 +332,7 @@ export default class VisitingTrips extends Component{
             }
 
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
+
 
             return(
                 <Modal 
@@ -438,7 +440,10 @@ export default class VisitingTrips extends Component{
                                 </View>
                                 {data.isInPast ? 
                                 <View style={{flexDirection: 'row'}}>
-                                    <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Report Trip</Button>
+                                    <Button onPress={() =>  {
+                                        this.setState({modalVisible: false})
+                                        this.props.navigation.navigate("EditTrip", {visit: data.visit, listing: data.listing})
+                                    }} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Report Trip</Button>
                                 </View>
                                 : 
                                 <View style={{flexDirection: 'row'}}>

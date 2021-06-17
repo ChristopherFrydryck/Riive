@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, Animated, TouchableWithoutFeedback, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, Alert} from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, Animated, TouchableWithoutFeedback, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, Alert, Linking} from 'react-native';
 import Text from '../components/Txt'
 
 import MapView, {Marker} from 'react-native-maps';
@@ -15,6 +15,8 @@ import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import Image from '../components/Image'
+import RadioList from '../components/RadioList'
+import RadioButton from '../components/RadioButton'
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 
 import * as firebase from 'firebase/app';
@@ -33,12 +35,15 @@ import {inject, observer} from 'mobx-react/native'
 class externalSpace extends React.Component {
     
     _isMounted = false;
+    isInPast = null;
+    isCurrentlyActive = null;
+    sameTimezone = false;
 
     static navigationOptions = ({navigation}) => {
         const { params = {} } = navigation.state;
         
         return{
-          headerTitle: params.title ? params.title : "Loading...",
+          headerTitle: "Edit Trip Details",
           headerTitleStyle:{
               fontWeight: "300",
               fontSize: 18,
@@ -53,14 +58,23 @@ class externalSpace extends React.Component {
             visit: this.props.navigation.state.params.visit,
             listing: this.props.navigation.state.params.listing,
             currentActivePhoto: 0,
+            selectedVehicle:  this.props.navigation.state.params.visit.vehicle,
         }
 
 
     }
 
     async componentDidMount(){
-     
-       this._isMounted = true;
+        const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
+        const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
+        this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
+        this.isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !this.isInPast;
+        // Check if space is in same timezone as current device
+        if(this.state.listing.timezone.offsetValue + new Date().getTimezoneOffset()/60 === 0){
+            this.sameTimezone = true;
+        }
+
+        this._isMounted = true;
 
        
 
@@ -71,7 +85,7 @@ class externalSpace extends React.Component {
 
     //   let {spaceName} = this.state.listing
 
-      console.log(this.state.visit.price.price)
+
     
 
       this.props.navigation.setParams({
@@ -138,13 +152,70 @@ class externalSpace extends React.Component {
     //   }
 
 
+    setActiveVehicle = (vehicle, idOnly) => {
+
+
+        if(idOnly){
+            let activeVehicle = this.props.UserStore.vehicles.filter(x => x.VehicleID === vehicle)[0]
+
+            this.setState({selectedVehicle: {
+                Color: activeVehicle.Color,
+                LicensePlate: activeVehicle.LicensePlate,
+                Make: activeVehicle.Make,
+                Model: activeVehicle.Model,
+                VehicleID: activeVehicle.VehicleID,
+                Year: activeVehicle.Year,
+            }})
+
+            // this.setState({selectedVehicle: activeVehicle.VehicleID})
+        }else{
+            this.setState({selectedVehicle: {
+                Color: vehicle.Color,
+                LicensePlate: vehicle.LicensePlate,
+                Make: vehicle.Make,
+                Model: vehicle.Model,
+                VehicleID: vehicle.VehicleID,
+                Year: vehicle.Year,
+            }})
+            // // console.log(vehicle.VehicleID)
+            // this.setState({selectedVehicle: vehicle.VehicleID})
+        }
+        
+    }
+
 
     render(){
         const {width, height} = Dimensions.get("window")
+        let vehicleArray = this.props.UserStore.vehicles.map(vehicle => {
+            return(
+                <RadioButton key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
+                    <View style={{flex: 1}}>
+                        <Text style={{fontSize: 16}}>{`${vehicle.Year} ${vehicle.Make} ${vehicle.Model}`}</Text>
+                        <Text style={{fontSize: 12}} >{`${vehicle.LicensePlate}`}</Text>
+                    </View>
+                </RadioButton>
+            )
+          })
+
+          let paymentsArray = this.props.UserStore.payments.map(payment => {
+            let cardValid = false
+            let d = new Date();
+            // Validate card is not expired
+            if(payment.Year < parseInt(d.getFullYear().toString().slice(2))){
+              cardValid = false;
+          }else if(payment.Year == parseInt(d.getFullYear().toString().slice(2)) && payment.Month < d.getMonth() + 1){
+              cardValid = false;
+          }else{
+              cardValid = true;
+          }
+        })
+
+      
+
         if(this._isMounted){
        return(
-                <View style={{flex: 1, backgroundColor: 'white'}}>
-                   <ScrollView >
+                <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
+                   {/* <ScrollView >
                     <View>
                         <ScrollView
                             horizontal={true}
@@ -197,13 +268,69 @@ class externalSpace extends React.Component {
                             {this.renderDotsView(2, this.state.currentActivePhoto)}
                         </View>
                     </View>
-                    </ScrollView>
-                    <View style={styles.contentBox}>
-                        <View style={{width: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, borderRadius: width, marginBottom: 8}}>
-                            <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.visit.price.price}</Text>
+                    </ScrollView> */}
+                    <View style={[styles.contentBox, {marginTop: 16, display: 'flex', flexDirection: 'row'}]}>
+                        <View style={{borderRadius: 4, overflow: 'hidden', width: 120}}>
+                            {!this.state.visit.visit.isCancelled ? 
+                                <View style={{position: 'absolute', zIndex: 9, backgroundColor: 'white', top: 4, left: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 4}}>
+                                    <Text>{this.state.visit.price.total}</Text>
+                                </View>
+                            : null }
+                            <Image 
+                                aspectRatio={1/1}
+                                source={{uri: this.state.listing.photo}}
+                                height={120}
+                                style={{shadowColor: '#000', 
+                                shadowOpacity: 0.6, 
+                                shadowOffset:{width: 0, height: 0}, 
+                                shadowRadius: 3, 
+                                elevation: 0,}}
+                                resizeMode={'cover'}
+                            /> 
+                        </View>
+                        <View style={{marginLeft: 12, flex: 1, }}>
+                            <Text numberOfLines={2} ellipsizeMode='tail' style={{fontSize: 20}}>{this.state.listing.spaceName}</Text>
+                            {!this.state.visit.visit.isCancelled ? 
+                            <View>
+                                <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
+                                <Text type="medium" onPress={() => console.log("HELLO")} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                            </View>
+                            :
+                            <Text>Cancelled</Text>}
                         </View>
                     </View>
-                </View>
+                    <View style={[styles.contentBox, {marginTop: 16}]}>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Vehicle</Text>
+                        <RadioList activeItem={this.state.selectedVehicle.VehicleID} selectItem={(option) => this.setActiveVehicle(option, true)}>
+                                    {vehicleArray}
+                        </RadioList>
+                        <Button onPress={() => this.props.navigation.navigate("AddVehicle")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Vehicle</Button>
+                    </View>
+                    <View style={[styles.contentBox, {marginTop: 16}]}>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Payment</Text>
+                      
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderColor: Colors.mist900, borderTopWidth: 2, borderBottomWidth: 2, paddingVertical: 8, paddingHorizontal: 16, marginTop: 16 }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    
+                    <Icon
+                        iconName="credit-card"
+                        iconColor="black"
+                        iconSize={32}
+                        style={styles.icon}          
+                    />
+                    
+                    <View>
+                        <Text style={{fontSize: 12}}>Test</Text>
+                        <Text>{`•••• •••• •••• ${this.state.visit.payment.CCV}`}</Text>
+                    </View>
+                    </View>
+                    <View style={{backgroundColor: "rgba(251, 178, 68, 0.3)", borderRadius: 4, paddingHorizontal: 4, }}>
+                        <Text type="Medium" style={{fontSize: 14, color: Colors.tango900}}>DEFAULT</Text>
+                    </View>
+                  </View>
+        
+                        </View>
+                </ScrollView>
        )
         // return(
         //     <View style={{flex: 1, backgroundColor: 'white'}}>
