@@ -59,6 +59,8 @@ class externalSpace extends React.Component {
             listing: this.props.navigation.state.params.listing,
             currentActivePhoto: 0,
             selectedVehicle:  this.props.navigation.state.params.visit.vehicle,
+
+            changesMade: false,
         }
 
 
@@ -86,12 +88,27 @@ class externalSpace extends React.Component {
     //   let {spaceName} = this.state.listing
 
 
+
     
 
       this.props.navigation.setParams({
         title: this.state.listing.spaceName || "Loading...",
       });
 
+    }
+
+    componentDidUpdate(prevProps, prevState){
+
+        if(prevState.selectedVehicle.VehicleID !== this.state.selectedVehicle.VehicleID && this.state.selectedVehicle.VehicleID !== this.props.navigation.state.params.visit.vehicle.VehicleID){
+            // If new vehicle is selected and not original vehicle on initial load
+            this.setState({changesMade: true})
+        }else if(prevState.selectedVehicle.VehicleID !== this.state.selectedVehicle.VehicleID){
+            // If original vehicle selected
+            this.setState({changesMade:false})
+        }else{
+            // DO NOTHING
+        }
+   
     }
 
     // getHost = () => {
@@ -118,6 +135,14 @@ class externalSpace extends React.Component {
         // console.log(newIndex)
     
         this.setState({currentActivePhoto: newIndex})
+    }
+
+    checkChanges = () => {
+        if(this.props.navigation.state.params.visit.vehicle !== this.state.selectedVehicle){
+            this.setState({changesMade: true})
+        }else{
+            this.setState({changesMade: false})
+        }
     }
     
     
@@ -153,34 +178,57 @@ class externalSpace extends React.Component {
 
 
     setActiveVehicle = (vehicle, idOnly) => {
-
+        
 
         if(idOnly){
             let activeVehicle = this.props.UserStore.vehicles.filter(x => x.VehicleID === vehicle)[0]
 
             this.setState({selectedVehicle: {
-                Color: activeVehicle.Color,
-                LicensePlate: activeVehicle.LicensePlate,
-                Make: activeVehicle.Make,
-                Model: activeVehicle.Model,
-                VehicleID: activeVehicle.VehicleID,
                 Year: activeVehicle.Year,
+                Model: activeVehicle.Model,
+                Make: activeVehicle.Make,
+                VehicleID: activeVehicle.VehicleID,
+                LicensePlate: activeVehicle.LicensePlate,
+                Color: activeVehicle.Color,
             }})
 
             // this.setState({selectedVehicle: activeVehicle.VehicleID})
         }else{
             this.setState({selectedVehicle: {
-                Color: vehicle.Color,
-                LicensePlate: vehicle.LicensePlate,
-                Make: vehicle.Make,
-                Model: vehicle.Model,
-                VehicleID: vehicle.VehicleID,
                 Year: vehicle.Year,
+                Model: vehicle.Model,
+                Make: vehicle.Make,
+                VehicleID: vehicle.VehicleID,
+                LicensePlate: vehicle.LicensePlate,
+                Color: vehicle.Color,
             }})
             // // console.log(vehicle.VehicleID)
             // this.setState({selectedVehicle: vehicle.VehicleID})
         }
         
+    }
+
+    updateTrip = () => {
+
+        if(this.state.changesMade){
+            const db = firestore();
+            db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then((trip) => {
+                if(!trip.exists){
+                    Alert("Failed to save changes. Trip not found.")
+                }else{
+                    try{
+                        db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
+                            vehicle: this.state.selectedVehicle
+                        })
+                        this.props.navigation.state.params.visit.vehicle = this.state.selectedVehicle;
+                        this.setState({changesMade: false})
+                    }catch(e){
+                        alert("Failed to save changes to trip. Try again soon and check connection.")
+                    }
+                }
+
+            })
+        }
     }
 
 
@@ -214,7 +262,8 @@ class externalSpace extends React.Component {
 
         if(this._isMounted){
        return(
-                <ScrollView style={{flex: 1, backgroundColor: 'white'}}>
+           <View style={{flex: 1, backgroundColor: 'white'}}>
+                <ScrollView >
                    {/* <ScrollView >
                     <View>
                         <ScrollView
@@ -307,30 +356,29 @@ class externalSpace extends React.Component {
                         <Button onPress={() => this.props.navigation.navigate("AddVehicle")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Vehicle</Button>
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Payment</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16,}}>Payment</Text>
                       
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderColor: Colors.mist900, borderTopWidth: 2, borderBottomWidth: 2, paddingVertical: 8, paddingHorizontal: 16, marginTop: 16 }}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    
-                    <Icon
-                        iconName="credit-card"
-                        iconColor="black"
-                        iconSize={32}
-                        style={styles.icon}          
-                    />
-                    
-                    <View>
-                        <Text style={{fontSize: 12}}>Test</Text>
-                        <Text>{`•••• •••• •••• ${this.state.visit.payment.CCV}`}</Text>
-                    </View>
-                    </View>
-                    <View style={{backgroundColor: "rgba(251, 178, 68, 0.3)", borderRadius: 4, paddingHorizontal: 4, }}>
-                        <Text type="Medium" style={{fontSize: 14, color: Colors.tango900}}>DEFAULT</Text>
-                    </View>
+                        <Icon
+                            iconName="credit-card"
+                            iconColor="black"
+                            iconSize={32}
+                            style={styles.icon}          
+                        />
+                            <View>
+                                <Text style={{fontSize: 12}}>{this.state.visit.payment.CardType.charAt(0).toUpperCase() + this.state.visit.payment.CardType.slice(1)}</Text>
+                                <Text>{`•••• •••• •••• ${this.state.visit.payment.Number}`}</Text>
+                            </View>
+                        </View>
                   </View>
         
-                        </View>
+                    </View>
                 </ScrollView>
+                <View style={styles.contentBox}>
+                    <Button disabled={!this.state.changesMade} onPress={() => this.updateTrip()} style = {this.state.changesMade ? {backgroundColor: Colors.tango700, height: 48} : {backgroundColor: Colors.mist900, height: 48}} textStyle={{color: 'white'}}>Save Changes</Button>
+                </View>
+                </View>
        )
         // return(
         //     <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -472,6 +520,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,  
       
       },
+      icon:{
+        paddingRight: 8
+    }
 })
 
 export default externalSpace;

@@ -113,6 +113,7 @@ class reserveSpace extends Component {
             let payment = this.props.UserStore.payments[0]
             this.setState({selectedPayment: {
                 CCV: payment.CCV,
+                Number: payment.Number,
                 CardType: payment.CardType,
                 Month: payment.Month,
                 Name: payment.Name,
@@ -160,6 +161,7 @@ class reserveSpace extends Component {
                 let activePayment = this.props.UserStore.payments.filter(x => x.PaymentID === payment)[0]
                 this.setState({selectedPayment: {
                     CCV: activePayment.CCV,
+                    Number: activePayment.Number,
                     CardType: activePayment.CardType,
                     Month: activePayment.Month,
                     Name: activePayment.Name,
@@ -172,6 +174,7 @@ class reserveSpace extends Component {
             }else{
                 this.setState({selectedPayment: {
                     CCV: payment.CCV,
+                    Number: payment.Number,
                     CardType: payment.CardType,
                     Month: payment.Month,
                     Name: payment.Name,
