@@ -88,9 +88,12 @@ class externalSpace extends React.Component {
 
     //   let {spaceName} = this.state.listing
 
+    console.log(this.state.visit.vehicle)
+
     
 
       this.updateTripTime();
+      this.renderVehicleList();
 
     
 
@@ -265,10 +268,17 @@ class externalSpace extends React.Component {
         }
     }
 
+    renderVehicleList = () => {
+        let unusedVehicleArray = this.props.UserStore.vehicles
 
-    render(){
-        const {width, height} = Dimensions.get("window")
-        let vehicleArray = this.props.UserStore.vehicles.map(vehicle => {
+          if(unusedVehicleArray.filter(x => x.VehicleID == this.props.navigation.state.params.visit.vehicle.VehicleID).length > 0){
+              let usedVehicle = this.props.navigation.state.params.visit.vehicle
+              unusedVehicleArray.filter(x => x.VehicleID === usedVehicle.VehicleID).unshift(usedVehicle)
+          }else{
+              unusedVehicleArray.unshift(this.props.navigation.state.params.visit.vehicle)
+          }
+
+         return unusedVehicleArray.map(vehicle => {
             return(
                 <RadioButton disabled={this.state.visit.isCancelled ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
                     <View style={{flex: 1}}>
@@ -278,6 +288,29 @@ class externalSpace extends React.Component {
                 </RadioButton>
             )
           })
+
+         
+    }
+
+
+    render(){
+        const {width, height} = Dimensions.get("window")
+        // let vehicleArray = this.props.UserStore.vehicles.map(vehicle => {
+        //     return(
+        //         <RadioButton disabled={this.state.visit.isCancelled ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
+        //             <View style={{flex: 1}}>
+        //                 <Text style={{fontSize: 16}}>{`${vehicle.Year} ${vehicle.Make} ${vehicle.Model}`}</Text>
+        //                 <Text style={{fontSize: 12}} >{`${vehicle.LicensePlate}`}</Text>
+        //             </View>
+        //         </RadioButton>
+        //     )
+        //   })
+
+        let vehicleArray = this.renderVehicleList();
+
+          
+            
+
 
           let paymentsArray = this.props.UserStore.payments.map(payment => {
             let cardValid = false
