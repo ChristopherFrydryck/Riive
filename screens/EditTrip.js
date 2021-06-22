@@ -87,6 +87,8 @@ class externalSpace extends React.Component {
 
     //   let {spaceName} = this.state.listing
 
+    console.log(this.state.visit.isCancelled)
+
 
 
     
@@ -137,29 +139,9 @@ class externalSpace extends React.Component {
         this.setState({currentActivePhoto: newIndex})
     }
 
-    checkChanges = () => {
-        if(this.props.navigation.state.params.visit.vehicle !== this.state.selectedVehicle){
-            this.setState({changesMade: true})
-        }else{
-            this.setState({changesMade: false})
-        }
-    }
+
     
-    
-    renderDotsView = (numItems, position) => {
-        var arr = [];
-        for(let i = 0; i <= numItems - 1; i++){
-            arr.push(
-                <Animated.View 
-                    key={i}
-                    style={{ opacity: position == i ? 1 : 0.3, height: 8, width: 8, backgroundColor: Colors.cosmos900, margin: 2, borderRadius: 8 }}
-                  />
-            )
-        }
-    
-        return(arr)
-        
-        }
+
 
     // goToHostProfile = () => {
     //     this.props.ComponentStore.selectedUser[0] = this.state.host ;
@@ -170,11 +152,6 @@ class externalSpace extends React.Component {
     //     })
     // }
 
-    // goToReserveSpace = () => {
-    //     this.props.navigation.navigate("ReserveSpace", {
-    //         homeState: {...this.props.navigation.state.params.homeState},
-    //     })
-    //   }
 
 
     setActiveVehicle = (vehicle, idOnly) => {
@@ -208,6 +185,50 @@ class externalSpace extends React.Component {
         
     }
 
+    showCancellationModal = () => {
+
+        Alert.alert(
+            'Cancel Trip',
+            'Cancelling a trip will',
+            [
+            { text: 'Cancel' },
+            // If they said no initially and want to change their mind,
+            // we can automatically open our app in their settings
+            // so there's less friction in turning notifications on
+            { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+            ]
+        )
+    }
+
+    cancelTrip = () => {
+        const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
+        const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
+        this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
+        this.isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !this.isInPast;
+
+        if(!this.isInPast){
+            const db = firestore();
+            db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then((trip) => {
+                if(!trip.exists){
+                    alert("Failed to save changes. Trip not found.")
+                }else{
+                    try{
+                        db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
+                            isCancelled: true,
+                            cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest"
+                        }).then(() => {
+                            this.props.navigation.goBack(null)
+                        })
+                    }catch(e){
+                        alert("Failed to cancel trip. Check your connection and try again soon.")
+                    }
+                }
+            })
+        }else{
+            alert("Failed to cancel this trip. Ended since cancellation.")
+        }
+    }
+
     updateTrip = () => {
 
         if(this.state.changesMade){
@@ -236,7 +257,7 @@ class externalSpace extends React.Component {
         const {width, height} = Dimensions.get("window")
         let vehicleArray = this.props.UserStore.vehicles.map(vehicle => {
             return(
-                <RadioButton key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
+                <RadioButton disabled={this.state.visit.isCancelled ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
                     <View style={{flex: 1}}>
                         <Text style={{fontSize: 16}}>{`${vehicle.Year} ${vehicle.Make} ${vehicle.Model}`}</Text>
                         <Text style={{fontSize: 12}} >{`${vehicle.LicensePlate}`}</Text>
@@ -264,63 +285,9 @@ class externalSpace extends React.Component {
        return(
            <View style={{flex: 1, backgroundColor: 'white'}}>
                 <ScrollView >
-                   {/* <ScrollView >
-                    <View>
-                        <ScrollView
-                            horizontal={true}
-                            pagingEnabled={true}
-                            scrollEnabled={true}
-                            decelerationRate={0}
-                            snapToAlignment="start"
-                            snapToInterval={width}
-                            onScroll={data =>  this.carouselUpdate(data.nativeEvent.contentOffset.x)}
-                            scrollEventThrottle={1}
-                            showsHorizontalScrollIndicator={false}
-                            // persistentScrollbar={true}
-                        >
-                        <View>
-                        <Image 
-                                style={{width: width}}
-                                aspectRatio={16/9}
-                                source={{uri: this.state.listing.photo}}
-                                resizeMode={'cover'}
-                            /> 
-                            </View>
-                            <View>
-                            <View  style={{ position:'absolute', width: width, aspectRatio: 16/9, zIndex: 9}}/>
-                                <MapView
-                                provider={MapView.PROVIDER_GOOGLE}
-                                mapStyle={NightMap}
-                                style={{width: width, aspectRatio:16/9}}
-                                region={{
-                                latitude: this.state.listing.region.latitude,
-                                longitude: this.state.listing.region.longitude,
-                                latitudeDelta: this.state.listing.region.latitudeDelta,
-                                longitudeDelta: this.state.listing.region.longitudeDelta,
-                                }}
-                                pitchEnabled={false} 
-                                rotateEnabled={false} 
-                                zoomEnabled={false} 
-                                scrollEnabled={false}
-                                >
-                                    <Marker 
-                                        coordinate={{
-                                        latitude: this.state.listing.region.latitude,
-                                        longitude: this.state.listing.region.longitude
-                                        }}   
-                                    />
-                                </MapView>
-                            </View>
-                        </ScrollView>
-                        
-                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 8}}>
-                            {this.renderDotsView(2, this.state.currentActivePhoto)}
-                        </View>
-                    </View>
-                    </ScrollView> */}
                     <View style={[styles.contentBox, {marginTop: 16, display: 'flex', flexDirection: 'row'}]}>
                         <View style={{borderRadius: 4, overflow: 'hidden', width: 120}}>
-                            {!this.state.visit.visit.isCancelled ? 
+                            {!this.state.visit.isCancelled ? 
                                 <View style={{position: 'absolute', zIndex: 9, backgroundColor: 'white', top: 4, left: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 4}}>
                                     <Text>{this.state.visit.price.total}</Text>
                                 </View>
@@ -339,10 +306,10 @@ class externalSpace extends React.Component {
                         </View>
                         <View style={{marginLeft: 12, flex: 1, }}>
                             <Text numberOfLines={2} ellipsizeMode='tail' style={{fontSize: 20}}>{this.state.listing.spaceName}</Text>
-                            {!this.state.visit.visit.isCancelled ? 
+                            {!this.state.visit.isCancelled ? 
                             <View>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
-                                <Text type="medium" onPress={() => console.log("HELLO")} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
                             </View>
                             :
                             <Text>Cancelled</Text>}
@@ -380,113 +347,6 @@ class externalSpace extends React.Component {
                 </View>
                 </View>
        )
-        // return(
-        //     <View style={{flex: 1, backgroundColor: 'white'}}>
-        //         <ScrollView >
-        //         <View>
-        //             <ScrollView
-        //                     horizontal={true}
-        //                     pagingEnabled={true}
-        //                     scrollEnabled={true}
-        //                     decelerationRate={0}
-        //                     snapToAlignment="start"
-        //                     snapToInterval={width}
-        //                     onScroll={data =>  this.carouselUpdate(data.nativeEvent.contentOffset.x)}
-        //                     scrollEventThrottle={1}
-        //                     showsHorizontalScrollIndicator={false}
-        //                     // persistentScrollbar={true}
-        //                 >
-        //                 <View>
-        //                 <Image 
-        //                         style={{width: width}}
-        //                         aspectRatio={16/9}
-        //                         source={{uri: this.state.listing.photo}}
-        //                         resizeMode={'cover'}
-        //                     /> 
-        //                     </View>
-        //                     <View>
-        //                     <View  style={{ position:'absolute', width: width, aspectRatio: 16/9, zIndex: 9}}/>
-        //                         <MapView
-        //                         provider={MapView.PROVIDER_GOOGLE}
-        //                         mapStyle={NightMap}
-        //                         style={{width: width, aspectRatio:16/9}}
-        //                         region={{
-        //                         latitude: this.state.listing.region.latitude,
-        //                         longitude: this.state.listing.region.longitude,
-        //                         latitudeDelta: this.state.listing.region.latitudeDelta,
-        //                         longitudeDelta: this.state.listing.region.longitudeDelta,
-        //                         }}
-        //                         pitchEnabled={false} 
-        //                         rotateEnabled={false} 
-        //                         zoomEnabled={false} 
-        //                         scrollEnabled={false}
-        //                         >
-        //                             <Marker 
-        //                                 coordinate={{
-        //                                 latitude: this.state.listing.region.latitude,
-        //                                 longitude: this.state.listing.region.longitude
-        //                                 }}   
-        //                             />
-        //                         </MapView>
-        //                     </View>
-        //                 </ScrollView>
-                        
-        //                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 8}}>
-        //                     {this.renderDotsView(2, this.state.currentActivePhoto)}
-        //                 </View>
-        //             </View>
-
-        //             <View style={styles.contentBox}>
-        //                 <View style={{width: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, borderRadius: width, marginBottom: 8}}>
-        //                             <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.listing.spacePrice}/hr</Text>
-        //                 </View>
-                    
-        //                     <Text  style={{fontSize: 24, flexWrap: 'wrap'}}>{this.state.listing.spaceName}</Text>
-        //                     <Text style={{marginBottom: 8}}>No ratings yet</Text>
-        //                     <View style={{flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8}}>
-        //                         <Icon
-        //                             iconName="user"
-                                    
-        //                             iconColor={Colors.cosmos300}
-        //                             iconSize={16}
-        //                             style={{marginRight: 8, marginTop: 4}}
-        //                         />
-        //                         <TouchableWithoutFeedback onPress={() => this.goToHostProfile()}><Text>Hosted by <Text style={{textDecorationLine: 'underline'}}>{this.state.host.firstname} {this.state.host.lastname.charAt(0).toUpperCase()}</Text>.</Text></TouchableWithoutFeedback>
-        //                     </View>
-                            
-        //                     {this.state.listing.spaceBio.split("").length > 0 ? 
-        //                     <View style={{flexDirection: 'row'}}>
-        //                         <Icon
-        //                             iconName="form"
-        //                             iconLib="AntDesign"
-        //                             iconColor={Colors.cosmos300}
-        //                             iconSize={16}
-        //                             style={{marginRight: 8, marginTop: 4}}
-        //                         />
-        //                         <Text style={{flex: 1}}>{this.state.listing.spaceBio}</Text>
-        //                     </View>
-        //                     : null}
-                            
-                    
-                        
-
-                        
-        //                     <View style={{marginTop: 32}}>
-        //                         <DayAvailabilityPicker 
-        //                             availability={this.state.listing.availability}
-        //                             availabilityCallback={() => {}}
-        //                             editable={false}
-        //                         />
-        //                     </View>
-                            
-                        
-        //                 </View>
-        //             </ScrollView>
-        //             <View style={styles.contentBox}>
-        //                 <Button onPress={() => this.goToReserveSpace()} style = {{backgroundColor: Colors.tango700, height: 48}} textStyle={{color: 'white'}}>Reserve Space</Button>
-        //             </View>
-        //           </View>
-        // )
         }else{
             return(
                 <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height={height}>

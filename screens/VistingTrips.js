@@ -221,7 +221,7 @@ export default class VisitingTrips extends Component{
 
         return(
 
-            <TouchableOpacity disabled={isCancelled} style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, modalVisible: true})}>
+            <TouchableOpacity style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, modalVisible: true})}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <View style={{borderRadius: 4, overflow: 'hidden'}}>
                         {!isCancelled ? 
