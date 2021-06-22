@@ -59,6 +59,7 @@ class externalSpace extends React.Component {
             listing: this.props.navigation.state.params.listing,
             currentActivePhoto: 0,
             selectedVehicle:  this.props.navigation.state.params.visit.vehicle,
+            lastUpdate: null,
 
             changesMade: false,
         }
@@ -87,9 +88,9 @@ class externalSpace extends React.Component {
 
     //   let {spaceName} = this.state.listing
 
-    console.log(this.state.visit.isCancelled)
+    
 
-
+      this.updateTripTime();
 
     
 
@@ -97,6 +98,13 @@ class externalSpace extends React.Component {
         title: this.state.listing.spaceName || "Loading...",
       });
 
+    }
+
+    updateTripTime = () => {
+        let lastUpdate = new Date(parseInt(this.state.visit.updated.seconds + "000"))
+        let lastUpdateString = lastUpdate.toLocaleString('en-US', {timezone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+
+        this.setState({lastUpdate: lastUpdateString})
     }
 
     componentDidUpdate(prevProps, prevState){
@@ -205,6 +213,7 @@ class externalSpace extends React.Component {
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
         this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
         this.isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !this.isInPast;
+        var currentTime = firestore.Timestamp.now();
 
         if(!this.isInPast){
             const db = firestore();
@@ -215,7 +224,8 @@ class externalSpace extends React.Component {
                     try{
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
                             isCancelled: true,
-                            cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest"
+                            cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest",
+                            updated: currentTime
                         }).then(() => {
                             this.props.navigation.goBack(null)
                         })
@@ -233,15 +243,18 @@ class externalSpace extends React.Component {
 
         if(this.state.changesMade){
             const db = firestore();
+            var currentTime = firestore.Timestamp.now();
             db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then((trip) => {
                 if(!trip.exists){
                     Alert("Failed to save changes. Trip not found.")
                 }else{
                     try{
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
-                            vehicle: this.state.selectedVehicle
+                            vehicle: this.state.selectedVehicle,
+                            updated: currentTime,
                         })
                         this.props.navigation.state.params.visit.vehicle = this.state.selectedVehicle;
+                        this.updateTripTime();
                         this.setState({changesMade: false})
                     }catch(e){
                         alert("Failed to save changes to trip. Try again soon and check connection.")
@@ -309,10 +322,11 @@ class externalSpace extends React.Component {
                             {!this.state.visit.isCancelled ? 
                             <View>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
+                                <Text numberOfLines={1} ellipsizeMode='tail'>Last updated {`${this.state.lastUpdate.split(" ")[0].split("/")[0]}/${this.state.lastUpdate.split(" ")[0].split("/")[1]} @ ${this.state.lastUpdate.split(" ")[1].split(":")[0]}:${this.state.lastUpdate.split(" ")[1].split(":")[1]} ${this.state.lastUpdate.split(" ")[2]}`}</Text>
                                 <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
                             </View>
                             :
-                            <Text>Cancelled</Text>}
+                            <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].slice(0,4) + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
                         </View>
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
