@@ -88,12 +88,12 @@ class externalSpace extends React.Component {
 
     //   let {spaceName} = this.state.listing
 
-    console.log(this.state.visit.vehicle)
+ 
 
     
 
       this.updateTripTime();
-      this.renderVehicleList();
+    //   this.renderVehicleList();
 
     
 
@@ -169,7 +169,8 @@ class externalSpace extends React.Component {
         
 
         if(idOnly){
-            let activeVehicle = this.props.UserStore.vehicles.filter(x => x.VehicleID === vehicle)[0]
+            let vehicleArray = this.props.UserStore.vehicles
+            let activeVehicle = vehicleArray.filter(x => x.VehicleID === vehicle)[0]
 
             this.setState({selectedVehicle: {
                 Year: activeVehicle.Year,
@@ -269,25 +270,56 @@ class externalSpace extends React.Component {
     }
 
     renderVehicleList = () => {
-        let unusedVehicleArray = this.props.UserStore.vehicles
 
-          if(unusedVehicleArray.filter(x => x.VehicleID == this.props.navigation.state.params.visit.vehicle.VehicleID).length > 0){
-              let usedVehicle = this.props.navigation.state.params.visit.vehicle
-              unusedVehicleArray.filter(x => x.VehicleID === usedVehicle.VehicleID).unshift(usedVehicle)
+        
+        let currentVehicles = this.props.UserStore.vehicles
+        let defaultVehicle = this.props.navigation.state.params.visit.vehicle
+        //   If current vehicle for trip exists on profile
+          if(currentVehicles.filter(x => x.VehicleID == defaultVehicle.VehicleID).length > 0){
+            //   let usedVehicle = this.props.navigation.state.params.visit.vehicle
+            //   currentVehicles.filter(x => x.VehicleID === usedVehicle.VehicleID).unshift(usedVehicle)
+            
+            return currentVehicles.map(vehicle => {
+                return(
+                    <RadioButton disabled={this.state.visit.isCancelled || this.isInPast ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
+                        <View style={{flex: 1}}>
+                            <Text style={{fontSize: 16}}>{`${vehicle.Year} ${vehicle.Make} ${vehicle.Model}`}</Text>
+                            <Text style={{fontSize: 12}} >{`${vehicle.LicensePlate}`}</Text>
+                        </View>
+                    </RadioButton>
+                )
+              })
+            
+
           }else{
-              unusedVehicleArray.unshift(this.props.navigation.state.params.visit.vehicle)
+              //   If current vehicle for trip has been removed from profile
+              let profileVehicles = currentVehicles.map(vehicle => {
+                return(
+                    <RadioButton disabled={this.state.visit.isCancelled || this.isInPast ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
+                        <View style={{flex: 1}}>
+                            <Text style={{fontSize: 16}}>{`${vehicle.Year} ${vehicle.Make} ${vehicle.Model}`}</Text>
+                            <Text style={{fontSize: 12}} >{`${vehicle.LicensePlate}`}</Text>
+                        </View>
+                    </RadioButton>
+                )
+              })
+
+              let newEl = [
+              <RadioButton disabled={this.state.visit.isCancelled || this.isInPast ? true : false} key ={defaultVehicle.VehicleID} style={{paddingVertical: 6}} id={defaultVehicle.VehicleID} selectItem={() => this.setActiveVehicle(defaultVehicle, false)}>
+                  <View style={{flex: 1}}>
+                      <Text style={{fontSize: 16}}>{`${defaultVehicle.Year} ${defaultVehicle.Make} ${defaultVehicle.Model}`}</Text>
+                      <Text style={{fontSize: 12}} >{`${defaultVehicle.LicensePlate}`}</Text>
+                    </View>
+                </RadioButton>]
+
+            return [newEl[0], ...profileVehicles]
+                
+            
+
+
           }
 
-         return unusedVehicleArray.map(vehicle => {
-            return(
-                <RadioButton disabled={this.state.visit.isCancelled ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
-                    <View style={{flex: 1}}>
-                        <Text style={{fontSize: 16}}>{`${vehicle.Year} ${vehicle.Make} ${vehicle.Model}`}</Text>
-                        <Text style={{fontSize: 12}} >{`${vehicle.LicensePlate}`}</Text>
-                    </View>
-                </RadioButton>
-            )
-          })
+         
 
          
     }
@@ -367,7 +399,11 @@ class externalSpace extends React.Component {
                         <RadioList activeItem={this.state.selectedVehicle.VehicleID} selectItem={(option) => this.setActiveVehicle(option, true)}>
                                     {vehicleArray}
                         </RadioList>
-                        <Button onPress={() => this.props.navigation.navigate("AddVehicle")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Vehicle</Button>
+                        { !this.isInPast && !this.state.visit.isCancelled ?
+                            <Button onPress={() => this.props.navigation.navigate("AddVehicle")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Vehicle</Button>
+                            :
+                            null
+                        }
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
                         <Text type="medium" numberOfLines={1} style={{fontSize: 16,}}>Payment</Text>
