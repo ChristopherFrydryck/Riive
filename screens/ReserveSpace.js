@@ -343,8 +343,8 @@ class reserveSpace extends Component {
             var dollarsServiceFeeCents = price * this.state.serviceFeePercentage > 175 ? Math.ceil(price * this.state.serviceFeePercentage) : 175;
             dollarsServiceFee = dollarsServiceFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
-            var dollarsProcessingFee = ((((price * this.state.serviceFeePercentage) * .029) + 30) / 100);
-            var dollarsProcessingFeeCents = Math.ceil(((price * this.state.serviceFeePercentage) * .029) + 30)
+            var dollarsProcessingFee = ((((price * this.state.serviceFeePercentage) * .029) + 60) / 100);
+            var dollarsProcessingFeeCents = Math.ceil(((price * this.state.serviceFeePercentage) * .029) + 60)
             dollarsProcessingFee = dollarsProcessingFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
 

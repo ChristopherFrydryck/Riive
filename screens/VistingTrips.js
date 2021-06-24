@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity} from 'react-native'
 
+
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
@@ -8,6 +9,7 @@ import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
 import MapView, {Marker} from 'react-native-maps';
+import Clipboard from '@react-native-clipboard/clipboard';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
@@ -363,24 +365,34 @@ export default class VisitingTrips extends Component{
                             <View style={{paddingHorizontal: 16}}>
                                 
                                 <Text numberOfLines={1} style={{textAlign: 'center', fontSize: 18, marginTop: 8, paddingBottom: 4}}>{isToday ? `Today, ${data.visit.visit.day.monthName} ${data.visit.visit.day.dateName} ${data.visit.visit.day.year}` : `${data.visit.visit.day.dayName}, ${data.visit.visit.day.monthName} ${data.visit.visit.day.dateName} ${data.visit.visit.day.year}`}</Text>
-                                <Text numberOfLines={1} style={{textAlign: "center", paddingBottom: 8, color: Colors.cosmos300}}>Driving {data.visit.vehicle.Year} {data.visit.vehicle.Make} {data.visit.vehicle.Model} ({data.visit.vehicle.LicensePlate})</Text>
-                                <View style={{flexDirection: 'row', alignItems: "flex-end", justifyContent: 'space-between', marginTop: 0, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: Colors.mist900}}>
-                                    <View style={{flexDirection: 'column', alignItems: 'center', flex: 3}}>
-                                        <Text type="Light" numberOfLines={1} style={{fontSize: 18}}>Arrival</Text>
-                                        <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.tango700}}>{data.visit.visit.time.start.labelFormatted} {sameTimezone ? null : data.listing.timezone.timeZoneAbbr}</Text>
+                                {data.visit.isCancelled ? 
+                                    <View style={{paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: Colors.mist900, marginBottom: 8}}>
+                                        <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.hal500, textAlign: 'center'}}>Trip Cancelled</Text>
                                     </View>
-                                    <Icon 
-                                        iconName="arrow-right"
-                                        iconColor={Colors.tango700}
-                                        iconSize={24}
-                                        iconLib="MaterialCommunityIcons"
-                                        style={{flex: 1, paddingBottom: 4, textAlign: 'center'}}
-                                    />
-                                    <View style={{flexDirection: 'column', alignItems: 'center', flex: 3}}>
-                                        <Text  type="Light" numberOfLines={1} style={{fontSize: 18}}>Departure</Text>
-                                        <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.tango700}}>{data.visit.visit.time.end.labelFormatted} {sameTimezone ? null : data.listing.timezone.timeZoneAbbr}</Text>
+                                :
+                                <View>
+                                    <Text numberOfLines={1} style={{textAlign: "center", paddingBottom: 8, color: Colors.cosmos300}}>Driving {data.visit.vehicle.Year} {data.visit.vehicle.Make} {data.visit.vehicle.Model} ({data.visit.vehicle.LicensePlate})</Text>
+                                    <View style={{flexDirection: 'row', alignItems: "flex-end", justifyContent: 'space-between', marginTop: 0, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: Colors.mist900}}>
+                                        <View style={{flexDirection: 'column', alignItems: 'center', flex: 3}}>
+                                            <Text type="Light" numberOfLines={1} style={{fontSize: 18}}>Arrival</Text>
+                                            <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.tango700}}>{data.visit.visit.time.start.labelFormatted} {sameTimezone ? null : data.listing.timezone.timeZoneAbbr}</Text>
+                                        </View>
+                                        <Icon 
+                                            iconName="arrow-right"
+                                            iconColor={Colors.tango700}
+                                            iconSize={24}
+                                            iconLib="MaterialCommunityIcons"
+                                            style={{flex: 1, paddingBottom: 4, textAlign: 'center'}}
+                                        />
+                                        <View style={{flexDirection: 'column', alignItems: 'center', flex: 3}}>
+                                            <Text  type="Light" numberOfLines={1} style={{fontSize: 18}}>Departure</Text>
+                                            <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.tango700}}>{data.visit.visit.time.end.labelFormatted} {sameTimezone ? null : data.listing.timezone.timeZoneAbbr}</Text>
+                                        </View>
                                     </View>
                                 </View>
+                                }
+                                {data.visit.isCancelled ? null :
+                                <View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8, marginBottom: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Listing Details</Text>
                                         <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{data.visit.tripID}</Text>
@@ -403,38 +415,43 @@ export default class VisitingTrips extends Component{
                                         scrollEnabled={false}
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
-                                        <Text>{data.listing.address.full}</Text>
+                                        <Text onPress={()=>Clipboard.setString(data.listing.address.full)}>{data.listing.address.full}  <Icon iconName="copy" iconColor={Colors.cosmos300} iconSize={16} /></Text>
+                                        
                                         <Button onPress={() => this.openGps(data.listing.region.latitude, data.listing.region.longitude, data.listing.address.full)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Get Directions</Button>
                                     </View>
                                 </View>
+                                </View>}
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Payment Details</Text>
-                                        <Icon 
-                                            iconName={data.visit.payment.CardType !== '' ? 'cc-' + data.visit.payment.CardType : 'credit-card'}
-                                            iconLib="FontAwesome"
-                                            iconColor={Colors.cosmos300}
-                                            iconSize={28}
-                                            style={{ marginLeft: 16}}
-                                        />
+                                        {/* <Text>
+                                            {data.visit.payment.Number}  */}
+                                            <Icon 
+                                                iconName={data.visit.payment.CardType !== '' ? 'cc-' + data.visit.payment.CardType : 'credit-card'}
+                                                iconLib="FontAwesome"
+                                                iconColor={Colors.cosmos300}
+                                                iconSize={28}
+                                                style={{ marginLeft: 16}}
+                                            />
+                                        {/* </Text> */}
                                 </View>
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Parking Fare</Text>
-                                        <Text>{data.visit.price.price}</Text>
+                                        <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.price}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Service Fee</Text>
-                                        <Text>{data.visit.price.serviceFee}</Text>
+                                        <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Processing Fee</Text>
-                                        <Text>{data.visit.price.processingFee}</Text>
+                                        <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.processingFee}</Text>
                                     </View>
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.price.total}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Returned (USD)" : "Total (USD)"}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? ((data.visit.price.priceCents + data.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"}) : data.visit.price.total}</Text>
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
@@ -443,7 +460,7 @@ export default class VisitingTrips extends Component{
                                     <Button onPress={() =>  {
                                         this.setState({modalVisible: false})
                                         this.props.navigation.navigate("EditTrip", {visit: data.visit, listing: data.listing})
-                                    }} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Report Trip</Button>
+                                    }} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>View Trip Details</Button>
                                 </View>
                                 : 
                                 <View style={{flexDirection: 'row'}}>

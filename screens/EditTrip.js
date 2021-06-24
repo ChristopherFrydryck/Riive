@@ -60,6 +60,7 @@ class externalSpace extends React.Component {
             currentActivePhoto: 0,
             selectedVehicle:  this.props.navigation.state.params.visit.vehicle,
             lastUpdate: null,
+            isRefundable: false,
 
             changesMade: false,
         }
@@ -79,7 +80,7 @@ class externalSpace extends React.Component {
 
         this._isMounted = true;
 
-       
+       this.checkIfRefundable()
 
        this._navListener = this.props.navigation.addListener('didFocus', () => {
         StatusBar.setBarStyle('dark-content', true);
@@ -197,19 +198,107 @@ class externalSpace extends React.Component {
         
     }
 
-    showCancellationModal = () => {
+    checkIfRefundable = () => {
+        // const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
+        const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
+        // this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
+        // this.isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !this.isInPast;
 
-        Alert.alert(
-            'Cancel Trip',
-            'Cancelling a trip will',
-            [
-            { text: 'Cancel' },
-            // If they said no initially and want to change their mind,
-            // we can automatically open our app in their settings
-            // so there's less friction in turning notifications on
-            { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
-            ]
-        )
+        var diffVisitTimes = Math.abs(new Date(this.state.visit.visit.time.end.unix) - new Date(this.state.visit.visit.time.start.unix));
+
+        var minutes = Math.floor((diffVisitTimes/1000)/60);
+        var thirtyMinSections = Math.ceil(minutes/30)
+
+        let minutesSinceStart = Math.ceil((timeDiffStart/1000)/60) >= 0 ? null : Math.abs(Math.ceil((timeDiffStart/1000)/60))
+        let minutesUntilEnd = minutes - minutesSinceStart
+         
+        console.log(`Total Minutes: ${minutes}, Minutes Since Start: ${minutesSinceStart}, Difference: ${minutes - minutesSinceStart}`)
+
+        if(minutesSinceStart){
+            if(minutesUntilEnd < 30){
+                this.setState({isRefundable: false})
+            }else{
+                this.setState({isRefundable: true})
+            }
+        }else{
+            this.setState({isRefundable: true})
+        }
+    }
+
+    showCancellationModal = () => {
+        const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
+        const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
+        this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
+        this.isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !this.isInPast;
+
+        var diffVisitTimes = Math.abs(new Date(this.state.visit.visit.time.end.unix) - new Date(this.state.visit.visit.time.start.unix));
+
+
+        var minutes = Math.floor((diffVisitTimes/1000)/60);
+        var thirtyMinSections = Math.ceil(minutes/30)
+
+        // If not started yet, minutesSinceStart is null
+        let minutesSinceStart = Math.ceil((timeDiffStart/1000)/60) >= 0 ? null : Math.abs(Math.ceil((timeDiffStart/1000)/60))
+
+
+        let sectionsUnrefundable = Math.ceil((minutesSinceStart/30)%thirtyMinSections)
+        let hoursUnrefundable = sectionsUnrefundable / 2
+
+
+        let refundableAmt = null
+        let refundableAmtCents = null;
+
+        if(minutesSinceStart){
+            if(minutesSinceStart >= 30){
+                refundableAmtCents = this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable)
+                refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                
+            }else{
+                refundableAmtCents = this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents
+                refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                
+            }
+        }else{
+            refundableAmtCents = this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents
+            refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+        }
+
+        console.log(`Total refunded: ${refundableAmtCents}`)
+
+        if(this.props.UserStore.directDepositInfo.id){
+            if(this.isCurrentlyActive){
+                Alert.alert(
+                    'Cancel Trip',
+                    `Cancelling a trip will return a total amount of ${refundableAmt} back to the account ending in `,
+                    [
+                    { text: 'Cancel' },
+                    { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                    ]
+                )
+
+            }else{
+                Alert.alert(
+                    'Cancel Trip',
+                    `Cancelling a trip will return a total amount of ${((this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})} back to the account ending in `,
+                    [
+                    { text: 'Cancel' },
+                    { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                    ]
+                )
+            }
+        }else{
+            Alert.alert(
+                'Need Bank Information',
+                `Additional bank information is required to direct deposit funds back into your bank account.`,
+                [
+                
+                { text: 'Add Bank Information', onPress: () => this.props.navigation.navigate('BankInfo') },
+                { text: 'Cancel' },
+                ]
+            )
+        }
+
+        
     }
 
     cancelTrip = () => {
@@ -327,6 +416,7 @@ class externalSpace extends React.Component {
 
     render(){
         const {width, height} = Dimensions.get("window")
+        // console.log()
         // let vehicleArray = this.props.UserStore.vehicles.map(vehicle => {
         //     return(
         //         <RadioButton disabled={this.state.visit.isCancelled ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
@@ -388,7 +478,11 @@ class externalSpace extends React.Component {
                             <View>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
                                 <Text numberOfLines={1} ellipsizeMode='tail'>Last updated {`${this.state.lastUpdate.split(" ")[0].split("/")[0]}/${this.state.lastUpdate.split(" ")[0].split("/")[1]} @ ${this.state.lastUpdate.split(" ")[1].split(":")[0]}:${this.state.lastUpdate.split(" ")[1].split(":")[1]} ${this.state.lastUpdate.split(" ")[2]}`}</Text>
-                                <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                {!this.isInPast && this.state.isRefundable ? 
+                                    <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                    :
+                                    <Text type="medium" onPress={() => console.log("Go to report page")} style={{fontSize: 16, color: Colors.tango900, textDecorationLine: 'underline'}}>Report Trip</Text> 
+                                }
                             </View>
                             :
                             <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].slice(0,4) + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
