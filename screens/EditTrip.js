@@ -226,6 +226,7 @@ class externalSpace extends React.Component {
     }
 
     showCancellationModal = () => {
+        this.checkIfRefundable();
         const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
         this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
@@ -247,55 +248,60 @@ class externalSpace extends React.Component {
 
         let refundableAmt = null
         let refundableAmtCents = null;
-
-        if(minutesSinceStart){
-            if(minutesSinceStart >= 30){
-                refundableAmtCents = this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable)
-                refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                
+        if(this.state.isRefundable){
+            if(minutesSinceStart){
+                if(minutesSinceStart >= 30){
+                    refundableAmtCents = this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable)
+                    refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                    
+                }else{
+                    refundableAmtCents = this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents
+                    refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                    
+                }
             }else{
-                refundableAmtCents = this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents
+                refundableAmtCents = this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                
             }
         }else{
-            refundableAmtCents = this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents
-            refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+            Alert("This visit can no longer be refunded. For any questions, contact us at support@riive.net.")
         }
 
         console.log(`Total refunded: ${refundableAmtCents}`)
 
-        if(this.props.UserStore.directDepositInfo.id){
-            if(this.isCurrentlyActive){
-                Alert.alert(
-                    'Cancel Trip',
-                    `Cancelling a trip will return a total amount of ${refundableAmt} back to the account ending in `,
-                    [
-                    { text: 'Cancel' },
-                    { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
-                    ]
-                )
+        if(this.state.isRefundable){
+            if(this.props.UserStore.directDepositInfo.id){
+                if(this.isCurrentlyActive){
+                    Alert.alert(
+                        'Cancel Trip',
+                        `Cancelling a trip will return a total amount of ${refundableAmt} back to the account ending in `,
+                        [
+                        { text: 'Cancel' },
+                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                        ]
+                    )
 
+                }else{
+                    Alert.alert(
+                        'Cancel Trip',
+                        `Cancelling a trip will return a total amount of ${((this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})} back to the account ending in `,
+                        [
+                        { text: 'Cancel' },
+                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                        ]
+                    )
+                }
             }else{
                 Alert.alert(
-                    'Cancel Trip',
-                    `Cancelling a trip will return a total amount of ${((this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})} back to the account ending in `,
+                    'Need Bank Information',
+                    `Additional bank information is required to direct deposit funds back into your bank account.`,
                     [
+                    
+                    { text: 'Add Bank Information', onPress: () => this.props.navigation.navigate('BankInfo') },
                     { text: 'Cancel' },
-                    { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
                     ]
                 )
             }
-        }else{
-            Alert.alert(
-                'Need Bank Information',
-                `Additional bank information is required to direct deposit funds back into your bank account.`,
-                [
-                
-                { text: 'Add Bank Information', onPress: () => this.props.navigation.navigate('BankInfo') },
-                { text: 'Cancel' },
-                ]
-            )
         }
 
         
