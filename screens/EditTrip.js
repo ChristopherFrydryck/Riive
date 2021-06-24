@@ -60,7 +60,10 @@ class externalSpace extends React.Component {
             currentActivePhoto: 0,
             selectedVehicle:  this.props.navigation.state.params.visit.vehicle,
             lastUpdate: null,
+
             isRefundable: false,
+            refundAmt: null,
+            refundAmtCents: null,
 
             changesMade: false,
         }
@@ -212,7 +215,6 @@ class externalSpace extends React.Component {
         let minutesSinceStart = Math.ceil((timeDiffStart/1000)/60) >= 0 ? null : Math.abs(Math.ceil((timeDiffStart/1000)/60))
         let minutesUntilEnd = minutes - minutesSinceStart
          
-        console.log(`Total Minutes: ${minutes}, Minutes Since Start: ${minutesSinceStart}, Difference: ${minutes - minutesSinceStart}`)
 
         if(minutesSinceStart){
             if(minutesUntilEnd < 30){
@@ -253,28 +255,30 @@ class externalSpace extends React.Component {
                 if(minutesSinceStart >= 30){
                     refundableAmtCents = this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable)
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
                     
                 }else{
                     refundableAmtCents = this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    
+                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
                 }
             }else{
                 refundableAmtCents = this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
             }
         }else{
             Alert("This visit can no longer be refunded. For any questions, contact us at support@riive.net.")
+            this.setState({refundAmt: null, refundAmtCents: null})
         }
 
-        console.log(`Total refunded: ${refundableAmtCents}`)
 
         if(this.state.isRefundable){
             if(this.props.UserStore.directDepositInfo.id){
                 if(this.isCurrentlyActive){
                     Alert.alert(
                         'Cancel Trip',
-                        `Cancelling a trip will return a total amount of ${refundableAmt} back to the account ending in `,
+                        `Cancelling your current trip will return a partial amount of ${refundableAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}`,
                         [
                         { text: 'Cancel' },
                         { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
@@ -323,6 +327,8 @@ class externalSpace extends React.Component {
                     try{
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
                             isCancelled: true,
+                            refundAmt: this.state.refundAmt,
+                            refundAmtCents: this.state.refundAmtCents,
                             cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest",
                             updated: currentTime
                         }).then(() => {

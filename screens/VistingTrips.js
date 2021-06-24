@@ -451,7 +451,10 @@ export default class VisitingTrips extends Component{
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Returned (USD)" : "Total (USD)"}</Text>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? ((data.visit.price.priceCents + data.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"}) : data.visit.price.total}</Text>
+                                        <View>
+                                             <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? data.visit.refundAmt || "--" : data.visit.price.total}</Text>
+                                        </View>
+                                       
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>

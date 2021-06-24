@@ -456,6 +456,8 @@ class reserveSpace extends Component {
                                 searchedAddress: searchedAddress,
                                 searchInputValue: searchInputValue,
                                 distanceWalking: locationDifferenceWalking,
+                                refundAmt: null,
+                                refundAmtCents: null,
                                 visit: {
                                     day: daySearched,
                                     time: {
