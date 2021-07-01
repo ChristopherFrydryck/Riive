@@ -60,8 +60,8 @@ const fs = require('fs');
                     // id_number: request.body.ssn,
                 }
             )
-        }).then(() => {
-            db.collection('users').doc(request.body.FBID).get()
+        }).then(async() => {
+            await db.collection('users').doc(request.body.FBID).get()
             .then(doc => {
                 if(!doc.exists){
                     error = new Error("User does not exist")
