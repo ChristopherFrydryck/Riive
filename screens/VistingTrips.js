@@ -315,24 +315,22 @@ export default class VisitingTrips extends Component{
     }
 
     slideBottomPill = () => {
+        clearTimeout(this.pillTimeout)
    
-
-        Animated.timing(this.state.slideUpAnimation, {
-            toValue: 40,
-            duration: 250,
-            easing: Easing.elastic(1),
-            useNativeDriver: false,
-          }).start();
-
-        setTimeout(() => {
             Animated.timing(this.state.slideUpAnimation, {
-            toValue: -100,
-            duration: 250,
-            easing: Easing.elastic(1),
-            useNativeDriver: false,
-          }).start();}, 2000)
+                toValue: 40,
+                duration: 250,
+                easing: Easing.elastic(1),
+                useNativeDriver: false,
+            }).start();
 
-        
+            this.pillTimeout = setTimeout(() => {
+                Animated.timing(this.state.slideUpAnimation, {
+                toValue: -100,
+                duration: 250,
+                easing: Easing.elastic(1),
+                useNativeDriver: false,
+            }).start();}, 2000)
       }
 
     VisitModal(props) {
