@@ -50,6 +50,7 @@ import {inject, observer} from 'mobx-react/native'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 import Colors from '../constants/Colors';
+import FloatingCircles from '../components/FloatingCircles'
 
 
 
@@ -685,7 +686,7 @@ class Profile extends Component{
 
          
                 await this.addAddress()                
-                this.setState({fullnameError: "", submitted: true}) 
+                await this.setState({fullnameError: "", submitted: true}) 
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
@@ -1066,13 +1067,13 @@ class Profile extends Component{
                             style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
                             />}
                             query={{
-                            key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
-                            language: 'en'
+                                key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+                                language: 'en'
                             }}
                             GooglePlacesSearchQuery={{
-                            rankby: 'distance',
-                            types: 'address',
-                            components: "country:us"
+                                rankby: 'distance',
+                                types: 'address',
+                                components: "country:us"
                             }}
                             // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
                             nearbyPlacesAPI={'GoogleReverseGeocoding'}
@@ -1193,7 +1194,7 @@ class Profile extends Component{
                                 disabled={this.state.savingChanges || this.state.failed || this.state.submitted}
                                 bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : this.state.failed ? 'rgba(190, 55, 55, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%
                                 textColor={this.state.submitted ? Colors.fortune700 : this.state.failed ? Colors.hal700 : Colors.tango700}
-                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? "Saving Changes..." : "Save Changes"}</ClickableChip>
+                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? <FloatingCircles color={Colors.tango500}/> : "Save Changes"}</ClickableChip>
 
                         
                     

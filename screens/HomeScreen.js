@@ -175,7 +175,7 @@ class Home extends Component {
         
         this.setPermissions();
         this.mapLocationFunction();
-        this.getCurrentLocation(true);
+        this.getCurrentLocation(false);
         
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);

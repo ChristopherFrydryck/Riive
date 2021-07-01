@@ -253,17 +253,17 @@ class externalSpace extends React.Component {
         if(this.state.isRefundable){
             if(minutesSinceStart){
                 if(minutesSinceStart >= 30){
-                    refundableAmtCents = this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable)
+                    refundableAmtCents = Math.floor(this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable))
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                     this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
                     
                 }else{
-                    refundableAmtCents = this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents
+                    refundableAmtCents = Math.floor(this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents)
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                     this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
                 }
             }else{
-                refundableAmtCents = this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents
+                refundableAmtCents = Math.floor(this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                 this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
             }
@@ -288,7 +288,7 @@ class externalSpace extends React.Component {
                 }else{
                     Alert.alert(
                         'Cancel Trip',
-                        `Cancelling a trip will return a total amount of ${((this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})} back to the account ending in `,
+                        `Cancelling a trip will return a total amount of ${((this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})} back to the account ending in ${this.props.UserStore.directDepositInfo.number}`,
                         [
                         { text: 'Cancel' },
                         { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
