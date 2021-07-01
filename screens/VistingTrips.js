@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity} from 'react-native'
+import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity, Animated, Easing} from 'react-native'
 
 
 import Button from '../components/Button'
@@ -35,6 +35,8 @@ export default class VisitingTrips extends Component{
             lastRenderedItem: null,
             selectedVisit: null,
             modalVisible: false,
+            slideUpAnimation: new Animated.Value(-100),
+
             // secitonlist stuff
             
         }
@@ -312,6 +314,27 @@ export default class VisitingTrips extends Component{
         this.props.navigation.navigate("TOS")
     }
 
+    slideBottomPill = () => {
+   
+
+        Animated.timing(this.state.slideUpAnimation, {
+            toValue: 40,
+            duration: 250,
+            easing: Easing.elastic(1),
+            useNativeDriver: false,
+          }).start();
+
+        setTimeout(() => {
+            Animated.timing(this.state.slideUpAnimation, {
+            toValue: -100,
+            duration: 250,
+            easing: Easing.elastic(1),
+            useNativeDriver: false,
+          }).start();}, 2000)
+
+        
+      }
+
     VisitModal(props) {
         const {data, visible} = props;
         
@@ -415,7 +438,11 @@ export default class VisitingTrips extends Component{
                                         scrollEnabled={false}
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
-                                        <Text onPress={()=>Clipboard.setString(data.listing.address.full)}>{data.listing.address.full}  <Icon iconName="copy" iconColor={Colors.cosmos300} iconSize={16} /></Text>
+                                        <Text onPress={()=> {
+                                            Clipboard.setString(data.listing.address.full)
+                                            this.slideBottomPill()
+                                            
+                                        }}>{data.listing.address.full}  <Icon iconName="copy" iconColor={Colors.cosmos300} iconSize={16} /></Text>
                                         
                                         <Button onPress={() => this.openGps(data.listing.region.latitude, data.listing.region.longitude, data.listing.address.full)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Get Directions</Button>
                                     </View>
@@ -478,6 +505,14 @@ export default class VisitingTrips extends Component{
                             
                             
                         </ScrollView>
+                        <Animated.View style={[styles.searchToastPill, {bottom: this.state.slideUpAnimation}]}>
+                        {/* <ActivityIndicator /> */}
+                       
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                                {/* <ActivityIndicator color="white"/> */}
+                                <Text style={{color: Colors.apollo900, paddingLeft: 8}}>Copied Address</Text>
+                            </View>  
+                    </Animated.View>
                     </SafeAreaView>
                 </Modal>
             )
@@ -552,5 +587,24 @@ const styles = StyleSheet.create({
         //   shadowRadius: 3, 
         //   elevation: 12,
         //   borderRadius: 4,
-      }
+      },
+      searchToastPill: {
+        height: 40, 
+        backgroundColor: Colors.mist300, 
+        position: 'absolute', 
+        alignSelf: 'center', 
+        alignItems: 'center', 
+        flexDirection: 'row',
+        justifyContent: 'center', 
+        borderRadius: 24, 
+        paddingHorizontal: 16,
+        shadowColor: Colors.cosmos900,
+        shadowOffset: {
+            width: 0,
+            height: 20,
+        },
+        shadowOpacity: .5,
+        shadowRadius: 20,
+        elevation: 12,
+    },
 })
