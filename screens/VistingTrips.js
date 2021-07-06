@@ -54,6 +54,8 @@ export default class VisitingTrips extends Component{
         });
         
 
+    
+
     }
 
     updateVisits = () => {   
@@ -315,7 +317,7 @@ export default class VisitingTrips extends Component{
     }
 
     slideBottomPill = () => {
-        clearTimeout(this.pillTimeout)
+            clearTimeout(this.pillTimeout)
    
             Animated.timing(this.state.slideUpAnimation, {
                 toValue: 40,
@@ -355,6 +357,8 @@ export default class VisitingTrips extends Component{
             }
 
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
+
+            // console.log((date.getTime() - data.visit.time.end.unix))
 
 
             return(
@@ -508,7 +512,7 @@ export default class VisitingTrips extends Component{
                        
                             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                                 {/* <ActivityIndicator color="white"/> */}
-                                <Text style={{color: Colors.apollo900, paddingLeft: 8}}>Copied Address</Text>
+                                <Text style={{color: Colors.cosmos900, paddingLeft: 8}}>Copied Address</Text>
                             </View>  
                     </Animated.View>
                     </SafeAreaView>

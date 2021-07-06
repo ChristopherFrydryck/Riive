@@ -5,6 +5,7 @@ import Colors from '../constants/Colors'
 
 import TripsTabNavigator from './TripsTabNavigator'
 import EditTrip from '../screens/EditTrip'
+import ReportTrip from '../screens/ReportTrip'
 
 import HostedTrips from './TripsPages/HostedTripsNavigator'
 import VisitingTrips from './TripsPages/VisitedTripsNavigator'
@@ -18,7 +19,20 @@ const TripsNavigator = createStackNavigator({
           headerShown: false
       }
   },
-  EditTrip: EditTrip,
+  EditTrip: {
+    screen: EditTrip,
+    navigationOptions: {
+      headerBackTitle: 'Back',
+      title: "Edit Trip"
+    } 
+  },
+  ReportTrip: {
+    screen: ReportTrip,
+    navigationOptions: {
+      headerBackTitle: 'Back',
+      title: "Report Trip"
+    }
+  }
 }, 
 {initialRouteName: "TripsTabNavigator",})
 

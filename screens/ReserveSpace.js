@@ -450,6 +450,7 @@ class reserveSpace extends Component {
                                 },
                                 tripID: ref.id,
                                 updated: currentTime,
+                                created: currentTime,
                                 vehicle: this.state.selectedVehicle,
                                 visitorID: this.props.UserStore.userID,
                                 visitorName: this.props.UserStore.fullname,

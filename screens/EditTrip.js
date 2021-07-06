@@ -43,7 +43,7 @@ class externalSpace extends React.Component {
         const { params = {} } = navigation.state;
         
         return{
-          headerTitle: "Edit Trip Details",
+          headerTitle: "Edit Trip",
           headerTitleStyle:{
               fontWeight: "300",
               fontSize: 18,
@@ -101,9 +101,9 @@ class externalSpace extends React.Component {
 
     
 
-      this.props.navigation.setParams({
-        title: this.state.listing.spaceName || "Loading...",
-      });
+    //   this.props.navigation.setParams({
+    //     title: this.state.listing.spaceName || "Loading...",
+    //   });
 
     }
 
@@ -493,7 +493,9 @@ class externalSpace extends React.Component {
                                 {!this.isInPast && this.state.isRefundable ? 
                                     <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
                                     :
-                                    <Text type="medium" onPress={() => console.log("Go to report page")} style={{fontSize: 16, color: Colors.tango900, textDecorationLine: 'underline'}}>Report Trip</Text> 
+                                   Math.abs(Math.floor((new Date().getTime() - this.state.visit.visit.time.end.unix) / 86400000)) <= 30 ?
+                                    <Text type="medium" onPress={() => this.props.navigation.navigate("ReportTrip")} style={{fontSize: 16, color: Colors.tango900, textDecorationLine: 'underline'}}>Report Trip</Text> 
+                                    : null 
                                 }
                             </View>
                             :
