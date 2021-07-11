@@ -173,7 +173,7 @@ class Home extends Component {
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
         
-        this.setPermissions();
+        
         this.mapLocationFunction();
         this.getCurrentLocation(false);
         
@@ -188,13 +188,14 @@ class Home extends Component {
       });
 
       this._navListener = this.props.navigation.addListener('didBlur', () => {
-        this.setPermissions();
+        
         clearInterval(this._interval)
       })
 
 
   
       this.getCurrentLocation(true);
+      this.setPermissions();
 
      
     

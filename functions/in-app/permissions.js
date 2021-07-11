@@ -36,8 +36,24 @@ import firestore from '@react-native-firebase/firestore';
           const doc = db.collection('users').doc(auth().currentUser.uid);
           await doc.get().then((doc) => {
             if (doc.exists){
-                  perms.notifications.tripsAndHosting = doc.data().permissions.notifications.tripsAndHosting;
-                  perms.notifications.discountsAndNews = doc.data().permissions.notifications.discountsAndNews;
+                //   If user exists and permissions are in db
+                  if(doc.data().hasOwnProperty("permissions")){
+                        perms.notifications.tripsAndHosting = doc.data().permissions.notifications.tripsAndHosting;
+                        perms.notifications.discountsAndNews = doc.data().permissions.notifications.discountsAndNews;
+                  }else{
+                        //   If user exists but doesn't have permissions set in the DB
+                        db.collection("users").doc(auth().currentUser.uid).update({
+                            permissions: {
+                                notifications: {
+                                  discountsAndNews: true,
+                                  tripsAndHosting: true,
+                                }
+                              }
+                        })
+                        perms.notifications.tripsAndHosting = true;
+                        perms.notifications.discountsAndNews = true;
+                  }
+             //   If user does not exist
             }else{
               perms.notifications.tripsAndHosting = true;
               perms.notifications.discountsAndNews = true;

@@ -1,23 +1,15 @@
-import React, {Component} from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity, Animated, Easing} from 'react-native'
+import React, { Component } from 'react'
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox, Alert, Linking} from 'react-native';
 
-
-import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
-import Image from '../components/Image'
+import Input from '../components/Input'
+import Button from '../components/Button'
 import Colors from '../constants/Colors'
+import Dropdown from '../components/Dropdown'
+import DropdownItem from '../components/DropdownItem'
 
-import MapView, {Marker} from 'react-native-maps';
-import Clipboard from '@react-native-clipboard/clipboard';
-import DayMap from '../constants/DayMap'
-import NightMap from '../constants/NightMap'
-
-import * as firebase from 'firebase/app';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import 'firebase/auth';
-import 'firebase/firestore';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
@@ -26,18 +18,29 @@ import {inject, observer} from 'mobx-react/native'
 @inject("UserStore", "ComponentStore")
 @observer
 export default class ReportTrip extends Component{
+   array = [
+        {
+            index: 0,
+            label: "I am being scammed",
+            db: "SPACE_ISSUE"
+        },
+        {
+            index: 1,
+            label: "The host was offensive",
+            db: "HOST_ISSUE"
+        },
+        {
+            index: 2,
+            label: "Something else",
+            db: "OTHER_ISSUE"
+        },
+    ]
 
    constructor(props){
         super(props);
         this.state = {
-            // isRefreshing: false,
-            // visits: [],
-            // lastRenderedItem: null,
-            // selectedVisit: null,
-            // modalVisible: false,
-            // slideUpAnimation: new Animated.Value(-100),
-
-            // secitonlist stuff
+           reportReason: this.array[0],
+           reportText: "",
             
         }
    }
@@ -56,81 +59,84 @@ export default class ReportTrip extends Component{
         
 
     }
-
-
-
-
-
-    
-
-
-
-
-    
     render(){
+        
+        // let {type, number, bankProvider, bankToken, cardType, fingerprint, id} = this.props.UserStore.directDepositInfo
         return(
-            <View style={styles.container}>
-                <Text>Report Trip</Text>
-            </View>
+            <KeyboardAwareScrollView 
+                keyboardShouldPersistTaps="handled"
+                automaticallyAdjustContentInsets={false}
+                scrollEnabled
+                enableOnAndroid={true}
+                extraScrollHeight={150} //iOS
+                extraHeight={135} //Android
+                style={{backgroundColor: 'white', paddingTop: 16}} 
+                contentContainerStyle={{flexShrink: 1, justifyContent: 'center'}}
+            >
+                <View style={[styles.container, {flexDirection: 'row', alignItems: 'center'}]}>
+                  <Icon 
+                      iconName="report"
+                      iconLib="MaterialIcons"
+                      iconSize={32}
+                      style={{marginRight: 4}}
+                  />
+                  <Text style={{fontSize: 20, }} type="SemiBold">Report Trip</Text>
+                 
+                        
+                  
+                </View>
+                <View style={[styles.container, {flex: 1}]}>
+                    <Dropdown
+                        flex={0}
+                        selectedValue = {this.state.reportReason.label}
+                        label="Report Reason"
+                        // error={this.state.error.make}
+                        style={{height: 32}}
+                        onValueChange = {(res) => Platform.OS == 'ios' ? this.setState({reportReason: res}) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
+                     >
+                        {
+                            this.array.map((x, i) => {
+                                if(Platform.OS === 'ios'){
+                                      return(
+                                          {key: x.index, label: x.label, baseValue: x.db}
+                                      )
+                                 }
+                                else{
+                                     return(
+                                        <DropdownItem key={x.index} label={x.label} value={x.db}/>
+                                     )
+                                 }
+                             })
+                        }
+                    </Dropdown>
+                    <Input 
+                        placeholder='Add a bio...'         
+                        label="Report Details"
+                        name="space bio"                 
+                        onChangeText= {reportText => this.setState({reportText})}
+                        value={this.state.reportText}
+                        mask="multiline"
+                        numLines={4}
+                        rightText={`${this.state.reportText.length}/300`}
+                        maxLength = {300}
+                        keyboardType='default'
+                        // error={this.state.bioError}
+                        />
+                </View>
+                <Button onPress={() => console.log(this.state.reportText)}>Test</Button>
+                
+ 
+                
+            </KeyboardAwareScrollView>
         )
     }
+    
 }
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 8,
-        paddingHorizontal: 8,
-        backgroundColor: "white"
-    },
-    sectionHeader: {
-        paddingTop: 2,
-        paddingBottom: 2,
-        paddingLeft: 10,
-        paddingRight: 10,
-        fontSize: 20,
-        fontWeight: '400',
-        color: Colors.cosmos700,
-        backgroundColor: 'white'
-      },
-    sectionHeaderPast: {
-        color: '#c2c2c2',
-    },
-    
-      item: {
-        padding: 10,
-        fontSize: 18,
-        height: 44,
-      },
-      visitCard: {
-          backgroundColor: 'white',
-          
-          height: 100,
-          marginVertical: 8,
-          marginHorizontal: 4,
-        //   shadowColor: '#000', 
-        //   shadowOpacity: 0.6, 
-        //   shadowOffset:{width: 2, height: 2}, 
-        //   shadowRadius: 3, 
-        //   elevation: 12,
-        //   borderRadius: 4,
-      },
-      searchToastPill: {
-        height: 40, 
-        backgroundColor: Colors.mist300, 
-        position: 'absolute', 
-        alignSelf: 'center', 
-        alignItems: 'center', 
-        flexDirection: 'row',
-        justifyContent: 'center', 
-        borderRadius: 24, 
-        paddingHorizontal: 16,
-        shadowColor: Colors.cosmos900,
-        shadowOffset: {
-            width: 0,
-            height: 20,
-        },
-        shadowOpacity: .5,
-        shadowRadius: 20,
-        elevation: 12,
-    },
+  container: {
+      paddingHorizontal: 16
+  }, 
+  icon:{
+      paddingRight: 8
+  }
 })
