@@ -8,8 +8,12 @@ import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import Dropdown from '../components/Dropdown'
 import DropdownItem from '../components/DropdownItem'
+import { version } from '../package.json'
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import DeviceInfo from 'react-native-device-info'
+
+import firestore from '@react-native-firebase/firestore';
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
@@ -22,17 +26,17 @@ export default class ReportTrip extends Component{
         {
             index: 0,
             label: "I am being scammed",
-            db: "SPACE_ISSUE"
+            baseValue: "SPACE_ISSUE"
         },
         {
             index: 1,
             label: "The host was offensive",
-            db: "HOST_ISSUE"
+            baseValue: "HOST_ISSUE"
         },
         {
             index: 2,
             label: "Something else",
-            db: "OTHER_ISSUE"
+            baseValue: "OTHER_ISSUE"
         },
     ]
 
@@ -59,6 +63,73 @@ export default class ReportTrip extends Component{
         
 
     }
+
+    reportIssue = async ( reportText ) => {
+
+        //    console.log(DeviceInfo.getDevice())
+        let ipAddr = null;
+        let macAddr = null;
+    
+        await DeviceInfo.getIpAddress().then((res) => {
+            ipAddr = res
+        })
+    
+        await DeviceInfo.getMacAddress().then((res) => {
+            macAddr = res
+        })
+    
+            if(!reportText || reportText.replace(/\s/g,"") == ""){
+                this.setState({reportIssueModalVisible: false})
+                Alert.alert(
+                    "Failed to submit issue",
+                    "Try inputting valid text into the report text input."
+                )
+            }else{
+             let db = firestore()
+             let reportRef = db.collection("reports").doc().id
+             let userRef = db.collection("users").doc(this.props.UserStore.userID).id
+    
+             let createdTime = new Date().getTime();
+             
+    
+    
+             try{
+                db.collection("reports").doc(reportRef).set({
+                    reportType: this.state.reportReason.baseValue,
+                    reportID: reportRef,
+                    reportText: reportText,
+                    userReport: this.props.UserStore.userID,
+                    reportDate: createdTime,
+                    resolved: false,
+                    resolvedTime: null,
+                    resolvedBy: null,
+                    buildDetails:{
+                        appName: DeviceInfo.getApplicationName(),
+                        bundleID: DeviceInfo.getBundleId(),
+                        version: version,
+                        deviceOS: Platform.OS,
+                        brand: DeviceInfo.getBrand(),
+                        model: DeviceInfo.getModel(),
+                        buildNumber: DeviceInfo.getBuildNumber(),
+                        osVersion: DeviceInfo.getSystemVersion(),
+                        ipAddress: ipAddr,
+                        macAddress: macAddr 
+                    },
+                }).then(() => {
+                    db.collection("users").doc(userRef).collection('reports').doc(reportRef).set({
+                        reportType: this.state.reportReason.baseValue,
+                        reportID: reportRef,
+                        reportDate: createdTime,
+                    })
+                }).then(() => alert("Thank you for reporting an issue. We will solve it as soon as possible."))
+             }catch(e){
+                 alert(e)
+             }
+            }
+             
+        }
+
+
     render(){
         
         // let {type, number, bankProvider, bankToken, cardType, fingerprint, id} = this.props.UserStore.directDepositInfo
@@ -98,12 +169,12 @@ export default class ReportTrip extends Component{
                             this.array.map((x, i) => {
                                 if(Platform.OS === 'ios'){
                                       return(
-                                          {key: x.index, label: x.label, baseValue: x.db}
+                                          {key: x.index, label: x.label, baseValue: x.baseValue}
                                       )
                                  }
                                 else{
                                      return(
-                                        <DropdownItem key={x.index} label={x.label} value={x.db}/>
+                                        <DropdownItem key={x.index} label={x.label} value={x.baseValue}/>
                                      )
                                  }
                              })
@@ -123,7 +194,7 @@ export default class ReportTrip extends Component{
                         // error={this.state.bioError}
                         />
                 </View>
-                <Button onPress={() => console.log(this.state.reportText)}>Test</Button>
+                <Button onPress={() => this.reportIssue(this.state.reportText)}>Test</Button>
                 
  
                 
