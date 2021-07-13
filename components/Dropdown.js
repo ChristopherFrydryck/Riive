@@ -20,7 +20,7 @@ class Dropdown extends React.PureComponent{
             <View style={{flex: this.props.flex}}>
                 <SafeAreaView />
                 <View style={styles.container}>
-                    <Text style={this.props.enabled ? styles.label : styles.label_disabled}>{this.props.label}</Text>
+                    <Text style={Platform.OS === 'ios' ? styles.label : [styles.label, {marginBottom: 6}]}>{this.props.label}</Text>
                     <ModalSelector
                         animationType={'fade'}
                         disabled = {!this.props.enabled}
