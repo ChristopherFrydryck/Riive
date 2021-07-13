@@ -135,7 +135,7 @@ export default class DayAvailabilityPicker extends React.Component{
 
         
 
-        if(Platform.OS === 'ios'){
+
             timeSelected = input.baseValue
             activeDayBlock[0].start = timeSelected;
             removedSelectedDay.splice(activeDay[0].dayValue, 0, activeDay[0]);
@@ -145,13 +145,7 @@ export default class DayAvailabilityPicker extends React.Component{
             
         
             // console.log(removedSelectedDay)
-        }else{
-            timeSelected = input
-            activeDayBlock[0].start = timeSelected;
-            removedSelectedDay.splice(activeDay[0].dayValue, 0, activeDay[0]);
-
-            this.setState({dailyStaging: removedSelectedDay})
-        }
+        
 
 
         // Error checking schedule
@@ -174,7 +168,7 @@ export default class DayAvailabilityPicker extends React.Component{
 
         
 
-        if(Platform.OS === 'ios'){
+
             timeSelected = input.baseValue
             activeDayBlock[0].end = timeSelected;
             removedSelectedDay.splice(activeDay[0].dayValue, 0, activeDay[0]);
@@ -182,15 +176,7 @@ export default class DayAvailabilityPicker extends React.Component{
             this.setState({dailyStaging: removedSelectedDay})
       
             // console.log(timeSelected)
-        }else{
-            timeSelected = input
-            activeDayBlock[0].end = timeSelected;
-            removedSelectedDay.splice(activeDay[0].dayValue, 0, activeDay[0]);
-
-
-            this.setState({dailyStaging: removedSelectedDay})
-            // console.log(timeSelected)
-        }
+       
 
         // Error checking schedule
         this.testValidAvailability()
@@ -378,29 +364,13 @@ export default class DayAvailabilityPicker extends React.Component{
 
             // See if it is the last option where we add an end time
             if(nextDayIndex + 1 > this.state.dailyStaging[this.state.activeDay].data.length){
-                if(Platform.OS == 'ios'){
                     this.addTimeSlot(Times[0].start[Times[1].end.indexOf(option.end) + 1], "2359")
-                }else{
-                    this.addTimeSlot(Times[0].start[Times[1].end.indexOf(option.end) + 1], "2359")
-                    
-                    // console.log(activeDay[0].data.sort((a, b) => parseInt(a.start) - parseInt(b.start)))
-                    console.log(nextDayIndex)
-                }
+                
 
                 
             }else{
-                if(Platform.OS == 'ios'){
                    
                     this.addTimeSlot(Times[0].start[Times[1].end.indexOf(option.end) + 1], Times[1].end[Times[0].start.indexOf(this.state.dailyStaging[this.state.activeDay].data[nextDayIndex].start) - 1])
-
-           
-                }else{
-              
-                    this.addTimeSlot(Times[0].start[Times[1].end.indexOf(option.end) + 1], Times[1].end[Times[0].start.indexOf(this.state.dailyStaging[this.state.activeDay].data[nextDayIndex].start) - 1])
-
-                    // console.log(activeDay[0].data.sort((a, b) => parseInt(a.start) - parseInt(b.start)))
-                    console.log(nextDayIndex)
-                }
                 
             }
 
@@ -525,7 +495,7 @@ export default class DayAvailabilityPicker extends React.Component{
                                             style={{minWidth: 145}}
                                             label="Start Time"
                                     
-                                            selectedValue={Platform.OS == 'ios' ? this.convertToCommonTime(option.start) : option.start}
+                                            selectedValue={this.convertToCommonTime(option.start)}
                                             onValueChange={(x) => this.changeStartTime(x, this.state.dailyStaging[this.state.activeDay].dayValue, option.id)}
                                         >
                                             {
@@ -533,13 +503,13 @@ export default class DayAvailabilityPicker extends React.Component{
                                                 this.state.dailyStaging[this.state.activeDay].data[i - 1] ?
                                                     startTimes.filter(x => parseInt(x.label) > parseInt(this.state.dailyStaging[this.state.activeDay].data[i - 1].end) && parseInt(x.label) < parseInt(this.state.dailyStaging[this.state.activeDay].data[i].end)).map(x => {
                                                         return(
-                                                            Platform.OS == "android" ? <DropdownItem key={x.key} value={x.label} label={x.labelFormatted}/> : {key: x.key, label: x.labelFormatted, baseValue: x.label}
+                                                            {key: x.key, label: x.labelFormatted, baseValue: x.label}
                                                         )
                                                     })
                                                 :
                                                     startTimes.filter(x => parseInt(x.label) < parseInt(this.state.dailyStaging[this.state.activeDay].data[i].end)).map(x => {
                                                         return(
-                                                        Platform.OS == "android" ? <DropdownItem key={x.key} value={x.label} label={x.labelFormatted}/> : {key: x.key, label: x.labelFormatted, baseValue: x.label}
+                                                         {key: x.key, label: x.labelFormatted, baseValue: x.label}
                                                         )
                                                     })
                                          
@@ -550,7 +520,7 @@ export default class DayAvailabilityPicker extends React.Component{
                                         <Dropdown 
                                             style={{minWidth: 145}}
                                             label="End Time"
-                                            selectedValue={Platform.OS == 'ios' ? this.convertToCommonTime(option.end) : option.end}
+                                            selectedValue={this.convertToCommonTime(option.end)}
                                             onValueChange={(x) => this.changeEndTime(x, this.state.dailyStaging[this.state.activeDay].dayValue, option.id)}
                                         
                                         >
@@ -558,13 +528,13 @@ export default class DayAvailabilityPicker extends React.Component{
                                                 this.state.dailyStaging[this.state.activeDay].data[i + 1] ?
                                                 endTimes.filter(x => parseInt(x.label) > parseInt(option.start) && parseInt(this.state.dailyStaging[this.state.activeDay].data[i + 1].start) > parseInt(x.label)).map(x => {
                                                     return(
-                                                        Platform.OS == "android" ? <DropdownItem key={x.key} value={x.label} label={x.labelFormatted} /> : {key: x.key, label: x.labelFormatted, baseValue: x.label}
+                                                       {key: x.key, label: x.labelFormatted, baseValue: x.label}
                                                     )
                                                 })
                                                 :
                                             endTimes.filter(x => parseInt(x.label) > parseInt(option.start)).map(x => {
                                                 return(
-                                                    Platform.OS == "android" ?<DropdownItem key={x.key} value={x.label} label={x.labelFormatted}/>: {key: x.key, label: x.labelFormatted, baseValue: x.label}
+                                                    {key: x.key, label: x.labelFormatted, baseValue: x.label}
                                                 )
                                             })
                                            

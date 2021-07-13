@@ -25,16 +25,21 @@ export default class ReportTrip extends Component{
    array = [
         {
             index: 0,
+            label: "Select a report reason...",
+            baseValue: null
+        },
+        {
+            index: 1,
             label: "I am being scammed",
             baseValue: "SPACE_ISSUE"
         },
         {
-            index: 1,
+            index: 2,
             label: "The host was offensive",
             baseValue: "HOST_ISSUE"
         },
         {
-            index: 2,
+            index: 3,
             label: "Something else",
             baseValue: "OTHER_ISSUE"
         },
@@ -130,6 +135,12 @@ export default class ReportTrip extends Component{
         }
 
 
+        pickerChange = (index) => {
+            this.setState({reportReason: this.array[index]})
+            // console.log(this.array[index])
+        }
+
+
     render(){
         
         // let {type, number, bankProvider, bankToken, cardType, fingerprint, id} = this.props.UserStore.directDepositInfo
@@ -163,20 +174,16 @@ export default class ReportTrip extends Component{
                         label="Report Reason"
                         // error={this.state.error.make}
                         style={{height: 32}}
-                        onValueChange = {(res) => Platform.OS == 'ios' ? this.setState({reportReason: res}) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
+                        onValueChange = {(res) => this.pickerChange(res.index)}
                      >
                         {
                             this.array.map((x, i) => {
-                                if(Platform.OS === 'ios'){
-                                      return(
-                                          {key: x.index, label: x.label, baseValue: x.baseValue}
-                                      )
-                                 }
-                                else{
+                                
                                      return(
-                                        <DropdownItem key={x.index} label={x.label} value={x.baseValue}/>
+                                        // <DropdownItem key={x.index} label={x.label} value={x}/>
+                                        {index: x.index, label: x.label, baseValue: x.baseValue}
                                      )
-                                 }
+                                 
                              })
                         }
                     </Dropdown>

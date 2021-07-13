@@ -15,33 +15,21 @@ class Dropdown extends React.PureComponent{
         const allProps = Object.assign({}, this.props,{style:style})
         const {height} = Dimensions.get('window');
 
-    if(Platform.OS === 'android'){
+   
         return(
-            <View style={{flex: this.props.flex}}>
-                <View style={styles.container}>
-                    <Text style={this.props.enabled ? styles.label : styles.label_disabled}>{this.props.label}</Text>
-                    <Picker {...allProps} enabled={this.props.enabled} selectedValue={this.props.selectedValue} onValueChange={this.props.onValueChange}>
-                        {this.props.children}
-                    </Picker>
-                </View>
-                <Text style={styles.error}>{this.props.error}</Text>
-            </View>
-        )
-    }else{
-        return(
-            
             <View style={{flex: this.props.flex}}>
                 <SafeAreaView />
                 <View style={styles.container}>
                     <Text style={this.props.enabled ? styles.label : styles.label_disabled}>{this.props.label}</Text>
                     <ModalSelector
+                        animationType={'fade'}
                         disabled = {!this.props.enabled}
                         accessible={true}
                         supportedOrientations={['portrait']}
                         scrollViewAccessibilityLabel={'Scrollable options'}
                         cancelButtonAccessibilityLabel={'Cancel Button'}
                         onChange={this.props.onValueChange}
-                        onModalClose={this.props.onValueChange}
+                        onModalClose={this.props.onClose ? this.props.onClose : () => {}}
                         overlayStyle={{paddingTop: '15%'}}
                         data={this.props.children}
                     >
@@ -60,7 +48,7 @@ class Dropdown extends React.PureComponent{
                 <Text style={styles.error}>{this.props.error}</Text>
             </View>
         )
-    }
+   
     }
 }
 

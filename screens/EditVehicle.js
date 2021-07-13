@@ -354,6 +354,7 @@ class AddVehicle extends React.Component{
             <ScrollView style={[styles.container, {backgroundColor: 'white'}]}>
                 <View style={{flexDirection: "row" }}>
                     <Input 
+                        editable ={false}
                         flex= {1}
                         onChangeText = {(value) => this.setState({yearSelected: value}, () => {this.checkYearMake()})}
                         label="Year"
@@ -365,18 +366,14 @@ class AddVehicle extends React.Component{
                     />
                     <View style={{marginLeft: 16, flex: 3}}>
                         <Dropdown
+                            enabled={false}
                             selectedValue = {this.state.makeSelected}
                             label="Make"
                             error={this.state.error.make}
                             style={{height: 28}}
-                            onValueChange = {Platform.OS === "ios" ? (value) => this.setState({makeSelected: value.label}, () => {this.checkYearMake()}) 
-                                                                   : (value) => this.setState({makeSelected: value}, () => {this.checkYearMake()})}   
+                            onValueChange = {(value) => this.setState({makeSelected: value.label}, () => {this.checkYearMake()})}   
                         >
-                            {Platform.OS === "android" ?
-                                carObjArray.map((carMake) => {
-                                    return(<Picker.Item label={carMake.label} value={carMake.label} key={carMake.key}/>)
-                                })
-                            : carObjArray}
+                            {carObjArray}
                          </Dropdown>
                    
                     </View>
@@ -389,19 +386,14 @@ class AddVehicle extends React.Component{
                 { unique.length > 0 ?
                 <View style={{flex: 11}}>
                     <Dropdown
-                        enabled={this.state.modelEnabled}
+                        enabled={false}
                         selectedValue = {this.state.modelSelected}
                         label="Model"
                         style={{height: 28}}
                         error={this.state.error.model}
-                        onValueChange = {Platform.OS === "ios" ? (value) => this.setState({modelSelected: value.label}) 
-                                                               : (value) => this.setState({modelSelected: value})}                
+                        onValueChange = {(value) => this.setState({modelSelected: value.label})}                
                     >
-                        {Platform.OS === "android" ?
-                            unique.map((carModel) => {
-                                return(<Picker.Item label={carModel.Model_Name} value={carModel.Model_Name} key={carModel.Model_ID}/>)
-                            })
-                            : unique.map((carModel) => {
+                        {unique.map((carModel) => {
                                 return({label: carModel.Model_Name, key: carModel.Model_ID})
                             })}           
                        
@@ -439,14 +431,9 @@ class AddVehicle extends React.Component{
                                 selectedValue = {this.state.vehicleColor}
                                 label="Color"
                                 style={{height: 28}}
-                                onValueChange = {Platform.OS === "ios" ? (value) => this.setState({vehicleColor: value.label}) 
-                                                                       : (value) => this.setState({vehicleColor: value})}                  
+                                onValueChange = {(value) => this.setState({vehicleColor: value.label})}                  
                             >
-                            { Platform.OS === "android" ? 
-                                colorArray.map((res, i) => {
-                                    return(<Picker.Item key={i} label={res} value={res}/>)
-                                })
-                                : colorArray.map((res, i) => {
+                            { colorArray.map((res, i) => {
                                     return({label: res, key: i})
                                 })}                
                             </Dropdown> 

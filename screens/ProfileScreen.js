@@ -1155,20 +1155,16 @@ class Profile extends Component{
                             label="Line 2 (optional)"
                             // error={this.state.error.make}
                             style={{height: 32}}
-                            onValueChange = {(res) => Platform.OS == 'ios' ? this.setState(prevState => ({address: {...this.state.address, line2Prefix: res.baseValue || prevState.address.line2Prefix}})) : this.setState({address: {...this.state.address, line2Prefix: res || "Hello"}})}
+                            onValueChange = {(res) => this.setState(prevState => ({address: {...this.state.address, line2Prefix: res.baseValue || prevState.address.line2Prefix}}) )}
                         >
                             {
                             AddressTypes.map((x, i) => {
-                            if(Platform.OS === 'ios'){
+                 
                                 return(
                                 {key: i, label: x, baseValue: x}
                                 )
-                            }
-                            else{
-                                return(
-                                    <DropdownItem key={i} label={x} value={x}/>
-                                )
-                            }
+                            
+                            
                             })
                             }
                         </Dropdown>
