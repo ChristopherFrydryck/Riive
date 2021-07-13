@@ -173,6 +173,7 @@ class Settings extends React.Component{
                 reportText: reportText,
                 userReport: this.props.UserStore.userID,
                 reportDate: createdTime,
+                status: "UNRESOLVED",
                 resolved: false,
                 resolvedTime: null,
                 resolvedBy: null,

@@ -494,7 +494,10 @@ class externalSpace extends React.Component {
                                     <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
                                     :
                                    Math.abs(Math.floor((new Date().getTime() - this.state.visit.visit.time.end.unix) / 86400000)) <= 30 ?
-                                    <Text type="medium" onPress={() => this.props.navigation.navigate("ReportTrip")} style={{fontSize: 16, color: Colors.tango900, textDecorationLine: 'underline'}}>Report Trip</Text> 
+                                    <Text type="medium" onPress={() => this.props.navigation.navigate("ReportTrip", {
+                                        visit: this.state.visit,
+                                        listing: this.state.listing
+                                    })} style={{fontSize: 16, color: Colors.tango900, textDecorationLine: 'underline'}}>Report Trip</Text> 
                                     : null 
                                 }
                             </View>
