@@ -126,8 +126,7 @@ export default class ReportTrip extends Component{
     
     
              try{
-                db.collection("reports").doc(reportRef).set({reportData
-                }).then(() => {
+                db.collection("reports").doc(reportRef).set(reportData).then(() => {
                     this.props.UserStore.reports.push(reportData)
                     db.collection("users").doc(userRef).collection('reports').doc(reportRef).set({
                         reportType: this.state.reportReason.baseValue,
