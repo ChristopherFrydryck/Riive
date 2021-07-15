@@ -60,6 +60,7 @@ class externalSpace extends React.Component {
             currentActivePhoto: 0,
             selectedVehicle:  this.props.navigation.state.params.visit.vehicle,
             lastUpdate: null,
+            tripReported: this.props.UserStore.reports.map(x => x.visit ? x.visit.visitID : null ).includes(this.props.navigation.state.params.visit.tripID),
 
             isRefundable: false,
             refundAmt: null,
@@ -88,6 +89,10 @@ class externalSpace extends React.Component {
        this._navListener = this.props.navigation.addListener('didFocus', () => {
         StatusBar.setBarStyle('dark-content', true);
         Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+
+        this.setState({tripReported: this.props.UserStore.reports.map(x => x.visit ? x.visit.visitID : null ).includes(this.state.visit.tripID)})
+
+    
       });
 
     //   let {spaceName} = this.state.listing
@@ -490,9 +495,12 @@ class externalSpace extends React.Component {
                             <View>
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
                                 <Text numberOfLines={1} ellipsizeMode='tail'>Last updated {`${this.state.lastUpdate.split(" ")[0].split("/")[0]}/${this.state.lastUpdate.split(" ")[0].split("/")[1]} @ ${this.state.lastUpdate.split(" ")[1].split(":")[0]}:${this.state.lastUpdate.split(" ")[1].split(":")[1]} ${this.state.lastUpdate.split(" ")[2]}`}</Text>
-                                {!this.isInPast && this.state.isRefundable ? 
+                                {!this.isInPast && this.state.isRefundable && !this.state.tripReported ? 
                                     <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
-                                    :
+                                :
+                                this.state.tripReported  ? 
+                                    <Text type="medium" style={{fontSize: 16, color: Colors.cosmos300}}>Trip Reported</Text> 
+                                :
                                    Math.abs(Math.floor((new Date().getTime() - this.state.visit.visit.time.end.unix) / 86400000)) <= 30 ?
                                     <Text type="medium" onPress={() => this.props.navigation.navigate("ReportTrip", {
                                         visit: this.state.visit,

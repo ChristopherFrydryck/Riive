@@ -226,6 +226,8 @@ export default class Authentication extends React.Component {
 
     const searchHistoryRef = db.collection('users').doc(auth().currentUser.uid).collection('searchHistory');
     let searchHistory = new Array();
+    // const reportsRef = db.collection('users').doc(auth().currentUser.uid).collection('searchHistory');
+    // let reports = new Array();
 
       this.props.UserStore.userID = auth().currentUser.uid;
       this.props.UserStore.email = auth().currentUser.email;
@@ -256,6 +258,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.last_update = doc.data().last_update;
               this.props.UserStore.vehicles = doc.data().vehicles;
               this.props.UserStore.listings = [];
+              this.props.UserStore.reports = [];
               this.props.UserStore.trips = doc.data().trips;
               this.props.UserStore.payments = doc.data().payments;
               this.props.UserStore.searchHistory = searchHistory;
@@ -264,7 +267,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.pushTokens = doc.data().pushTokens || [];
               this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
               this.props.UserStore.address = doc.data().primaryAddress || {};
-              // this.props.UserStore.permissions = doc.data().pemissions || {
+              // this.props.UserStore.permissions = doc.data().permissions || {
               //   notifications: {
               //     discountsAndNews: false,
               //     tripsAndHosting: false,
@@ -300,7 +303,7 @@ export default class Authentication extends React.Component {
           listingsData.push(qs.docs[i].data())
         }
         this.props.UserStore.listings = listingsData;
-    }).then(() => this.props.navigation.navigate("Home"))
+    })
 
 
     }else if(length > 0 && length > 10){
@@ -318,15 +321,57 @@ export default class Authentication extends React.Component {
         }
       }).then(() => {
         this.props.UserStore.listings = listingsData;
-        this.props.navigation.navigate('Home')
       })
     }
 
   }else{
-    this.props.navigation.navigate('Home')
-  }
+    this.props.UserStore.listings = []
+  } 
+
+  return doc
   
+  }).then(doc => {
+    db.collection('users').doc(auth().currentUser.uid).collection("reports").get().then(qs => {
+
+      let length = qs.size
+      let reportIds = qs.docs.map(x => x.data().reportID)
+
+
+      if( length > 0 && length <= 10){
+        db.collection('reports').where(firestore.FieldPath.documentId(), "in", reportIds).get().then((data) => {
+          let reportsData = [];
+          for(let i = 0; i < data.docs.length; i++){
+            reportsData.push(data.docs[i].data())
+          }
+          this.props.UserStore.reports = reportsData;
+        })
+      }else if(length > 0 && length > 10){
+        
+        let allArrs = [];
+        var reportsData = [];
+        while(reportIds.length > 0){
+          allArrs.push(reportIds.splice(0, 10))
+        }
+
+        for(let i = 0; i < allArrs.length; i++){
+          db.collection('reports').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((d) => {
+            for(let i = 0; i < d.docs.length; i++){
+              reportsData.push(d.docs[i].data())
+            }
+          }).then(() => {
+            this.props.UserStore.reports = reportsData;
+          })
+        }
+      }else{
+        this.props.UserStore.reports = [];
+      }
+
+    })
+
+    return doc
+    
   }).then(() => {
+    this.props.navigation.navigate('Home')
     this._isMounted = true;
   }).catch((e) => {
     alert("Failed to grab user data. " + e)
@@ -497,6 +542,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.last_update = auth().currentUser.metadata.creationTime;
                     this.props.UserStore.vehicles = [];
                     this.props.UserStore.listings = [];
+                    this.props.UserStore.reports = [];
                     this.props.UserStore.payments = [];
                     this.props.UserStore.trips = [];
                     this.props.UserStore.searchHistory = [];
@@ -596,6 +642,7 @@ onPressSignIn = async() => {
 
     const searchHistoryRef = db.collection('users').doc(this.props.UserStore.userID).collection('searchHistory');
     let searchHistory = new Array();
+    let reports = new Array();
 
 
    await searchHistoryRef.get().then((doc) => {
@@ -626,6 +673,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.last_update = doc.data().last_update;
                 this.props.UserStore.vehicles = doc.data().vehicles;
                 this.props.UserStore.listings = [];
+                this.props.UserStore.reports = [];
                 this.props.UserStore.trips = doc.data().trips;
                 this.props.UserStore.payments = doc.data().payments;
                 this.props.UserStore.searchHistory = searchHistory;
@@ -666,33 +714,69 @@ onPressSignIn = async() => {
           listingsData.push(qs.docs[i].data())
         }
         this.props.UserStore.listings = listingsData;
-    }).then(() => this.props.navigation.navigate("Home"))
+    })
+    }else if(length > 0 && length > 10){
+      let listings = doc.data().listings;
+      let allArrs = [];
+      var listingsData = [];
+      while(listings.length > 0){
+        allArrs.push(listings.splice(0, 10))
+      }
 
-
-  }else if(length > 0 && length > 10){
-    let listings = doc.data().listings;
-    let allArrs = [];
-    var listingsData = [];
-    while(listings.length > 0){
-      allArrs.push(listings.splice(0, 10))
+      for(let i = 0; i < allArrs.length; i++){
+        db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+          for(let i = 0; i < qs.docs.length; i++){
+            listingsData.push(qs.docs[i].data())
+          }
+        }).then(() => {
+          this.props.UserStore.listings = listingsData;
+          
+        })
+      }
+    
+    }else{
+      this.props.UserStore.listings = [];
     }
+    return doc
+  }).then(doc => {
+    db.collection('users').doc(auth().currentUser.uid).collection("reports").get().then(qs => {
 
-    for(let i = 0; i < allArrs.length; i++){
-      db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-        for(let i = 0; i < qs.docs.length; i++){
-          listingsData.push(qs.docs[i].data())
+      let length = qs.size
+      let reportIds = qs.docs.map(x => x.data().reportID)
+
+
+      if( length > 0 && length <= 10){
+        db.collection('reports').where(firestore.FieldPath.documentId(), "in", reportIds).get().then((data) => {
+          let reportsData = [];
+          for(let i = 0; i < data.docs.length; i++){
+            reportsData.push(data.docs[i].data())
+          }
+          this.props.UserStore.reports = reportsData;
+        })
+      }else if(length > 0 && length > 10){
+        
+        let allArrs = [];
+        var reportsData = [];
+        while(reportIds.length > 0){
+          allArrs.push(reportIds.splice(0, 10))
         }
-      }).then(() => {
-        this.props.UserStore.listings = listingsData;
-        this.props.navigation.navigate('Home')
-      })
-    }
-  
-  }else{
-     this.props.navigation.navigate('Home')
-  }
-     
-  }).catch((e) => {
+
+        for(let i = 0; i < allArrs.length; i++){
+          db.collection('reports').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((d) => {
+            for(let i = 0; i < d.docs.length; i++){
+              reportsData.push(d.docs[i].data())
+            }
+          }).then(() => {
+            this.props.UserStore.reports = reportsData;
+          })
+        }
+      }else{
+        this.props.UserStore.reports = [];
+      }
+
+    })
+    return doc
+  }).then(() => this.props.navigation.navigate("Home")).catch((e) => {
     alert("Failed to grab user data. Please try again. " + e)
     auth().signOut();
   })

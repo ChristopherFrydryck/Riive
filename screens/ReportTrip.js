@@ -95,26 +95,21 @@ export default class ReportTrip extends Component{
     
              let createdTime = new Date().getTime();
              
-    
-    
-             try{
-                db.collection("reports").doc(reportRef).set({
-        
-                        userReport: this.props.UserStore.userID,
-                        reportType: this.state.reportReason.baseValue,
-                        reportID: reportRef,
-                        reportText: reportText,
-                        reportDate: createdTime,
-                        status: "UNRESOLVED",
-                        resolved: false,
-                        resolvedTime: null,
-                        resolvedBy: null,
-                        visit: {
-                            visitID: this.state.visit.tripID,
-                            hostID: this.state.listing.hostID,
-                            listingID: this.state.listing.listingID
-                        },
-           
+             let reportData = {
+                    userReport: this.props.UserStore.userID,
+                    reportType: this.state.reportReason.baseValue,
+                    reportID: reportRef,
+                    reportText: reportText,
+                    reportDate: createdTime,
+                    status: "UNRESOLVED",
+                    resolved: false,
+                    resolvedTime: null,
+                    resolvedBy: null,
+                    visit: {
+                        visitID: this.state.visit.tripID,
+                        hostID: this.state.listing.hostID,
+                        listingID: this.state.listing.listingID
+                    },
                     buildDetails:{
                         appName: DeviceInfo.getApplicationName(),
                         bundleID: DeviceInfo.getBundleId(),
@@ -127,7 +122,13 @@ export default class ReportTrip extends Component{
                         ipAddress: ipAddr,
                         macAddress: macAddr 
                     },
+             }
+    
+    
+             try{
+                db.collection("reports").doc(reportRef).set({reportData
                 }).then(() => {
+                    this.props.UserStore.reports.push(reportData)
                     db.collection("users").doc(userRef).collection('reports').doc(reportRef).set({
                         reportType: this.state.reportReason.baseValue,
                         reportID: reportRef,

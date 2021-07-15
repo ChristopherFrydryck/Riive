@@ -192,6 +192,8 @@ class Home extends Component {
         clearInterval(this._interval)
       })
 
+      
+
 
   
       this.getCurrentLocation(true);
@@ -219,6 +221,7 @@ class Home extends Component {
  
 
       this.rippleAnimation();
+      
    
 
   }
