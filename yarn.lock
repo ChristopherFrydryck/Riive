@@ -1364,11 +1364,6 @@
   "resolved" "https://registry.npmjs.org/@react-native-community/picker/-/picker-1.8.1.tgz"
   "version" "1.8.1"
 
-"@react-native-community/viewpager@^2.0.2":
-  "integrity" "sha512-CKVhIZdX/Cmb80muog8sKpi5vM8npwFp4tx4Dj1IvTBidZweuO22+VH2rDOj7E0LzdV9IYRJ4FGBwcPBD2qUrQ=="
-  "resolved" "https://registry.npmjs.org/@react-native-community/viewpager/-/viewpager-2.0.2.tgz"
-  "version" "2.0.2"
-
 "@react-native-firebase/app@^10.8.0", "@react-native-firebase/app@10.8.0", "@react-native-firebase/app@10.8.1":
   "integrity" "sha512-VIWVpqb+V4ltOEmpUEfcsA/ZmcV+FLWGMlRGN+xB/cXorD3nYhYF/LPxOtX7TOHrlxPeL2dikLry9hKv4PlZCw=="
   "resolved" "https://registry.npmjs.org/@react-native-firebase/app/-/app-10.8.0.tgz"

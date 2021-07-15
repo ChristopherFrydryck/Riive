@@ -159,6 +159,7 @@ export default class ReportTrip extends Component{
 
 
         pickerChange = (index) => {
+      
             this.setState({reportReason: this.array[index]})
             // console.log(this.array[index])
         }
@@ -203,13 +204,13 @@ export default class ReportTrip extends Component{
                         label="Report Reason"
                         // error={this.state.error.make}
                         style={{height: 32}}
-                        onValueChange = {(res) => this.pickerChange(res.index)}
+                        onValueChange = {(res) => this.pickerChange(res.key)}
                      >
                         {
                             this.array.map((x, i) => {
                                 
                                      return(
-                                        {index: x.index, label: x.label, baseValue: x.baseValue}
+                                        {key: x.index, label: x.label, baseValue: x.baseValue}
                                      )
                                  
                              })
