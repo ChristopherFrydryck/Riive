@@ -26,12 +26,12 @@ export default class ReportTrip extends Component{
         {
             index: 0,
             label: "I am being scammed",
-            baseValue: "SPACE_ISSUE"
+            baseValue: this.props.navigation.state.params.isGuest ? "VISIT_ISSUE_AS_GUEST" : "VISIT_ISSUE_AS_HOST"
         },
         {
             index: 1,
-            label: "The host was offensive",
-            baseValue: "HOST_ISSUE"
+            label: this.props.navigation.state.params.isGuest ? "The host was offensive" : "The guest was offensive",
+            baseValue: this.props.navigation.state.params.isGuest ? "HOST_ISSUE" : "GUEST_ISSUE"
         },
         {
             index: 2,
@@ -44,6 +44,7 @@ export default class ReportTrip extends Component{
         super(props);
         this.state = {
            reportReason: this.array[0],
+           isGuest: this.props.navigation.state.params.isGuest,
            reportText: "",
            reportTextError: "",
 
@@ -95,7 +96,7 @@ export default class ReportTrip extends Component{
     
              let createdTime = new Date().getTime();
              
-             let reportData = {
+             let reportData = this.state.isGuest ? {
                     userReport: this.props.UserStore.userID,
                     reportType: this.state.reportReason.baseValue,
                     reportID: reportRef,
@@ -122,6 +123,35 @@ export default class ReportTrip extends Component{
                         ipAddress: ipAddr,
                         macAddress: macAddr 
                     },
+             }
+             : 
+             {
+                userReport: this.props.UserStore.userID,
+                reportType: this.state.reportReason.baseValue,
+                reportID: reportRef,
+                reportText: reportText,
+                reportDate: createdTime,
+                status: "UNRESOLVED",
+                resolved: false,
+                resolvedTime: null,
+                resolvedBy: null,
+                visit: {
+                    visitID: this.state.visit.tripID,
+                    guestID: this.state.visit.visitorID,
+                    listingID: this.state.listing.listingID
+                },
+                buildDetails:{
+                    appName: DeviceInfo.getApplicationName(),
+                    bundleID: DeviceInfo.getBundleId(),
+                    version: version,
+                    deviceOS: Platform.OS,
+                    brand: DeviceInfo.getBrand(),
+                    model: DeviceInfo.getModel(),
+                    buildNumber: DeviceInfo.getBuildNumber(),
+                    osVersion: DeviceInfo.getSystemVersion(),
+                    ipAddress: ipAddr,
+                    macAddress: macAddr 
+                },
              }
     
     
@@ -197,7 +227,10 @@ export default class ReportTrip extends Component{
                   
                 </View>
                 <View style={[styles.container, {marginTop: 8,}]}>
-                    <Text style={{fontSize: 16, }}>If you have encountered issues with your trip at {this.state.listing.spaceName}, you can report it here. Once processed, we will get back to you via {this.props.UserStore.email} or at {this.props.UserStore.phone} to resolve any problems and ensure Riive is a safe place for all of our users.</Text>
+                    {this.state.isGuest ? <Text style={{fontSize: 16, }}>If you have encountered issues with your trip at {this.state.listing.spaceName}, you can report it here. Once processed, we will get back to you via {this.props.UserStore.email} or at {this.props.UserStore.phone} to resolve any problems and ensure Riive is a safe place for all of our users.</Text>
+                    :
+                    <Text style={{fontSize: 16, }}>If you have encountered issues with your guest at {this.state.listing.spaceName}, you can report it here. Once processed, we will get back to you via {this.props.UserStore.email} or at {this.props.UserStore.phone} to resolve any problems and ensure Riive is a safe place for all of our users.</Text>
+                    }
                     <Dropdown
                         flex={0}
                         selectedValue = {this.state.reportReason.label}

@@ -503,6 +503,7 @@ class externalSpace extends React.Component {
                                 :
                                    Math.abs(Math.floor((new Date().getTime() - this.state.visit.visit.time.end.unix) / 86400000)) <= 30 ?
                                     <Text type="medium" onPress={() => this.props.navigation.navigate("ReportTrip", {
+                                        isGuest: true,
                                         visit: this.state.visit,
                                         listing: this.state.listing
                                     })} style={{fontSize: 16, color: Colors.tango900, textDecorationLine: 'underline'}}>Report Trip</Text> 

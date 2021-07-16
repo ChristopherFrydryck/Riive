@@ -47,6 +47,8 @@ export default class HostedTrips extends Component{
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
             this.updateVisits();
         });
+
+        
     }
 
     updateVisits = () => {
@@ -216,6 +218,8 @@ export default class HostedTrips extends Component{
     renderVisit = (data) => {
         const {visit, listing, isInPast, current} = data;
         const {isCancelled} = visit
+        
+
         const visitorName = `${visit.visitorName.split(" ")[0]} ${visit.visitorName.split(" ")[1].slice(0,1)}.`
         return(
 
@@ -324,6 +328,8 @@ export default class HostedTrips extends Component{
                 sameTimezone = true;
             }
 
+            const isReported = this.props.UserStore.reports.map(x => x.visit ? x.visit.visitID : null ).includes(data.visit.tripID)
+
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
 
 
@@ -431,9 +437,18 @@ export default class HostedTrips extends Component{
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
-                                {data.isInPast ? 
+                                {data.isInPast? 
                                 <View style={{flexDirection: 'row'}}>
-                                    <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Report Trip</Button>
+                                    <Button 
+                                    disabled={isReported}
+                                    onPress={() =>  {
+                                        this.props.navigation.navigate("ReportTrip", {
+                                            isGuest: false,
+                                            visit: data.visit,
+                                            listing: data.listing
+                                        })
+                                        this.setState({modalVisible: false})
+                                    }} style = {isReported ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : {flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={isReported ? {color: Colors.cosmos300, fontWeight: "500"} : {color: "white", fontWeight: "500"}}>{isReported ? "Trip Reported" : "Report Trip"}</Button>
                                 </View>
                                 : 
                                 <View style={{flexDirection: 'row'}}>
