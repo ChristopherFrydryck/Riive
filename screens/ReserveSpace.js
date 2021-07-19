@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { Platform, Animated, Dimensions, StatusBar, ScrollView, View, StyleSheet, ActivityIndicator } from 'react-native';
 
-
-
-
-
 import Text from '../components/Txt'
 import Button from '../components/Button'
 import Icon from '../components/Icon'
@@ -17,6 +13,7 @@ import NightMap from '../constants/NightMap'
 // import { RadioButton } from 'react-native-paper';
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
+import FloatingCircles from '../components/FloatingCircles'
 
 
 import * as firebase from 'firebase/app';
@@ -66,7 +63,9 @@ class reserveSpace extends Component {
             totalCents: null,
 
             selectedVehicle: null,
+            selectedVehicleError: "",
             selectedPayment: null,
+            selectedPaymentError: "",
 
             
             inSameTimezone: false,
@@ -549,6 +548,17 @@ class reserveSpace extends Component {
 
                 }
             }else{
+                if(!this.state.selectedVehicle){
+                    this.setState({selectedVehicleError: "Select/add a vehicle to reserve a space"})
+                }else{
+                    this.setState({selectedVehicleError: ""})
+                }
+
+                if(!this.state.selectedPayment){
+                    this.setState({selectedPaymentError: "Select/add a card to reserve a space"})
+                }else{
+                    this.setState({selectedPaymentError: ""})
+                }
                 this.setState({authenticatingReservation: false})
             }
 
@@ -714,6 +724,9 @@ class reserveSpace extends Component {
                     
                     <View style={[styles.container, {marginTop: 16}]}>
                         <Text type="medium" numberOfLines={1} style={{fontSize: 16}}>Vehicle</Text>
+                        { this.state.selectedVehicleError === "" ? null :
+                        <Text numberOfLines={1} style={{fontSize: 16, color: Colors.hal500}}>{this.state.selectedVehicleError}</Text>
+                        }
                         {this.props.UserStore.vehicles.length > 0 ? 
                             <RadioList activeItem={this.state.selectedVehicle ? this.state.selectedVehicle.VehicleID : null} selectItem={(option) => this.setActiveVehicle(option, true)}>
                                 {vehicleArray}
@@ -727,6 +740,9 @@ class reserveSpace extends Component {
                     
                         <View style={[styles.container, {marginTop: 16}]}>
                             <Text type="medium" numberOfLines={1} style={{fontSize: 16}}>Payments</Text>
+                            { this.state.selectedPaymentError === "" ? null :
+                                <Text numberOfLines={1} style={{fontSize: 16, color: Colors.hal500}}>{this.state.selectedPaymentError}</Text>
+                            }
                             {this.props.UserStore.payments.length > 0 ? 
                                 <RadioList activeItem={this.state.selectedPayment ? this.state.selectedPayment.PaymentID : null} selectItem={(option) => this.setActivePayment(option, true)}>
                                     {paymentsArray}
@@ -761,7 +777,7 @@ class reserveSpace extends Component {
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.total}</Text>
                         </View>
-                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks ? "Reserve Space" : `Booked at ${timeSearched[0].labelFormatted}`}</Button>
+                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks ? this.state.authenticatingReservation ? <FloatingCircles color="white"/> : "Reserve Space" : `Booked at ${timeSearched[0].labelFormatted}`}</Button>
                     </View>
                     
                 </ScrollView>
