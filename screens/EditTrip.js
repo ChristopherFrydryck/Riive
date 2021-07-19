@@ -334,6 +334,8 @@ class externalSpace extends React.Component {
                             isCancelled: true,
                             refundAmt: this.state.refundAmt,
                             refundAmtCents: this.state.refundAmtCents,
+                            hostCharged: null,
+                            hostChargedCents: null,
                             cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest",
                             updated: currentTime
                         }).then(() => {

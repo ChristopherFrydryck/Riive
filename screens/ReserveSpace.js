@@ -372,8 +372,8 @@ class reserveSpace extends Component {
             await this.checkAvailability()
             const db = firestore();
 
-            console.log(`Vehicle: ${JSON.stringify(this.state.selectedVehicle)}`)
-            console.log(`Card: ${JSON.stringify(this.state.selectedPayment)}`)
+            // console.log(`Vehicle: ${JSON.stringify(this.state.selectedVehicle)}`)
+            // console.log(`Card: ${JSON.stringify(this.state.selectedPayment)}`)
 
             if(this.state.selectedVehicle && this.state.selectedPayment && this.state.spaceAvailabilityWorks){
                 let card = this.state.selectedPayment;
@@ -459,6 +459,8 @@ class reserveSpace extends Component {
                                 distanceWalking: locationDifferenceWalking,
                                 refundAmt: null,
                                 refundAmtCents: null,
+                                hostCharged: null,
+                                hostChargedCents: null,
                                 visit: {
                                     day: daySearched,
                                     time: {
