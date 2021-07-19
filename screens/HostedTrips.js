@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity} from 'react-native'
+import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity, Alert} from 'react-native'
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
@@ -49,6 +49,76 @@ export default class HostedTrips extends Component{
         });
 
         
+    }
+
+    showCancellationModal = () => {
+
+        let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
+
+        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+
+
+
+        Alert.alert(
+                        'Canceling a Guest Trip',
+                        `Cancelling a trip for an upcoming guest will refund the entire amount to the guest and you will be charged ${amountChargedToHost}. If this day/time does not work in the future, you can update your space availability under Edit Details or manage your space from your profile.`,
+                        [
+                        { text: 'Back' },
+                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() },
+                        
+                        ]
+                    )
+            
+                
+
+        
+    }
+
+    cancelTrip = () => {
+
+      
+
+        let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
+
+        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+
+        const timeDiffEnd = this.state.selectedVisit.visit.visit.time.end.unix - new Date().getTime()
+        const timeDiffStart = this.state.selectedVisit.visit.visit.time.start.unix - new Date().getTime()
+
+        let isInPast = timeDiffEnd != Math.abs(timeDiffEnd)
+        let isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !isInPast
+
+        var currentTime = firestore.Timestamp.now();
+
+       
+
+        if(!isInPast){
+            const db = firestore();
+            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then((trip) => {
+                if(!trip.exists){
+                    alert("Failed to save changes. Trip not found.")
+                }else{
+                    try{
+                        db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
+                            isCancelled: true,
+                            refundAmt: amountChargedToHost,
+                            refundAmtCents: amountChargedToHostCents,
+                            cancelledBy: "host",
+                            updated: currentTime
+                        }).then(() => {
+                            // this.props.navigation.goBack(null)
+                        })
+                    }catch(e){
+                        alert("Failed to cancel trip. Check your connection and try again soon.")
+                    }
+                }
+            })
+        }else{
+            alert("Failed to cancel this trip. Ended since cancellation.")
+        }
+        console.log("CANCEL TRIP")
     }
 
     updateVisits = () => {
@@ -215,10 +285,13 @@ export default class HostedTrips extends Component{
     };
 
     
+
+    
     renderVisit = (data) => {
         const {visit, listing, isInPast, current} = data;
         const {isCancelled} = visit
         
+        console.log(visit.cancelledBy)
 
         const visitorName = `${visit.visitorName.split(" ")[0]} ${visit.visitorName.split(" ")[1].slice(0,1)}.`
         return(
@@ -246,7 +319,7 @@ export default class HostedTrips extends Component{
                  <View style={{flex: 1, marginHorizontal: 8}}>
                     <Text numberOfLines={1} ellipsizeMode='tail' style={{fontSize: 18}}>{listing.spaceName}</Text>
                     {isCancelled ? 
-                      <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {data.cancelledBy === 'host' ? 'you' : 'guest'}</Text>
+                      <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {visit.cancelledBy === 'host' ? 'you' : 'guest'}</Text>
                     : 
                       <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visited by {visitorName}</Text>
                     }
@@ -311,7 +384,6 @@ export default class HostedTrips extends Component{
         const {data, visible} = props;
         
         if(data){
-            // console.log(data.isInPast)
             var date = new Date()
             var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -332,6 +404,14 @@ export default class HostedTrips extends Component{
 
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
 
+            const timeDiffEnd = data.visit.visit.time.end.unix - new Date().getTime()
+            const timeDiffStart = data.visit.visit.time.start.unix - new Date().getTime()
+
+
+                        
+
+                        let isInPast = timeDiffEnd != Math.abs(timeDiffEnd)
+                        let isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !isInPast
 
             return(
                 <Modal 
@@ -437,7 +517,7 @@ export default class HostedTrips extends Component{
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
-                                {data.isInPast? 
+                                {isInPast? 
                                 <View style={{flexDirection: 'row'}}>
                                     <Button 
                                     disabled={isReported}
@@ -448,11 +528,11 @@ export default class HostedTrips extends Component{
                                             listing: data.listing
                                         })
                                         this.setState({modalVisible: false})
-                                    }} style = {isReported ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : {flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={isReported ? {color: Colors.cosmos300, fontWeight: "500"} : {color: "white", fontWeight: "500"}}>{isReported ? "Trip Reported" : "Report Trip"}</Button>
+                                    }} style = {isReported ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : {flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{isReported ? "Trip Reported" : "Report Trip"}</Button>
                                 </View>
                                 : 
                                 <View style={{flexDirection: 'row'}}>
-                                    <Button onPress={() =>  this.props.navigation.navigate("Home")} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Cancel Trip</Button>
+                                    <Button disabled={isCurrentlyActive} onPress={() => this.showCancellationModal()} style = {isCurrentlyActive ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Cancel Trip</Button>
                                 </View>
                                 }
                             </View>
