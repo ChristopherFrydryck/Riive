@@ -51,7 +51,10 @@ export default class VisitingTrips extends Component{
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');   
             this.updateVisits();  
+            
         });
+
+       
         
 
     
@@ -74,13 +77,17 @@ export default class VisitingTrips extends Component{
 
 
     
-            var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(6)
-            // spaceVisits = spaceVisits.where("isCancelled", '==', false)
+            var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(10)
+            
+            // spaceVisits = spaceVisits.orderBy("isCancelled", "asc")
 
             var visits = [];
             
 
             spaceVisits.get().then( async(spaceData) => {
+         
+                // spaceData.docs.forEach(x => console.log(x.data().isCancelled))
+                // spaceData.docs.sort((a, b) => a.data().isCancelled - b.data().isCancelled)
 
                 await this.setState({lastRenderedItem: spaceData.docs[spaceData.docs.length-1]})
 
@@ -111,6 +118,10 @@ export default class VisitingTrips extends Component{
                         if(visits.some(x => x.title === title)){
                             let visitIndex = visits.findIndex(i => i.title === title)
                             visits[visitIndex].data.push(visitData)
+                            // Sorts visits by showing non cancelled trips first
+                            for(let i = 0; i < visits.length; i++){
+                                visits[i].data.sort((a, b) => a.visit.isCancelled - b.visit.isCancelled)
+                            }
                         }else{
                             visits.push({title: title, isInPast: isInPast, data: [visitData]})
                         } 
@@ -118,9 +129,9 @@ export default class VisitingTrips extends Component{
                 }
 
                 // Sort each day by start time
-                visits.forEach(x => {
-                    x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
-                })
+                // visits.forEach(x => {
+                //     x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
+                // })
                 
                 return(visits)
 
@@ -164,6 +175,7 @@ export default class VisitingTrips extends Component{
                 var visits = this.state.visits;
 
                     spaceVisits.startAfter(this.state.lastRenderedItem).get().then( async(nextData) => {
+                        // nextData.docs.sort((a, b) => a.data().isCancelled - b.data().isCancelled)
                         await this.setState({lastRenderedItem: nextData.docs[nextData.docs.length-1]})
 
                         for(doc of nextData.docs){
@@ -193,15 +205,19 @@ export default class VisitingTrips extends Component{
                                 if(visits.some(x => x.title === title)){
                                     let visitIndex = visits.findIndex(i => i.title === title)
                                     visits[visitIndex].data.push(visitData)
+                                    // Sorts visits by showing non cancelled trips first
+                                    for(let i = 0; i < visits.length; i++){
+                                        visits[i].data.sort((a, b) => a.visit.isCancelled - b.visit.isCancelled)
+                                    }
                                 }else{
                                     visits.push({title: title, isInPast: isInPast, data: [visitData]})
                                 } 
                             })               
                         }
                         // Sort each day by start time
-                        visits.forEach(x => {
-                            x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
-                        })
+                        // visits.forEach(x => {
+                        //     x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
+                        // })
 
                         
                         
@@ -254,7 +270,8 @@ export default class VisitingTrips extends Component{
                     : 
                       <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Hosted by {hostName}</Text>
                     }
-                    {isCancelled ? null : 
+                    {isCancelled ? 
+                        <Text numberOfLines={1} ellipsizeMode='tail' style={{color: "#adadad", textDecorationLine: "line-through"}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text> : 
                         <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text>
                     }
                  </View>

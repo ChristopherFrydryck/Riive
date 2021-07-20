@@ -144,7 +144,7 @@ export default class HostedTrips extends Component{
 
 
     
-            var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(6)
+            var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(10)
             // spaceVisits = spaceVisits.where("isCancelled", '==', false)
 
             var visits = [];
@@ -181,6 +181,9 @@ export default class HostedTrips extends Component{
                         if(visits.some(x => x.title === title)){
                             let visitIndex = visits.findIndex(i => i.title === title)
                             visits[visitIndex].data.push(visitData)
+                            for(let i = 0; i < visits.length; i++){
+                                visits[i].data.sort((a, b) => a.visit.isCancelled - b.visit.isCancelled)
+                            }
                         }else{
                             visits.push({title: title, isInPast: isInPast, data: [visitData]})
                         } 
@@ -188,9 +191,9 @@ export default class HostedTrips extends Component{
                 }
 
                 // Sort each day by start time
-                visits.forEach(x => {
-                    x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
-                })
+                // visits.forEach(x => {
+                //     x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
+                // })
 
                 
                 
@@ -231,7 +234,7 @@ export default class HostedTrips extends Component{
                 let year = date.getFullYear();
             
 
-                var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(5)
+                var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(20)
 
                 var visits = this.state.visits;
             
@@ -265,15 +268,18 @@ export default class HostedTrips extends Component{
                                 if(visits.some(x => x.title === title)){
                                     let visitIndex = visits.findIndex(i => i.title === title)
                                     visits[visitIndex].data.push(visitData)
+                                    for(let i = 0; i < visits.length; i++){
+                                        visits[i].data.sort((a, b) => a.visit.isCancelled - b.visit.isCancelled)
+                                    }
                                 }else{
                                     visits.push({title: title, isInPast: isInPast, data: [visitData]})
                                 } 
                             })               
                         }
                         // Sort each day by start time
-                        visits.forEach(x => {
-                            x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
-                        })
+                        // visits.forEach(x => {
+                        //     x.data.sort((a, b) => a.visit.visit.time.start.unix - b.visit.visit.time.start.unix)
+                        // })
 
                         
                         
@@ -329,7 +335,9 @@ export default class HostedTrips extends Component{
                     : 
                       <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visited by {visitorName}</Text>
                     }
-                    {isCancelled ? null : 
+                    {isCancelled ? 
+                        <Text numberOfLines={1} ellipsizeMode='tail' style={{color: "#adadad", textDecorationLine: "line-through"}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text> 
+                        : 
                         <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text>
                     }
                  </View>
