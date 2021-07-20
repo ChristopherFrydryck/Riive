@@ -22,18 +22,18 @@ DerivedData
 project.xcworkspace
 
 # Gradle
-# /build/
-# /packages/react-native-codegen/android/build/
-# /packages/react-native-codegen/android/gradlePlugin-build/gradlePlugin/build
-# /packages/riive/android/app/.cxx/
-# /packages/riive/android/app/build/
-# /packages/riive/android/app/gradle/
-# /packages/riive/android/app/gradlew
-# /packages/riive/android/app/gradlew.bat
-# /ReactAndroid/build/
-# /ReactAndroid/gradle/
-# /ReactAndroid/gradlew
-# /ReactAndroid/gradlew.bat
+/build/
+/packages/react-native-codegen/android/build/
+/packages/react-native-codegen/android/gradlePlugin-build/gradlePlugin/build
+/packages/riive/android/app/.cxx/
+/packages/riive/android/app/build/
+/packages/riive/android/app/gradle/
+/packages/riive/android/app/gradlew
+/packages/riive/android/app/gradlew.bat
+/ReactAndroid/build/
+/ReactAndroid/gradle/
+/ReactAndroid/gradlew
+/ReactAndroid/gradlew.bat
 
 # Buck
 .buckd
