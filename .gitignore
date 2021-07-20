@@ -22,18 +22,18 @@ DerivedData
 project.xcworkspace
 
 # Gradle
-/build/
-/packages/react-native-codegen/android/build/
-/packages/react-native-codegen/android/gradlePlugin-build/gradlePlugin/build
-/packages/riive/android/app/.cxx/
-/packages/riive/android/app/build/
-/packages/riive/android/app/gradle/
-/packages/riive/android/app/gradlew
-/packages/riive/android/app/gradlew.bat
-/ReactAndroid/build/
-/ReactAndroid/gradle/
-/ReactAndroid/gradlew
-/ReactAndroid/gradlew.bat
+# /build/
+# /packages/react-native-codegen/android/build/
+# /packages/react-native-codegen/android/gradlePlugin-build/gradlePlugin/build
+# /packages/riive/android/app/.cxx/
+# /packages/riive/android/app/build/
+# /packages/riive/android/app/gradle/
+# /packages/riive/android/app/gradlew
+# /packages/riive/android/app/gradlew.bat
+# /ReactAndroid/build/
+# /ReactAndroid/gradle/
+# /ReactAndroid/gradlew
+# /ReactAndroid/gradlew.bat
 
 # Buck
 .buckd
@@ -44,23 +44,20 @@ buck-out
 /ReactAndroid/src/main/gen
 
 # Android Studio
-.project
-.settings
-.classpath
+# .project
+# .settings
+# .classpath
 
 # Watchman
 .watchmanconfig
 
 # Android
+build/
 .idea
 .gradle
 local.properties
 *.iml
-<<<<<<< HEAD
 *.hprof
-=======
-/android/
->>>>>>> master
 
 # Node
 node_modules
@@ -95,7 +92,6 @@ package-lock.json
 /packages/react-native-codegen/**/*.xcodeproj
 
 # CocoaPods
-<<<<<<< HEAD
 /ios/Pods/
 
 #additional
@@ -103,24 +99,3 @@ firebaseConfig.js
 firestore.rules
 firestore.indexes.json
 firebase.json
-=======
-/template/ios/Pods/
-/template/ios/Podfile.lock
-/packages/riive/Gemfile.lock
-
-# Ignore RNTester specific Pods, but keep the __offline_mirrors__ here.
-/packages/riive/Pods/*
-!/packages/riive/Pods/__offline_mirrors__
-
-# react-native-codegen
-/React/FBReactNativeSpec/FBReactNativeSpec
-/packages/react-native-codegen/lib
-/ReactCommon/react/renderer/components/rncore/
-
-# Visual studio
-.vscode
-.vs
-
-# Android memory profiler files
-*.hprof
->>>>>>> master

@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_number": "888723186328",
+    "firebase_url": "https://riive-parking.firebaseio.com",
+    "project_id": "riive-parking",
+    "storage_bucket": "riive-parking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888723186328:android:a4518cf53ee488a722a6ed",
+        "android_client_info": {
+          "package_name": "com.riive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "888723186328-lk7ncbb67os71tltickojco8evpk7vnd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.riive",
+            "certificate_hash": "44f253623e92e41c713847d3253626fe4d242594"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsZup3roSbxSJHTnQ4cqYSU4-UHzK5XTQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "888723186328-2kl8rti0cqsehtrqvum2nrjrme93h0r4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "888723186328-bq5cq0kof3dd1mn5pbi6ivj5ebodis9o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.riive"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
