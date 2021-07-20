@@ -387,17 +387,17 @@ PODS:
     - nanopb/encode (= 2.30907.0)
   - nanopb/decode (2.30907.0)
   - nanopb/encode (2.30907.0)
-  - Permission-Camera (3.0.0):
+  - Permission-Camera (3.0.5):
     - RNPermissions
-  - Permission-LocationAccuracy (3.0.0):
+  - Permission-LocationAccuracy (3.0.5):
     - RNPermissions
-  - Permission-LocationAlways (3.0.0):
+  - Permission-LocationAlways (3.0.5):
     - RNPermissions
-  - Permission-LocationWhenInUse (3.0.0):
+  - Permission-LocationWhenInUse (3.0.5):
     - RNPermissions
-  - Permission-Notifications (3.0.0):
+  - Permission-Notifications (3.0.5):
     - RNPermissions
-  - Permission-PhotoLibrary (3.0.0):
+  - Permission-PhotoLibrary (3.0.5):
     - RNPermissions
   - PromisesObjC (1.2.12)
   - RCTRequired (0.63.4)
@@ -638,26 +638,26 @@ PODS:
     - React-jsi (= 0.63.4)
   - rn-fetch-blob (0.10.16):
     - React-Core
-  - RNCClipboard (1.8.2):
+  - RNCClipboard (1.8.4):
     - React-Core
-  - RNCMaskedView (0.1.10):
+  - RNCMaskedView (0.1.11):
     - React
   - RNCPicker (1.8.1):
     - React-Core
-  - RNDeviceInfo (8.0.2):
+  - RNDeviceInfo (8.1.3):
     - React-Core
-  - RNFBApp (10.8.0):
+  - RNFBApp (10.8.1):
     - Firebase/CoreOnly (~> 7.6.0)
     - React-Core
-  - RNFBAuth (10.8.0):
+  - RNFBAuth (10.8.1):
     - Firebase/Auth (~> 7.6.0)
     - React-Core
     - RNFBApp
-  - RNFBFirestore (10.8.0):
+  - RNFBFirestore (10.8.1):
     - Firebase/Firestore (~> 7.6.0)
     - React-Core
     - RNFBApp
-  - RNFBMessaging (10.8.0):
+  - RNFBMessaging (10.8.1):
     - Firebase/Messaging (~> 7.6.0)
     - React-Core
     - RNFBApp
@@ -679,7 +679,7 @@ PODS:
     - React-Core
     - React-RCTImage
     - TOCropViewController
-  - RNPermissions (3.0.0):
+  - RNPermissions (3.0.5):
     - React-Core
   - RNReanimated (1.4.0):
     - React
@@ -687,7 +687,7 @@ PODS:
     - React
   - RNSVG (9.13.3):
     - React
-  - RNVectorIcons (8.0.0):
+  - RNVectorIcons (8.1.0):
     - React-Core
   - Stripe (19.4.1)
   - TOCropViewController (2.6.0)
@@ -933,12 +933,12 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
-  Permission-Camera: 119b01de97a5b3edb637999e38476b68143b9d17
-  Permission-LocationAccuracy: e748463597fb8789cacdab1f9aa7d7a5924faae5
-  Permission-LocationAlways: c083f45f28c4b78ddc6f9668cf1a984d879a80ec
-  Permission-LocationWhenInUse: e2b8c40ce0f3675a521f26787ab47ebb9bace503
-  Permission-Notifications: 5c69bf2f6c1e30345af4f25e2981dc1c8dafbc22
-  Permission-PhotoLibrary: cb9cdc1e3744e26ab404297a8e289d50c8ee27e8
+  Permission-Camera: ac603073e4128e51e6ca3c39129778f05b4082fa
+  Permission-LocationAccuracy: c008fa8c4a90fcb6e33f465c2a8684e92d93b794
+  Permission-LocationAlways: 0704c3bcce11f98f8d6ddf34c49c65893ec64b09
+  Permission-LocationWhenInUse: e1168a583654f1d2d34d3a18c4c6518ce409ad2a
+  Permission-Notifications: 16ccd862111103378a7bab9fb1c5c71addffc348
+  Permission-PhotoLibrary: 0748c1a490fad126dfe36dbea8234dedfe59cc27
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
   RCTTypeSafety: 8c9c544ecbf20337d069e4ae7fd9a377aadf504b
@@ -965,23 +965,23 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   rn-fetch-blob: 651b8d076b43d0d7aa294a3d9ec16c00aab8bef9
-  RNCClipboard: 18e2e6048edf841b1225b81025969ba8330f3251
-  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNCClipboard: ddd4d291537f1667209c9c405aaa4307297e252e
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
-  RNDeviceInfo: a9601119924a67d2479d3facf04cec7b658f44ed
-  RNFBApp: 97b618641633d6d23187a9d0537c3893482c483f
-  RNFBAuth: 7c6c9e7289d98709cd5d1333d829925f81823375
-  RNFBFirestore: 859fc78b3dc89ef10e430b39cd9f14e07ef4e158
-  RNFBMessaging: 9eae1103b79d94c6baa5bc43dabc9aba49dfb9da
+  RNDeviceInfo: 8d3a29207835f972bce883723882980143270d55
+  RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
+  RNFBAuth: 16f2b91bf53f398d83a15cff0dd52225967c1d78
+  RNFBFirestore: 337b96bf5b1b2d32bb9fc4735afd47b16532dde8
+  RNFBMessaging: 1823217d31e942531cc3f51fb5367dcbc69c1e10
   RNFBStorage: fb33c149ca21187b86f4e32dc35693525b5f2ac0
   RNGestureHandler: 911d3b110a7a233a34c4f800e7188a84b75319c6
   RNGoogleSignin: 6baed9bb19c9c54614bef63bdc55c381b4e33c44
   RNImageCropPicker: 54e5ea3d0e298ed51e1441a2fa0a0e7c90ee256d
-  RNPermissions: 99dd8d4a30ff13509b949ca63cd1f69edc461775
+  RNPermissions: 7043bacbf928eae25808275cfe73799b8f618911
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: 254da4b84f25971cbb30ed3ddc84131f23cac812
   RNSVG: f6177f8d7c095fada7cfee2e4bb7388ba426064c
-  RNVectorIcons: f67a1abce2ec73e62fe4606e8110e95a832bc859
+  RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   Stripe: 03e13dd1c55e59aeeb8614547700199ff1dc4e01
   TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
