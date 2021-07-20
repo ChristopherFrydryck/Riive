@@ -7,13 +7,11 @@
  */
 
 import React from 'react';
+import type {Node} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
-  StyleSheet,
   ScrollView,
-  View,
-  Text,
   StatusBar,
   LogBox
 } from 'react-native';
