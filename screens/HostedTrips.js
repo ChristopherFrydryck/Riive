@@ -144,7 +144,7 @@ export default class HostedTrips extends Component{
 
 
     
-            var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(10)
+            var spaceVisits = db.collection("trips").where("hostID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(6)
             // spaceVisits = spaceVisits.where("isCancelled", '==', false)
 
             var visits = [];

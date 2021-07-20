@@ -77,7 +77,7 @@ export default class VisitingTrips extends Component{
 
 
     
-            var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(10)
+            var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(6)
             
             // spaceVisits = spaceVisits.orderBy("isCancelled", "asc")
 
@@ -170,7 +170,7 @@ export default class VisitingTrips extends Component{
                 let year = date.getFullYear();
             
 
-                var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(5)
+                var spaceVisits = db.collection("trips").where("visitorID", "==", this.props.UserStore.userID).orderBy("endTimeUnix", "desc").limit(20)
 
                 var visits = this.state.visits;
 
