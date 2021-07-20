@@ -58,3 +58,9 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+#additional
+firebaseConfig.js
+firestore.rules
+firestore.indexes.json
+firebase.json
