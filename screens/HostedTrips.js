@@ -593,7 +593,7 @@ export default class HostedTrips extends Component{
                                 : 
                                 <View style={{flexDirection: 'column'}}>
                                     <Button disabled={isCurrentlyActive && !isCancelled} onPress={() => this.showCancellationModal()} style = {isCurrentlyActive ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Cancel Trip</Button>
-                                    {isCurrentlyActive && !isCancelled ? <Text style={{fontSize: 14}}>Currently active trips can only be cancelled by guests. To prevent this in the future, <Text onPress={() => this.openEditSpace(listing)} style={{textDecorationLine: 'underline', color: Colors.tango900, fontSize: 14}}>edit your availability</Text></Text> :  null}
+                                    {isCurrentlyActive && !isCancelled ? <Text style={{fontSize: 14, marginVertical: 8}}>Currently active trips can only be cancelled by guests. To prevent this in the future, <Text onPress={() => this.openEditSpace(listing)} style={{textDecorationLine: 'underline', color: Colors.tango900, fontSize: 14}}>edit your availability</Text></Text> :  null}
                                 </View>
                                 }
                             </View>
