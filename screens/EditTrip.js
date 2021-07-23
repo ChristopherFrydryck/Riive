@@ -329,6 +329,9 @@ class externalSpace extends React.Component {
                 if(!trip.exists){
                     alert("Failed to save changes. Trip not found.")
                 }else{
+                    let hostPushTokens = null;
+                    // console.log(trip.data().hostID)
+
                     try{
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
                             isCancelled: true,
@@ -338,8 +341,48 @@ class externalSpace extends React.Component {
                             hostChargedCents: null,
                             cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest",
                             updated: currentTime
+                        }).then(async() => {
+                            await db.collection("users").doc(trip.data().hostID).get().then((host) => {
+                                if(!host.exists){
+                                    throw "Host does not exist"
+                                }else{
+                                
+                                    hostPushTokens = host.data().pushTokens
+                                }
+                             })
+                        }).then(() => {
+                            let date = new Date();
+                            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            let today = date.getDate();
+                            let month = months[date.getMonth()]
+                            let year = date.getFullYear();
+                            const isToday = this.state.visit.visit.day.dateName === today && this.state.visit.visit.day.year === year && this.state.visit.visit.day.monthName === month;
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                  Accept: 'application/json',
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    tokens: hostPushTokens.filter(x => x !== null),
+                                    // title: "HELLO WORLD",
+                                    // message: "There is nothing here...",
+                                    title: this.isCurrentlyActive ? "Cancelled current trip" : "Cancelled upcoming trip",
+                                    message: this.isCurrentlyActive ? `${this.state.visit.visitorName.split(" ")[0]} ${this.state.visit.visitorName.split(" ")[1].split("")[0]}. has ended their current visit at ${this.state.listing.spaceName} early.` : `${this.state.visit.visitorName.split(" ")[0]} ${this.state.visit.visitorName.split(" ")[1].split("")[0]}. has cancelled their upcoming visit ${isToday ? "today" : `on ${this.state.visit.visit.day.dayName}`} at ${this.state.listing.spaceName} from ${this.state.visit.visit.time.start.labelFormatted} - ${this.state.visit.visit.time.end.labelFormatted}.`,
+                                    // message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space ${isToday ? "today" : daySearched.dayName} at ${timeSearched[0].labelFormatted}.`,
+                                    screen: "HostedTrips"
+                                })
+                              }
+                          
+                                
+                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+
+                            
                         }).then(() => {
                             this.props.navigation.goBack(null)
+                        }).catch(e => {
+                            throw e
                         })
                     }catch(e){
                         alert("Failed to cancel trip. Check your connection and try again soon.")
