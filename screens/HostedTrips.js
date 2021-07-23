@@ -91,18 +91,18 @@ export default class HostedTrips extends Component{
         const timeDiffEnd = this.state.selectedVisit.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.selectedVisit.visit.visit.time.start.unix - new Date().getTime()
 
-        let isInPast = timeDiffEnd != Math.abs(timeDiffEnd)
-        let isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !isInPast
+        let isInPast = this.state.selectedVisit.isInPast
+        let isCurrentlyActive = this.state.selectedVisit.current
 
         var currentTime = firestore.Timestamp.now();
-
+        var visitorPushTokens = null;
        
 
         if(!isInPast){
             const db = firestore();
             db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then((trip) => {
                 if(!trip.exists){
-                    alert("Failed to save changes. Trip not found.")
+                    alert("Trip not found.")
                 }else{
                     try{
                         db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
@@ -113,10 +113,45 @@ export default class HostedTrips extends Component{
                             hostChargedCents: amountChargedToHostCents,
                             cancelledBy: "host",
                             updated: currentTime
+                        }).then(async() => {
+                            await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
+                                if(!visitor.exists){
+                                    throw "Host does not exist"
+                                }else{
+                                    visitorPushTokens = visitor.data().pushTokens
+                                }
+                             })
                         }).then(() => {
-                            // this.props.navigation.goBack(null)
+                            let date = new Date();
+                            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            let today = date.getDate();
+                            let month = months[date.getMonth()]
+                            let year = date.getFullYear();
+                            const isToday = this.state.selectedVisit.visit.visit.day.dateName === today && this.state.selectedVisit.visit.visit.day.year === year && this.state.seletedVisit.visit.day.monthName === month;
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                  Accept: 'application/json',
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    tokens: visitorPushTokens.filter(x => x !== null),
+                                    title: isCurrentlyActive ? "Cancelled current trip" : "Cancelled upcoming trip",
+                                    message: isCurrentlyActive ? `The host of ${this.state.selectedVisit.listing.spaceName} has cancelled your visit early.` : `The host of ${this.state.selectedVisit.listing.spaceName} has cancelled your upcoming visit ${isToday ? "today" : `on ${this.state.selectedVisit.visit.visit.day.dayName}`} from ${this.state.selectedVisit.visit.visit.time.start.labelFormatted} - ${this.state.selectedVisit.visit.visit.time.end.labelFormatted}.`,
+                                    screen: "HostedTrips"
+                                })
+                              }
+                          
+                                
+                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+
+                            
+                        }).then(() => {
                             this.updateVisits();
                             this.setState({modalVisible: false})
+                        }).catch(e => {
+                            throw e
                         })
                     }catch(e){
                         alert("Failed to cancel trip. Check your connection and try again soon.")
