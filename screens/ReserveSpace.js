@@ -777,6 +777,7 @@ class reserveSpace extends Component {
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.total}</Text>
                         </View>
+                        <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                         <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks ? this.state.authenticatingReservation ? <FloatingCircles color="white"/> : "Reserve Space" : `Booked at ${timeSearched[0].labelFormatted}`}</Button>
                     </View>
                     
