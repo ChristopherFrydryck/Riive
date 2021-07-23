@@ -339,7 +339,7 @@ class externalSpace extends React.Component {
                             refundAmtCents: this.state.refundAmtCents,
                             hostCharged: null,
                             hostChargedCents: null,
-                            cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest",
+                            cancelledBy: "guest",
                             updated: currentTime
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().hostID).get().then((host) => {
@@ -366,11 +366,8 @@ class externalSpace extends React.Component {
                                 },
                                 body: JSON.stringify({
                                     tokens: hostPushTokens.filter(x => x !== null),
-                                    // title: "HELLO WORLD",
-                                    // message: "There is nothing here...",
                                     title: this.isCurrentlyActive ? "Cancelled current trip" : "Cancelled upcoming trip",
                                     message: this.isCurrentlyActive ? `${this.state.visit.visitorName.split(" ")[0]} ${this.state.visit.visitorName.split(" ")[1].split("")[0]}. has ended their current visit at ${this.state.listing.spaceName} early.` : `${this.state.visit.visitorName.split(" ")[0]} ${this.state.visit.visitorName.split(" ")[1].split("")[0]}. has cancelled their upcoming visit ${isToday ? "today" : `on ${this.state.visit.visit.day.dayName}`} at ${this.state.listing.spaceName} from ${this.state.visit.visit.time.start.labelFormatted} - ${this.state.visit.visit.time.end.labelFormatted}.`,
-                                    // message: `${this.props.UserStore.firstname} ${this.props.UserStore.lastname.split("")[0].toUpperCase()}. booked your space ${isToday ? "today" : daySearched.dayName} at ${timeSearched[0].labelFormatted}.`,
                                     screen: "HostedTrips"
                                 })
                               }
