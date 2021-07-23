@@ -5,7 +5,7 @@ This is Riive, a shareparking app currently in development. You can view my port
 
 
 ## To be completed:
-+ Cancellation notifications
++ ~~Cancellation notifications!~~
 + Bank charges and payouts
 + Marketing
 + Opening a company bank account
