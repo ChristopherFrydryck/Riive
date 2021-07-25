@@ -972,7 +972,7 @@ renderCurrentState() {
   render() {
 
       return (
-        <ScrollView contentContainerStyle={{flexGrow : 1, justifyContent : 'center'}}>
+        <ScrollView contentContainerStyle={{flexGrow : 1, justifyContent : 'center', backgroundColor: 'white'}}>
           <KeyboardAvoidingView 
             // style={{backgroundColor: 'purple'}}
             behavior={"padding"} 

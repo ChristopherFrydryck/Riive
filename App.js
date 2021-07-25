@@ -59,7 +59,7 @@
  class App extends React.Component {
    constructor(props){
      super(props);
-     LogBox.ignoreLogs(['Setting a timer', 'Animated: `useNativeDriver`', 'Cannot update during an existing state transition'])
+     LogBox.ignoreLogs(['Setting a timer', 'Animated: `useNativeDriver`', 'Cannot update during an existing state transition', "Require cycle:"])
      this.state ={
        notificationVisible: false,
      }
