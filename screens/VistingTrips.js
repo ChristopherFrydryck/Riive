@@ -486,11 +486,11 @@ export default class VisitingTrips extends Component{
                                         <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.price}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Service Fee</Text>
+                                        <Text>Service Fee {data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
                                         <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Processing Fee</Text>
+                                        <Text>Processing Fee {data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
                                         <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.processingFee}</Text>
                                     </View>
                                 </View>

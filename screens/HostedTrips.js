@@ -496,7 +496,7 @@ export default class HostedTrips extends Component{
                             <Text numberOfLines={1} style={{textAlign: 'center', fontSize: 18, marginTop: 8, paddingBottom: 4}}>{isToday ? `Today, ${visit.visit.day.monthName} ${visit.visit.day.dateName} ${visit.visit.day.year}` : `${visit.visit.day.dayName}, ${visit.visit.day.monthName} ${visit.visit.day.dateName} ${visit.visit.day.year}`}</Text>
                             {isCancelled ? 
                                 <View style={{paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: Colors.mist900, marginBottom: 8}}>
-                                <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.hal500, textAlign: 'center'}}>Trip Cancelled</Text>
+                                <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.hal500, textAlign: 'center'}}>Trip cancelled by {data.visit.cancelledBy === 'host' ? "you" : "guest"}</Text>
                                 <Text>{}</Text>
                                 </View>
                             :
@@ -574,7 +574,7 @@ export default class HostedTrips extends Component{
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 1} : {fontSize: 24, flex: 1}}>{isCancelled ? visit.cancelledBy === 'host' ? "Charged (USD)" : "Returned to Guest (USD)" : "Total Profit (USD)"}</Text>
-                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 0}: {fontSize: 24, flex: 0}}>{isCancelled ? visit.cancelledBy === 'host' ? visit.hostCharged : visit.price.price : visit.price.price}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 0}: {fontSize: 24, flex: 0}}>{isCancelled ? visit.cancelledBy === 'host' ? visit.hostCharged : visit.refundAmt : visit.price.price}</Text>
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
