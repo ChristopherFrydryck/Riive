@@ -375,8 +375,6 @@ export default class VisitingTrips extends Component{
 
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
 
-            // console.log((date.getTime() - data.visit.time.end.unix))
-
 
             return(
                 <Modal 

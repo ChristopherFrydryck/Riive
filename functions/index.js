@@ -737,6 +737,8 @@ const fs = require('fs');
             payment_method_types: ['card'],
             amount: request.body.amount,
             currency: 'usd',
+            confirm: true,
+            description: request.body.description,
             customer: request.body.visitorID,
             payment_method: request.body.cardID,
             receipt_email: request.body.customerEmail,
@@ -748,14 +750,17 @@ const fs = require('fs');
             if (result.error) {
               throw result.error
             } else {
-                console.log("SUCCESS")
-                return null
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: result,
+                    removedCardID: request.body.PaymentID,
+                })
               // The payment has succeeded
               // Display a success message
             }
         }).catch((e) => {
-            console.log("Failed process because of " + e)
-            return null;
+            response.status(500).send(e)
         });
     })
 

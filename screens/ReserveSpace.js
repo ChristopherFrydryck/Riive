@@ -420,9 +420,21 @@ class reserveSpace extends Component {
                             let endDate = new Date(currentYear, monthNames.indexOf(daySearched.monthName), daySearched.dateName, timeSearched[1].label.slice(0,2), timeSearched[1].label.slice(2,4), 59);
                             let endDateString = new Date(currentYear, monthNames.indexOf(daySearched.monthName), daySearched.dateName, timeSearched[1].label.slice(0,2), timeSearched[1].label.slice(2,4), 59).toLocaleString('en-US', {timezone: timeZone});
 
+                            var paymentIntent = null
+
+                            
+
 
                             const ref = db.collection("trips").doc();
                             var currentTime = firestore.Timestamp.now();
+
+                            await this.payForSpace(hostDoc.stripeConnectID).then(res => {
+                                if(res.statusCode !== 200){
+                                    throw `Error ${res.statusCode}: ${res.raw.message}`
+                                }else{
+                                    paymentIntent = res.data.id
+                                }
+                            })
 
                             
 
@@ -447,6 +459,7 @@ class reserveSpace extends Component {
                                     total: this.state.total,
                                     totalCents: this.state.totalCents,
                                 },
+                                paymentIntentID: paymentIntent,
                                 tripID: ref.id,
                                 updated: currentTime,
                                 created: currentTime,
@@ -516,7 +529,6 @@ class reserveSpace extends Component {
                                
                             
                             
-                            // this.payForSpace(hostDoc.stripeID)
                             await this.setState({authenticatingReservation: false})
                             await this.props.navigation.navigate("ReservationConfirmed", {
                                 homeState: {
@@ -540,7 +552,7 @@ class reserveSpace extends Component {
                             throw e
                         }
                     }).catch(e => {
-                        console.log(e)
+                        alert(e)
                     })
 
 
@@ -573,7 +585,7 @@ class reserveSpace extends Component {
           }
 
         payForSpace = async (hostStripeID) => {
-            // console.log(this.props.ComponentStore.selectedExternalSpot[0].hostID)
+            
 
             const settings = {
               method: 'POST',
@@ -583,20 +595,24 @@ class reserveSpace extends Component {
               },
               body: JSON.stringify({
                 amount: this.state.totalCents,
-                customer: this.props.UserStore.stripeConnectID,
+                visitorID: this.props.UserStore.stripeID,
+                description: "Hello world",
                 cardID: this.state.selectedPayment.StripePMID,
                 customerEmail: this.props.UserStore.email,
                 transactionFee: this.state.serviceFeeCents + this.state.processingFeeCents,
                 hostID: hostStripeID
               })
             }
+
+   
+
             try{
               
               const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/payForSpace', settings)
               const data = await fetchResponse.json();
               return data;
             }catch(e){
-              alert(e);
+              return e
             }    
           }
 
