@@ -460,6 +460,7 @@ class reserveSpace extends Component {
                                     totalCents: this.state.totalCents,
                                 },
                                 paymentIntentID: paymentIntent,
+                                refundId: null,
                                 tripID: ref.id,
                                 updated: currentTime,
                                 created: currentTime,
