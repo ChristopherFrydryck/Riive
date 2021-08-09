@@ -6,6 +6,8 @@ import Button from '../components/Button'
 import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
+import Round from '../functions/in-app/round'
+
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
@@ -342,8 +344,10 @@ class reserveSpace extends Component {
             var dollarsServiceFeeCents = price * this.state.serviceFeePercentage > 175 ? Math.ceil(price * this.state.serviceFeePercentage) : 175;
             dollarsServiceFee = dollarsServiceFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
-            var dollarsProcessingFee = ((((price * this.state.serviceFeePercentage) * .029) + 60) / 100);
-            var dollarsProcessingFeeCents = Math.ceil(((price * this.state.serviceFeePercentage) * .029) + 60)
+            
+
+            var dollarsProcessingFee = Round((((price  * .039) + 30) / 100), 2);
+            var dollarsProcessingFeeCents = Math.ceil((price  * .039) + 30)
             dollarsProcessingFee = dollarsProcessingFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
 
