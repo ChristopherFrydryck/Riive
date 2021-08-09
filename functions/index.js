@@ -764,6 +764,29 @@ const fs = require('fs');
         });
     })
 
+    exports.refundTrip = functions.https.onRequest((request, response) => {
+        stripe.refunds.create({
+            payment_intent: request.body.paymentIntent,
+            amount: request.body.amount,
+            reason: requested_by_customer,
+            reverse_transfer: true,
+            refund_application_fee: request.body.refundApplicationFee 
+          }).then(res => {
+              console.log(res)
+              if(res.status !== "succeeded"){
+                throw res.error
+              }else{
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: res,
+                })
+              }
+          }).catch(e => {
+            return response.status(500).send(e)
+          })
+    })
+
     exports.deleteSpace = functions.firestore.document('listings/{listingID}').onDelete((snap, context) => {
         const { listingID } = context.params;
         const bucket = admin.storage().bucket('gs://riive-parking.appspot.com');

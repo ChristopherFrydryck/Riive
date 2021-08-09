@@ -206,6 +206,34 @@ class externalSpace extends React.Component {
         
     }
 
+    refundTrip = async () => {
+            
+
+        const settings = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentIntent: this.state.visit.paymentIntentID,
+            amount: 1,
+            refundApplicationFee: false,
+          })
+        }
+
+
+
+        try{
+          
+          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/refundTrip', settings)
+          const data = await fetchResponse.json();
+          return data;
+        }catch(e){
+          return e
+        }    
+      }
+
     checkIfRefundable = () => {
         // const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
@@ -325,18 +353,32 @@ class externalSpace extends React.Component {
 
         if(!this.isInPast){
             const db = firestore();
-            db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then((trip) => {
+            db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
                     alert("Failed to save changes. Trip not found.")
                 }else{
                     let hostPushTokens = null;
+                    let refundID =  null;
                     // console.log(trip.data().hostID)
 
                     try{
+
+                      await this.refundTrip().then(res => {
+                           
+                            
+                            if(res.statusCode !== 200){
+                                throw `Error ${res}:`
+                            }else{
+                                refundID = res.data.id
+                            }
+                            throw res
+                        })
+
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
                             isCancelled: true,
                             refundAmt: this.state.refundAmt,
                             refundAmtCents: this.state.refundAmtCents,
+                            refundId: refundID,
                             hostCharged: null,
                             hostChargedCents: null,
                             cancelledBy: "guest",
@@ -382,7 +424,7 @@ class externalSpace extends React.Component {
                             throw e
                         })
                     }catch(e){
-                        alert("Failed to cancel trip. Check your connection and try again soon.")
+                        alert(e)
                     }
                 }
             })
