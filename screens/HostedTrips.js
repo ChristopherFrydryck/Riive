@@ -109,6 +109,8 @@ export default class HostedTrips extends Component{
                             isCancelled: true,
                             refundAmt: refundAmount,
                             refundAmtCents: refundAmountCents,
+                            refundFull: true,
+                            refundServiceFee: true,
                             hostCharged: amountChargedToHost,
                             hostChargedCents: amountChargedToHostCents,
                             cancelledBy: "host",
@@ -560,20 +562,35 @@ export default class HostedTrips extends Component{
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Parking Fare</Text>
-                                        <Text style={visit.isCancelled ? {textDecorationLine: 'line-through'}: null} >{visit.price.price}</Text>
+                                        {visit.isCancelled ? 
+                                       
+                                            <View>
+                                                {visit.refundFull ? 
+                                                    <Text style={visit.cancelledBy === 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.price }</Text>
+                                                : 
+                                                    <View style={{flexDirection: 'row'}}>
+                                                        <Text style={{textDecorationLine: 'line-through', marginRight: 8}}>{visit.price.price }</Text>
+                                                        <Text>{((visit.refundAmtCents - visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
+                                                    </View>
+                                                }
+                                            </View>
+                                        
+                                        :
+                                            <Text>{visit.price.price}</Text>
+                                        }
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Service Fee {isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : <Text style={{fontSize: 12}}>(charged to visitor)</Text>}</Text>
-                                        <Text style={visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{visit.price.serviceFee}</Text>
+                                        <Text style={visit.isCancelled && !visit.refundServiceFee ? {textDecorationLine: 'line-through'} : null}>{visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Processing Fee {isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : <Text style={{fontSize: 12}}>(charged to visitor)</Text>}</Text>
-                                        <Text style={visit.isCancelled ? {textDecorationLine: 'line-through'}: null} >{visit.price.processingFee}</Text>
+                                        <Text style={visit.isCancelled && visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.processingFee}</Text>
                                     </View>
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 1} : {fontSize: 24, flex: 1}}>{isCancelled ? visit.cancelledBy === 'host' ? "Charged (USD)" : "Returned to Guest (USD)" : "Total Profit (USD)"}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 1} : {fontSize: 24, flex: 1}}>{isCancelled ? visit.cancelledBy === 'host' ? "Charged (USD)" : "Guest Refund (USD)" : "Total(USD)"}</Text>
                                         <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 0}: {fontSize: 24, flex: 0}}>{isCancelled ? visit.cancelledBy === 'host' ? visit.hostCharged : visit.refundAmt : visit.price.price}</Text>
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>

@@ -49,7 +49,7 @@ export let getToken = async() => {
     try{
         if(enabled){
             if(isEmulator){
-                throw "Push notifications not working on emulators"
+                throw "Push notifications are not working on emulators. Run the app on a physical device to see push notifications."
             }
             
             let tok = await messaging().getToken();
@@ -62,7 +62,7 @@ export let getToken = async() => {
             return null
         }
     }catch(e){ 
-        alert(e)
+        console.warn(e)
         return null
     }
     

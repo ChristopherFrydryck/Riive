@@ -768,13 +768,17 @@ const fs = require('fs');
         stripe.refunds.create({
             payment_intent: request.body.paymentIntent,
             amount: request.body.amount,
-            reason: requested_by_customer,
+            reason: "requested_by_customer",
             reverse_transfer: true,
             refund_application_fee: request.body.refundApplicationFee 
           }).then(res => {
-              console.log(res)
+              
               if(res.status !== "succeeded"){
-                throw res.error
+                const error = new Error("Failed to get your information")
+                error.statusCode = 501;
+                error.name = 'Stripe/RefundFailure'
+                throw error;
+           
               }else{
                 return response.send({
                     statusCode: 200,
@@ -782,8 +786,12 @@ const fs = require('fs');
                     data: res,
                 })
               }
-          }).catch(e => {
-            return response.status(500).send(e)
+          }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
           })
     })
 

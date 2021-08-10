@@ -476,6 +476,8 @@ class reserveSpace extends Component {
                                 distanceWalking: locationDifferenceWalking,
                                 refundAmt: null,
                                 refundAmtCents: null,
+                                refundFull: null,
+                                refundServiceFee: null,
                                 hostCharged: null,
                                 hostChargedCents: null,
                                 visit: {

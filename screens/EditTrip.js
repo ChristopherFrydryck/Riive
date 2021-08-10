@@ -65,6 +65,8 @@ class externalSpace extends React.Component {
             isRefundable: false,
             refundAmt: null,
             refundAmtCents: null,
+            fullRefund: null,
+            refundServiceFee: null,
 
             changesMade: false,
         }
@@ -206,7 +208,7 @@ class externalSpace extends React.Component {
         
     }
 
-    refundTrip = async () => {
+    refundTrip = async (amountRefund, refundFee) => {
             
 
         const settings = {
@@ -217,8 +219,8 @@ class externalSpace extends React.Component {
           },
           body: JSON.stringify({
             paymentIntent: this.state.visit.paymentIntentID,
-            amount: 1,
-            refundApplicationFee: false,
+            amount: amountRefund,
+            refundApplicationFee: refundFee,
           })
         }
 
@@ -288,21 +290,21 @@ class externalSpace extends React.Component {
                 if(minutesSinceStart >= 30){
                     refundableAmtCents = Math.floor(this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable))
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
+                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: false})
                     
                 }else{
                     refundableAmtCents = Math.floor(this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents)
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
+                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: true})
                 }
             }else{
                 refundableAmtCents = Math.floor(this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
+                this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: true, refundServiceFee: true})
             }
         }else{
             Alert("This visit can no longer be refunded. For any questions, contact us at support@riive.net.")
-            this.setState({refundAmt: null, refundAmtCents: null})
+            this.setState({refundAmt: null, refundAmtCents: null, fullRefund: null})
         }
 
 
@@ -363,15 +365,13 @@ class externalSpace extends React.Component {
 
                     try{
 
-                      await this.refundTrip().then(res => {
-                           
-                            
+                      await this.refundTrip(this.state.refundAmtCents, false).then(res => {
+                      
                             if(res.statusCode !== 200){
-                                throw `Error ${res}:`
+                                throw res.message
                             }else{
                                 refundID = res.data.id
                             }
-                            throw res
                         })
 
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
@@ -379,6 +379,8 @@ class externalSpace extends React.Component {
                             refundAmt: this.state.refundAmt,
                             refundAmtCents: this.state.refundAmtCents,
                             refundId: refundID,
+                            refundFull: this.state.fullRefund,
+                            refundServiceFee: this.state.refundServiceFee,
                             hostCharged: null,
                             hostChargedCents: null,
                             cancelledBy: "guest",
@@ -388,7 +390,6 @@ class externalSpace extends React.Component {
                                 if(!host.exists){
                                     throw "Host does not exist"
                                 }else{
-                                
                                     hostPushTokens = host.data().pushTokens
                                 }
                              })
@@ -595,7 +596,7 @@ class externalSpace extends React.Component {
                                 }
                             </View>
                             :
-                            <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].slice(0,4) + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
+                            <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].split(" ")[0].split(":")[0] + ":" + this.state.lastUpdate.split(" ")[1].split(" ")[0].split(":")[1] + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
                         </View>
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>

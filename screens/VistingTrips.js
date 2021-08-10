@@ -494,7 +494,7 @@ export default class VisitingTrips extends Component{
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Returned (USD)" : "Total (USD)"}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Refunded (USD)" : "Total (USD)"}</Text>
                                         <View>
                                              <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? data.visit.refundAmt || "--" : data.visit.price.total}</Text>
                                         </View>
