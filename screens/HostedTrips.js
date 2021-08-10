@@ -100,21 +100,31 @@ export default class HostedTrips extends Component{
 
         if(!isInPast){
             const db = firestore();
-            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then((trip) => {
+            let refundID = null;
+            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
                     alert("Trip not found.")
                 }else{
+
                     try{
-                        db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
-                            isCancelled: true,
-                            refundAmt: refundAmount,
-                            refundAmtCents: refundAmountCents,
-                            refundFull: true,
-                            refundServiceFee: true,
-                            hostCharged: amountChargedToHost,
-                            hostChargedCents: amountChargedToHostCents,
-                            cancelledBy: "host",
-                            updated: currentTime
+                        await this.refundTrip(refundAmountCents, true).then(res => {
+                            if(res.statusCode !== 200){
+                                throw res.message
+                            }else{
+                               refundID = res.data.id
+                            }
+                        }).then(() => {
+                            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
+                                isCancelled: true,
+                                refundAmt: refundAmount,
+                                refundAmtCents: refundAmountCents,
+                                refundFull: true,
+                                refundServiceFee: true,
+                                hostCharged: amountChargedToHost,
+                                hostChargedCents: amountChargedToHostCents,
+                                cancelledBy: "host",
+                                updated: currentTime
+                            })
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
                                 if(!visitor.exists){
@@ -156,7 +166,7 @@ export default class HostedTrips extends Component{
                             throw e
                         })
                     }catch(e){
-                        alert("Failed to cancel trip. Check your connection and try again soon.")
+                        alert(e)
                     }
                 }
             })
@@ -164,6 +174,34 @@ export default class HostedTrips extends Component{
             alert("Failed to cancel this trip. Ended since cancellation.")
         }
     }
+
+    refundTrip = async (amountRefund, refundFee) => {
+            
+
+        const settings = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentIntent: this.state.selectedVisit.visit.paymentIntentID,
+            amount: amountRefund,
+            refundApplicationFee: refundFee,
+          })
+        }
+
+
+
+        try{
+          
+          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/refundTrip', settings)
+          const data = await fetchResponse.json();
+          return data;
+        }catch(e){
+          return e
+        }    
+      }
 
     updateVisits = () => {
         try{
