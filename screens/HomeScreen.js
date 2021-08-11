@@ -342,7 +342,7 @@ class Home extends Component {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
         },  error => alert(`There was an issue getting your location. ${error.message}`),
         {
-            enableHighAccuracy: true,
+            enableHighAccuracy: false,
             timeout: 10000,
             maximumAge: 3600000
         })

@@ -650,11 +650,11 @@ export default class HostedTrips extends Component{
                                      </View>
                                      
                                      {this.props.UserStore.payments.length > 0 ? 
-                                        <RadioList activeItem={this.state.selectedPayment ? this.state.selectedPayment.PaymentID : null} selectItem={(option) => this.setActivePayment(option, true)}>
+                                        <RadioList style={{marginBottom: 24}} activeItem={this.state.selectedPayment ? this.state.selectedPayment.PaymentID : null} selectItem={(option) => this.setActivePayment(option, true)}>
                                             {paymentsArray}
                                         </RadioList>
                                     : null}
-                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : "Cancel Trip"}</Button>
+                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Charge ${amountChargedToHost}`}</Button>
                                      
                         </View>
                    </ActionSheet>
