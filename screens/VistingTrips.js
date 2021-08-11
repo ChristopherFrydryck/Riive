@@ -382,7 +382,7 @@ export default class VisitingTrips extends Component{
                     visible={visible}
                     onRequestClose={() => this.setState({modalVisible: false, selectedVisit: null})}
                 >
-                    <SafeAreaView style={{flex: 1}}>
+                    <SafeAreaView style={{flex: 1, paddingBottom: 16}}>
                         <View style={{flex: 0}}>
                             <View style={{flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: Platform.OS === 'ios' ? 0 : 16}}>
                                 <Text numberOfLines={1}  ellipsizeMode='tail' style={{ fontSize: 18}}>{data.listing.spaceName}</Text>
