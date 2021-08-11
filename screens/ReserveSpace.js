@@ -432,7 +432,7 @@ class reserveSpace extends Component {
                             const ref = db.collection("trips").doc();
                             var currentTime = firestore.Timestamp.now();
 
-                            await this.payForSpace(hostDoc.stripeConnectID).then(res => {
+                            await this.payForSpace(hostDoc.stripeConnectID, ref.id).then(res => {
                                 if(res.statusCode !== 200){
                                     throw `Error ${res.statusCode}: ${res.raw.message}`
                                 }else{
@@ -591,7 +591,7 @@ class reserveSpace extends Component {
               someDate.getFullYear() == today.getFullYear()
           }
 
-        payForSpace = async (hostStripeID) => {
+        payForSpace = async (hostStripeID, refID) => {
             
 
             const settings = {
@@ -603,7 +603,7 @@ class reserveSpace extends Component {
               body: JSON.stringify({
                 amount: this.state.totalCents,
                 visitorID: this.props.UserStore.stripeID,
-                description: "Hello world",
+                description: `Visit id: ${refID}`,
                 cardID: this.state.selectedPayment.StripePMID,
                 customerEmail: this.props.UserStore.email,
                 transactionFee: this.state.serviceFeeCents + this.state.processingFeeCents,

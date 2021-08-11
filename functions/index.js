@@ -732,6 +732,33 @@ const fs = require('fs');
         })
     })
 
+    exports.collectPayment = functions.https.onRequest((request, response) => {
+        stripe.paymentIntents.create({
+            amount: request.body.amount,
+            currency: 'usd',
+            confirm: true,
+            description: request.body.description,
+            customer: request.body.visitorID,
+            payment_method: request.body.paymentID,
+            receipt_email: request.body.customerEmail,
+        }).then(function(result) {
+            if (result.error) {
+              throw result.error
+            } else {
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: result,
+                    removedCardID: request.body.PaymentID,
+                })
+              // The payment has succeeded
+              // Display a success message
+            }
+        }).catch((e) => {
+            response.status(500).send(e)
+        });
+    })
+
     exports.payForSpace = functions.https.onRequest((request, response) => {
         stripe.paymentIntents.create({
             payment_method_types: ['card'],

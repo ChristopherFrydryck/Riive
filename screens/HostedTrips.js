@@ -1,12 +1,16 @@
-import React, {Component} from 'react'
+import React, {Component, createRef} from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity, Alert} from 'react-native'
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
+import RadioList from '../components/RadioList'
+import RadioButton from '../components/RadioButton'
+import FloatingCircles from '../components/FloatingCircles'
 import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
 import MapView, {Marker} from 'react-native-maps';
+import ActionSheet from "react-native-actions-sheet";
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
@@ -19,7 +23,7 @@ import 'firebase/firestore';
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
 
-
+const actionSheetRef = createRef();
 
 @inject("UserStore", "ComponentStore")
 @observer
@@ -31,7 +35,10 @@ export default class HostedTrips extends Component{
             visits: [],
             lastRenderedItem: null,
             selectedVisit: null,
-            modalVisible: false,
+            selectedPayment: null,
+            visitModalVisible: false,
+            cardModalVisible: false,
+            cancellingTrip: false,
             // secitonlist stuff
             
         }
@@ -42,44 +49,93 @@ export default class HostedTrips extends Component{
 
    componentDidMount(){
         // Set Status Bar page info here!
-    this._navListener = this.props.navigation.addListener('didFocus', () => {
+        this._navListener = this.props.navigation.addListener('didFocus', () => {
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
             this.updateVisits();
         });
 
         
+
+        
     }
 
     showCancellationModal = () => {
 
-        let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
+        
+        if(this.props.UserStore.payments.length > 0){
+            let payment = this.props.UserStore.payments[0]
+            this.setState({selectedPayment: {
+                CCV: payment.CCV,
+                Number: payment.Number,
+                CardType: payment.CardType,
+                Month: payment.Month,
+                Name: payment.Name,
+                PaymentID: payment.PaymentID,
+                StripeID: payment.StripeID,
+                StripePMID: payment.StripePMID,
+                Type: payment.Type,
+                Year: payment.Year
+            }})
+        }else{
+            this.setState({selectedPayment: null})
+        }
+        this.setState({cardModalVisible: true})
+ 
+     
 
-        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
-        let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-
-
-        Alert.alert(
-                        'Canceling a Guest Trip',
-                        `Cancelling a trip for an upcoming guest will refund the entire amount to the guest and you will be charged ${amountChargedToHost}. If this day/time does not work in the future, you can update your space availability under Edit Details or manage your space from your profile.`,
-                        [
-                        { text: 'Back' },
-                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() },
+        // Alert.alert(
+        //                 'Canceling a Guest Trip',
+        //                 `Cancelling a trip for an upcoming guest will refund the entire amount to the guest and you will be charged ${amountChargedToHost}. If this day/time does not work in the future, you can update your space availability under Edit Details or manage your space from your profile.`,
+        //                 [
+        //                 { text: 'Back' },
+        //                 { text: 'Cancel Trip', onPress: () => this.cancelTrip() },
                         
-                        ]
-                    )
+        //                 ]
+        //             )
             
                 
 
         
     }
 
+    setActivePayment = (payment, idOnly) => {
+        if(idOnly){
+            let activePayment = this.props.UserStore.payments.filter(x => x.PaymentID === payment)[0]
+            this.setState({selectedPayment: {
+                CCV: activePayment.CCV,
+                Number: activePayment.Number,
+                CardType: activePayment.CardType,
+                Month: activePayment.Month,
+                Name: activePayment.Name,
+                PaymentID: activePayment.PaymentID,
+                StripeID: activePayment.StripeID,
+                StripePMID: activePayment.StripePMID,
+                Type: activePayment.Type,
+                Year: activePayment.Year
+            }})
+        }else{
+            this.setState({selectedPayment: {
+                CCV: payment.CCV,
+                Number: payment.Number,
+                CardType: payment.CardType,
+                Month: payment.Month,
+                Name: payment.Name,
+                PaymentID: payment.PaymentID,
+                StripeID: payment.StripeID,
+                StripePMID: payment.StripePMID,
+                Type: payment.Type,
+                Year: payment.Year
+            }})
+        }
+    }
+
     cancelTrip = () => {
 
-      
-
         let { serviceFeeCents, processingFeeCents, priceCents } = this.state.selectedVisit.visit.price
+
+        this.setState({cancellingTrip: true})
 
 
         let amountChargedToHostCents = serviceFeeCents + processingFeeCents
@@ -98,7 +154,7 @@ export default class HostedTrips extends Component{
         var visitorPushTokens = null;
        
 
-        if(!isInPast){
+        if(!isInPast && this.state.selectedPayment !== null){
             const db = firestore();
             let refundID = null;
             db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then(async(trip) => {
@@ -107,7 +163,13 @@ export default class HostedTrips extends Component{
                 }else{
 
                     try{
-                        await this.refundTrip(refundAmountCents, true).then(res => {
+                        await this.collectPayment(amountChargedToHostCents).then(res => {
+                            if(res.statusCode !== 200){
+                                throw res.raw.message
+                            }
+                        }).then(() => {
+                            return this.refundTrip(refundAmountCents, true)
+                        }).then(res => {
                             if(res.statusCode !== 200){
                                 throw res.message
                             }else{
@@ -120,6 +182,7 @@ export default class HostedTrips extends Component{
                                 refundAmtCents: refundAmountCents,
                                 refundFull: true,
                                 refundServiceFee: true,
+                                refundId: refundID,
                                 hostCharged: amountChargedToHost,
                                 hostChargedCents: amountChargedToHostCents,
                                 cancelledBy: "host",
@@ -161,8 +224,9 @@ export default class HostedTrips extends Component{
                             
                         }).then(() => {
                             this.updateVisits();
-                            this.setState({modalVisible: false})
+                            this.setState({visitModalVisible: false, cancellingTrip: false})
                         }).catch(e => {
+                            this.setState({cancellingTrip: false})
                             throw e
                         })
                     }catch(e){
@@ -171,7 +235,13 @@ export default class HostedTrips extends Component{
                 }
             })
         }else{
-            alert("Failed to cancel this trip. Ended since cancellation.")
+            this.setState({cancellingTrip: false})
+            if(isInPast){
+                alert("Failed to cancel this trip. Ended since cancellation.")
+            }else{
+                alert("Select or add a payment to cancel this trip.")
+            }
+           
         }
     }
 
@@ -202,6 +272,38 @@ export default class HostedTrips extends Component{
           return e
         }    
       }
+
+
+      collectPayment = async (total) => {
+
+    
+
+        const settings = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: total,
+            visitorID: this.props.UserStore.stripeID,
+            description: `Collected money from host on visit ${this.state.selectedVisit.visit.tripID}`,
+            paymentID: this.state.selectedPayment.StripePMID,
+            customerEmail: this.props.UserStore.email,
+          })
+        }
+
+        try{
+          
+          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/collectPayment', settings)
+          const data = await fetchResponse.json();
+          return data;
+        }catch(e){
+          return e
+        }    
+      }
+
+
 
     updateVisits = () => {
         try{
@@ -383,7 +485,7 @@ export default class HostedTrips extends Component{
         const visitorName = `${visit.visitorName.split(" ")[0]} ${visit.visitorName.split(" ")[1].slice(0,1)}.`
         return(
 
-            <TouchableOpacity  style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, modalVisible: true})}>
+            <TouchableOpacity  style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, visitModalVisible: true})}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <View style={{borderRadius: 4, overflow: 'hidden',}}>
                     {!isCancelled ? 
@@ -441,7 +543,7 @@ export default class HostedTrips extends Component{
     openEditSpace = (spot) => {
         this.props.ComponentStore.selectedSpot.clear()
         this.props.ComponentStore.selectedSpot.push(spot)
-        this.setState({modalVisible: false})
+        this.setState({visitModalVisible: false})
         this.props.navigation.navigate("EditSpace")
     }
 
@@ -465,8 +567,89 @@ export default class HostedTrips extends Component{
     }
 
     pressedTOS = () => {
-        this.setState({modalVisible: false})
+        this.setState({visitModalVisible: false})
         this.props.navigation.navigate("TOS")
+    }
+
+    cardsSheet = (props) => {
+        const {data, visible, active} = props;
+
+        const {visit, listing, current} = data;
+        const {isCancelled} = visit
+
+        let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
+
+        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+
+            if(visible){
+                actionSheetRef.current?.setModalVisible(true);
+
+                var paymentsArray = this.props.UserStore.payments.map(payment => {
+                    let cardValid = false
+                    let d = new Date();
+                    // Validate card is not expired
+                    if(payment.Year < parseInt(d.getFullYear().toString().slice(2))){
+                      cardValid = false;
+                  }else if(payment.Year == parseInt(d.getFullYear().toString().slice(2)) && payment.Month < d.getMonth() + 1){
+                      cardValid = false;
+                  }else{
+                      cardValid = true;
+                  }
+      
+                    return(
+                      <RadioButton key={payment.PaymentID} style={{paddingVertical: 6}} id={payment.PaymentID} selectItem={() => this.setActivePayment(payment, false)}>
+                          <View style={{flex: 1, alignItems: 'flex-start'}}>
+                              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                  <Text style={{fontSize: 16, marginRight: 16}}>{`••••••••••••${payment.Number}`}</Text> 
+                                  <Icon 
+                                      iconName={payment.CardType ? 'cc-' + payment.CardType : 'credit-card'}
+                                      iconLib="FontAwesome"
+                                      iconColor={Colors.cosmos900}
+                                      iconSize={20}
+                                      style={{ marginLeft: "auto"}}
+                                   />
+                              </View>
+                              
+                              <Text style={cardValid ? {fontSize: 12} : {fontSize: 12, color: Colors.hal500}} >{cardValid ? `Expires ${payment.Month}/${payment.Year}` : "Expired"}</Text>
+                          </View>
+                      </RadioButton>
+                    )
+                })
+            }
+            
+           
+            return(
+                <ActionSheet 
+                        ref = {actionSheetRef}
+                        bounceOnOpen={true}
+                        bounciness={4}
+                        gestureEnabled={true}
+                        containerStyle={{paddingTop: 8, zIndex: 99999}}
+                        extraScroll={40}
+                        delayActionSheetDrawTime={0}
+                        initialOffsetFromBottom = {1}
+                   >
+                       <View style={styles.actionSheetContent}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
+                                        <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>Cancelling Trip</Text>
+                                     </View>
+                                     <Text style={{fontSize: 14}}>Cancelling a trip for an upcoming guest will refund the entire amount to the guest and <Text style={{fontSize: 14, fontWeight: 'bold'}}>you will be charged {amountChargedToHost}</Text>. Update your space availability to prevent future bookings at this time.</Text>
+                                     <Text style={{marginTop: 32}}>Choose a payment method to charge</Text>
+                                     {this.props.UserStore.payments.length > 0 ? 
+                                        <RadioList activeItem={this.state.selectedPayment ? this.state.selectedPayment.PaymentID : null} selectItem={(option) => this.setActivePayment(option, true)}>
+                                            {paymentsArray}
+                                        </RadioList>
+                                    : null}
+                                     <Button onPress={() => {
+                                         this.setState({cardModalVisible: false, visitModalVisible: false})
+                                         this.props.navigation.navigate("AddPayment")
+                                      }} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Payment</Button>
+                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : "Cancel Trip"}</Button>
+                                     
+                        </View>
+                   </ActionSheet>
+            )
     }
  
     VisitModal(props) {
@@ -509,7 +692,8 @@ export default class HostedTrips extends Component{
                 <Modal 
                     animationType="slide"
                     visible={visible}
-                    onRequestClose={() => this.setState({modalVisible: false, selectedVisit: null})}
+                    onRequestClose={() => this.setState({visitModalVisible: false, selectedVisit: null})}
+                    style={{zIndex: -999}}
                 >
                     <SafeAreaView style={{flex: 1}}>
                         <View style={{flex: 0}}>
@@ -521,7 +705,7 @@ export default class HostedTrips extends Component{
                                     iconName="x"
                                     iconColor={Colors.cosmos500}
                                     iconSize={28}
-                                    onPress={() => this.setState({modalVisible: false, selectedVisit: null})}
+                                    onPress={() => this.setState({visitModalVisible: false, selectedVisit: null})}
                                     style={{position: 'absolute', top: Platform.OS === 'ios' ? 8 : 16, right: 8}}
                                 />
                         </View>
@@ -643,7 +827,7 @@ export default class HostedTrips extends Component{
                                             visit: visit,
                                             listing: listing
                                         })
-                                        this.setState({modalVisible: false})
+                                        this.setState({visitModalVisible: false})
                                     }} style = {isReported ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : {flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{isReported ? "Trip Reported" : "Report Trip"}</Button>
                                 </View>
                                 : 
@@ -653,6 +837,8 @@ export default class HostedTrips extends Component{
                                 </View>
                                 }
                             </View>
+
+                            <this.cardsSheet visible={this.state.cardModalVisible} data={data} active={isCurrentlyActive}/>
                             
                             
                             
@@ -669,7 +855,7 @@ export default class HostedTrips extends Component{
     render(){
         return(
             <View style={styles.container}>
-                <this.VisitModal visible={this.state.modalVisible} data={this.state.selectedVisit}/>
+                <this.VisitModal visible={this.state.visitModalVisible} data={this.state.selectedVisit}/>
                  {/* <ScrollView refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateVisits}/>}>
                     <Text>This is Visiting trips.</Text>
                      <View> */}
@@ -687,6 +873,7 @@ export default class HostedTrips extends Component{
                             ListEmptyComponent={() => this.emptyComponent()}
                             ListFooterComponent={this.LoadingIndicatorBottom()}
                         />
+                    
                {/* </View>
              </ScrollView> */}
             </View>
@@ -731,5 +918,9 @@ const styles = StyleSheet.create({
         //   shadowRadius: 3, 
         //   elevation: 12,
         //   borderRadius: 4,
-      }
+      },
+      actionSheetContent:{
+        paddingTop: 8,
+        paddingHorizontal: 16, 
+    }
 })
