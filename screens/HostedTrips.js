@@ -22,6 +22,7 @@ import 'firebase/firestore';
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
+import ClickableChip from '../components/ClickableChip'
 
 const actionSheetRef = createRef();
 
@@ -635,16 +636,24 @@ export default class HostedTrips extends Component{
                                         <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>Cancelling Trip</Text>
                                      </View>
                                      <Text style={{fontSize: 14}}>Cancelling a trip for an upcoming guest will refund the entire amount to the guest and <Text style={{fontSize: 14, fontWeight: 'bold'}}>you will be charged {amountChargedToHost}</Text>. Update your space availability to prevent future bookings at this time.</Text>
-                                     <Text style={{marginTop: 32}}>Choose a payment method to charge</Text>
+                                     <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16}}>
+                                        <Text style={{flex: 1}}>Choose a payment method</Text>
+                                        <ClickableChip 
+                                        bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%
+                                        textColor={Colors.tango700}
+                                        onPress={() => {
+                                            this.setState({cardModalVisible: false, visitModalVisible: false})
+                                            this.props.navigation.navigate("AddPayment")
+                                        }}
+                                        >+ Card</ClickableChip>
+            
+                                     </View>
+                                     
                                      {this.props.UserStore.payments.length > 0 ? 
                                         <RadioList activeItem={this.state.selectedPayment ? this.state.selectedPayment.PaymentID : null} selectItem={(option) => this.setActivePayment(option, true)}>
                                             {paymentsArray}
                                         </RadioList>
                                     : null}
-                                     <Button onPress={() => {
-                                         this.setState({cardModalVisible: false, visitModalVisible: false})
-                                         this.props.navigation.navigate("AddPayment")
-                                      }} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Payment</Button>
                                       <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : "Cancel Trip"}</Button>
                                      
                         </View>
