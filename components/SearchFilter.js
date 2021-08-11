@@ -789,7 +789,7 @@ SearchFilter.defaultProps = {
 
 const styles = StyleSheet.create({
     container: {
-        zIndex: 99,
+        zIndex: 9999,
         flex: 0,
         width: Dimensions.get("window").width,
     },

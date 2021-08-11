@@ -179,7 +179,7 @@ class Home extends Component {
         
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);
-            Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
+            Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango500);
         }else{
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
@@ -658,7 +658,11 @@ this.forceUpdate();
 
 filterResults = async() => {
   if(this.state.searchFilterOpen){
+      
       await this.getResults(this.region.current.latitude, this.region.current.longitude, this.region.current.longitudeDelta * 69, 99999.9999, 99999.9999)
+      Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
+  }else{
+    Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango500);
   }
   
   await this.setState({searchFilterOpen: !this.state.searchFilterOpen})
@@ -897,37 +901,41 @@ goToReserveSpace = () => {
   }
 
   render() {
-  
     const {width, height} = Dimensions.get('window')
     const {firstname, email, permissions} = this.props.UserStore
     if(permissions.locationServices && this.region.current.latitude && this.region.current.longitude){
       return (
-        <SafeAreaView style={{flex: 1, position: 'relative', backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white'}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
 
           {/* Search Filter component */}
-          <View style={{opacity: this.state.searchFilterOpen ? 1 : 0,  marginTop: Platform.OS === 'ios' ? 40 : StatusBar.currentHeight, zIndex: 999, position: 'absolute'}}>
-              <SearchFilter visible={this.state.searchFilterOpen} currentSearch={this.state.searchInputValue} timeCallback={(data) => this.searchFilterTimeCallback(data)} dayCallback={(data) => this.searchFilterDayCallback(data)}/>
-              {this.state.searchFilterOpen ? 
-              <TouchableOpacity onPress={() => this.filterResults()} style={{width: width, height: height, backgroundColor: 'black', opacity: 0.3}} disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}/>
-              : null}
-          </View>
+          <SafeAreaView style={Platform.OS === 'ios' ? {zIndex:  999999} : null}>
+              {/* <View style={{zIndex: 99999999, position: 'absolute',}}> */}
+                <SearchFilter visible={this.state.searchFilterOpen} currentSearch={this.state.searchInputValue} timeCallback={(data) => this.searchFilterTimeCallback(data)} dayCallback={(data) => this.searchFilterDayCallback(data)}/>
+                {this.state.searchFilterOpen ? 
+                <TouchableOpacity onPress={() => this.filterResults()} style={{position: 'absolute',width: width, height: height, backgroundColor: 'black', opacity: 0.3}} disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}/>
+                : null}
+              {/* </View> */}
+          </SafeAreaView>
 
-          <View style={{paddingHorizontal: 16, paddingBottom: this.state.searchFilterOpen ? 0 : 36, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between"}}>
-            {/* <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text> */}
-            <Image 
-                localImage={true} 
-                source={require('../assets/img/Logo_Abbreviated_001.png')} 
-                width={48}
-                aspectRatio={1/1}
-                style={styles.img} />
-            <FilterButton 
-              onPress={() => this.filterResults()}
-              disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}
-              searchFilterOpen={this.state.searchFilterOpen}
-              daySearched={this.state.daySearched}
-              timeSearched={this.state.timeSearched}
-            />
-          </View>
+            {!this.state.searchFilterOpen ?
+            <View style={{paddingHorizontal: 16, paddingBottom: this.state.searchFilterOpen ? 0 : 36, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: "space-between"}}>
+                {/* <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text> */}
+                <Image 
+                    localImage={true} 
+                    source={require('../assets/img/Logo_Abbreviated_001.png')} 
+                    width={48}
+                    aspectRatio={1/1}
+                    style={styles.img} />
+                <FilterButton 
+                onPress={() => this.filterResults()}
+                disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}
+                searchFilterOpen={this.state.searchFilterOpen}
+                daySearched={this.state.daySearched}
+                timeSearched={this.state.timeSearched}
+                />
+            </View>
+            : null}
+   
           
           <View style={{flex: 1}}>
           <MapView
@@ -1272,7 +1280,8 @@ export default Home
 const styles = StyleSheet.create({
   mapStyle:{
       zIndex: -999,
-      position: "relative",
+      elevation: -999,
+    //   position: "relative",
       flex: 1,
   },
   img:{
