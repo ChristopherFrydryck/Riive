@@ -592,7 +592,6 @@ class reserveSpace extends Component {
           }
 
         payForSpace = async (hostStripeID, refID) => {
-            
 
             const settings = {
               method: 'POST',

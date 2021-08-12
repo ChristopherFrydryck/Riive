@@ -129,11 +129,17 @@ class SpacesList extends React.Component{
                 source={{uri: spot.photo}}
                 resizeMode={'cover'}
             /> 
-            {currentActive[0].available ? 
+            {currentActive[0].available && !spot.hidden ? 
                 <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 12, left: 0, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 8, borderTopRightRadius: 4, borderBottomRightRadius: 4}}>
                     <Animated.View style={{opacity: this.state.activeTimeFadeAnimation, width: 8, height: 8, backgroundColor: Colors.fortune500, borderRadius: Dimensions.get("window").width/2, marginRight: 8}}/>
                     <Text style={{color: Colors.fortune500}}>Available Now</Text>
                 </View>
+                : 
+                spot.hidden ? 
+                    <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 12, left: 0, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 8, borderTopRightRadius: 4, borderBottomRightRadius: 4}}>
+                        <View style={{opacity: 1, width: 10, height: 10, borderColor: Colors.hal500, borderWidth: 1, backgroundColor: 'none', borderRadius: Dimensions.get("window").width/2, marginRight: 8}}/>
+                        <Text style={{color: Colors.hal500}}>Unavailable</Text>
+                    </View>
                 : null}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap', padding: 8}}>

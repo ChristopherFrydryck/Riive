@@ -20,7 +20,6 @@ import Icon from '../../components/Icon'
 import Button from '../../components/Button'
 import Colors from '../../constants/Colors'
 import Image from '../../components/Image'
-import DayAvailabilityPicker from '../../components/DayAvailabilityPicker'
 import FloatingCircles from '../../components/FloatingCircles'
 
 import Timezones from '../../constants/Timezones'

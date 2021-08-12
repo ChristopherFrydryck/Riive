@@ -17,7 +17,6 @@ import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
-import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';

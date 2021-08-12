@@ -499,7 +499,6 @@ renderDotsView = (numItems, position) =>{
       const {width, height} = Dimensions.get('window')
       const {ComponentStore, UserStore} = this.props
 
-      
       return(
         
         <KeyboardAwareScrollView
@@ -616,6 +615,9 @@ renderDotsView = (numItems, position) =>{
                     </View> */}
                     <View style={{paddingHorizontal: 16}}>
                       <DayAvailabilityPicker 
+                        listing={this.props.ComponentStore.selectedSpot[0]}
+                        isHidden={this.props.ComponentStore.selectedSpot[0].hidden}
+                        isDeleted={this.props.ComponentStore.selectedSpot[0].toBeDeleted}
                         availability={this.state.daily}
                         availabilityCallback={this.availabilityCallbackFunction}
                         >
@@ -720,6 +722,9 @@ renderDotsView = (numItems, position) =>{
                       
                         <View style={{marginTop: 32}}>
                             <DayAvailabilityPicker 
+                                listing={this.props.ComponentStore.selectedSpot[0]}
+                                isHidden={this.props.ComponentStore.selectedSpot[0].hidden}
+                                isDeleted={this.props.ComponentStore.selectedSpot[0].toBeDeleted}
                                 availability={this.state.daily}
                                 availabilityCallback={this.availabilityCallbackFunction}
                                 editable={false}
