@@ -45,7 +45,6 @@ export default class DayAvailabilityPicker extends React.Component{
 
     componentDidMount () {
         this.fadeAnimation();
-        console.log(this.state.isHidden)
     }
 
     convertToCommonTime = (t) => {
