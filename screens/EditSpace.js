@@ -30,6 +30,7 @@ import storage from '@react-native-firebase/storage'
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
+import ClickableChip from '../components/ClickableChip';
 
 
 
@@ -141,6 +142,7 @@ class editSpace extends Component {
             // Integrated version 1.0.0
             hidden: space.hidden,
             toBeDeleted: space.toBeDeleted,
+            deleteDate: null,
             visits: space.visits,
 
             
@@ -379,6 +381,7 @@ class editSpace extends Component {
                 updated: createdTime,
                 hidden: this.state.hidden,
                 toBeDeleted: this.state.toBeDeleted,
+                deleteDate: null,
 
                })
 
@@ -403,6 +406,7 @@ class editSpace extends Component {
                   updated: createdTime,
                   hidden: this.state.hidden,
                   toBeDeleted: this.state.toBeDeleted,
+                  deleteDate: null,
                   visits: this.state.visits,
                }
                // add space to mobx UserStore
@@ -445,6 +449,10 @@ class editSpace extends Component {
   availabilityCallbackFunction = (data) => {
   
     this.checkForChanges("daily", data)
+  }
+
+  navigationCallbackFunction = () => {
+    this.props.navigation.goBack(null)
   }
    
 
@@ -512,17 +520,17 @@ renderDotsView = (numItems, position) =>{
             visible={this.state.editModalOpen} animationType="slide"
             //         transparent={true}          
           >
-            <SafeAreaView style={{backgroundColor: 'white', flex: 1}} />
+            <SafeAreaView style={{backgroundColor: 'white', flex: 0}} />
             <View style={{padding: 8, flexDirection: 'row', justifyContent: 'space-between'}}>
-    
+   
                   <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8, marginLeft: 8}}>Edit Space</Text>
                   <Icon 
-                                    iconName="x"
-                                    iconColor={Colors.cosmos500}
-                                    iconSize={28}
-                                    onPress={() => this.openEditModal()}
-                                    style={{marginTop: 10, marginLeft: "auto", marginRight: 5}}
-                                />
+                      iconName="x"
+                      iconColor={Colors.cosmos500}
+                      iconSize={28}
+                      onPress={() => this.openEditModal()}
+                      style={{marginTop: 10, marginLeft: "auto", marginRight: 5}}
+                  />
               </View>
               <KeyboardAwareScrollView 
                     keyboardShouldPersistTaps="handled"
@@ -549,23 +557,51 @@ renderDotsView = (numItems, position) =>{
                   </View>
                   <View style={{paddingHorizontal: 16}}>
                       
+                      <View style={{}}>
                         <Image 
-                          style={{width: Dimensions.get("window").width - 32}}
+                          style={{width: Dimensions.get("window").width - 32, flex: 1}}
                           aspectRatio={16/9}
                           source={{uri: this.state.photo}}
                           resizeMode={'cover'}
                         /> 
+
+                        <View style={{flexDirection: 'row', position: 'absolute', bottom: 8, left: 8, width: Dimensions.get("window").width - 32}}>
+                          <ClickableChip onPress={() => this.pickImage()} bgColor='rgba(0, 0, 0, 0.6)' style={{height: 30, alignItems: 'center', justifyContent: 'center', marginRight: 8}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                              <Icon 
+                                    iconName="photo"
+                                    iconLib="Foundation"
+                                    iconColor={Colors.mist300}
+                                    iconSize={16}
+                                    style={{paddingRight: 6, marginTop: 4}}
+                                />
+                                <Text style={{color: Colors.mist300}}>Change Photo</Text>
+                            </View>
+                          </ClickableChip>
+                          <ClickableChip onPress={() => this.launchCamera()} bgColor='rgba(0, 0, 0, 0.6)' style={{height: 30, alignItems: 'center', justifyContent: 'center'}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                              <Icon 
+                                    iconName="camera"
+                                    iconColor={Colors.mist300}
+                                    iconSize={16}
+                                    style={{paddingRight: 6, marginTop: 4}}
+                                />
+                                <Text style={{color: Colors.mist300}}>Take Photo</Text>
+                            </View>
+                          </ClickableChip>
+                        </View>
+                    </View>
                     
   
-                        <View style={{display: "flex", flexDirection: 'row', marginBottom: 16}}>
+                        {/* <View style={{display: "flex", flexDirection: 'row', marginBottom: 16}}>
                         <Button style={{flex: 1, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.pickImage()}>Change Photo</Button>
                         <Button style={{flex: 1, marginLeft: 8, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.launchCamera()}>Take Photo</Button>
-                      </View>
+                      </View> */}
                     
                       
                       </View>
 
-                  <View style={{paddingHorizontal: 16}}>
+                  <View style={{paddingHorizontal: 16, marginTop: 8}}>
                     <Input 
                       placeholder='Name your space...'         
                       label="Space Name"
@@ -616,10 +652,9 @@ renderDotsView = (numItems, position) =>{
                     <View style={{paddingHorizontal: 16}}>
                       <DayAvailabilityPicker 
                         listing={this.props.ComponentStore.selectedSpot[0]}
-                        isHidden={this.props.ComponentStore.selectedSpot[0].hidden}
-                        isDeleted={this.props.ComponentStore.selectedSpot[0].toBeDeleted}
                         availability={this.state.daily}
                         availabilityCallback={this.availabilityCallbackFunction}
+                        navigationCallback={this.navigationCallbackFunction}
                         >
                       </DayAvailabilityPicker>
 
@@ -723,8 +758,6 @@ renderDotsView = (numItems, position) =>{
                         <View style={{marginTop: 32}}>
                             <DayAvailabilityPicker 
                                 listing={this.props.ComponentStore.selectedSpot[0]}
-                                isHidden={this.props.ComponentStore.selectedSpot[0].hidden}
-                                isDeleted={this.props.ComponentStore.selectedSpot[0].toBeDeleted}
                                 availability={this.state.daily}
                                 availabilityCallback={this.availabilityCallbackFunction}
                                 editable={false}

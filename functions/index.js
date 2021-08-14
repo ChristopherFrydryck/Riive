@@ -1106,6 +1106,7 @@ const fs = require('fs');
                                             db.collection('listings').doc(afterUser.listings[i]).update({
                                                 hidden: false,
                                                 toBeDeleted: false,
+                                                deleted: false,
                                                 visits: 0, 
                                             })
                                         }

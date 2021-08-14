@@ -84,12 +84,13 @@ class SpacesList extends React.Component{
                 // Integrated version 1.0.0
                 hidden: spot.hidden,
                 toBeDeleted: spot.toBeDeleted,
+                deleteDate: spot.deleteDate,
                 visits: spot.visits,
             })
             // console.log(this.props.ComponentStore.selectedSpot[0].spaceName)
             this.props.navigation.navigate("EditSpace")
          
-
+           
        
         
         
@@ -98,10 +99,12 @@ class SpacesList extends React.Component{
     renderSpaceCard = (spot, index) => {
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
-        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => !x.toBeDeleted)
+        var currentDate = new Date().getTime()
+        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => x.deleteDate > currentDate || !x.deleteDate)
+
+        
         
         let currentActive = orderedData[index].availability[dayToday].data.filter((x) => parseInt(x.start.substring(0,2)) <= hourToday && parseInt(x.end.substring(0,2)) >= hourToday)
-
 
        let cardStyle
        if(orderedData.length > 1){
@@ -116,7 +119,13 @@ class SpacesList extends React.Component{
            cardStyle = styles.li_single
        }
 
-       
+
+       if(spot.deleteDate){
+            var deleteDate = new Date(spot.deleteDate);
+            // Add 8 days to date
+            // deleteDate.setDate(deleteDate.getDate() + 8);
+       }
+    //    console.log(`${spot.spaceName} is set to be deleted on ${deleteDate}`)
        
        
         return(
@@ -146,7 +155,7 @@ class SpacesList extends React.Component{
                         iconColor={Colors.hal500}
                         iconSize={15}
                     />
-                    <Text style={{color: Colors.hal500, marginLeft: 4}}>Deleted</Text>
+                    <Text style={{color: Colors.hal500, marginLeft: 4}}>Deleting on {String(deleteDate).split(" ")[1] + " " + String(deleteDate).split(" ")[2]}</Text>
                 </View>
                 :
                 spot.hidden ? 
@@ -198,10 +207,10 @@ class SpacesList extends React.Component{
         let {spotsLoaded} =  this.props.ComponentStore;
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
-        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => !x.toBeDeleted)
+        var currentDate = new Date().getTime()
+        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => x.deleteDate > currentDate || !x.deleteDate)
         var {width} = Dimensions.get('window');
 
-        // console.log((16 * (orderedData.length - 2) + 48)/orderedData.length)
 
         if(spotsLoaded && orderedData.length == 1){
         return(
