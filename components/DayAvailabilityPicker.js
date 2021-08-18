@@ -427,7 +427,7 @@ export default class DayAvailabilityPicker extends React.Component{
         if(this.state.isHidden){
             Alert.alert(
                 'Resuming Your Booking',
-                'Users will be able to resume booking this space with your past availability set. Any other saved changes will be reset upon resuming your booking.',
+                'Users will be able to resume booking this space with your past availability set. Any other unsaved changes will be lost upon resuming your booking.',
                 [
                     { text: 'Resume Booking', onPress: () =>{
                         this.togglePause();
@@ -438,7 +438,7 @@ export default class DayAvailabilityPicker extends React.Component{
         }else{
             Alert.alert(
                 'Pausing Your Booking',
-                'Users will be unable to book this space until you resume it manually. Any other saved changes will be reset upon pausing your booking.',
+                'Users will be unable to book this space until you resume it manually. Any other unsaved changes will be lost upon pausing your booking.',
                 [
                     { text: 'Pause Booking', onPress: () =>{
                         this.togglePause();

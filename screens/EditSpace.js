@@ -451,6 +451,19 @@ class editSpace extends Component {
     this.checkForChanges("daily", data)
   }
 
+  deleteSpace = async() => {
+    const db = firestore();
+    let date = new Date();
+    date.setDate(date.getDate() + 8);
+  
+    await db.collection("listings").doc(this.state.postID).update({
+      toBeDeleted: true,
+      deleteDate: date.getTime()
+    }).then(() => {
+      this.props.navigation.goBack(null)
+    })
+  }
+
   navigationCallbackFunction = () => {
     this.props.navigation.goBack(null)
   }
@@ -541,19 +554,19 @@ renderDotsView = (numItems, position) =>{
                   >
                   
                   <View style={{ width: "100%", paddingHorizontal: 16, position: 'absolute', zIndex: 9, }}>
-                    <View style={{ padding: 8, backgroundColor: 'rgba(0, 0, 0, 0.6)'}}>
+                    <TouchableOpacity onPress={() => this.deleteSpace()} style={{ padding: 8, backgroundColor: 'rgba(232, 66, 66, 0.7)'}}>
                       <View style={{flexDirection: 'row'}}>
                       <Icon
-                                iconName="location-pin"
-                                iconLib="Entypo"
+                                iconName="trash"
+                                iconLib="feather"
                                 iconColor="white"
                                 iconSize={16}
                                 style={{marginRight: 8, marginTop: 4}}
                             />
-                        <Text style={{color: "white", fontSize: 16, marginRight: 24}}>{this.state.address.full} {this.state.address.box ? <Text style={{color: "white"}}># {this.state.address.box}</Text> : null}</Text>
+                        <Text style={{color: "white", fontSize: 16, marginRight: 24}}>Delete space @ {this.state.address.full.split(",")[0]}</Text>
                       </View>
                       {this.state.address.spaceNumber ? <Text style={{color: "white", marginLeft: 24}}>Space # {this.state.address.spaceNumber}</Text> : null}
-                    </View>
+                    </TouchableOpacity>
                   </View>
                   <View style={{paddingHorizontal: 16}}>
                       
