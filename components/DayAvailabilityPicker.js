@@ -687,12 +687,17 @@ export default class DayAvailabilityPicker extends React.Component{
                             
                         })}
                         {this.props.editable ? 
-                            <View style={{flexDirection: 'row', flex: 1}}>
-                                {this.state.listing && !this.state.isDeleted ?
-                                <Button disabled={false} style={{flex: 1, marginRight: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.tango900}} textStyle={{color: Colors.tango900}} onPress={(x) => this.pauseAlert()}>{this.state.isHidden ? "Resume Booking" : "Pause Booking"}</Button>
-                                : null }
-                                <Button disabled={this.state.isHidden} style={{flex: 1, marginLeft: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: this.state.isHidden ? Colors.mist900 : Colors.tango900}} textStyle={{color: this.state.isHidden ? Colors.mist900 : Colors.tango900}} onPress={(x) => this.openModal()}>Edit Time Slot{this.state.daily[this.state.activeDay].data.length > 1 ? "s" : null}</Button>
-                            </View>
+                           
+                                this.state.listing && !this.state.isDeleted ?
+                                <View style={{flexDirection: 'row', flex: 1}}>
+                                    <Button disabled={false} style={{flex: 1, marginRight: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.tango900}} textStyle={{color: Colors.tango900}} onPress={(x) => this.pauseAlert()}>{this.state.isHidden ? "Resume Booking" : "Pause Booking"}</Button>
+                                    
+                                    {this.state.isHidden ? null :
+                                        <Button disabled={this.state.isHidden} style={{flex: 1, marginLeft: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: this.state.isHidden ? Colors.mist900 : Colors.tango900}} textStyle={{color: this.state.isHidden ? Colors.mist900 : Colors.tango900}} onPress={(x) => this.openModal()}>Edit Time Slot{this.state.daily[this.state.activeDay].data.length > 1 ? "s" : null}</Button>
+                                    }
+                                </View>
+                                : null 
+                          
                            
                         : null}
                        

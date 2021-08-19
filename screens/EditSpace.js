@@ -46,6 +46,7 @@ import ClickableChip from '../components/ClickableChip';
 class editSpace extends Component {
   _isMounted = false;
 
+
   static navigationOptions = ({navigation}) => {
     const { params = {} } = navigation.state;
     
@@ -56,18 +57,35 @@ class editSpace extends Component {
           fontSize: 18,
       },
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => params.openEditModal()}
+        
+        params.deleted ? 
+          <TouchableOpacity
+          onPress={() => params.restoreSpace()}
           style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16}}
         >
           <Icon 
-            iconName="edit-2"
+            iconName="backup-restore"
+            iconLib="MaterialCommunityIcons"
             iconColor="rgb(14, 122, 254)"
             iconSize={18}
             style={{marginRight: 4}}
           />
-          <Text style={{fontSize: 18, color: "rgb(14, 122, 254)"}}>Edit</Text>
+          <Text style={{fontSize: 18, color: "rgb(14, 122, 254)"}}>Restore</Text>
         </TouchableOpacity>
+        : 
+          <TouchableOpacity
+            onPress={() => params.openEditModal()}
+            style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16}}
+          >
+            <Icon 
+              iconName="edit-2"
+              iconColor="rgb(14, 122, 254)"
+              iconSize={18}
+              style={{marginRight: 4}}
+            />
+            <Text style={{fontSize: 18, color: "rgb(14, 122, 254)"}}>Edit</Text>
+          </TouchableOpacity>
+        
       )
     }
     
@@ -168,7 +186,9 @@ class editSpace extends Component {
 
        this.props.navigation.setParams({
          title: add.length > 20 ? add.substring(0,20) + "..." : add,
+         deleted: this.state.toBeDeleted,
          openEditModal: this.openEditModal,
+         restoreSpace: this.restoreAlert,
       });
 
        
@@ -177,6 +197,8 @@ class editSpace extends Component {
     openEditModal = () => {
       this.setState({editModalOpen: !this.state.editModalOpen})
     }
+
+    
 
 
     getPermissionAsync = async (...perms) => {
@@ -456,9 +478,7 @@ class editSpace extends Component {
         "Deleting a Space", 
         "Deleting a hosted space makes it unavailable to any future trips and will remove itself from your profile in 7 days. All current trips will still occur unless you cancel them individually.",
         [
-          { text: 'Delete Space', onPress: () =>{
-              this.deleteSpace();
-          }},
+          { text: 'Delete Space', onPress: () => this.deleteSpace()},
           { text: 'Cancel' }
       ]
     )
@@ -476,6 +496,30 @@ class editSpace extends Component {
       this.props.navigation.goBack(null)
     })
   }
+
+  restoreAlert = () => {
+    Alert.alert(
+      "Restoring a Space", 
+      "Restoring your hosted space will make it available again to anyone searching within your availability. You can update it upon restoring your space.",
+      [
+        { text: 'Restore Space', onPress: () => this.restoreSpace()},
+        { text: 'Cancel' }
+    ]
+  )
+  }
+
+  restoreSpace = async() => {
+    const db = firestore();
+  
+    await db.collection("listings").doc(this.state.postID).update({
+      toBeDeleted: false,
+      deleteDate: null,
+    }).then(() => {
+      this.props.navigation.goBack(null)
+    })
+  }
+
+
 
   navigationCallbackFunction = () => {
     this.props.navigation.goBack(null)
