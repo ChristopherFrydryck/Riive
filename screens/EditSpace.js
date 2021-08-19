@@ -451,10 +451,23 @@ class editSpace extends Component {
     this.checkForChanges("daily", data)
   }
 
+  deleteAlert = () => {
+    Alert.alert(
+        "Deleting a Space", 
+        "Deleting a hosted space makes it unavailable to any future trips and will remove itself from your profile in 7 days. All current trips will still occur unless you cancel them individually.",
+        [
+          { text: 'Delete Space', onPress: () =>{
+              this.deleteSpace();
+          }},
+          { text: 'Cancel' }
+      ]
+    )
+  }
+
   deleteSpace = async() => {
     const db = firestore();
     let date = new Date();
-    date.setDate(date.getDate() + 8);
+    date.setDate(date.getDate() + 7);
   
     await db.collection("listings").doc(this.state.postID).update({
       toBeDeleted: true,
@@ -554,7 +567,7 @@ renderDotsView = (numItems, position) =>{
                   >
                   
                   <View style={{ width: "100%", paddingHorizontal: 16, position: 'absolute', zIndex: 9, }}>
-                    <TouchableOpacity onPress={() => this.deleteSpace()} style={{ padding: 8, backgroundColor: 'rgba(232, 66, 66, 0.7)'}}>
+                    <TouchableOpacity onPress={() => this.deleteAlert()} style={{ padding: 8, backgroundColor: 'rgba(232, 66, 66, 0.7)'}}>
                       <View style={{flexDirection: 'row'}}>
                       <Icon
                                 iconName="trash"

@@ -31,7 +31,7 @@ export default class DayAvailabilityPicker extends React.Component{
 
             listing: this.props.listing,
             isHidden: this.props.listing ? this.props.listing.hidden : false,
-            isDeleted: this.props.listing ? this.props.listing.deleted : false,
+            isDeleted: this.props.listing ? this.props.listing.toBeDeleted : false,
 
             daily: this.props.availability,
             dailyStaging: JSON.parse(JSON.stringify(this.props.availability)),

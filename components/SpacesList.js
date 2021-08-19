@@ -130,7 +130,7 @@ class SpacesList extends React.Component{
        
         return(
         <TouchableOpacity
-        disabled={spot.toBeDeleted}
+        // disabled={spot.toBeDeleted}
         key={spot.listingID}
         style={cardStyle}
         onPress = {() => this.selectSpace(spot)}
