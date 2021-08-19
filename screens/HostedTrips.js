@@ -163,6 +163,21 @@ export default class HostedTrips extends Component{
                     alert("Trip not found.")
                 }else{
 
+                    // let date = new Date();
+                    // var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    // var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    // let today = date.getDate();
+                    // let month = months[date.getMonth()]
+                    // let year = date.getFullYear();
+
+                    // this.state.selectedVisit.visit.visit.day.dateName === today
+                    // this.state.selectedVisit.visit.visit.day.year === year
+                    // this.state.seletedVisit.visit.visit.day.monthName === month
+
+                    // const isToday = true;
+
+                    // console.log(isToday)
+
                     try{
                         await this.collectPayment(amountChargedToHostCents).then(res => {
                             if(res.statusCode !== 200){
@@ -198,13 +213,17 @@ export default class HostedTrips extends Component{
                                 }
                              })
                         }).then(() => {
+
+                            console.log("Before isToday")
+
                             let date = new Date();
                             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                             var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                             let today = date.getDate();
                             let month = months[date.getMonth()]
                             let year = date.getFullYear();
-                            const isToday = this.state.selectedVisit.visit.visit.day.dateName === today && this.state.selectedVisit.visit.visit.day.year === year && this.state.seletedVisit.visit.day.monthName === month;
+
+                           
                             const settings = {
                                 method: 'POST',
                                 headers: {
@@ -213,8 +232,8 @@ export default class HostedTrips extends Component{
                                 },
                                 body: JSON.stringify({
                                     tokens: visitorPushTokens.filter(x => x !== null),
-                                    title: isCurrentlyActive ? "Cancelled current trip" : "Cancelled upcoming trip",
-                                    message: isCurrentlyActive ? `The host of ${this.state.selectedVisit.listing.spaceName} has cancelled your visit early.` : `The host of ${this.state.selectedVisit.listing.spaceName} has cancelled your upcoming visit ${isToday ? "today" : `on ${this.state.selectedVisit.visit.visit.day.dayName}`} from ${this.state.selectedVisit.visit.visit.time.start.labelFormatted} - ${this.state.selectedVisit.visit.visit.time.end.labelFormatted}.`,
+                                    title: "Cancelled upcoming trip",
+                                    message: `The host of ${this.state.selectedVisit.listing.spaceName} has cancelled your upcoming visit.`,
                                     screen: "HostedTrips"
                                 })
                               }
@@ -654,7 +673,7 @@ export default class HostedTrips extends Component{
                                             {paymentsArray}
                                         </RadioList>
                                     : null}
-                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Charge ${amountChargedToHost}`}</Button>
+                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Pay ${amountChargedToHost}`}</Button>
                                      
                         </View>
                    </ActionSheet>
