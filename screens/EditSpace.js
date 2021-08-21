@@ -480,8 +480,8 @@ class editSpace extends Component {
         "Deleting a Space", 
         "Deleting a hosted space makes it unavailable to any future trips and will remove itself from your profile in 7 days. All current trips will still occur unless you cancel them individually.",
         [
-          { text: 'Delete Space', onPress: () => this.deleteSpace()},
-          { text: 'Cancel' }
+          { text: 'Cancel' },
+          { text: 'Delete Space', onPress: () => this.deleteSpace()}
       ]
     )
   }
