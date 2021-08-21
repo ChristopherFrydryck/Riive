@@ -58,7 +58,9 @@ class editSpace extends Component {
       },
       headerRight: () => (
         
-        params.deleted ? 
+        params.deleted && params.deleteDate > new Date().getTime() ? 
+          null :
+          params.deleted ?
           <TouchableOpacity
           onPress={() => params.restoreSpace()}
           style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16}}
@@ -160,7 +162,7 @@ class editSpace extends Component {
             // Integrated version 1.0.0
             hidden: space.hidden,
             toBeDeleted: space.toBeDeleted,
-            deleteDate: null,
+            deleteDate: space.deleteDate,
             visits: space.visits,
 
             
@@ -502,8 +504,8 @@ class editSpace extends Component {
       "Restoring a Space", 
       "Restoring your hosted space will make it available again to anyone searching within your availability. You can update it upon restoring your space.",
       [
-        { text: 'Restore Space', onPress: () => this.restoreSpace()},
-        { text: 'Cancel' }
+        { text: 'Cancel' },
+        { text: 'Restore Space', onPress: () => this.restoreSpace()} 
     ]
   )
   }
@@ -795,11 +797,17 @@ renderDotsView = (numItems, position) =>{
                   </View>
                 
                   <View style={styles.contentBox}>
-                    <View style={{width: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, borderRadius: width, marginBottom: 8}}>
+                    {this.state.toBeDeleted ? 
+                    <View style={{ alignSelf: "flex-start", backgroundColor: Colors.hal500, paddingVertical: 4, paddingHorizontal: 16, borderRadius: width, marginBottom: 8 }}>
+                      <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.deleteDate > new Date().getTime() ? `Deleting on ${String(new Date(this.state.deleteDate)).split(" ")[1]} ${String(new Date(this.state.deleteDate)).split(" ")[2]}` : `Deleted`}</Text>
+                    </View>
+                    :
+                    <View style={{alignSelf: 'flex-start', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, paddingHorizontal: 16, borderRadius: width, marginBottom: 8}}>
                                 <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.spacePrice}/hr</Text>
                     </View>
+                    }
                   
-                        <Text  style={{fontSize: 24, flexWrap: 'wrap'}}>{this.state.spaceName}</Text>
+                        <Text  style={{ flex: 0,fontSize: 24, flexWrap: 'wrap'}}>{this.state.spaceName}</Text>
                         <View style={{flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8}}>
                             <Icon
                                 iconName="location-pin"
