@@ -246,11 +246,11 @@ class reserveSpace extends Component {
 
         }
 
-        checkHiddenOrCancelled = () => {
+        checkHiddenOrCancelled = async() => {
             const db = firestore();
             const space = db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID)
 
-            space.get().then(res => {
+            await space.get().then(res => {
                 return res.data()
             }).then((res) => {
                 if(res.toBeDeleted || res.hidden){
