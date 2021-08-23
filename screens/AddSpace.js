@@ -149,6 +149,7 @@ class addSpace extends Component {
              // Integrated version 1.0.0
              hidden: false,
              toBeDeleted: false,
+             deleteDate: null,
              visits: 0,
             
              verificationSent: false,
@@ -623,6 +624,7 @@ class addSpace extends Component {
                       created: createdTime,
                       hidden: false,
                       toBeDeleted: false,
+                      deleteDate: null,
                       visits: []
                })
 
@@ -643,6 +645,7 @@ class addSpace extends Component {
                   created: createdTime,
                   hidden: false,
                   toBeDeleted: false,
+                  deleteDate: null,
                   visits: [],
                })
 
@@ -1124,6 +1127,9 @@ clearAddress = () => {
             </View>
             <View style={{paddingHorizontal: 16}}>
               <DayAvailabilityPicker 
+                listing={null}
+                isHidden={false}
+                isDeleted={false}
                 availability={this.state.daily}
                 availabilityCallback={this.availabilityCallbackFunction}
                 >

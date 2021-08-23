@@ -17,7 +17,6 @@ import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
-import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -65,6 +64,8 @@ class externalSpace extends React.Component {
             isRefundable: false,
             refundAmt: null,
             refundAmtCents: null,
+            fullRefund: null,
+            refundServiceFee: null,
 
             changesMade: false,
         }
@@ -206,6 +207,34 @@ class externalSpace extends React.Component {
         
     }
 
+    refundTrip = async (amountRefund, refundFee) => {
+            
+
+        const settings = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentIntent: this.state.visit.paymentIntentID,
+            amount: amountRefund,
+            refundApplicationFee: refundFee,
+          })
+        }
+
+
+
+        try{
+          
+          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/refundTrip', settings)
+          const data = await fetchResponse.json();
+          return data;
+        }catch(e){
+          return e
+        }    
+      }
+
     checkIfRefundable = () => {
         // const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
@@ -260,21 +289,21 @@ class externalSpace extends React.Component {
                 if(minutesSinceStart >= 30){
                     refundableAmtCents = Math.floor(this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable))
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
+                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: false})
                     
                 }else{
                     refundableAmtCents = Math.floor(this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents)
                     refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
+                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: true})
                 }
             }else{
                 refundableAmtCents = Math.floor(this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents})
+                this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: true, refundServiceFee: true})
             }
         }else{
             Alert("This visit can no longer be refunded. For any questions, contact us at support@riive.net.")
-            this.setState({refundAmt: null, refundAmtCents: null})
+            this.setState({refundAmt: null, refundAmtCents: null, fullRefund: null})
         }
 
 
@@ -325,24 +354,77 @@ class externalSpace extends React.Component {
 
         if(!this.isInPast){
             const db = firestore();
-            db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then((trip) => {
+            db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
                     alert("Failed to save changes. Trip not found.")
                 }else{
+                    let hostPushTokens = null;
+                    let refundID =  null;
+                    // console.log(trip.data().hostID)
+
                     try{
+
+                      await this.refundTrip(this.state.refundAmtCents, false).then(res => {
+                      
+                            if(res.statusCode !== 200){
+                                throw res.message
+                            }else{
+                                refundID = res.data.id
+                            }
+                        })
+
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
                             isCancelled: true,
                             refundAmt: this.state.refundAmt,
                             refundAmtCents: this.state.refundAmtCents,
+                            refundId: refundID,
+                            refundFull: this.state.fullRefund,
+                            refundServiceFee: this.state.refundServiceFee,
                             hostCharged: null,
                             hostChargedCents: null,
-                            cancelledBy: trip.data().hostID === this.props.UserStore.userID ? "host" : "guest",
+                            cancelledBy: "guest",
                             updated: currentTime
+                        }).then(async() => {
+                            await db.collection("users").doc(trip.data().hostID).get().then((host) => {
+                                if(!host.exists){
+                                    throw "Host does not exist"
+                                }else{
+                                    hostPushTokens = host.data().pushTokens
+                                }
+                             })
+                        }).then(() => {
+                            let date = new Date();
+                            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            let today = date.getDate();
+                            let month = months[date.getMonth()]
+                            let year = date.getFullYear();
+                            const isToday = this.state.visit.visit.day.dateName === today && this.state.visit.visit.day.year === year && this.state.visit.visit.day.monthName === month;
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                  Accept: 'application/json',
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    tokens: hostPushTokens.filter(x => x !== null),
+                                    title: this.isCurrentlyActive ? "Cancelled current trip" : "Cancelled upcoming trip",
+                                    message: this.isCurrentlyActive ? `${this.state.visit.visitorName.split(" ")[0]} ${this.state.visit.visitorName.split(" ")[1].split("")[0]}. has ended their current visit at ${this.state.listing.spaceName} early.` : `${this.state.visit.visitorName.split(" ")[0]} ${this.state.visit.visitorName.split(" ")[1].split("")[0]}. has cancelled their upcoming visit ${isToday ? "today" : `on ${this.state.visit.visit.day.dayName}`} at ${this.state.listing.spaceName} from ${this.state.visit.visit.time.start.labelFormatted} - ${this.state.visit.visit.time.end.labelFormatted}.`,
+                                    screen: "HostedTrips"
+                                })
+                              }
+                          
+                                
+                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+
+                            
                         }).then(() => {
                             this.props.navigation.goBack(null)
+                        }).catch(e => {
+                            throw e
                         })
                     }catch(e){
-                        alert("Failed to cancel trip. Check your connection and try again soon.")
+                        alert(e)
                     }
                 }
             })
@@ -513,7 +595,7 @@ class externalSpace extends React.Component {
                                 }
                             </View>
                             :
-                            <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].slice(0,4) + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
+                            <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].split(" ")[0].split(":")[0] + ":" + this.state.lastUpdate.split(" ")[1].split(" ")[0].split(":")[1] + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
                         </View>
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>

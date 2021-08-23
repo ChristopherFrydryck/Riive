@@ -50,7 +50,7 @@ const HomeNavigator = createStackNavigator({
             gestureEnabled: false,
         }
     },
-    TermsOfService: {
+    TOS: {
         screen: TermsOfService,
         navigationOptions: {
             title: "Terms of Service",

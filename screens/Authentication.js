@@ -263,7 +263,8 @@ export default class Authentication extends React.Component {
               this.props.UserStore.payments = doc.data().payments;
               this.props.UserStore.searchHistory = searchHistory;
               this.props.UserStore.disabled = doc.data().disabled.isDisabled;
-              this.props.UserStore.deleted = doc.data().deleted.toBeDeleted
+              this.props.UserStore.toBeDeleted = doc.data().deleted.toBeDeleted
+              this.props.UserStore.deleteDate = doc.data().deleted.deleted
               this.props.UserStore.pushTokens = doc.data().pushTokens || [];
               this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
               this.props.UserStore.address = doc.data().primaryAddress || {};
@@ -972,7 +973,7 @@ renderCurrentState() {
   render() {
 
       return (
-        <ScrollView contentContainerStyle={{flexGrow : 1, justifyContent : 'center'}}>
+        <ScrollView contentContainerStyle={{flexGrow : 1, justifyContent : 'center', backgroundColor: 'white'}}>
           <KeyboardAvoidingView 
             // style={{backgroundColor: 'purple'}}
             behavior={"padding"} 

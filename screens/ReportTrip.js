@@ -7,7 +7,6 @@ import Input from '../components/Input'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import Dropdown from '../components/Dropdown'
-import DropdownItem from '../components/DropdownItem'
 import { version } from '../package.json'
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

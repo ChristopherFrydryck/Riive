@@ -375,8 +375,6 @@ export default class VisitingTrips extends Component{
 
             const hostName = `${data.visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
 
-            // console.log((date.getTime() - data.visit.time.end.unix))
-
 
             return(
                 <Modal 
@@ -384,7 +382,7 @@ export default class VisitingTrips extends Component{
                     visible={visible}
                     onRequestClose={() => this.setState({modalVisible: false, selectedVisit: null})}
                 >
-                    <SafeAreaView style={{flex: 1}}>
+                    <SafeAreaView style={{flex: 1, paddingBottom: 16}}>
                         <View style={{flex: 0}}>
                             <View style={{flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: Platform.OS === 'ios' ? 0 : 16}}>
                                 <Text numberOfLines={1}  ellipsizeMode='tail' style={{ fontSize: 18}}>{data.listing.spaceName}</Text>
@@ -470,7 +468,7 @@ export default class VisitingTrips extends Component{
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Payment Details</Text>
                                         {/* <Text>
-                                            {data.visit.payment.Number}  */}
+                                            {data.visit.payment.Number} 
                                             <Icon 
                                                 iconName={data.visit.payment.CardType !== '' ? 'cc-' + data.visit.payment.CardType : 'credit-card'}
                                                 iconLib="FontAwesome"
@@ -478,25 +476,40 @@ export default class VisitingTrips extends Component{
                                                 iconSize={28}
                                                 style={{ marginLeft: 16}}
                                             />
-                                        {/* </Text> */}
+                                        </Text> */}
                                 </View>
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Parking Fare</Text>
-                                        <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.price}</Text>
+                                        {data.visit.isCancelled ? 
+                                        <View>
+                                            {data.visit.refundFull ? 
+                                                <Text>{data.visit.price.price}</Text>
+                                                :
+                                                <View style={{flexDirection: 'row'}}>
+                                                    <Text style={{textDecorationLine: 'line-through', marginRight: 8}}>{data.visit.price.price}</Text>
+                                                    <Text>{((data.visit.refundAmtCents - data.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
+                                                </View>
+                                            }
+                                        </View>
+                                            
+                                        :
+                                            <Text>{data.visit.price.price}</Text>
+                                        }   
+                                       
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Service Fee</Text>
-                                        <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.serviceFee}</Text>
+                                        <Text>Service Fee {data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
+                                        <Text style={data.visit.isCancelled ? data.visit.refundServiceFee ? null : {textDecorationLine: 'line-through'}: null}>{data.visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Processing Fee</Text>
-                                        <Text style={data.visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{data.visit.price.processingFee}</Text>
+                                        <Text>Processing Fee {data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
+                                        <Text style={data.visit.isCancelled && data.visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null}>{data.visit.price.processingFee}</Text>
                                     </View>
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Returned (USD)" : "Total (USD)"}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Refunded (USD)" : "Total (USD)"}</Text>
                                         <View>
                                              <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? data.visit.refundAmt || "--" : data.visit.price.total}</Text>
                                         </View>

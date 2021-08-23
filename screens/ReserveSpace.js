@@ -6,6 +6,8 @@ import Button from '../components/Button'
 import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
+import Round from '../functions/in-app/round'
+
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
@@ -71,6 +73,7 @@ class reserveSpace extends Component {
             inSameTimezone: false,
 
             spaceAvailabilityWorks: true,
+            spaceCancelledOrHidden: false,
             authenticatingReservation: false,
         }
         
@@ -243,6 +246,21 @@ class reserveSpace extends Component {
 
         }
 
+        checkHiddenOrCancelled = async() => {
+            const db = firestore();
+            const space = db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID)
+
+            await space.get().then(res => {
+                return res.data()
+            }).then((res) => {
+                if(res.toBeDeleted || res.hidden){
+                    this.setState({spaceCancelledOrHidden: true})
+                }else{
+                    this.setState({spaceCancelledOrHidden: false})
+                }
+            })
+        }
+
         checkAvailability = async() => {
             let worksArray = [];
             let futureVisits = [];
@@ -342,8 +360,10 @@ class reserveSpace extends Component {
             var dollarsServiceFeeCents = price * this.state.serviceFeePercentage > 175 ? Math.ceil(price * this.state.serviceFeePercentage) : 175;
             dollarsServiceFee = dollarsServiceFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
-            var dollarsProcessingFee = ((((price * this.state.serviceFeePercentage) * .029) + 60) / 100);
-            var dollarsProcessingFeeCents = Math.ceil(((price * this.state.serviceFeePercentage) * .029) + 60)
+            
+
+            var dollarsProcessingFee = Round((((price  * .039) + 30) / 100), 2);
+            var dollarsProcessingFeeCents = Math.ceil((price  * .039) + 30)
             dollarsProcessingFee = dollarsProcessingFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
 
@@ -368,13 +388,14 @@ class reserveSpace extends Component {
         checkout = async() => {
             const { region, searchedAddress, searchInputValue, daySearched, timeSearched, locationDifferenceWalking } = this.props.navigation.state.params.homeState;
             await this.setState({authenticatingReservation: true})
+            await this.checkHiddenOrCancelled()
             await this.checkAvailability()
             const db = firestore();
 
             // console.log(`Vehicle: ${JSON.stringify(this.state.selectedVehicle)}`)
             // console.log(`Card: ${JSON.stringify(this.state.selectedPayment)}`)
 
-            if(this.state.selectedVehicle && this.state.selectedPayment && this.state.spaceAvailabilityWorks){
+            if(this.state.selectedVehicle && this.state.selectedPayment && this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden){
                 let card = this.state.selectedPayment;
                 let vehicle = this.state.selectedPayment;
                 // console.log(`${this.props.UserStore.userID} is paying for spot ${this.props.ComponentStore.selectedExternalSpot[0].listingID} with card ${this.state.selectedPayment.PaymentID} and driving a ${this.state.selectedVehicle.Year} ${this.state.selectedVehicle.Make} ${this.state.selectedVehicle.Model}`)
@@ -420,9 +441,21 @@ class reserveSpace extends Component {
                             let endDate = new Date(currentYear, monthNames.indexOf(daySearched.monthName), daySearched.dateName, timeSearched[1].label.slice(0,2), timeSearched[1].label.slice(2,4), 59);
                             let endDateString = new Date(currentYear, monthNames.indexOf(daySearched.monthName), daySearched.dateName, timeSearched[1].label.slice(0,2), timeSearched[1].label.slice(2,4), 59).toLocaleString('en-US', {timezone: timeZone});
 
+                            var paymentIntent = null
+
+                            
+
 
                             const ref = db.collection("trips").doc();
                             var currentTime = firestore.Timestamp.now();
+
+                            await this.payForSpace(hostDoc.stripeConnectID, ref.id).then(res => {
+                                if(res.statusCode !== 200){
+                                    throw `Error ${res.statusCode}: ${res.raw.message}`
+                                }else{
+                                    paymentIntent = res.data.id
+                                }
+                            })
 
                             
 
@@ -447,6 +480,8 @@ class reserveSpace extends Component {
                                     total: this.state.total,
                                     totalCents: this.state.totalCents,
                                 },
+                                paymentIntentID: paymentIntent,
+                                refundId: null,
                                 tripID: ref.id,
                                 updated: currentTime,
                                 created: currentTime,
@@ -458,6 +493,8 @@ class reserveSpace extends Component {
                                 distanceWalking: locationDifferenceWalking,
                                 refundAmt: null,
                                 refundAmtCents: null,
+                                refundFull: null,
+                                refundServiceFee: null,
                                 hostCharged: null,
                                 hostChargedCents: null,
                                 visit: {
@@ -516,7 +553,6 @@ class reserveSpace extends Component {
                                
                             
                             
-                            // this.payForSpace(hostDoc.stripeID)
                             await this.setState({authenticatingReservation: false})
                             await this.props.navigation.navigate("ReservationConfirmed", {
                                 homeState: {
@@ -540,7 +576,7 @@ class reserveSpace extends Component {
                             throw e
                         }
                     }).catch(e => {
-                        console.log(e)
+                        alert(e)
                     })
 
 
@@ -572,8 +608,7 @@ class reserveSpace extends Component {
               someDate.getFullYear() == today.getFullYear()
           }
 
-        payForSpace = async (hostStripeID) => {
-            // console.log(this.props.ComponentStore.selectedExternalSpot[0].hostID)
+        payForSpace = async (hostStripeID, refID) => {
 
             const settings = {
               method: 'POST',
@@ -583,20 +618,24 @@ class reserveSpace extends Component {
               },
               body: JSON.stringify({
                 amount: this.state.totalCents,
-                customer: this.props.UserStore.stripeConnectID,
+                visitorID: this.props.UserStore.stripeID,
+                description: `Visit id: ${refID}`,
                 cardID: this.state.selectedPayment.StripePMID,
                 customerEmail: this.props.UserStore.email,
                 transactionFee: this.state.serviceFeeCents + this.state.processingFeeCents,
                 hostID: hostStripeID
               })
             }
+
+   
+
             try{
               
               const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/payForSpace', settings)
               const data = await fetchResponse.json();
               return data;
             }catch(e){
-              alert(e);
+              return e
             }    
           }
 
@@ -777,7 +816,8 @@ class reserveSpace extends Component {
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.total}</Text>
                         </View>
-                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks ? this.state.authenticatingReservation ? <FloatingCircles color="white"/> : "Reserve Space" : `Booked at ${timeSearched[0].labelFormatted}`}</Button>
+                        <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
+                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.spaceCancelledOrHidden || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? this.state.authenticatingReservation ? <FloatingCircles color="white"/> : "Reserve Space" : this.state.spaceCancelledOrHidden ? `Space Unavailable` :`Booked at ${timeSearched[0].labelFormatted}`}</Button>
                     </View>
                     
                 </ScrollView>

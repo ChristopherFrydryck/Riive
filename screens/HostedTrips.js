@@ -1,12 +1,16 @@
-import React, {Component} from 'react'
+import React, {Component, createRef} from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, RefreshControl, SectionList, ActivityIndicator, Modal, SafeAreaView, Linking, TouchableOpacity, Alert} from 'react-native'
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
+import RadioList from '../components/RadioList'
+import RadioButton from '../components/RadioButton'
+import FloatingCircles from '../components/FloatingCircles'
 import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
 import MapView, {Marker} from 'react-native-maps';
+import ActionSheet from "react-native-actions-sheet";
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
@@ -18,8 +22,9 @@ import 'firebase/firestore';
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
+import ClickableChip from '../components/ClickableChip'
 
-
+const actionSheetRef = createRef();
 
 @inject("UserStore", "ComponentStore")
 @observer
@@ -31,7 +36,10 @@ export default class HostedTrips extends Component{
             visits: [],
             lastRenderedItem: null,
             selectedVisit: null,
-            modalVisible: false,
+            selectedPayment: null,
+            visitModalVisible: false,
+            cardModalVisible: false,
+            cancellingTrip: false,
             // secitonlist stuff
             
         }
@@ -42,44 +50,93 @@ export default class HostedTrips extends Component{
 
    componentDidMount(){
         // Set Status Bar page info here!
-    this._navListener = this.props.navigation.addListener('didFocus', () => {
+        this._navListener = this.props.navigation.addListener('didFocus', () => {
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
             this.updateVisits();
         });
 
         
+
+        
     }
 
     showCancellationModal = () => {
 
-        let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
+        
+        if(this.props.UserStore.payments.length > 0){
+            let payment = this.props.UserStore.payments[0]
+            this.setState({selectedPayment: {
+                CCV: payment.CCV,
+                Number: payment.Number,
+                CardType: payment.CardType,
+                Month: payment.Month,
+                Name: payment.Name,
+                PaymentID: payment.PaymentID,
+                StripeID: payment.StripeID,
+                StripePMID: payment.StripePMID,
+                Type: payment.Type,
+                Year: payment.Year
+            }})
+        }else{
+            this.setState({selectedPayment: null})
+        }
+        this.setState({cardModalVisible: true})
+ 
+     
 
-        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
-        let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-
-
-        Alert.alert(
-                        'Canceling a Guest Trip',
-                        `Cancelling a trip for an upcoming guest will refund the entire amount to the guest and you will be charged ${amountChargedToHost}. If this day/time does not work in the future, you can update your space availability under Edit Details or manage your space from your profile.`,
-                        [
-                        { text: 'Back' },
-                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() },
+        // Alert.alert(
+        //                 'Canceling a Guest Trip',
+        //                 `Cancelling a trip for an upcoming guest will refund the entire amount to the guest and you will be charged ${amountChargedToHost}. If this day/time does not work in the future, you can update your space availability under Edit Details or manage your space from your profile.`,
+        //                 [
+        //                 { text: 'Back' },
+        //                 { text: 'Cancel Trip', onPress: () => this.cancelTrip() },
                         
-                        ]
-                    )
+        //                 ]
+        //             )
             
                 
 
         
     }
 
+    setActivePayment = (payment, idOnly) => {
+        if(idOnly){
+            let activePayment = this.props.UserStore.payments.filter(x => x.PaymentID === payment)[0]
+            this.setState({selectedPayment: {
+                CCV: activePayment.CCV,
+                Number: activePayment.Number,
+                CardType: activePayment.CardType,
+                Month: activePayment.Month,
+                Name: activePayment.Name,
+                PaymentID: activePayment.PaymentID,
+                StripeID: activePayment.StripeID,
+                StripePMID: activePayment.StripePMID,
+                Type: activePayment.Type,
+                Year: activePayment.Year
+            }})
+        }else{
+            this.setState({selectedPayment: {
+                CCV: payment.CCV,
+                Number: payment.Number,
+                CardType: payment.CardType,
+                Month: payment.Month,
+                Name: payment.Name,
+                PaymentID: payment.PaymentID,
+                StripeID: payment.StripeID,
+                StripePMID: payment.StripePMID,
+                Type: payment.Type,
+                Year: payment.Year
+            }})
+        }
+    }
+
     cancelTrip = () => {
 
-      
-
         let { serviceFeeCents, processingFeeCents, priceCents } = this.state.selectedVisit.visit.price
+
+        this.setState({cancellingTrip: true})
 
 
         let amountChargedToHostCents = serviceFeeCents + processingFeeCents
@@ -91,42 +148,180 @@ export default class HostedTrips extends Component{
         const timeDiffEnd = this.state.selectedVisit.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.selectedVisit.visit.visit.time.start.unix - new Date().getTime()
 
-        let isInPast = timeDiffEnd != Math.abs(timeDiffEnd)
-        let isCurrentlyActive = timeDiffStart != Math.abs(timeDiffStart) && !isInPast
+        let isInPast = this.state.selectedVisit.isInPast
+        let isCurrentlyActive = this.state.selectedVisit.current
 
         var currentTime = firestore.Timestamp.now();
-
+        var visitorPushTokens = null;
        
 
-        if(!isInPast){
+        if(!isInPast && this.state.selectedPayment !== null){
             const db = firestore();
-            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then((trip) => {
+            let refundID = null;
+            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
-                    alert("Failed to save changes. Trip not found.")
+                    alert("Trip not found.")
                 }else{
+
+                    // let date = new Date();
+                    // var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                    // var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    // let today = date.getDate();
+                    // let month = months[date.getMonth()]
+                    // let year = date.getFullYear();
+
+                    // this.state.selectedVisit.visit.visit.day.dateName === today
+                    // this.state.selectedVisit.visit.visit.day.year === year
+                    // this.state.seletedVisit.visit.visit.day.monthName === month
+
+                    // const isToday = true;
+
+                    // console.log(isToday)
+
                     try{
-                        db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
-                            isCancelled: true,
-                            refundAmt: refundAmount,
-                            refundAmtCents: refundAmountCents,
-                            hostCharged: amountChargedToHost,
-                            hostChargedCents: amountChargedToHostCents,
-                            cancelledBy: "host",
-                            updated: currentTime
+                        await this.collectPayment(amountChargedToHostCents).then(res => {
+                            if(res.statusCode !== 200){
+                                throw res.raw.message
+                            }
                         }).then(() => {
-                            // this.props.navigation.goBack(null)
+                            return this.refundTrip(refundAmountCents, true)
+                        }).then(res => {
+                            if(res.statusCode !== 200){
+                                throw res.message
+                            }else{
+                               refundID = res.data.id
+                            }
+                        }).then(() => {
+                            db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
+                                isCancelled: true,
+                                refundAmt: refundAmount,
+                                refundAmtCents: refundAmountCents,
+                                refundFull: true,
+                                refundServiceFee: true,
+                                refundId: refundID,
+                                hostCharged: amountChargedToHost,
+                                hostChargedCents: amountChargedToHostCents,
+                                cancelledBy: "host",
+                                updated: currentTime
+                            })
+                        }).then(async() => {
+                            await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
+                                if(!visitor.exists){
+                                    throw "Host does not exist"
+                                }else{
+                                    visitorPushTokens = visitor.data().pushTokens
+                                }
+                             })
+                        }).then(() => {
+
+                            let date = new Date();
+                            var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                            var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            let today = date.getDate();
+                            let month = months[date.getMonth()]
+                            let year = date.getFullYear();
+
+                           
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                  Accept: 'application/json',
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    tokens: visitorPushTokens.filter(x => x !== null),
+                                    title: "Cancelled upcoming trip",
+                                    message: `The host of ${this.state.selectedVisit.listing.spaceName} has cancelled your upcoming visit.`,
+                                    screen: "HostedTrips"
+                                })
+                              }
+                          
+                                
+                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+
+                            
+                        }).then(() => {
                             this.updateVisits();
-                            this.setState({modalVisible: false})
+                            this.setState({visitModalVisible: false, cancellingTrip: false})
+                        }).catch(e => {
+                            this.setState({cancellingTrip: false})
+                            throw e
                         })
                     }catch(e){
-                        alert("Failed to cancel trip. Check your connection and try again soon.")
+                        alert(e)
                     }
                 }
             })
         }else{
-            alert("Failed to cancel this trip. Ended since cancellation.")
+            this.setState({cancellingTrip: false})
+            if(isInPast){
+                alert("Failed to cancel this trip. Ended since cancellation.")
+            }else{
+                alert("Select or add a payment to cancel this trip.")
+            }
+           
         }
     }
+
+    refundTrip = async (amountRefund, refundFee) => {
+            
+
+        const settings = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentIntent: this.state.selectedVisit.visit.paymentIntentID,
+            amount: amountRefund,
+            refundApplicationFee: refundFee,
+          })
+        }
+
+
+
+        try{
+          
+          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/refundTrip', settings)
+          const data = await fetchResponse.json();
+          return data;
+        }catch(e){
+          return e
+        }    
+      }
+
+
+      collectPayment = async (total) => {
+
+    
+
+        const settings = {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: total,
+            visitorID: this.props.UserStore.stripeID,
+            description: `Collected money from host on visit ${this.state.selectedVisit.visit.tripID}`,
+            paymentID: this.state.selectedPayment.StripePMID,
+            customerEmail: this.props.UserStore.email,
+          })
+        }
+
+        try{
+          
+          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/collectPayment', settings)
+          const data = await fetchResponse.json();
+          return data;
+        }catch(e){
+          return e
+        }    
+      }
+
+
 
     updateVisits = () => {
         try{
@@ -308,7 +503,7 @@ export default class HostedTrips extends Component{
         const visitorName = `${visit.visitorName.split(" ")[0]} ${visit.visitorName.split(" ")[1].slice(0,1)}.`
         return(
 
-            <TouchableOpacity  style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, modalVisible: true})}>
+            <TouchableOpacity  style={styles.visitCard} onPress={() => this.setState({selectedVisit: data, visitModalVisible: true})}>
                 <View style={{flex: 1, flexDirection: 'row'}}>
                     <View style={{borderRadius: 4, overflow: 'hidden',}}>
                     {!isCancelled ? 
@@ -366,7 +561,7 @@ export default class HostedTrips extends Component{
     openEditSpace = (spot) => {
         this.props.ComponentStore.selectedSpot.clear()
         this.props.ComponentStore.selectedSpot.push(spot)
-        this.setState({modalVisible: false})
+        this.setState({visitModalVisible: false})
         this.props.navigation.navigate("EditSpace")
     }
 
@@ -390,8 +585,97 @@ export default class HostedTrips extends Component{
     }
 
     pressedTOS = () => {
-        this.setState({modalVisible: false})
+        this.setState({visitModalVisible: false})
         this.props.navigation.navigate("TOS")
+    }
+
+    cardsSheet = (props) => {
+        const {data, visible, active} = props;
+
+        const {visit, listing, current} = data;
+        const {isCancelled} = visit
+
+        let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
+
+        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+
+            if(visible){
+                actionSheetRef.current?.setModalVisible(true);
+
+                var paymentsArray = this.props.UserStore.payments.map(payment => {
+                    let cardValid = false
+                    let d = new Date();
+                    // Validate card is not expired
+                    if(payment.Year < parseInt(d.getFullYear().toString().slice(2))){
+                      cardValid = false;
+                  }else if(payment.Year == parseInt(d.getFullYear().toString().slice(2)) && payment.Month < d.getMonth() + 1){
+                      cardValid = false;
+                  }else{
+                      cardValid = true;
+                  }
+      
+                    return(
+                      <RadioButton key={payment.PaymentID} style={{paddingVertical: 6}} id={payment.PaymentID} selectItem={() => this.setActivePayment(payment, false)}>
+                          <View style={{flex: 1, alignItems: 'flex-start'}}>
+                              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                                  <Text style={{fontSize: 16, marginRight: 16}}>{`••••••••••••${payment.Number}`}</Text> 
+                                  <Icon 
+                                      iconName={payment.CardType ? 'cc-' + payment.CardType : 'credit-card'}
+                                      iconLib="FontAwesome"
+                                      iconColor={Colors.cosmos900}
+                                      iconSize={20}
+                                      style={{ marginLeft: "auto"}}
+                                   />
+                              </View>
+                              
+                              <Text style={cardValid ? {fontSize: 12} : {fontSize: 12, color: Colors.hal500}} >{cardValid ? `Expires ${payment.Month}/${payment.Year}` : "Expired"}</Text>
+                          </View>
+                      </RadioButton>
+                    )
+                })
+            }
+            
+           
+            return(
+                <ActionSheet 
+                        ref = {actionSheetRef}
+                        bounceOnOpen={true}
+                        bounciness={4}
+                        gestureEnabled={true}
+                        containerStyle={{paddingTop: 8, zIndex: 99999}}
+                        extraScroll={40}
+                        delayActionSheetDrawTime={0}
+                        initialOffsetFromBottom = {1}
+                   >
+                       <View style={styles.actionSheetContent}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
+                                        <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>Cancelling Trip</Text>
+                                     </View>
+                                     <Text style={{fontSize: 14}}>Cancelling a trip for an upcoming guest will refund the entire amount to the guest and <Text style={{fontSize: 14, fontWeight: 'bold'}}>you will be charged {amountChargedToHost}</Text>. Update your space availability to prevent future bookings at this time.</Text>
+                                     <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 16}}>
+                                        <Text style={{flex: 1}}>Choose a payment method</Text>
+                                        <ClickableChip 
+                                        bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%
+                                        textColor={Colors.tango700}
+                                        onPress={() => {
+                                            this.setState({cardModalVisible: false, visitModalVisible: false})
+                                            this.props.navigation.navigate("AddPayment")
+                                        }}
+                                        >+ Card</ClickableChip>
+            
+                                     </View>
+                                     
+                                     {this.props.UserStore.payments.length > 0 ? 
+                                        <RadioList style={{marginBottom: 24}} activeItem={this.state.selectedPayment ? this.state.selectedPayment.PaymentID : null} selectItem={(option) => this.setActivePayment(option, true)}>
+                                            {paymentsArray}
+                                        </RadioList>
+                                    : null}
+                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Pay ${amountChargedToHost}`}</Button>
+                                     
+                        </View>
+                   </ActionSheet>
+            )
     }
  
     VisitModal(props) {
@@ -434,9 +718,10 @@ export default class HostedTrips extends Component{
                 <Modal 
                     animationType="slide"
                     visible={visible}
-                    onRequestClose={() => this.setState({modalVisible: false, selectedVisit: null})}
+                    onRequestClose={() => this.setState({visitModalVisible: false, selectedVisit: null})}
+                    style={{zIndex: -999}}
                 >
-                    <SafeAreaView style={{flex: 1}}>
+                    <SafeAreaView style={{flex: 1, paddingBottom: 16}}>
                         <View style={{flex: 0}}>
                             <View style={{flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: Platform.OS === 'ios' ? 0 : 16}}>
                                 <Text numberOfLines={1}  ellipsizeMode='tail' style={{ fontSize: 18}}>{data.listing.spaceName}</Text>
@@ -446,7 +731,7 @@ export default class HostedTrips extends Component{
                                     iconName="x"
                                     iconColor={Colors.cosmos500}
                                     iconSize={28}
-                                    onPress={() => this.setState({modalVisible: false, selectedVisit: null})}
+                                    onPress={() => this.setState({visitModalVisible: false, selectedVisit: null})}
                                     style={{position: 'absolute', top: Platform.OS === 'ios' ? 8 : 16, right: 8}}
                                 />
                         </View>
@@ -461,7 +746,8 @@ export default class HostedTrips extends Component{
                             <Text numberOfLines={1} style={{textAlign: 'center', fontSize: 18, marginTop: 8, paddingBottom: 4}}>{isToday ? `Today, ${visit.visit.day.monthName} ${visit.visit.day.dateName} ${visit.visit.day.year}` : `${visit.visit.day.dayName}, ${visit.visit.day.monthName} ${visit.visit.day.dateName} ${visit.visit.day.year}`}</Text>
                             {isCancelled ? 
                                 <View style={{paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: Colors.mist900, marginBottom: 8}}>
-                                <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.hal500, textAlign: 'center'}}>Trip Cancelled</Text>
+                                <Text type="Regular" numberOfLines={1} style={{fontSize: 22, color: Colors.hal500, textAlign: 'center'}}>Trip cancelled by {data.visit.cancelledBy === 'host' ? "you" : "guest"}</Text>
+                                <Text>{}</Text>
                                 </View>
                             :
                                 <View>
@@ -524,21 +810,36 @@ export default class HostedTrips extends Component{
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text>Parking Fare</Text>
-                                        <Text style={visit.isCancelled ? {textDecorationLine: 'line-through'}: null} >{visit.price.price}</Text>
+                                        {visit.isCancelled ? 
+                                       
+                                            <View>
+                                                {visit.refundFull ? 
+                                                    <Text style={visit.cancelledBy === 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.price }</Text>
+                                                : 
+                                                    <View style={{flexDirection: 'row'}}>
+                                                        <Text style={{textDecorationLine: 'line-through', marginRight: 8}}>{visit.price.price }</Text>
+                                                        <Text>{((visit.refundAmtCents - visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
+                                                    </View>
+                                                }
+                                            </View>
+                                        
+                                        :
+                                            <Text>{visit.price.price}</Text>
+                                        }
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Service Fee</Text>
-                                        <Text style={visit.isCancelled ? {textDecorationLine: 'line-through'}: null}>{visit.price.serviceFee}</Text>
+                                        <Text>Service Fee {isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : <Text style={{fontSize: 12}}>(charged to visitor)</Text>}</Text>
+                                        <Text style={visit.isCancelled && !visit.refundServiceFee ? {textDecorationLine: 'line-through'} : null}>{visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Processing Fee</Text>
-                                        <Text style={visit.isCancelled ? {textDecorationLine: 'line-through'}: null} >{visit.price.processingFee}</Text>
+                                        <Text>Processing Fee {isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : <Text style={{fontSize: 12}}>(charged to visitor)</Text>}</Text>
+                                        <Text style={visit.isCancelled && visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.processingFee}</Text>
                                     </View>
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{isCancelled ? "Returned (USD)" : "Total (USD)"}</Text>
-                                        <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{isCancelled ? visit.price.price : visit.price.total}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 1} : {fontSize: 24, flex: 1}}>{isCancelled ? visit.cancelledBy === 'host' ? "Charged (USD)" : "Guest Refund (USD)" : "Total(USD)"}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 0}: {fontSize: 24, flex: 0}}>{isCancelled ? visit.cancelledBy === 'host' ? visit.hostCharged : visit.refundAmt : visit.price.price}</Text>
                                     </View>
                                     <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
@@ -552,15 +853,18 @@ export default class HostedTrips extends Component{
                                             visit: visit,
                                             listing: listing
                                         })
-                                        this.setState({modalVisible: false})
+                                        this.setState({visitModalVisible: false})
                                     }} style = {isReported ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : {flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{isReported ? "Trip Reported" : "Report Trip"}</Button>
                                 </View>
                                 : 
-                                <View style={{flexDirection: 'row'}}>
+                                <View style={{flexDirection: 'column'}}>
                                     <Button disabled={isCurrentlyActive && !isCancelled} onPress={() => this.showCancellationModal()} style = {isCurrentlyActive ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Cancel Trip</Button>
+                                    {isCurrentlyActive && !isCancelled ? <Text style={{fontSize: 14, marginVertical: 8}}>Currently active trips can only be cancelled by guests. To prevent this in the future, <Text onPress={() => this.openEditSpace(listing)} style={{textDecorationLine: 'underline', color: Colors.tango900, fontSize: 14}}>edit your availability</Text></Text> :  null}
                                 </View>
                                 }
                             </View>
+
+                            <this.cardsSheet visible={this.state.cardModalVisible} data={data} active={isCurrentlyActive}/>
                             
                             
                             
@@ -577,7 +881,7 @@ export default class HostedTrips extends Component{
     render(){
         return(
             <View style={styles.container}>
-                <this.VisitModal visible={this.state.modalVisible} data={this.state.selectedVisit}/>
+                <this.VisitModal visible={this.state.visitModalVisible} data={this.state.selectedVisit}/>
                  {/* <ScrollView refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateVisits}/>}>
                     <Text>This is Visiting trips.</Text>
                      <View> */}
@@ -595,6 +899,7 @@ export default class HostedTrips extends Component{
                             ListEmptyComponent={() => this.emptyComponent()}
                             ListFooterComponent={this.LoadingIndicatorBottom()}
                         />
+                    
                {/* </View>
              </ScrollView> */}
             </View>
@@ -639,5 +944,9 @@ const styles = StyleSheet.create({
         //   shadowRadius: 3, 
         //   elevation: 12,
         //   borderRadius: 4,
-      }
+      },
+      actionSheetContent:{
+        paddingTop: 8,
+        paddingHorizontal: 16, 
+    }
 })

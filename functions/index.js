@@ -732,11 +732,40 @@ const fs = require('fs');
         })
     })
 
+    exports.collectPayment = functions.https.onRequest((request, response) => {
+        stripe.paymentIntents.create({
+            amount: request.body.amount,
+            currency: 'usd',
+            confirm: true,
+            description: request.body.description,
+            customer: request.body.visitorID,
+            payment_method: request.body.paymentID,
+            receipt_email: request.body.customerEmail,
+        }).then(function(result) {
+            if (result.error) {
+              throw result.error
+            } else {
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: result,
+                    removedCardID: request.body.PaymentID,
+                })
+              // The payment has succeeded
+              // Display a success message
+            }
+        }).catch((e) => {
+            response.status(500).send(e)
+        });
+    })
+
     exports.payForSpace = functions.https.onRequest((request, response) => {
         stripe.paymentIntents.create({
             payment_method_types: ['card'],
             amount: request.body.amount,
             currency: 'usd',
+            confirm: true,
+            description: request.body.description,
             customer: request.body.visitorID,
             payment_method: request.body.cardID,
             receipt_email: request.body.customerEmail,
@@ -748,15 +777,49 @@ const fs = require('fs');
             if (result.error) {
               throw result.error
             } else {
-                console.log("SUCCESS")
-                return null
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: result,
+                    removedCardID: request.body.PaymentID,
+                })
               // The payment has succeeded
               // Display a success message
             }
         }).catch((e) => {
-            console.log("Failed process because of " + e)
-            return null;
+            response.status(500).send(e)
         });
+    })
+
+    exports.refundTrip = functions.https.onRequest((request, response) => {
+        stripe.refunds.create({
+            payment_intent: request.body.paymentIntent,
+            amount: request.body.amount,
+            reason: "requested_by_customer",
+            reverse_transfer: true,
+            refund_application_fee: request.body.refundApplicationFee 
+          }).then(res => {
+              
+              if(res.status !== "succeeded"){
+                const error = new Error("Failed to get your information")
+                error.statusCode = 501;
+                error.name = 'Stripe/RefundFailure'
+                throw error;
+           
+              }else{
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: res,
+                })
+              }
+          }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+          })
     })
 
     exports.deleteSpace = functions.firestore.document('listings/{listingID}').onDelete((snap, context) => {
@@ -1043,6 +1106,7 @@ const fs = require('fs');
                                             db.collection('listings').doc(afterUser.listings[i]).update({
                                                 hidden: false,
                                                 toBeDeleted: false,
+                                                deleted: false,
                                                 visits: 0, 
                                             })
                                         }

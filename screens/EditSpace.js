@@ -30,6 +30,7 @@ import storage from '@react-native-firebase/storage'
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
+import ClickableChip from '../components/ClickableChip';
 
 
 
@@ -45,6 +46,7 @@ import {inject, observer} from 'mobx-react/native'
 class editSpace extends Component {
   _isMounted = false;
 
+
   static navigationOptions = ({navigation}) => {
     const { params = {} } = navigation.state;
     
@@ -55,18 +57,37 @@ class editSpace extends Component {
           fontSize: 18,
       },
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => params.openEditModal()}
+        
+        params.deleted && params.deleteDate > new Date().getTime() ? 
+          null :
+          params.deleted ?
+          <TouchableOpacity
+          onPress={() => params.restoreSpace()}
           style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16}}
         >
           <Icon 
-            iconName="edit-2"
+            iconName="backup-restore"
+            iconLib="MaterialCommunityIcons"
             iconColor="rgb(14, 122, 254)"
             iconSize={18}
             style={{marginRight: 4}}
           />
-          <Text style={{fontSize: 18, color: "rgb(14, 122, 254)"}}>Edit</Text>
+          <Text style={{fontSize: 18, color: "rgb(14, 122, 254)"}}>Restore</Text>
         </TouchableOpacity>
+        : 
+          <TouchableOpacity
+            onPress={() => params.openEditModal()}
+            style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16}}
+          >
+            <Icon 
+              iconName="edit-2"
+              iconColor="rgb(14, 122, 254)"
+              iconSize={18}
+              style={{marginRight: 4}}
+            />
+            <Text style={{fontSize: 18, color: "rgb(14, 122, 254)"}}>Edit</Text>
+          </TouchableOpacity>
+        
       )
     }
     
@@ -141,6 +162,7 @@ class editSpace extends Component {
             // Integrated version 1.0.0
             hidden: space.hidden,
             toBeDeleted: space.toBeDeleted,
+            deleteDate: space.deleteDate,
             visits: space.visits,
 
             
@@ -166,7 +188,9 @@ class editSpace extends Component {
 
        this.props.navigation.setParams({
          title: add.length > 20 ? add.substring(0,20) + "..." : add,
+         deleted: this.state.toBeDeleted,
          openEditModal: this.openEditModal,
+         restoreSpace: this.restoreAlert,
       });
 
        
@@ -175,6 +199,8 @@ class editSpace extends Component {
     openEditModal = () => {
       this.setState({editModalOpen: !this.state.editModalOpen})
     }
+
+    
 
 
     getPermissionAsync = async (...perms) => {
@@ -379,6 +405,7 @@ class editSpace extends Component {
                 updated: createdTime,
                 hidden: this.state.hidden,
                 toBeDeleted: this.state.toBeDeleted,
+                deleteDate: null,
 
                })
 
@@ -403,6 +430,7 @@ class editSpace extends Component {
                   updated: createdTime,
                   hidden: this.state.hidden,
                   toBeDeleted: this.state.toBeDeleted,
+                  deleteDate: null,
                   visits: this.state.visits,
                }
                // add space to mobx UserStore
@@ -445,6 +473,58 @@ class editSpace extends Component {
   availabilityCallbackFunction = (data) => {
   
     this.checkForChanges("daily", data)
+  }
+
+  deleteAlert = () => {
+    Alert.alert(
+        "Deleting a Space", 
+        "Deleting a hosted space makes it unavailable to any future trips and will remove itself from your profile in 7 days. All current trips will still occur unless you cancel them individually.",
+        [
+          { text: 'Cancel' },
+          { text: 'Delete Space', onPress: () => this.deleteSpace()}
+      ]
+    )
+  }
+
+  deleteSpace = async() => {
+    const db = firestore();
+    let date = new Date();
+    date.setDate(date.getDate() + 7);
+  
+    await db.collection("listings").doc(this.state.postID).update({
+      toBeDeleted: true,
+      deleteDate: date.getTime()
+    }).then(() => {
+      this.props.navigation.goBack(null)
+    })
+  }
+
+  restoreAlert = () => {
+    Alert.alert(
+      "Restoring a Space", 
+      "Restoring your hosted space will make it available again to anyone searching within your availability. You can update it upon restoring your space.",
+      [
+        { text: 'Cancel' },
+        { text: 'Restore Space', onPress: () => this.restoreSpace()} 
+    ]
+  )
+  }
+
+  restoreSpace = async() => {
+    const db = firestore();
+  
+    await db.collection("listings").doc(this.state.postID).update({
+      toBeDeleted: false,
+      deleteDate: null,
+    }).then(() => {
+      this.props.navigation.goBack(null)
+    })
+  }
+
+
+
+  navigationCallbackFunction = () => {
+    this.props.navigation.goBack(null)
   }
    
 
@@ -499,7 +579,6 @@ renderDotsView = (numItems, position) =>{
       const {width, height} = Dimensions.get('window')
       const {ComponentStore, UserStore} = this.props
 
-      
       return(
         
         <KeyboardAwareScrollView
@@ -513,17 +592,17 @@ renderDotsView = (numItems, position) =>{
             visible={this.state.editModalOpen} animationType="slide"
             //         transparent={true}          
           >
-            <SafeAreaView style={{backgroundColor: 'white', flex: 1}} />
+            <SafeAreaView style={{backgroundColor: 'white', flex: 0}} />
             <View style={{padding: 8, flexDirection: 'row', justifyContent: 'space-between'}}>
-    
+   
                   <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8, marginLeft: 8}}>Edit Space</Text>
                   <Icon 
-                                    iconName="x"
-                                    iconColor={Colors.cosmos500}
-                                    iconSize={28}
-                                    onPress={() => this.openEditModal()}
-                                    style={{marginTop: 10, marginLeft: "auto", marginRight: 5}}
-                                />
+                      iconName="x"
+                      iconColor={Colors.cosmos500}
+                      iconSize={28}
+                      onPress={() => this.openEditModal()}
+                      style={{marginTop: 10, marginLeft: "auto", marginRight: 5}}
+                  />
               </View>
               <KeyboardAwareScrollView 
                     keyboardShouldPersistTaps="handled"
@@ -534,39 +613,67 @@ renderDotsView = (numItems, position) =>{
                   >
                   
                   <View style={{ width: "100%", paddingHorizontal: 16, position: 'absolute', zIndex: 9, }}>
-                    <View style={{ padding: 8, backgroundColor: 'rgba(0, 0, 0, 0.6)'}}>
+                    <TouchableOpacity onPress={() => this.deleteAlert()} style={{ padding: 8, backgroundColor: 'rgba(232, 66, 66, 0.7)'}}>
                       <View style={{flexDirection: 'row'}}>
                       <Icon
-                                iconName="location-pin"
-                                iconLib="Entypo"
+                                iconName="trash"
+                                iconLib="feather"
                                 iconColor="white"
                                 iconSize={16}
                                 style={{marginRight: 8, marginTop: 4}}
                             />
-                        <Text style={{color: "white", fontSize: 16, marginRight: 24}}>{this.state.address.full} {this.state.address.box ? <Text style={{color: "white"}}># {this.state.address.box}</Text> : null}</Text>
+                        <Text style={{color: "white", fontSize: 16, marginRight: 24}}>Delete space @ {this.state.address.full.split(",")[0]}</Text>
                       </View>
                       {this.state.address.spaceNumber ? <Text style={{color: "white", marginLeft: 24}}>Space # {this.state.address.spaceNumber}</Text> : null}
-                    </View>
+                    </TouchableOpacity>
                   </View>
                   <View style={{paddingHorizontal: 16}}>
                       
+                      <View style={{}}>
                         <Image 
-                          style={{width: Dimensions.get("window").width - 32}}
+                          style={{width: Dimensions.get("window").width - 32, flex: 1}}
                           aspectRatio={16/9}
                           source={{uri: this.state.photo}}
                           resizeMode={'cover'}
                         /> 
+
+                        <View style={{flexDirection: 'row', position: 'absolute', bottom: 8, left: 8, width: Dimensions.get("window").width - 32}}>
+                          <ClickableChip onPress={() => this.pickImage()} bgColor='rgba(0, 0, 0, 0.6)' style={{height: 30, alignItems: 'center', justifyContent: 'center', marginRight: 8}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                              <Icon 
+                                    iconName="photo"
+                                    iconLib="Foundation"
+                                    iconColor={Colors.mist300}
+                                    iconSize={16}
+                                    style={{paddingRight: 6, marginTop: 4}}
+                                />
+                                <Text style={{color: Colors.mist300}}>Change Photo</Text>
+                            </View>
+                          </ClickableChip>
+                          <ClickableChip onPress={() => this.launchCamera()} bgColor='rgba(0, 0, 0, 0.6)' style={{height: 30, alignItems: 'center', justifyContent: 'center'}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                              <Icon 
+                                    iconName="camera"
+                                    iconColor={Colors.mist300}
+                                    iconSize={16}
+                                    style={{paddingRight: 6, marginTop: 4}}
+                                />
+                                <Text style={{color: Colors.mist300}}>Take Photo</Text>
+                            </View>
+                          </ClickableChip>
+                        </View>
+                    </View>
                     
   
-                        <View style={{display: "flex", flexDirection: 'row', marginBottom: 16}}>
+                        {/* <View style={{display: "flex", flexDirection: 'row', marginBottom: 16}}>
                         <Button style={{flex: 1, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.pickImage()}>Change Photo</Button>
                         <Button style={{flex: 1, marginLeft: 8, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.launchCamera()}>Take Photo</Button>
-                      </View>
+                      </View> */}
                     
                       
                       </View>
 
-                  <View style={{paddingHorizontal: 16}}>
+                  <View style={{paddingHorizontal: 16, marginTop: 8}}>
                     <Input 
                       placeholder='Name your space...'         
                       label="Space Name"
@@ -616,8 +723,10 @@ renderDotsView = (numItems, position) =>{
                     </View> */}
                     <View style={{paddingHorizontal: 16}}>
                       <DayAvailabilityPicker 
+                        listing={this.props.ComponentStore.selectedSpot[0]}
                         availability={this.state.daily}
                         availabilityCallback={this.availabilityCallbackFunction}
+                        navigationCallback={this.navigationCallbackFunction}
                         >
                       </DayAvailabilityPicker>
 
@@ -688,11 +797,17 @@ renderDotsView = (numItems, position) =>{
                   </View>
                 
                   <View style={styles.contentBox}>
-                    <View style={{width: 100, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, borderRadius: width, marginBottom: 8}}>
+                    {this.state.toBeDeleted ? 
+                    <View style={{ alignSelf: "flex-start", backgroundColor: Colors.hal500, paddingVertical: 4, paddingHorizontal: 16, borderRadius: width, marginBottom: 8 }}>
+                      <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.deleteDate > new Date().getTime() ? `Deleting on ${String(new Date(this.state.deleteDate)).split(" ")[1]} ${String(new Date(this.state.deleteDate)).split(" ")[2]}` : `Deleted`}</Text>
+                    </View>
+                    :
+                    <View style={{alignSelf: 'flex-start', justifyContent: 'center', backgroundColor: Colors.fortune500, paddingVertical: 4, paddingHorizontal: 16, borderRadius: width, marginBottom: 8}}>
                                 <Text style={{ fontSize: 16, color: Colors.mist300,}}>{this.state.spacePrice}/hr</Text>
                     </View>
+                    }
                   
-                        <Text  style={{fontSize: 24, flexWrap: 'wrap'}}>{this.state.spaceName}</Text>
+                        <Text  style={{ flex: 0,fontSize: 24, flexWrap: 'wrap'}}>{this.state.spaceName}</Text>
                         <View style={{flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8}}>
                             <Icon
                                 iconName="location-pin"
@@ -720,6 +835,7 @@ renderDotsView = (numItems, position) =>{
                       
                         <View style={{marginTop: 32}}>
                             <DayAvailabilityPicker 
+                                listing={this.props.ComponentStore.selectedSpot[0]}
                                 availability={this.state.daily}
                                 availabilityCallback={this.availabilityCallbackFunction}
                                 editable={false}

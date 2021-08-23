@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import {View, StyleSheet, Switch, Modal, SafeAreaView, Dimensions, Animated, Platform, ScrollView} from 'react-native'
+import {View, Alert, StyleSheet, Switch, Modal, SafeAreaView, Dimensions, Animated, Platform, ScrollView} from 'react-native'
 
 
 import Text from './Txt'
@@ -13,14 +13,25 @@ import DropdownItem from '../components/DropdownItem'
 
 import Times from '../constants/TimesAvailable'
 
+import firestore from '@react-native-firebase/firestore';
+
+//MobX Imports
+import {inject, observer} from 'mobx-react/native'
 
 
-
+@inject("UserStore", "ComponentStore")
+@observer
 export default class DayAvailabilityPicker extends React.Component{
     constructor(props){
         super(props)
         this.state = {
             activeDay: new Date().getDay(),
+
+            
+
+            listing: this.props.listing,
+            isHidden: this.props.listing ? this.props.listing.hidden : false,
+            isDeleted: this.props.listing ? this.props.listing.toBeDeleted : false,
 
             daily: this.props.availability,
             dailyStaging: JSON.parse(JSON.stringify(this.props.availability)),
@@ -398,7 +409,6 @@ export default class DayAvailabilityPicker extends React.Component{
     }
 
     openModal = () => {
-        
         this.setState((prevState, state) => ({timeSlotModalVisible: true}))
         this.testValidAvailability()
 
@@ -408,8 +418,49 @@ export default class DayAvailabilityPicker extends React.Component{
     closeModal = async () => {
       
       await  this.setState((prevState) => ({timeSlotModalVisible: false}))
+ 
 
 
+    }
+
+    pauseAlert = () => {
+        if(this.state.isHidden){
+            Alert.alert(
+                'Resuming Your Booking',
+                'Users will be able to resume booking this space with your past availability set. Any other unsaved changes will be lost upon resuming your booking.',
+                [
+                    { text: 'Resume Booking', onPress: () =>{
+                        this.togglePause();
+                    }},
+                    { text: 'Cancel' }
+                ]
+            )
+        }else{
+            Alert.alert(
+                'Pausing Your Booking',
+                'Users will be unable to book this space until you resume it manually. Any other unsaved changes will be lost upon pausing your booking.',
+                [
+                    { text: 'Pause Booking', onPress: () =>{
+                        this.togglePause();
+                    }},
+                    { text: 'Cancel' }                
+                ]
+            )
+        }
+    }
+
+    togglePause = async() => {
+
+        await this.setState({isHidden: !this.state.isHidden})
+            const db = firestore();
+            db.collection("listings").doc(this.state.listing.listingID).update({
+                hidden: this.state.isHidden
+            })
+        
+
+        // Navigation Callback
+        this.props.navigationCallback();
+        
     }
 
     updateAvailability = async () => {
@@ -425,7 +476,7 @@ export default class DayAvailabilityPicker extends React.Component{
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
 
-        
+       
         var startTimes = [];
         for (var i = 0 ; i < Times[0].start.length; i++){
            startTimes.push({key: i, label: Times[0].start[i], labelFormatted: this.convertToCommonTime(Times[0].start[i])})
@@ -458,7 +509,7 @@ export default class DayAvailabilityPicker extends React.Component{
                     <SafeAreaView style={{paddingTop: 16, paddingHorizontal: 16, flex: 1, alignItems: 'center'}}>
                     <View style={{}}>
                         <TopBar style={{flex: 0}}>
-                            <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8}}>{this.state.dailyStaging[this.state.activeDay].dayName} Availability</Text>
+                            <Text style={{fontSize: 20, marginRight: 'auto', marginTop: 8, marginLeft: 8}}>{this.state.dailyStaging[this.state.activeDay].dayName} Availability</Text>
                                 <Icon 
                                     iconName="x"
                                     iconColor={Colors.cosmos500}
@@ -604,10 +655,24 @@ export default class DayAvailabilityPicker extends React.Component{
                         ))}
                     </View>
                     <View style={{paddingVertical: 16}}>
-                    
-                        
+                            
                                     
-                            {this.state.daily[this.state.activeDay].data.map((option, i) => {
+                            {this.state.listing && this.state.isHidden || this.state.isDeleted ?
+                                <View>
+                                    <View style={{padding: 16, display: "flex", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',borderColor: Colors.mist900, borderTopWidth: 1, borderBottomWidth: 1, backgroundColor: 'white'}}>   
+                                    <View style={{ flexDirection: "row", alignItems: 'center'}}>
+                                       
+                                        <Text style={{fontSize: 16}}>Space Unavailable</Text>
+                                        </View>
+                                        <Text style={{color: this.state.listing && this.state.isDeleted ? Colors.hal500 : Colors.tango900 }}>{this.state.listing && this.state.isDeleted ? "Space Deleted" : "Booking Paused"}</Text>
+                                    </View> 
+                                </View>
+
+                                
+                            
+                            :
+                            
+                            this.state.daily[this.state.activeDay].data.map((option, i) => {
                                 return(
                                 <View key={option.id} style={{padding: 16, display: "flex", flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',borderColor: Colors.mist900, borderTopWidth: 1, borderBottomWidth: i == 0  && this.state.daily[this.state.activeDay].data.length > 1 ? 0 : 1, backgroundColor: 'white'}}>   
                                     <View style={{ flexDirection: "row", alignItems: 'center'}}>
@@ -617,20 +682,32 @@ export default class DayAvailabilityPicker extends React.Component{
                                         <Text style={{fontSize: 16}}>{this.convertToCommonTime(option.start)} - {this.convertToCommonTime(option.end)}</Text>
                                         </View>
                                         <Text style={{color: option.available ? Colors.fortune900 : "#000000"}}>{option.available ? "Available" : "Unavailable"}</Text>
-                                    
-                                    {/* <Switch
-                                        onValueChange={() => this.changeAvailability(this.state.daily[this.state.activeDay - 1], option.id)}
-                                        value={option.available}
-                                    /> */}
                                 </View> 
                             )
                             
                         })}
                         {this.props.editable ? 
-                        <Button style={{backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.tango900}} textStyle={{color: Colors.tango900}} onPress={(x) => this.openModal()}>Edit Time Slot{this.state.daily[this.state.activeDay].data.length > 1 ? "s" : null}</Button>
+                           
+                                this.state.listing && !this.state.isDeleted ?
+                                <View style={{flexDirection: 'row', flex: 1}}>
+                                    <Button disabled={false} style={{flex: 1, marginRight: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.tango900}} textStyle={{color: Colors.tango900}} onPress={(x) => this.pauseAlert()}>{this.state.isHidden ? "Resume Booking" : "Pause Booking"}</Button>
+                                    
+                                    {this.state.isHidden ? null :
+                                        <Button disabled={this.state.isHidden} style={{flex: 1, marginLeft: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: this.state.isHidden ? Colors.mist900 : Colors.tango900}} textStyle={{color: this.state.isHidden ? Colors.mist900 : Colors.tango900}} onPress={(x) => this.openModal()}>Edit Time Slot{this.state.daily[this.state.activeDay].data.length > 1 ? "s" : null}</Button>
+                                    }
+                                </View>
+                                : null 
+                          
+                           
                         : null}
                        
 
+
+                             {/* {this.state.listing && this.state.isDeleted && !this.props.editable ? null :
+                  
+                                            <Button style={{flex: 1, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.togglePause(this.state.listing.listingID, this.state.isHidden)}>Resume Booking</Button>
+                                         
+                                    } */}
                             
                      
                      
@@ -654,7 +731,10 @@ export default class DayAvailabilityPicker extends React.Component{
 }
 
 DayAvailabilityPicker.defaultProps = {
-   editable: true
+   editable: true,
+   isHidden: false,
+   isDeleted: false,
+   listing: null,
 };
 
 

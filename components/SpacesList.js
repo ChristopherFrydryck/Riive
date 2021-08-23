@@ -84,12 +84,13 @@ class SpacesList extends React.Component{
                 // Integrated version 1.0.0
                 hidden: spot.hidden,
                 toBeDeleted: spot.toBeDeleted,
+                deleteDate: spot.deleteDate,
                 visits: spot.visits,
             })
             // console.log(this.props.ComponentStore.selectedSpot[0].spaceName)
             this.props.navigation.navigate("EditSpace")
          
-
+           
        
         
         
@@ -98,10 +99,12 @@ class SpacesList extends React.Component{
     renderSpaceCard = (spot, index) => {
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
-        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created)
+        var currentDate = new Date().getTime()
+        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => x.deleteDate > currentDate || !x.deleteDate)
+
+        
         
         let currentActive = orderedData[index].availability[dayToday].data.filter((x) => parseInt(x.start.substring(0,2)) <= hourToday && parseInt(x.end.substring(0,2)) >= hourToday)
-
 
        let cardStyle
        if(orderedData.length > 1){
@@ -115,10 +118,19 @@ class SpacesList extends React.Component{
        }else{
            cardStyle = styles.li_single
        }
-       
 
+
+       if(spot.deleteDate){
+            var deleteDate = new Date(spot.deleteDate);
+            // Add 8 days to date
+            // deleteDate.setDate(deleteDate.getDate() + 8);
+       }
+    //    console.log(`${spot.spaceName} is set to be deleted on ${deleteDate}`)
+       
+       
         return(
         <TouchableOpacity
+        // disabled={spot.toBeDeleted}
         key={spot.listingID}
         style={cardStyle}
         onPress = {() => this.selectSpace(spot)}
@@ -129,12 +141,34 @@ class SpacesList extends React.Component{
                 source={{uri: spot.photo}}
                 resizeMode={'cover'}
             /> 
-            {currentActive[0].available ? 
+            {currentActive[0].available && !spot.hidden  && !spot.toBeDeleted ? 
                 <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 12, left: 0, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 8, borderTopRightRadius: 4, borderBottomRightRadius: 4}}>
                     <Animated.View style={{opacity: this.state.activeTimeFadeAnimation, width: 8, height: 8, backgroundColor: Colors.fortune500, borderRadius: Dimensions.get("window").width/2, marginRight: 8}}/>
                     <Text style={{color: Colors.fortune500}}>Available Now</Text>
                 </View>
-                : null}
+                : 
+                spot.toBeDeleted ?
+                <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 12, left: 0, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 8, borderTopRightRadius: 4, borderBottomRightRadius: 4}}>
+                    <Icon 
+                        iconName="delete"
+                        iconLib="MaterialCommunityIcons"
+                        iconColor={Colors.hal500}
+                        iconSize={15}
+                    />
+                    <Text style={{color: Colors.hal500, marginLeft: 4}}>Deleting on {String(deleteDate).split(" ")[1] + " " + String(deleteDate).split(" ")[2]}</Text>
+                </View>
+                :
+                spot.hidden ? 
+                    <View style={{flexDirection: 'row', alignItems: 'center', position: 'absolute', top: 12, left: 0, backgroundColor: 'white', paddingVertical: 4, paddingHorizontal: 8, borderTopRightRadius: 4, borderBottomRightRadius: 4}}>
+                        <Icon 
+                            iconName="pause"
+                            iconLib="Ionicons"
+                            iconColor={Colors.tango900}
+                            iconSize={15}
+                        />
+                        <Text style={{color: Colors.tango900, marginLeft: 4}}>Paused</Text>
+                    </View>
+                : null }
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap', padding: 8}}>
             {/* <Icon
@@ -152,14 +186,16 @@ class SpacesList extends React.Component{
             <Text style={{fontSize: 16}}>{spot.address.full}</Text>
             : <Text style={{fontSize: 16}}>{spot.address.full.substring(0, 28) + "..."}</Text>}
             </View>
+            {spot.toBeDeleted ? null :
             <View style={{position:"absolute", right:0}}>
+                
                 <Icon 
                     iconName="chevron-right"
                     iconColor={Colors.mist900}
                     iconSize={28}
                 />
             </View>
-
+             }
         </View>
        
        
@@ -171,12 +207,12 @@ class SpacesList extends React.Component{
         let {spotsLoaded} =  this.props.ComponentStore;
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
-        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created)
+        var currentDate = new Date().getTime()
+        var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => x.deleteDate > currentDate || !x.deleteDate)
         var {width} = Dimensions.get('window');
 
-        // console.log((16 * (orderedData.length - 2) + 48)/orderedData.length)
 
-        if(spotsLoaded && this.state.data.length == 1){
+        if(spotsLoaded && orderedData.length == 1){
         return(
         <View style={styles.container}>
                         
@@ -184,7 +220,7 @@ class SpacesList extends React.Component{
                
         </View>
             
-        )}else if(spotsLoaded && this.state.data.length > 1){
+        )}else if(spotsLoaded && orderedData.length > 1){
    
 
            
@@ -204,7 +240,7 @@ class SpacesList extends React.Component{
                 />
             </View>
             )
-        }else if(!spotsLoaded && this.state.data.length > 1){
+        }else if(!spotsLoaded && orderedData.length > 1){
             return(
                 <View style={[styles.container, {flexDirection: 'row', justifyContent: 'space-evenly', marginLeft: 16}]}>
                     <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height="160">
