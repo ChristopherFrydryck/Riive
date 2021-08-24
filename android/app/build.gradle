@@ -1,15 +1,20 @@
-apply plugin: "com.android.application"
-
-import com.android.build.OutputFile
-
-
 // Environment variables:
-
 project.ext.envConfigFiles = [
   release: ".env.production",
   debug: ".env.development",
   developmentrelease: ".env.development",
 ]
+
+apply plugin: "com.android.application"
+
+apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+
+
+import com.android.build.OutputFile
+
+
+
+
 
 
 /**
@@ -132,6 +137,7 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    flavorDimensions "default"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -186,6 +192,28 @@ android {
         developmentrelease {
             initWith debug
             applicationIdSuffix ".development"
+            manifestPlaceholders = [label: 'Riive Dev']
+        }
+    }
+    productFlavors {
+         dev {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.riive.development'
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "com.riive"
+            manifestPlaceholders = [label: 'Riive Dev']
+        }
+        prod {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.riive'
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "com.riive"
+        }
+        qa {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.riive.development'
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "com.riive"
             manifestPlaceholders = [label: 'Riive Dev']
         }
     }
@@ -246,5 +274,3 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply plugin: 'com.google.gms.google-services'
-// Applying react native config for env 
-apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"

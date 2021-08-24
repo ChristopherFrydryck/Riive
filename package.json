@@ -3,9 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "ios-device": "react-native run-ios --device",
+    "android": "ENVFILE=.env.production react-native run-android --variant=prodDebug",
+
+    "ios": "ENVFILE=.env.production react-native run-ios",
+    "ios-device": "ENVFILE=.env.production react-native run-ios --device",
+    "ios-staging": "ENVFILE=.env.staging react-native run-ios",
+    "ios-device-staging": "ENVFILE=.env.staging react-native run-ios --device",
+    "ios-dev": "ENVFILE=.env.development react-native run-ios",
+    "ios-device-dev": "ENVFILE=.env.development react-native run-ios --device",
+
+
     "start": "react-native start",
     "clean-start": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* &&  rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache clean --force &&  npm install && npm start -- --reset-cache",
     "test": "jest",
