@@ -3,7 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "devices": "adb devices",
+
     "android": "ENVFILE=.env.production react-native run-android --variant=prodDebug",
+    "android-device": "ENVFILE=.env.production react-native run-android --deviceId=$DEVICEID --variant=prodDebug",
+    "android-staging": "ENVFILE=.env.staging react-native run-android --variant=stageDebug",
+    "android-dev": "ENVFILE=.env.staging react-native run-android --variant=devDebug",
 
     "ios": "ENVFILE=.env.production react-native run-ios",
     "ios-device": "ENVFILE=.env.production react-native run-ios --device",

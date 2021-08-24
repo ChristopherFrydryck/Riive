@@ -209,7 +209,7 @@ android {
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "com.riive"
         }
-        qa {
+        stage {
             minSdkVersion rootProject.ext.minSdkVersion
             applicationId 'com.riive.development'
             targetSdkVersion rootProject.ext.targetSdkVersion
