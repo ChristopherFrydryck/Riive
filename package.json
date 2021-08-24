@@ -4,11 +4,15 @@
   "private": true,
   "scripts": {
     "devices": "adb devices",
+    "clean-android": "cd android && ./gradlew clean && cd ..",
+    "clean-ios": "cd ios && xcodebuild clean && cd ..",
+
 
     "android": "ENVFILE=.env.production react-native run-android --variant=prodDebug",
     "android-device": "ENVFILE=.env.production react-native run-android --deviceId=$DEVICEID --variant=prodDebug",
     "android-staging": "ENVFILE=.env.staging react-native run-android --variant=stageDebug",
-    "android-dev": "ENVFILE=.env.staging react-native run-android --variant=devDebug",
+    "android-dev": "ENVFILE=.env.development react-native run-android --variant=devDebug",
+
 
     "ios": "ENVFILE=.env.production react-native run-ios",
     "ios-device": "ENVFILE=.env.production react-native run-ios --device",
@@ -19,7 +23,9 @@
 
 
     "start": "react-native start",
-    "clean-start": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* &&  rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache clean --force &&  npm install && npm start -- --reset-cache",
+    "clean-start": "watchman watch-del-all && cd android && ./gradlew clean && cd .. && rm -rf $TMPDIR/react-native-packager-cache-* &&  rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache clean --force &&  npm install && npm start -- --reset-cache",
+
+
     "test": "jest",
     "lint": "eslint ."
   },

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "150143492815",
+    "project_id": "riive-dev",
+    "storage_bucket": "riive-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150143492815:android:39d43dac150271e8b94dba",
+        "android_client_info": {
+          "package_name": "com.riive.development"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150143492815-34g22n4i5v0dig1t10tj296b3h6ecbur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm5myWDJ1FocoN1oQyF67XaaupvvQXqTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150143492815-34g22n4i5v0dig1t10tj296b3h6ecbur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
