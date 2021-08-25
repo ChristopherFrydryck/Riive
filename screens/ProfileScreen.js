@@ -8,7 +8,7 @@ import AddressTypes from '../constants/AddressTypes'
 
 
 
-
+import config from 'react-native-config'
 
 import ImagePicker from 'react-native-image-crop-picker';
 import { request } from 'react-native-permissions';
@@ -141,6 +141,8 @@ class Profile extends Component{
 
     componentDidMount(){
         // Set Status Bar page info here!
+
+        console.log(config.FIREBASEAPPID)
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
             this.updateProfile()
@@ -216,10 +218,12 @@ class Profile extends Component{
             state: this.state.address.state,
           })
         }
+
+        console.log(this.state.searchedAddress)
       
-        if(this.state.address.line1 != ""){
+        if(this.state.searchedAddress){
           try{  
-            const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
+            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomerAddress`, settings)
             const data = await fetchResponse;
             if(data.status !== 200){
               throw "Failure to link address."
@@ -650,7 +654,7 @@ class Profile extends Component{
                     }
                     let error = null;
 
-                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editPhoneNumber`, settings).then((res) => {
                         if(res.status === 200){
                             this.props.UserStore.phone = this.state.phoneUpdate;
                             doc.update({ phone: this.props.UserStore.phone})
@@ -684,12 +688,13 @@ class Profile extends Component{
             if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode || checkLine2){
             
 
-         
+                
                 await this.addAddress()                
                 await this.setState({fullnameError: "", submitted: true}) 
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
+                console.log(this.state.fullNameUpdate)
                 let error = null;
                 if (this.state.fullNameUpdate.match(regexFullname)){
                     const settings = {
@@ -705,7 +710,7 @@ class Profile extends Component{
                         })
                     }
 
-                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editFullName', settings).then((res) => {
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editFullName`, settings).then((res) => {
                         if(res.status === 200){
                             this.props.UserStore.fullname = this.state.fullNameUpdate
                             doc.update({ 
@@ -757,7 +762,7 @@ class Profile extends Component{
                     }
              
 
-                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editDOB', settings).then((res) => {
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editDOB`, settings).then((res) => {
                         if(res.status === 200){
                             this.props.UserStore.dob = this.state.dobUpdate;
                             doc.update({
@@ -810,6 +815,7 @@ class Profile extends Component{
                 }
             }
         }catch(e){
+            console.log(e)
            
                 if(e.name.split("/")[0] === "Phone"){
                     this.setState({phoneError: e.message, failed: true})
@@ -825,6 +831,7 @@ class Profile extends Component{
                     this.setState({failed: true})
                     setTimeout(() => this.setState({failed: false}), 3000)
                 }
+                this.setState({savingChanges: false})
             
         }
 

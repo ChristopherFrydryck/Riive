@@ -1,11 +1,13 @@
+apply plugin: "com.android.application"
+apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+
 // Environment variables:
 project.ext.envConfigFiles = [
   release: ".env.production",
   debug: ".env.development"
 ]
 
-apply plugin: "com.android.application"
-apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+
 
 
 import com.android.build.OutputFile

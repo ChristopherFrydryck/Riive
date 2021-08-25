@@ -824,7 +824,7 @@ const fs = require('fs');
 
     exports.deleteSpace = functions.firestore.document('listings/{listingID}').onDelete((snap, context) => {
         const { listingID } = context.params;
-        const bucket = admin.storage().bucket('gs://riive-parking.appspot.com');
+        const bucket = admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`);
 
         bucket.deleteFiles({
             prefix: `listings/${listingID}`
@@ -895,7 +895,7 @@ const fs = require('fs');
 
     exports.deleteUser = functions.auth.user().onDelete((event) => {
         const { uid } = event;
-        const bucket = admin.storage().bucket('gs://riive-parking.appspot.com');
+        const bucket = admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`);
        
         
         db.collection('users').doc(uid).get().then((doc) => {
@@ -1073,7 +1073,7 @@ const fs = require('fs');
 
             return null
         }).then(() => {
-            return admin.storage().bucket('gs://riive-parking.appspot.com').file('dev-team/changelog.json').download()
+            return admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com').file('dev-team/changelog.json`).download()
         }).then((res) => {
             return JSON.parse(res)
         }).then((changelog) => {
