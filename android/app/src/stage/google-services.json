@@ -29,6 +29,49 @@
             {
               "client_id": "150143492815-34g22n4i5v0dig1t10tj296b3h6ecbur.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "150143492815-omuaama1ffsluu60iobdith9qsv8ufug.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.riive.development"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150143492815:android:246039738beca5fbb94dba",
+        "android_client_info": {
+          "package_name": "com.riive.staging"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150143492815-34g22n4i5v0dig1t10tj296b3h6ecbur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAm5myWDJ1FocoN1oQyF67XaaupvvQXqTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150143492815-34g22n4i5v0dig1t10tj296b3h6ecbur.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "150143492815-omuaama1ffsluu60iobdith9qsv8ufug.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.riive.development"
+              }
             }
           ]
         }

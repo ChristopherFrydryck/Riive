@@ -70,7 +70,7 @@
  
  
    render() {
-      console.log(config)
+      console.log(config.HELLO)
        return (        
          <Provider {...stores}>
              <View style={{flex: 1}}>

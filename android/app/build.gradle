@@ -1,12 +1,10 @@
 // Environment variables:
 project.ext.envConfigFiles = [
   release: ".env.production",
-  debug: ".env.development",
-  developmentrelease: ".env.development",
+  debug: ".env.development"
 ]
 
 apply plugin: "com.android.application"
-
 apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
 
 
@@ -189,11 +187,6 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
-        developmentrelease {
-            initWith debug
-            applicationIdSuffix ".development"
-            manifestPlaceholders = [label: 'Riive Dev']
-        }
     }
     productFlavors {
          dev {
@@ -211,10 +204,10 @@ android {
         }
         stage {
             minSdkVersion rootProject.ext.minSdkVersion
-            applicationId 'com.riive.development'
+            applicationId 'com.riive.staging'
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "com.riive"
-            manifestPlaceholders = [label: 'Riive Dev']
+            manifestPlaceholders = [label: 'Riive Staging']
         }
     }
 

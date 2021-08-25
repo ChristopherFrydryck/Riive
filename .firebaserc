@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "riive-parking"
+    "default": "riive-parking",
+    "test": "riive-dev",
+    "dev": "riive-dev",
+    "prod": "riive-parking"
   }
 }
