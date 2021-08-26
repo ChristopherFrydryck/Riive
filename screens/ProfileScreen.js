@@ -275,7 +275,7 @@ class Profile extends Component{
         var zip = det.address_components.filter(x => x.types.includes('postal_code'))[0]
       
         if(number && street && city && county && state){
-          // console.log(number)
+        //   console.log(number)
           // console.log(street)
           // console.log(city)
           // console.log(county)

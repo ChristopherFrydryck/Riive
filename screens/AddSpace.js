@@ -838,7 +838,7 @@ clearAddress = () => {
   this.GooglePlacesRef.setAddressText("")
   this.setState(prevState => ({
     searchedAddress: false,
-    timezone: timeZoneDB,
+    timezone: null,
     address:{
       ...prevState.address,
       full: null,
@@ -1128,8 +1128,6 @@ clearAddress = () => {
             <View style={{paddingHorizontal: 16}}>
               <DayAvailabilityPicker 
                 listing={null}
-                isHidden={false}
-                isDeleted={false}
                 availability={this.state.daily}
                 availabilityCallback={this.availabilityCallbackFunction}
                 >
