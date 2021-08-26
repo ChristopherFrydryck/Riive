@@ -11,6 +11,7 @@ import {Card, ThemeProvider} from 'react-native-paper';
 
 // import ImageBrowser from '../features/camera-roll/ImageBrowser'
 import ImagePicker from 'react-native-image-crop-picker';
+import config from 'react-native-config'
 
 
 import CheckImage from '../../assets/img/CheckAnatomy.png'
@@ -126,7 +127,7 @@ class addDebitCard extends Component {
     }
     try{
       
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addBankForDirectDeposit', settings)
+      const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addBankForDirectDeposit`, settings)
       const data = await fetchResponse.json();
       return data;
     }catch(e){

@@ -8,6 +8,8 @@ import Colors from '../constants/Colors'
 import LinearGradient from 'react-native-linear-gradient'
 import FloatingCircles from '../components/FloatingCircles'
 
+import config from 'react-native-config'
+
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
 
@@ -94,7 +96,7 @@ class EditPayment extends React.Component{
 
 
         try{ 
-          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/deleteSource', settings)
+          const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/deleteSource`, settings)
           const data = await fetchResponse.json();
           return data;
         }catch(e){

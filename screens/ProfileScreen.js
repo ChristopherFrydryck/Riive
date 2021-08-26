@@ -141,8 +141,6 @@ class Profile extends Component{
 
     componentDidMount(){
         // Set Status Bar page info here!
-
-        console.log(config.FIREBASEAPPID)
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
             this.updateProfile()
@@ -330,7 +328,6 @@ class Profile extends Component{
       
       setLocation = (text) => {
         this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
-        // console.log(text)
         // console.log("Set location")
         // console.log(this.state.address)
       }
@@ -901,7 +898,7 @@ class Profile extends Component{
                     transparent={false}
                     visible={this.state.editAccountModalVisible}
                     onRequestClose={() => this.setState({editAccountModalVisible: false})}
-                    
+                    keyboardShouldPersistTaps="handled"
                 >
 
                 <DialogInput 
@@ -1048,6 +1045,7 @@ class Profile extends Component{
                         />
                         <Text style={{fontSize: 15}}>Address</Text>
                         <GooglePlacesAutocomplete
+                            keyboardShouldPersistTaps="always"
                             placeholder='Your Address...'
                             returnKeyType={'search'}
                             ref={(instance) => { this.GooglePlacesRef = instance }}
@@ -1056,12 +1054,12 @@ class Profile extends Component{
                             autoFocus={false}
                             listViewDisplayed={false}
                             fetchDetails={true}
-                            onChangeText= {(text) => this.setLocation(text)}
                             onPress={(data, details = null) => {
-                            this.onSelectAddress(details)
+                                this.onSelectAddress(details)
                             }}
                             textInputProps={{
-                            clearButtonMode: 'never'
+                                // clearButtonMode: 'never',
+                                onChangeText: (text) => this.setLocation(text),
                             }}
                             renderRightButton={() => 
                             <Icon 
@@ -1088,49 +1086,42 @@ class Profile extends Component{
                             
                             
                             styles={{
-                            container: {
-                                border: 'none',
-                                zIndex: 99999,
-                            },
-                            textInputContainer: {
-                                width: '100%',
-                                display: 'flex',
-                                alignSelf: 'center',
-                                backgroundColor: "white",
-                                marginTop: -6,
-                                borderColor: '#eee',
-                                borderBottomWidth: 2,
-                                borderTopWidth: 0,
-                                backgroundColor: "none",
-                            },
-                            textInput: {
-                                paddingRight: 0,
-                                paddingLeft: 0,
-                                paddingBottom: 0,
-                                color: '#333',
-                                fontSize: 18,
-                                width: '100%',
-                            },
-                            description: {
-                                fontWeight: 'bold'
-                            },
-                            predefinedPlacesDescription: {
-                                color: '#1faadb'
-                            },
-                            listView:{
-                                backgroundColor: 'green',
-                                position: 'absolute',
-                                top: 40,
-                                width: Dimensions.get("window").width - 32,
-                                zIndex: 999999,
-                            },
-                            row: {
-                              backgroundColor: 'white',
-                              
-                            },
-                            poweredContainer:{
-                                backgroundColor: 'orange',
-                            }
+                                container: {
+                                    border: 'none',
+                                    flex: 0,
+                                  },
+                                  textInputContainer: {
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignSelf: 'center',
+                                    backgroundColor: "white",
+                                    marginTop: -6,
+                                    borderColor: '#eee',
+                                    borderBottomWidth: 2,
+                                    borderTopWidth: 0,
+                                    backgroundColor: "none",
+                                  },
+                                  textInput: {
+                                    paddingRight: 0,
+                                    paddingLeft: 0,
+                                    paddingBottom: 0,
+                                    color: '#333',
+                                    fontSize: 18,
+                                    width: '100%',
+                                  },
+                                  description: {
+                                    fontWeight: 'bold'
+                                  },
+                                  predefinedPlacesDescription: {
+                                    color: '#1faadb'
+                                  },
+                                  listView:{
+                                    backgroundColor: 'white',
+                                    position: 'absolute',
+                                    top: 40,
+                                    width: Dimensions.get("window").width - 32,
+                                    zIndex: 999999,
+                                  },
                             
                             }}
                         />

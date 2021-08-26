@@ -10,8 +10,10 @@ import Colors from '../../constants/Colors'
 import FloatingCircles from '../../components/FloatingCircles'
 import AddressTypes from '../../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
+
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
+import config from 'react-native-config'
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
@@ -133,7 +135,7 @@ addAddress = async () => {
 
   if(this.state.address.line1 != ""){
     try{  
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
+      const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomerAddress`, settings)
       const data = await fetchResponse;
       if(data.status !== 200){
         throw "Failure to link address."
@@ -175,7 +177,7 @@ addSSN = async () => {
 
   if(this.state.ssn != ""){
     try{  
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerSSN', settings)
+      const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomerSSN`, settings)
       const data = await fetchResponse;
       if(data.status !== 200){
         throw "Failure to link ssn."
@@ -312,12 +314,12 @@ setLocation(text) {
                 autoFocus={true}
                 listViewDisplayed={false}
                 fetchDetails={true}
-                onChangeText= {(text) => this.setLocation(text)}
                 onPress={(data, details = null) => {
                   this.onSelectAddress(details)
                 }}
                 textInputProps={{
-                  clearButtonMode: 'never'
+                  clearButtonMode: 'never',
+                  onChangeText: (text) => this.setLocation(text)
                 }}
                 renderRightButton={() => 
                 <Icon 

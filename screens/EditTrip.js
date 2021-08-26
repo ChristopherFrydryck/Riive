@@ -9,6 +9,7 @@ import NightMap from '../constants/NightMap'
 //For Shimmer
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, {Circle, Rect} from 'react-native-svg'
+import config from 'react-native-config'
 
 
 import Icon from '../components/Icon'
@@ -227,7 +228,7 @@ class externalSpace extends React.Component {
 
         try{
           
-          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/refundTrip', settings)
+          const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/refundTrip`, settings)
           const data = await fetchResponse.json();
           return data;
         }catch(e){
@@ -415,7 +416,7 @@ class externalSpace extends React.Component {
                               }
                           
                                 
-                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+                            fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/sendNotification`, settings)
 
                             
                         }).then(() => {
