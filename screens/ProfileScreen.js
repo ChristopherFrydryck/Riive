@@ -218,8 +218,6 @@ class Profile extends Component{
             state: this.state.address.state,
           })
         }
-
-        console.log(this.state.searchedAddress)
       
         if(this.state.searchedAddress){
           try{  
