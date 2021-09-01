@@ -9,6 +9,47 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* riiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* riiveTests.m */; };
 		062D1E6725E496E200D03320 /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56625D899C0004FE037 /* Poppins-Light.ttf */; };
+		066969C926E022F600B6D907 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
+		066969CA26E022F600B6D907 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		066969CC26E022F600B6D907 /* libPods-riive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E8B819ADE99D5159A4E9BA23 /* libPods-riive.a */; };
+		066969CE26E022F600B6D907 /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56625D899C0004FE037 /* Poppins-Light.ttf */; };
+		066969CF26E022F600B6D907 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56125D899C0004FE037 /* Poppins-SemiBold.ttf */; };
+		066969D026E022F600B6D907 /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56925D899C0004FE037 /* Poppins-SemiBoldItalic.ttf */; };
+		066969D126E022F600B6D907 /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F57025D899C0004FE037 /* Poppins-ExtraLight.ttf */; };
+		066969D226E022F600B6D907 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56725D899C0004FE037 /* Poppins-BoldItalic.ttf */; };
+		066969D326E022F600B6D907 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */; };
+		066969D426E022F600B6D907 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56325D899C0004FE037 /* Poppins-Medium.ttf */; };
+		066969D526E022F600B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */; };
+		066969D626E022F600B6D907 /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56425D899C0004FE037 /* Poppins-ExtraLightItalic.ttf */; };
+		066969D726E022F600B6D907 /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56025D899C0004FE037 /* Poppins-MediumItalic.ttf */; };
+		066969D826E022F600B6D907 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
+		066969D926E022F600B6D907 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		066969DA26E022F600B6D907 /* Poppins-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56A25D899C0004FE037 /* Poppins-BlackItalic.ttf */; };
+		066969DB26E022F600B6D907 /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56D25D899C0004FE037 /* Poppins-LightItalic.ttf */; };
+		066969DC26E022F600B6D907 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56225D899C0004FE037 /* Poppins-Bold.ttf */; };
+		066969DD26E022F600B6D907 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		066969DE26E022F600B6D907 /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56825D899C0004FE037 /* Poppins-Black.ttf */; };
+		066969DF26E022F600B6D907 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56525D899C0004FE037 /* Poppins-Italic.ttf */; };
+		066969E026E022F600B6D907 /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56E25D899C0004FE037 /* Poppins-ExtraBold.ttf */; };
+		066969E126E022F600B6D907 /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56C25D899C0004FE037 /* Poppins-Thin.ttf */; };
+		066969E226E022F600B6D907 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56F25D899C0004FE037 /* Poppins-ThinItalic.ttf */; };
+		066969E326E022F600B6D907 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5DBA88611341A684A12261 /* AntDesign.ttf */; };
+		066969E426E022F600B6D907 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27E5B36EC5AF4CE5ABF9DF37 /* Entypo.ttf */; };
+		066969E526E022F600B6D907 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A338163F4A5A43D2B5C35BC1 /* EvilIcons.ttf */; };
+		066969E626E022F600B6D907 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50F42D68A4774EF0A7666431 /* Feather.ttf */; };
+		066969E726E022F600B6D907 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 0676146025DCC20900639434 /* AirGoogleMaps */; };
+		066969E826E022F600B6D907 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E5B87A84E5440BA3B19619 /* FontAwesome.ttf */; };
+		066969E926E022F600B6D907 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD7031929B6D43F19C159855 /* FontAwesome5_Brands.ttf */; };
+		066969EA26E022F600B6D907 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FC9B69956ED409999EC9E87 /* FontAwesome5_Regular.ttf */; };
+		066969EB26E022F600B6D907 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8B49A49BFC445E28CC28273 /* FontAwesome5_Solid.ttf */; };
+		066969EC26E022F600B6D907 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
+		066969ED26E022F600B6D907 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
+		066969EE26E022F600B6D907 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 428DA4AD5DD14009ADBA2D54 /* Ionicons.ttf */; };
+		066969EF26E022F600B6D907 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 862BAFB6CAFF4883A2EC5982 /* MaterialCommunityIcons.ttf */; };
+		066969F026E022F600B6D907 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CA82E35522B40A29855A828 /* MaterialIcons.ttf */; };
+		066969F126E022F600B6D907 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF66E91405784758808331CD /* Octicons.ttf */; };
+		066969F226E022F600B6D907 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
+		066969F326E022F600B6D907 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 147836BD4D724736861A8E01 /* Zocial.ttf */; };
 		0673F58C25D89B06004FE037 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
 		0673F58E25D89B06004FE037 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56225D899C0004FE037 /* Poppins-Bold.ttf */; };
 		0673F58F25D89B06004FE037 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */; };
@@ -82,6 +123,9 @@
 		00E356F21AD99517003FC87E /* riiveTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = riiveTests.m; sourceTree = "<group>"; };
 		0296863F3C8FAB9F114B0F18 /* Pods-riive-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOS.release.xcconfig"; path = "Target Support Files/Pods-riive-tvOS/Pods-riive-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		062D1E6825EF3D6200D03320 /* riive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = riive.entitlements; path = riive/riive.entitlements; sourceTree = "<group>"; };
+		066969FA26E022F600B6D907 /* riive-development.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "riive-development.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		066969FB26E022F600B6D907 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/riive-development/Info.plist"; sourceTree = "<absolute>"; };
+		066969FF26E0249600B6D907 /* riive-development.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "riive-development.entitlements"; sourceTree = "<group>"; };
 		0673F56025D899C0004FE037 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
 		0673F56125D899C0004FE037 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 		0673F56225D899C0004FE037 /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Bold.ttf"; sourceTree = "<group>"; };
@@ -102,7 +146,7 @@
 		0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0676146025DCC20900639434 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/lib/ios/AirGoogleMaps"; sourceTree = "<group>"; };
-		0686BD4726E01AB8006BCAE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/Info.plist"; sourceTree = "<absolute>"; };
+		0686BD4726E01AB8006BCAE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/riive/Info.plist"; sourceTree = "<absolute>"; };
 		1013F37D17EBE19ADECF8532 /* Pods-riive-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-riive-tvOSTests/Pods-riive-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* riive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = riive/AppDelegate.h; sourceTree = "<group>"; };
@@ -152,6 +196,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		066969CB26E022F600B6D907 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				066969CC26E022F600B6D907 /* libPods-riive.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -194,6 +246,15 @@
 				00E356F11AD99517003FC87E /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		066969FC26E0231400B6D907 /* riive-development */ = {
+			isa = PBXGroup;
+			children = (
+				066969FF26E0249600B6D907 /* riive-development.entitlements */,
+				066969FB26E022F600B6D907 /* Info.plist */,
+			);
+			path = "riive-development";
 			sourceTree = "<group>";
 		};
 		13B07FAE1A68108700A75B9A /* riive */ = {
@@ -273,6 +334,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				066969FC26E0231400B6D907 /* riive-development */,
 				0676146025DCC20900639434 /* AirGoogleMaps */,
 				0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */,
 				0673F56825D899C0004FE037 /* Poppins-Black.ttf */,
@@ -313,6 +375,7 @@
 				00E356EE1AD99517003FC87E /* riiveTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* riive-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* riive-tvOSTests.xctest */,
+				066969FA26E022F600B6D907 /* riive-development.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -339,6 +402,28 @@
 			productName = riiveTests;
 			productReference = 00E356EE1AD99517003FC87E /* riiveTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		066969C526E022F600B6D907 /* riive-development */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 066969F726E022F600B6D907 /* Build configuration list for PBXNativeTarget "riive-development" */;
+			buildPhases = (
+				066969C626E022F600B6D907 /* [CP] Check Pods Manifest.lock */,
+				066969C726E022F600B6D907 /* Start Packager */,
+				066969C826E022F600B6D907 /* Sources */,
+				066969CB26E022F600B6D907 /* Frameworks */,
+				066969CD26E022F600B6D907 /* Resources */,
+				066969F426E022F600B6D907 /* Bundle React Native code and images */,
+				066969F526E022F600B6D907 /* [CP] Copy Pods Resources */,
+				066969F626E022F600B6D907 /* [CP-User] [RNFB] Core Configuration */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "riive-development";
+			productName = riive;
+			productReference = 066969FA26E022F600B6D907 /* riive-development.app */;
+			productType = "com.apple.product-type.application";
 		};
 		13B07F861A680F5B00A75B9A /* riive */ = {
 			isa = PBXNativeTarget;
@@ -413,6 +498,10 @@
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
+					066969C526E022F600B6D907 = {
+						DevelopmentTeam = 49J3538JQK;
+						ProvisioningStyle = Manual;
+					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 49J3538JQK;
 						LastSwiftMigration = 1120;
@@ -446,6 +535,7 @@
 				00E356ED1AD99517003FC87E /* riiveTests */,
 				2D02E47A1E0B4A5D006451C7 /* riive-tvOS */,
 				2D02E48F1E0B4A5D006451C7 /* riive-tvOSTests */,
+				066969C526E022F600B6D907 /* riive-development */,
 			);
 		};
 /* End PBXProject section */
@@ -455,6 +545,51 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		066969CD26E022F600B6D907 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				066969CE26E022F600B6D907 /* Poppins-Light.ttf in Resources */,
+				066969CF26E022F600B6D907 /* Poppins-SemiBold.ttf in Resources */,
+				066969D026E022F600B6D907 /* Poppins-SemiBoldItalic.ttf in Resources */,
+				066969D126E022F600B6D907 /* Poppins-ExtraLight.ttf in Resources */,
+				066969D226E022F600B6D907 /* Poppins-BoldItalic.ttf in Resources */,
+				066969D326E022F600B6D907 /* Poppins-ExtraBoldItalic.ttf in Resources */,
+				066969D426E022F600B6D907 /* Poppins-Medium.ttf in Resources */,
+				066969D526E022F600B6D907 /* GoogleService-Info.plist in Resources */,
+				066969D626E022F600B6D907 /* Poppins-ExtraLightItalic.ttf in Resources */,
+				066969D726E022F600B6D907 /* Poppins-MediumItalic.ttf in Resources */,
+				066969D826E022F600B6D907 /* Poppins-Regular.ttf in Resources */,
+				066969D926E022F600B6D907 /* LaunchScreen.storyboard in Resources */,
+				066969DA26E022F600B6D907 /* Poppins-BlackItalic.ttf in Resources */,
+				066969DB26E022F600B6D907 /* Poppins-LightItalic.ttf in Resources */,
+				066969DC26E022F600B6D907 /* Poppins-Bold.ttf in Resources */,
+				066969DD26E022F600B6D907 /* Images.xcassets in Resources */,
+				066969DE26E022F600B6D907 /* Poppins-Black.ttf in Resources */,
+				066969DF26E022F600B6D907 /* Poppins-Italic.ttf in Resources */,
+				066969E026E022F600B6D907 /* Poppins-ExtraBold.ttf in Resources */,
+				066969E126E022F600B6D907 /* Poppins-Thin.ttf in Resources */,
+				066969E226E022F600B6D907 /* Poppins-ThinItalic.ttf in Resources */,
+				066969E326E022F600B6D907 /* AntDesign.ttf in Resources */,
+				066969E426E022F600B6D907 /* Entypo.ttf in Resources */,
+				066969E526E022F600B6D907 /* EvilIcons.ttf in Resources */,
+				066969E626E022F600B6D907 /* Feather.ttf in Resources */,
+				066969E726E022F600B6D907 /* AirGoogleMaps in Resources */,
+				066969E826E022F600B6D907 /* FontAwesome.ttf in Resources */,
+				066969E926E022F600B6D907 /* FontAwesome5_Brands.ttf in Resources */,
+				066969EA26E022F600B6D907 /* FontAwesome5_Regular.ttf in Resources */,
+				066969EB26E022F600B6D907 /* FontAwesome5_Solid.ttf in Resources */,
+				066969EC26E022F600B6D907 /* Fontisto.ttf in Resources */,
+				066969ED26E022F600B6D907 /* Foundation.ttf in Resources */,
+				066969EE26E022F600B6D907 /* Ionicons.ttf in Resources */,
+				066969EF26E022F600B6D907 /* MaterialCommunityIcons.ttf in Resources */,
+				066969F026E022F600B6D907 /* MaterialIcons.ttf in Resources */,
+				066969F126E022F600B6D907 /* Octicons.ttf in Resources */,
+				066969F226E022F600B6D907 /* SimpleLineIcons.ttf in Resources */,
+				066969F326E022F600B6D907 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +669,135 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		066969C626E022F600B6D907 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-riive-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		066969C726E022F600B6D907 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		066969F426E022F600B6D907 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		066969F526E022F600B6D907 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-riive/Pods-riive-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+				"${PODS_ROOT}/Stripe/InternalFrameworks/Stripe3DS2.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/Stripe/Stripe.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Stripe3DS2.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Stripe.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TOCropViewControllerBundle.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-riive/Pods-riive-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		066969F626E022F600B6D907 /* [CP-User] [RNFB] Core Configuration */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "[CP-User] [RNFB] Core Configuration";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/usr/bin/env bash\n#\n# Copyright (c) 2016-present Invertase Limited & Contributors\n#\n# Licensed under the Apache License, Version 2.0 (the \"License\");\n# you may not use this library except in compliance with the License.\n# You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing, software\n# distributed under the License is distributed on an \"AS IS\" BASIS,\n# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n# See the License for the specific language governing permissions and\n# limitations under the License.\n#\nset -e\n\n_MAX_LOOKUPS=2;\n_SEARCH_RESULT=''\n_RN_ROOT_EXISTS=''\n_CURRENT_LOOKUPS=1\n_JSON_ROOT=\"'react-native'\"\n_JSON_FILE_NAME='firebase.json'\n_JSON_OUTPUT_BASE64='e30=' # { }\n_CURRENT_SEARCH_DIR=${PROJECT_DIR}\n_PLIST_BUDDY=/usr/libexec/PlistBuddy\n_TARGET_PLIST=\"${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}\"\n_DSYM_PLIST=\"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist\"\n\n# plist arrays\n_PLIST_ENTRY_KEYS=()\n_PLIST_ENTRY_TYPES=()\n_PLIST_ENTRY_VALUES=()\n\nfunction setPlistValue {\n  echo \"info:      setting plist entry '$1' of type '$2' in file '$4'\"\n  ${_PLIST_BUDDY} -c \"Add :$1 $2 '$3'\" $4 || echo \"info:      '$1' already exists\"\n}\n\nfunction getFirebaseJsonKeyValue () {\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$1'); puts output[$_JSON_ROOT]['$2']\"\n  else\n    echo \"\"\n  fi;\n}\n\nfunction jsonBoolToYesNo () {\n  if [[ $1 == \"false\" ]]; then\n    echo \"NO\"\n  elif [[ $1 == \"true\" ]]; then\n    echo \"YES\"\n  else echo \"NO\"\n  fi\n}\n\necho \"info: -> RNFB build script started\"\necho \"info: 1) Locating ${_JSON_FILE_NAME} file:\"\n\nif [[ -z ${_CURRENT_SEARCH_DIR} ]]; then\n  _CURRENT_SEARCH_DIR=$(pwd)\nfi;\n\nwhile true; do\n  _CURRENT_SEARCH_DIR=$(dirname \"$_CURRENT_SEARCH_DIR\")\n  if [[ \"$_CURRENT_SEARCH_DIR\" == \"/\" ]] || [[ ${_CURRENT_LOOKUPS} -gt ${_MAX_LOOKUPS} ]]; then break; fi;\n  echo \"info:      ($_CURRENT_LOOKUPS of $_MAX_LOOKUPS) Searching in '$_CURRENT_SEARCH_DIR' for a ${_JSON_FILE_NAME} file.\"\n  _SEARCH_RESULT=$(find \"$_CURRENT_SEARCH_DIR\" -maxdepth 2 -name ${_JSON_FILE_NAME} -print | head -n 1)\n  if [[ ${_SEARCH_RESULT} ]]; then\n    echo \"info:      ${_JSON_FILE_NAME} found at $_SEARCH_RESULT\"\n    break;\n  fi;\n  _CURRENT_LOOKUPS=$((_CURRENT_LOOKUPS+1))\ndone\n\nif [[ ${_SEARCH_RESULT} ]]; then\n  _JSON_OUTPUT_RAW=$(cat \"${_SEARCH_RESULT}\")\n  _RN_ROOT_EXISTS=$(ruby -e \"require 'rubygems';require 'json'; output=JSON.parse('$_JSON_OUTPUT_RAW'); puts output[$_JSON_ROOT]\" || echo '')\n\n  if [[ ${_RN_ROOT_EXISTS} ]]; then\n    _JSON_OUTPUT_BASE64=$(python -c 'import json,sys,base64;print(base64.b64encode(json.dumps(json.loads(open('\"'${_SEARCH_RESULT}'\"').read())['${_JSON_ROOT}'])))' || echo \"e30=\")\n  fi\n\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n\n  # config.analytics_auto_collection_enabled\n  _ANALYTICS_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"analytics_auto_collection_enabled\")\n  if [[ $_ANALYTICS_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FIREBASE_ANALYTICS_COLLECTION_ENABLED\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_ANALYTICS_AUTO_COLLECTION\")\")\n  fi\n\n  # config.perf_auto_collection_enabled\n  _PERF_AUTO_COLLECTION=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"perf_auto_collection_enabled\")\n  if [[ $_PERF_AUTO_COLLECTION ]]; then\n    _PLIST_ENTRY_KEYS+=(\"firebase_performance_collection_enabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_PERF_AUTO_COLLECTION\")\")\n  fi\n\n  # config.messaging_auto_init_enabled\n  _MESSAGING_AUTO_INIT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"messaging_auto_init_enabled\")\n  if [[ $_MESSAGING_AUTO_INIT ]]; then\n    _PLIST_ENTRY_KEYS+=(\"FirebaseMessagingAutoInitEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"$(jsonBoolToYesNo \"$_MESSAGING_AUTO_INIT\")\")\n  fi\n\n  # config.crashlytics_disable_auto_disabler - undocumented for now - mainly for debugging, document if becomes useful\n  _CRASHLYTICS_AUTO_DISABLE_ENABLED=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"crashlytics_disable_auto_disabler\")\n  if [[ $_CRASHLYTICS_AUTO_DISABLE_ENABLED == \"true\" ]]; then\n    echo \"Disabled Crashlytics auto disabler.\" # do nothing\n  else\n    _PLIST_ENTRY_KEYS+=(\"FirebaseCrashlyticsCollectionEnabled\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"NO\")\n  fi\n\n  # config.admob_delay_app_measurement_init\n  _ADMOB_DELAY_APP_MEASUREMENT=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_delay_app_measurement_init\")\n  if [[ $_ADMOB_DELAY_APP_MEASUREMENT == \"true\" ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADDelayAppMeasurementInit\")\n    _PLIST_ENTRY_TYPES+=(\"bool\")\n    _PLIST_ENTRY_VALUES+=(\"YES\")\n  fi\n\n  # config.admob_ios_app_id\n  _ADMOB_IOS_APP_ID=$(getFirebaseJsonKeyValue \"$_JSON_OUTPUT_RAW\" \"admob_ios_app_id\")\n  if [[ $_ADMOB_IOS_APP_ID ]]; then\n    _PLIST_ENTRY_KEYS+=(\"GADApplicationIdentifier\")\n    _PLIST_ENTRY_TYPES+=(\"string\")\n    _PLIST_ENTRY_VALUES+=(\"$_ADMOB_IOS_APP_ID\")\n  fi\nelse\n  _PLIST_ENTRY_KEYS+=(\"firebase_json_raw\")\n  _PLIST_ENTRY_TYPES+=(\"string\")\n  _PLIST_ENTRY_VALUES+=(\"$_JSON_OUTPUT_BASE64\")\n  echo \"warning:   A firebase.json file was not found, whilst this file is optional it is recommended to include it to configure firebase services in React Native Firebase.\"\nfi;\n\necho \"info: 2) Injecting Info.plist entries: \"\n\n# Log out the keys we're adding\nfor i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n  echo \"    ->  $i) ${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\"\ndone\n\nfor plist in \"${_TARGET_PLIST}\" \"${_DSYM_PLIST}\" ; do\n  if [[ -f \"${plist}\" ]]; then\n\n    # paths with spaces break the call to setPlistValue. temporarily modify\n    # the shell internal field separator variable (IFS), which normally\n    # includes spaces, to consist only of line breaks\n    oldifs=$IFS\n    IFS=\"\n\"\n\n    for i in \"${!_PLIST_ENTRY_KEYS[@]}\"; do\n      setPlistValue \"${_PLIST_ENTRY_KEYS[$i]}\" \"${_PLIST_ENTRY_TYPES[$i]}\" \"${_PLIST_ENTRY_VALUES[$i]}\" \"${plist}\"\n    done\n\n    # restore the original internal field separator value\n    IFS=$oldifs\n  else\n    echo \"warning:   A Info.plist build output file was not found (${plist})\"\n  fi\ndone\n\necho \"info: <- RNFB build script finished\"\n";
 		};
 		1A21A94CFBA5FC1508A39E0C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -824,6 +1088,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		066969C826E022F600B6D907 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				066969C926E022F600B6D907 /* AppDelegate.m in Sources */,
+				066969CA26E022F600B6D907 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F871A680F5B00A75B9A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -906,6 +1179,224 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/riive.app/riive";
+			};
+			name = Release;
+		};
+		066969F826E022F600B6D907 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9739E620D39E1870331CE21C /* Pods-riive.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "riive-development/riive-development.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 49J3538JQK;
+				ENABLE_BITCODE = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"$(inherited)",
+					"PB_FIELD_32BIT=1",
+					"PB_NO_PACKED_STRUCTS=1",
+					"PB_ENABLE_MALLOC=1",
+					"HAVE_GOOGLE_MAPS=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/AppAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/BoringSSL-GRPC\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCoreDiagnostics\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseFirestore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstallations\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstanceID\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseMessaging\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMAppAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
+					"\"${PODS_ROOT}/Headers/Public/Google-Maps-iOS-Utils\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleDataTransport\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-Camera\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-LocationAccuracy\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-LocationAlways\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-LocationWhenInUse\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-Notifications\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-PhotoLibrary\"",
+					"\"${PODS_ROOT}/Headers/Public/PromisesObjC\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCMaskedView\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCPicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBApp\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBFirestore\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBMessaging\"",
+					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
+					"\"${PODS_ROOT}/Headers/Public/RNGoogleSignin\"",
+					"\"${PODS_ROOT}/Headers/Public/RNImageCropPicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNPermissions\"",
+					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
+					"\"${PODS_ROOT}/Headers/Public/RNSVG\"",
+					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
+					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/Stripe\"",
+					"\"${PODS_ROOT}/Headers/Public/TOCropViewController\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/abseil\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-C++\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+					"\"${PODS_ROOT}/Headers/Public/nanopb\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-geolocation\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-maps\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-safe-area-context\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-viewpager\"",
+					"\"${PODS_ROOT}/Headers/Public/rn-fetch-blob\"",
+					"\"${PODS_ROOT}/Headers/Public/tipsi-stripe\"",
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
+					"\"${PODS_TARGET_SRCROOT}/Sources/FBLPromises/include\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
+				);
+				INFOPLIST_FILE = "riive-development/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.riive.development;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Riive Prod";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		066969F926E022F600B6D907 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E4BBC97B46DD2C17E4E26EDD /* Pods-riive.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "riive-development/riive-development.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 49J3538JQK;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"$(inherited)",
+					"PB_FIELD_32BIT=1",
+					"PB_NO_PACKED_STRUCTS=1",
+					"PB_ENABLE_MALLOC=1",
+					"HAVE_GOOGLE_MAPS=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/AppAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/BoringSSL-GRPC\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCoreDiagnostics\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseFirestore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstallations\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstanceID\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseMessaging\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMAppAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
+					"\"${PODS_ROOT}/Headers/Public/Google-Maps-iOS-Utils\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleDataTransport\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-Camera\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-LocationAccuracy\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-LocationAlways\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-LocationWhenInUse\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-Notifications\"",
+					"\"${PODS_ROOT}/Headers/Public/Permission-PhotoLibrary\"",
+					"\"${PODS_ROOT}/Headers/Public/PromisesObjC\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCMaskedView\"",
+					"\"${PODS_ROOT}/Headers/Public/RNCPicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBApp\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBFirestore\"",
+					"\"${PODS_ROOT}/Headers/Public/RNFBMessaging\"",
+					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
+					"\"${PODS_ROOT}/Headers/Public/RNGoogleSignin\"",
+					"\"${PODS_ROOT}/Headers/Public/RNImageCropPicker\"",
+					"\"${PODS_ROOT}/Headers/Public/RNPermissions\"",
+					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
+					"\"${PODS_ROOT}/Headers/Public/RNSVG\"",
+					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
+					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/Stripe\"",
+					"\"${PODS_ROOT}/Headers/Public/TOCropViewController\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/abseil\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-C++\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+					"\"${PODS_ROOT}/Headers/Public/nanopb\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-geolocation\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-maps\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-safe-area-context\"",
+					"\"${PODS_ROOT}/Headers/Public/react-native-viewpager\"",
+					"\"${PODS_ROOT}/Headers/Public/rn-fetch-blob\"",
+					"\"${PODS_ROOT}/Headers/Public/tipsi-stripe\"",
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
+					"\"${PODS_TARGET_SRCROOT}/Sources/FBLPromises/include\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
+				);
+				INFOPLIST_FILE = "riive-development/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.riive.development;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Riive Prod";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
@@ -1358,6 +1849,15 @@
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
 				00E356F71AD99517003FC87E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		066969F726E022F600B6D907 /* Build configuration list for PBXNativeTarget "riive-development" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				066969F826E022F600B6D907 /* Debug */,
+				066969F926E022F600B6D907 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
