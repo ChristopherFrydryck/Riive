@@ -102,6 +102,7 @@
 		0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0676146025DCC20900639434 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/lib/ios/AirGoogleMaps"; sourceTree = "<group>"; };
+		0686BD4726E01AB8006BCAE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/Info.plist"; sourceTree = "<absolute>"; };
 		1013F37D17EBE19ADECF8532 /* Pods-riive-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-riive-tvOSTests/Pods-riive-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* riive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = riive/AppDelegate.h; sourceTree = "<group>"; };
@@ -206,6 +207,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				0686BD4726E01AB8006BCAE2 /* Info.plist */,
 			);
 			name = riive;
 			sourceTree = "<group>";
