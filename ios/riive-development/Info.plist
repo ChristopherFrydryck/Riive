@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Riive</string>
+	<string>Riive Dev</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -38,9 +38,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to take photos.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need access to your location to show you relevant search results. With &quot;Always&quot; access we&apos;ll also send you location based notifications.</string>
+	<string>We need access to your location to show you relevant search results. With "Always" access we'll also send you location based notifications.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need access to your location to show you relevant search results. With &quot;Always&quot; access we&apos;ll also send you location based notifications.</string>
+	<string>We need access to your location to show you relevant search results. With "Always" access we'll also send you location based notifications.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need access to your location to show you relevant search results.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
