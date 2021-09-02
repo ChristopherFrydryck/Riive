@@ -90,7 +90,6 @@
 		06696A2E26E0367300B6D907 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
 		06696A2F26E0367300B6D907 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 147836BD4D724736861A8E01 /* Zocial.ttf */; };
 		06696A4226E047A100B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06696A4126E047A100B6D907 /* GoogleService-Info.plist */; };
-		06696A4426E047B200B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06696A4326E047B200B6D907 /* GoogleService-Info.plist */; };
 		06696A4626E047D800B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06696A4526E047D800B6D907 /* GoogleService-Info.plist */; };
 		0673F58C25D89B06004FE037 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
 		0673F58E25D89B06004FE037 /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56225D899C0004FE037 /* Poppins-Bold.ttf */; };
@@ -111,7 +110,6 @@
 		0673F59D25D89B06004FE037 /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56D25D899C0004FE037 /* Poppins-LightItalic.ttf */; };
 		0673F6C025DA463C004FE037 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */; };
 		0676146125DCC20900639434 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 0676146025DCC20900639434 /* AirGoogleMaps */; };
-		06ADFE8526E049E600138E6B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06ADFE8426E049E600138E6B /* GoogleService-Info.plist */; };
 		11165A26618A40DD94C0652A /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FC9B69956ED409999EC9E87 /* FontAwesome5_Regular.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -127,6 +125,7 @@
 		426BF18B55294F5DB372B1B1 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
 		452EF55B81C64293BC9C9524 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
 		553177E6754A4FE0AB601115 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5DBA88611341A684A12261 /* AntDesign.ttf */; };
+		6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CE75CF82FE4C13C6F3D6EA2 /* libPods-riive-app-riive.a */; };
 		75A0EAF1379F43D1BA220F3D /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF66E91405784758808331CD /* Octicons.ttf */; };
 		80B5FD4A94514C6193BE501A /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50F42D68A4774EF0A7666431 /* Feather.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -175,7 +174,6 @@
 		06696A3626E0367300B6D907 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/riive-staging/Info.plist"; sourceTree = "<absolute>"; };
 		06696A3726E036DB00B6D907 /* riive-staging.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "riive-staging.entitlements"; sourceTree = "<group>"; };
 		06696A4126E047A100B6D907 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		06696A4326E047B200B6D907 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		06696A4526E047D800B6D907 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0673F56025D899C0004FE037 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
 		0673F56125D899C0004FE037 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -198,7 +196,6 @@
 		0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0676146025DCC20900639434 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/lib/ios/AirGoogleMaps"; sourceTree = "<group>"; };
 		0686BD4726E01AB8006BCAE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/riive/Info.plist"; sourceTree = "<absolute>"; };
-		06ADFE8426E049E600138E6B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Desktop/Firebase/Prod/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1013F37D17EBE19ADECF8532 /* Pods-riive-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-riive-tvOSTests/Pods-riive-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* riive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = riive/AppDelegate.h; sourceTree = "<group>"; };
@@ -210,6 +207,7 @@
 		1A18119A178429F422B23E82 /* libPods-riive-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09201FA71947298B36DCA5 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		1C8D38169D231671645BB2BD /* Pods-riive-app-riive-riiveTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-app-riive-riiveTests.release.xcconfig"; path = "Target Support Files/Pods-riive-app-riive-riiveTests/Pods-riive-app-riive-riiveTests.release.xcconfig"; sourceTree = "<group>"; };
+		1CE75CF82FE4C13C6F3D6EA2 /* libPods-riive-app-riive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-app-riive.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2302199D1728E2DE1494FEF3 /* Pods-riive-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-riive-tvOS/Pods-riive-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		27E5B36EC5AF4CE5ABF9DF37 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		287B377928CA1B9B59B8D5FD /* Pods-riive-app-riive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-app-riive.release.xcconfig"; path = "Target Support Files/Pods-riive-app-riive/Pods-riive-app-riive.release.xcconfig"; sourceTree = "<group>"; };
@@ -280,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */,
+				6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,17 +341,8 @@
 			children = (
 				06696A3B26E0407500B6D907 /* Stage */,
 				06696A3A26E0405600B6D907 /* Dev */,
-				06696A3926E0404800B6D907 /* Prod */,
 			);
 			path = Firebase;
-			sourceTree = "<group>";
-		};
-		06696A3926E0404800B6D907 /* Prod */ = {
-			isa = PBXGroup;
-			children = (
-				06696A4326E047B200B6D907 /* GoogleService-Info.plist */,
-			);
-			path = Prod;
 			sourceTree = "<group>";
 		};
 		06696A3A26E0405600B6D907 /* Dev */ = {
@@ -397,6 +387,7 @@
 				4D54509CE31CC736A6365FB8 /* libPods-riive-app-riive-riiveTests.a */,
 				A934C42BC3B7BA8F2F7803B9 /* libPods-riive-app-riive-riive-development.a */,
 				F6E9A4128F1EAB005D1BEF3F /* libPods-riive-app-riive-riive-staging.a */,
+				1CE75CF82FE4C13C6F3D6EA2 /* libPods-riive-app-riive.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -489,7 +480,6 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				589EB6A4E6BB3F0FF510D860 /* Pods */,
 				6E480F19C21E42ADAB6E1680 /* Resources */,
-				06ADFE8426E049E600138E6B /* GoogleService-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -814,7 +804,6 @@
 				0673F58E25D89B06004FE037 /* Poppins-Bold.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				0673F59725D89B06004FE037 /* Poppins-Black.ttf in Resources */,
-				06ADFE8526E049E600138E6B /* GoogleService-Info.plist in Resources */,
 				0673F59325D89B06004FE037 /* Poppins-Italic.ttf in Resources */,
 				0673F59A25D89B06004FE037 /* Poppins-ExtraBold.ttf in Resources */,
 				0673F59425D89B06004FE037 /* Poppins-Thin.ttf in Resources */,
@@ -824,7 +813,6 @@
 				B23B916D2B6C499AAB470C38 /* EvilIcons.ttf in Resources */,
 				80B5FD4A94514C6193BE501A /* Feather.ttf in Resources */,
 				0676146125DCC20900639434 /* AirGoogleMaps in Resources */,
-				06696A4426E047B200B6D907 /* GoogleService-Info.plist in Resources */,
 				DACAEFE9AFFF431B85603827 /* FontAwesome.ttf in Resources */,
 				2087B0E4F99A4D77A3C426D8 /* FontAwesome5_Brands.ttf in Resources */,
 				11165A26618A40DD94C0652A /* FontAwesome5_Regular.ttf in Resources */,

@@ -47,6 +47,9 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import * as geofirestore from 'geofirestore'
 
+import Config from 'react-native-config';
+import { version } from '../package.json'
+
 if(Platform.OS === 'android') { // only android needs polyfill
   require('intl'); // import intl object
   require('intl/locale-data/jsonp/en');
@@ -926,6 +929,12 @@ goToReserveSpace = () => {
                     width={48}
                     aspectRatio={1/1}
                     style={styles.img} />
+                    {Config.ENVIRONMENT !== "production" ? 
+                    <View>
+                    <Text style={{fontSize: 12}}>{Config.ENVIRONMENT} environment</Text>
+                    <Text style={{fontSize: 12}}>Version {version}</Text>
+                    </View>
+                    : null}
                 <FilterButton 
                 onPress={() => this.filterResults()}
                 disabled={this.state.timeSearched[0].key > this.state.timeSearched[1].key ? true : false}

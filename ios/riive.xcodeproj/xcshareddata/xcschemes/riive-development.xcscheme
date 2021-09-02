@@ -23,7 +23,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0669698A26E020CE00B6D907"
+               BlueprintIdentifier = "066969C526E022F600B6D907"
                BuildableName = "riive-development.app"
                BlueprintName = "riive-development"
                ReferencedContainer = "container:riive.xcodeproj">
@@ -67,7 +67,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0669698A26E020CE00B6D907"
+            BlueprintIdentifier = "066969C526E022F600B6D907"
             BuildableName = "riive-development.app"
             BlueprintName = "riive-development"
             ReferencedContainer = "container:riive.xcodeproj">
@@ -84,7 +84,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0669698A26E020CE00B6D907"
+            BlueprintIdentifier = "066969C526E022F600B6D907"
             BuildableName = "riive-development.app"
             BlueprintName = "riive-development"
             ReferencedContainer = "container:riive.xcodeproj">

@@ -70,7 +70,7 @@
  
  
    render() {
-      console.log(config.FIREBASEAPPID)
+      console.log(config)
        return (        
          <Provider {...stores}>
              <View style={{flex: 1}}>
