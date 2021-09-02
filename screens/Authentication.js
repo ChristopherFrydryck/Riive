@@ -828,7 +828,7 @@ onPressSignIn = async() => {
       }
   
         
-        await fetch('https://us-central1-riive-parking.cloudfunctions.net/getUserDataFromEmail', settings).then((res) => {
+        await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/getUserDataFromEmail`, settings).then((res) => {
           return res.json()
         }).then((body) => {
           const db = firestore();
