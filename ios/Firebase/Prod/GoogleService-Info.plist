@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>888723186328-bq5cq0kof3dd1mn5pbi6ivj5ebodis9o.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.888723186328-bq5cq0kof3dd1mn5pbi6ivj5ebodis9o</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>888723186328-lk7ncbb67os71tltickojco8evpk7vnd.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA3tqsSn2ZC-ajDy2WszJJ935w1vz4oxog</string>
+	<key>GCM_SENDER_ID</key>
+	<string>888723186328</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.riive</string>
+	<key>PROJECT_ID</key>
+	<string>riive-parking</string>
+	<key>STORAGE_BUCKET</key>
+	<string>riive-parking.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:888723186328:ios:5b2496cf495c6aac22a6ed</string>
+	<key>DATABASE_URL</key>
+	<string>https://riive-parking.firebaseio.com</string>
+</dict>
+</plist>

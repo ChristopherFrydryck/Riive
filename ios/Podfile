@@ -47,7 +47,12 @@ abstract_target 'riive-app' do
 
   target 'riive-development' do
     inherit! :complete
-    # Pods for testing
+    # Pods for dev environment only
+  end
+
+  target 'riive-staging' do
+    inherit! :complete
+    # Pods for dev staging only
   end
 
 end
