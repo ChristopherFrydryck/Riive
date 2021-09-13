@@ -949,7 +949,7 @@ goToReserveSpace = () => {
           <View style={{flex: 1}}>
           <MapView
               provider={MapView.PROVIDER_GOOGLE}
-              mapStyle={DayMap}
+              customMapStyle={DayMap}
               style={styles.mapStyle}
               onRegionChangeComplete={region =>  this.onRegionChange(region)}
               onRegionChange={() => this.mapScrolling = true}
