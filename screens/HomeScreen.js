@@ -47,7 +47,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import * as geofirestore from 'geofirestore'
 
-import Config from 'react-native-config';
+import config from 'react-native-config';
 import { version } from '../package.json'
 
 if(Platform.OS === 'android') { // only android needs polyfill
@@ -497,7 +497,7 @@ getDistance = async(start, end, type) => {
 
   
 
-      await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${start}&destinations=${end}&departure_time=now&mode=${type}&arrival_time=${arrival}&traffic_model=optimistic&key=AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c`).then(x =>{
+      await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${start}&destinations=${end}&departure_time=now&mode=${type}&arrival_time=${arrival}&traffic_model=optimistic&key=${config.GOOGLE_API_KEY}`).then(x =>{
           this.setState({[stateName]: {
               distance: x.data.rows[0].elements[0].distance.text,
               duration: x.data.rows[0].elements[0].duration.text,
@@ -929,9 +929,9 @@ goToReserveSpace = () => {
                     width={48}
                     aspectRatio={1/1}
                     style={styles.img} />
-                    {Config.ENVIRONMENT !== "production" ? 
+                    {config.ENVIRONMENT !== "production" ? 
                     <View>
-                    <Text style={{fontSize: 12}}>{Config.ENVIRONMENT} environment</Text>
+                    <Text style={{fontSize: 12}}>{config.ENVIRONMENT} environment</Text>
                     <Text style={{fontSize: 12}}>Version {version}</Text>
                     </View>
                     : null}
@@ -1073,7 +1073,7 @@ goToReserveSpace = () => {
                    />
                }
                query={{
-                  key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+                  key: config.GOOGLE_API_KEY,
                   language: 'en'
               }}
               GooglePlacesSearchQuery={{

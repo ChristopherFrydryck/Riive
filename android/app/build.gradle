@@ -197,12 +197,14 @@ android {
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "com.riive"
             manifestPlaceholders = [label: 'Riive Dev']
+            resValue "string", "google_maps_api_key", "AIzaSyD6ygItxO5O3D7SwlMavzYP_xJrimJDA2Q"
         }
         prod {
             minSdkVersion rootProject.ext.minSdkVersion
             applicationId 'com.riive'
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "com.riive"
+            resValue "string", "google_maps_api_key", "AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c"
         }
         stage {
             minSdkVersion rootProject.ext.minSdkVersion
@@ -210,6 +212,7 @@ android {
             targetSdkVersion rootProject.ext.targetSdkVersion
             resValue "string", "build_config_package", "com.riive"
             manifestPlaceholders = [label: 'Riive Staging']
+            resValue "string", "google_maps_api_key", "AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c"
         }
     }
 

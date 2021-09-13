@@ -1070,7 +1070,7 @@ class Profile extends Component{
                             style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
                             />}
                             query={{
-                                key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+                                key: config.GOOGLE_API_KEY,
                                 language: 'en'
                             }}
                             GooglePlacesSearchQuery={{
