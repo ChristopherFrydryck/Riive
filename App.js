@@ -20,6 +20,8 @@
  } from 'react-native';
  
  import AuthNavigator from './navigators/AuthNavigator'
+
+ import config from 'react-native-config';
  
  // import {
  //   Header,
@@ -68,7 +70,7 @@
  
  
    render() {
- 
+      console.log(config)
        return (        
          <Provider {...stores}>
              <View style={{flex: 1}}>

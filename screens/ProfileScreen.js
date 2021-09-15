@@ -8,7 +8,7 @@ import AddressTypes from '../constants/AddressTypes'
 
 
 
-
+import config from 'react-native-config'
 
 import ImagePicker from 'react-native-image-crop-picker';
 import { request } from 'react-native-permissions';
@@ -217,9 +217,9 @@ class Profile extends Component{
           })
         }
       
-        if(this.state.address.line1 != ""){
+        if(this.state.searchedAddress){
           try{  
-            const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
+            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomerAddress`, settings)
             const data = await fetchResponse;
             if(data.status !== 200){
               throw "Failure to link address."
@@ -275,7 +275,7 @@ class Profile extends Component{
         var zip = det.address_components.filter(x => x.types.includes('postal_code'))[0]
       
         if(number && street && city && county && state){
-          // console.log(number)
+        //   console.log(number)
           // console.log(street)
           // console.log(city)
           // console.log(county)
@@ -328,7 +328,6 @@ class Profile extends Component{
       
       setLocation = (text) => {
         this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
-        // console.log(text)
         // console.log("Set location")
         // console.log(this.state.address)
       }
@@ -650,7 +649,7 @@ class Profile extends Component{
                     }
                     let error = null;
 
-                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editPhoneNumber', settings).then((res) => {
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editPhoneNumber`, settings).then((res) => {
                         if(res.status === 200){
                             this.props.UserStore.phone = this.state.phoneUpdate;
                             doc.update({ phone: this.props.UserStore.phone})
@@ -684,12 +683,13 @@ class Profile extends Component{
             if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode || checkLine2){
             
 
-         
+                
                 await this.addAddress()                
                 await this.setState({fullnameError: "", submitted: true}) 
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
+                console.log(this.state.fullNameUpdate)
                 let error = null;
                 if (this.state.fullNameUpdate.match(regexFullname)){
                     const settings = {
@@ -705,7 +705,7 @@ class Profile extends Component{
                         })
                     }
 
-                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editFullName', settings).then((res) => {
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editFullName`, settings).then((res) => {
                         if(res.status === 200){
                             this.props.UserStore.fullname = this.state.fullNameUpdate
                             doc.update({ 
@@ -757,7 +757,7 @@ class Profile extends Component{
                     }
              
 
-                    await fetch('https://us-central1-riive-parking.cloudfunctions.net/editDOB', settings).then((res) => {
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editDOB`, settings).then((res) => {
                         if(res.status === 200){
                             this.props.UserStore.dob = this.state.dobUpdate;
                             doc.update({
@@ -810,6 +810,7 @@ class Profile extends Component{
                 }
             }
         }catch(e){
+            console.log(e)
            
                 if(e.name.split("/")[0] === "Phone"){
                     this.setState({phoneError: e.message, failed: true})
@@ -825,6 +826,7 @@ class Profile extends Component{
                     this.setState({failed: true})
                     setTimeout(() => this.setState({failed: false}), 3000)
                 }
+                this.setState({savingChanges: false})
             
         }
 
@@ -896,7 +898,7 @@ class Profile extends Component{
                     transparent={false}
                     visible={this.state.editAccountModalVisible}
                     onRequestClose={() => this.setState({editAccountModalVisible: false})}
-                    
+                    keyboardShouldPersistTaps="handled"
                 >
 
                 <DialogInput 
@@ -1043,6 +1045,7 @@ class Profile extends Component{
                         />
                         <Text style={{fontSize: 15}}>Address</Text>
                         <GooglePlacesAutocomplete
+                            keyboardShouldPersistTaps="always"
                             placeholder='Your Address...'
                             returnKeyType={'search'}
                             ref={(instance) => { this.GooglePlacesRef = instance }}
@@ -1051,12 +1054,12 @@ class Profile extends Component{
                             autoFocus={false}
                             listViewDisplayed={false}
                             fetchDetails={true}
-                            onChangeText= {(text) => this.setLocation(text)}
                             onPress={(data, details = null) => {
-                            this.onSelectAddress(details)
+                                this.onSelectAddress(details)
                             }}
                             textInputProps={{
-                            clearButtonMode: 'never'
+                                // clearButtonMode: 'never',
+                                onChangeText: (text) => this.setLocation(text),
                             }}
                             renderRightButton={() => 
                             <Icon 
@@ -1067,7 +1070,7 @@ class Profile extends Component{
                             style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
                             />}
                             query={{
-                                key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+                                key: config.GOOGLE_API_KEY,
                                 language: 'en'
                             }}
                             GooglePlacesSearchQuery={{
@@ -1083,49 +1086,42 @@ class Profile extends Component{
                             
                             
                             styles={{
-                            container: {
-                                border: 'none',
-                                zIndex: 99999,
-                            },
-                            textInputContainer: {
-                                width: '100%',
-                                display: 'flex',
-                                alignSelf: 'center',
-                                backgroundColor: "white",
-                                marginTop: -6,
-                                borderColor: '#eee',
-                                borderBottomWidth: 2,
-                                borderTopWidth: 0,
-                                backgroundColor: "none",
-                            },
-                            textInput: {
-                                paddingRight: 0,
-                                paddingLeft: 0,
-                                paddingBottom: 0,
-                                color: '#333',
-                                fontSize: 18,
-                                width: '100%',
-                            },
-                            description: {
-                                fontWeight: 'bold'
-                            },
-                            predefinedPlacesDescription: {
-                                color: '#1faadb'
-                            },
-                            listView:{
-                                backgroundColor: 'green',
-                                position: 'absolute',
-                                top: 40,
-                                width: Dimensions.get("window").width - 32,
-                                zIndex: 999999,
-                            },
-                            row: {
-                              backgroundColor: 'white',
-                              
-                            },
-                            poweredContainer:{
-                                backgroundColor: 'orange',
-                            }
+                                container: {
+                                    border: 'none',
+                                    flex: 0,
+                                  },
+                                  textInputContainer: {
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignSelf: 'center',
+                                    backgroundColor: "white",
+                                    marginTop: -6,
+                                    borderColor: '#eee',
+                                    borderBottomWidth: 2,
+                                    borderTopWidth: 0,
+                                    backgroundColor: "none",
+                                  },
+                                  textInput: {
+                                    paddingRight: 0,
+                                    paddingLeft: 0,
+                                    paddingBottom: 0,
+                                    color: '#333',
+                                    fontSize: 18,
+                                    width: '100%',
+                                  },
+                                  description: {
+                                    fontWeight: 'bold'
+                                  },
+                                  predefinedPlacesDescription: {
+                                    color: '#1faadb'
+                                  },
+                                  listView:{
+                                    backgroundColor: 'white',
+                                    position: 'absolute',
+                                    top: 40,
+                                    width: Dimensions.get("window").width - 32,
+                                    zIndex: 999999,
+                                  },
                             
                             }}
                         />

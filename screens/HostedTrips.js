@@ -11,6 +11,7 @@ import Colors from '../constants/Colors'
 
 import MapView, {Marker} from 'react-native-maps';
 import ActionSheet from "react-native-actions-sheet";
+import config from 'react-native-config'
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
@@ -237,7 +238,7 @@ export default class HostedTrips extends Component{
                               }
                           
                                 
-                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+                            fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/sendNotification`, settings)
 
                             
                         }).then(() => {
@@ -283,7 +284,7 @@ export default class HostedTrips extends Component{
 
         try{
           
-          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/refundTrip', settings)
+          const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/refundTrip`, settings)
           const data = await fetchResponse.json();
           return data;
         }catch(e){
@@ -313,7 +314,7 @@ export default class HostedTrips extends Component{
 
         try{
           
-          const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/collectPayment', settings)
+          const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/collectPayment`, settings)
           const data = await fetchResponse.json();
           return data;
         }catch(e){

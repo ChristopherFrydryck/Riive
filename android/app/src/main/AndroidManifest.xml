@@ -34,7 +34,7 @@
     <!-- BEGIN GOOGLE MAPS CONFIG -->
     <meta-data
       android:name="com.google.android.geo.API_KEY"
-      android:value="AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c"/>
+      android:value="@string/google_maps_api_key"/>
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     <!-- END GOOGLE MAPS CONFIG -->
 

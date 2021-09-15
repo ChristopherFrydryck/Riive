@@ -3,10 +3,12 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'riive' do
+abstract_target 'riive-app' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
+
+  target 'riive' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
@@ -36,10 +38,24 @@ target 'riive' do
 
   pod 'Stripe', :git => 'https://github.com/stripe/stripe-ios.git', :tag => 'v19.4.1'
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing
   end
+
+  target 'riive-development' do
+    inherit! :complete
+    # Pods for dev environment only
+  end
+
+  target 'riive-staging' do
+    inherit! :complete
+    # Pods for dev staging only
+  end
+
+end
 
   # Enables Flipper.
   #
@@ -50,6 +66,8 @@ target 'riive' do
   #   flipper_post_install(installer)
   # end
 end
+
+
 
 target 'riive-tvOS' do
   # Pods for riive-tvOS

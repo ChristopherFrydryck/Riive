@@ -696,7 +696,10 @@ export default class DayAvailabilityPicker extends React.Component{
                                         <Button disabled={this.state.isHidden} style={{flex: 1, marginLeft: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: this.state.isHidden ? Colors.mist900 : Colors.tango900}} textStyle={{color: this.state.isHidden ? Colors.mist900 : Colors.tango900}} onPress={(x) => this.openModal()}>Edit Time Slot{this.state.daily[this.state.activeDay].data.length > 1 ? "s" : null}</Button>
                                     }
                                 </View>
-                                : null 
+                                : 
+                                <View style={{flexDirection: 'row', flex: 1}}>
+                                    <Button disabled={this.state.isHidden} style={{flex: 1, marginLeft: 4, backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: this.state.isHidden ? Colors.mist900 : Colors.tango900}} textStyle={{color: this.state.isHidden ? Colors.mist900 : Colors.tango900}} onPress={(x) => this.openModal()}>Edit Time Slot{this.state.daily[this.state.activeDay].data.length > 1 ? "s" : null}</Button>
+                                </View>
                           
                            
                         : null}

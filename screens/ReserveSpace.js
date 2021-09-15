@@ -9,6 +9,8 @@ import Colors from '../constants/Colors'
 import Round from '../functions/in-app/round'
 
 import MapView, {Marker} from 'react-native-maps';
+import config from 'react-native-config'
+
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
@@ -548,7 +550,7 @@ class reserveSpace extends Component {
                               }
                           
                                 
-                            fetch('https://us-central1-riive-parking.cloudfunctions.net/sendNotification', settings)
+                            fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/sendNotification`, settings)
                                 
                                
                             
@@ -631,7 +633,7 @@ class reserveSpace extends Component {
 
             try{
               
-              const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/payForSpace', settings)
+              const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/payForSpace`, settings)
               const data = await fetchResponse.json();
               return data;
             }catch(e){

@@ -11,7 +11,7 @@ import {Card, ThemeProvider} from 'react-native-paper';
 
 // import ImageBrowser from '../features/camera-roll/ImageBrowser'
 import ImagePicker from 'react-native-image-crop-picker';
-
+import config from 'react-native-config'
 
 
 
@@ -512,7 +512,7 @@ class addSpace extends Component {
     }
     try{
       
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addDebitCardForDirectDeposit', settings)
+      const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addDebitCardForDirectDeposit`, settings)
       const data = await fetchResponse.json();
       return data;
     }catch(e){
@@ -838,7 +838,7 @@ clearAddress = () => {
   this.GooglePlacesRef.setAddressText("")
   this.setState(prevState => ({
     searchedAddress: false,
-    timezone: timeZoneDB,
+    timezone: null,
     address:{
       ...prevState.address,
       full: null,
@@ -1128,8 +1128,6 @@ clearAddress = () => {
             <View style={{paddingHorizontal: 16}}>
               <DayAvailabilityPicker 
                 listing={null}
-                isHidden={false}
-                isDeleted={false}
                 availability={this.state.daily}
                 availabilityCallback={this.availabilityCallbackFunction}
                 >

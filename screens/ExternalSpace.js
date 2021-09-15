@@ -227,15 +227,10 @@ class externalSpace extends React.Component {
                             </View>
                             : null}
                             
-                    
-                        
 
-                        
                             <View style={{marginTop: 32}}>
                                 <DayAvailabilityPicker 
                                     listing={this.props.ComponentStore.selectedExternalSpot[0]}
-                                    isHidden={this.props.ComponentStore.selectedSpot[0].hidden}
-                                    isDeleted={this.props.ComponentStore.selectedSpot[0].toBeDeleted}
                                     availability={this.props.ComponentStore.selectedExternalSpot[0].availability}
                                     availabilityCallback={() => {}}
                                     editable={false}

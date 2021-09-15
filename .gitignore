@@ -56,6 +56,7 @@ build/
 .idea
 .gradle
 local.properties
+android/gradle.properties
 *.iml
 *.hprof
 
@@ -99,3 +100,11 @@ firebaseConfig.js
 firestore.rules
 firestore.indexes.json
 firebase.json
+storage.rules
+.react-native-config.js
+
+
+# Env Vars
+.env.development
+.env.production
+.env.staging

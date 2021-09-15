@@ -14,6 +14,8 @@ import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
+import config from 'react-native-config'
+
 
 //MobX Imports
 import {inject, observer} from 'mobx-react/native'
@@ -210,7 +212,7 @@ addAddress = async () => {
 
   if(this.state.address.line1 != ""){
     try{  
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerAddress', settings)
+      const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomerAddress`, settings)
       const data = await fetchResponse;
       if(data.status !== 200){
         throw "Failure to link address."
@@ -252,7 +254,7 @@ addSSN = async () => {
 
   if(this.state.ssn != ""){
     try{  
-      const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomerSSN', settings)
+      const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomerSSN`, settings)
       const data = await fetchResponse;
       if(data.status !== 200){
         throw "Failure to link ssn."
@@ -309,7 +311,7 @@ addSource = async () => {
   }
   try{
     
-    const fetchResponse = await fetch('https://us-central1-riive-parking.cloudfunctions.net/addSource', settings)
+    const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addSource`, settings)
     const data = await fetchResponse.json();
     return data;
   }catch(e){

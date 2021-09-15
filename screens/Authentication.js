@@ -11,6 +11,8 @@ import Button from '../components/Button'
 import FloatingCircles from '../components/FloatingCircles'
 import { checkPermissionsStatus } from '../functions/in-app/permissions'
 
+import config from 'react-native-config'
+
 import logo from '../assets/img/Logo_001.png'
 
 //MobX Imports
@@ -132,7 +134,7 @@ export default class Authentication extends React.Component {
       })
     }
     
-    await fetch('https://us-central1-riive-parking.cloudfunctions.net/addCustomer', settings).then((res) => {
+    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomer`, settings).then((res) => {
         let data = res.json()
         // console.log(`fnRes: ${JSON.stringify(res)}`)
         // console.log(`fnResStatus: ${res.status}`)
@@ -826,7 +828,7 @@ onPressSignIn = async() => {
       }
   
         
-        await fetch('https://us-central1-riive-parking.cloudfunctions.net/getUserDataFromEmail', settings).then((res) => {
+        await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/getUserDataFromEmail`, settings).then((res) => {
           return res.json()
         }).then((body) => {
           const db = firestore();

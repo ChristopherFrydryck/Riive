@@ -1,6 +1,21 @@
 apply plugin: "com.android.application"
+apply from: project(":react-native-config").projectDir.getPath() + "/dotenv.gradle"
+
+// Environment variables:
+project.ext.envConfigFiles = [
+  release: ".env.production",
+  debug: ".env.development"
+]
+
+
+
 
 import com.android.build.OutputFile
+
+
+
+
+
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
@@ -122,6 +137,7 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    flavorDimensions "default"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -136,6 +152,8 @@ android {
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
+        resValue "string", "build_config_package", "com.riive"
+        manifestPlaceholders = [label: 'Riive']
     }
 
     dexOptions {
@@ -162,6 +180,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug', 'release']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -169,6 +188,31 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+    productFlavors {
+         dev {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.riive.development'
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "com.riive"
+            manifestPlaceholders = [label: 'Riive Dev']
+            resValue "string", "google_maps_api_key", GOOGLE_MAP_KEY_DEV
+        }
+        prod {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.riive'
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "com.riive"
+            resValue "string", "google_maps_api_key", GOOGLE_MAP_KEY_PROD
+        }
+        stage {
+            minSdkVersion rootProject.ext.minSdkVersion
+            applicationId 'com.riive.staging'
+            targetSdkVersion rootProject.ext.targetSdkVersion
+            resValue "string", "build_config_package", "com.riive"
+            manifestPlaceholders = [label: 'Riive Staging']
+            resValue "string", "google_maps_api_key", GOOGLE_MAP_KEY_STAGE
         }
     }
 
