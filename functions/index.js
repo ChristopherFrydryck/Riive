@@ -267,6 +267,27 @@ const fs = require('fs');
         })
     })
 
+    exports.backupAll = functions.pubsub.schedule('every 24 hours').timeZone('America/New_York').onRun(() => {
+        let date = new Date();
+
+        
+        const client = new admin.firestore.v1.FirestoreAdminClient();
+        const databaseName = client.databasePath(functions.config().project.id, '(default)')
+        const bucket = `gs://${functions.config().project.id}.appspot.com/backups/all-collections/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+
+        return client.exportDocuments({
+            name: databaseName,
+            collectionIds: [],
+            outputUriPrefix: bucket,
+        }).then(([response]) => {
+            console.log(`Operation Name: ${response.name}`)
+            return response
+        }).catch(err => {
+            console.error(err)
+            throw new Error('Export operation failed')
+        })
+    })
+
     exports.addBankForDirectDeposit = functions.https.onRequest((request, response) => {
         return stripe.tokens.create({
             bank_account: {
