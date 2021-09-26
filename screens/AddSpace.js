@@ -909,7 +909,7 @@ clearAddress = () => {
               />
             }
             query={{
-              key: 'AIzaSyBa1s5i_DzraNU6Gw_iO-wwvG2jJGdnq8c',
+              key: config.GOOGLE_API_KEY,
               language: 'en'
             }}
             GooglePlacesSearchQuery={{

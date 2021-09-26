@@ -56,7 +56,7 @@ build/
 .idea
 .gradle
 local.properties
-android/gradle.properties
+gradle.properties
 *.iml
 *.hprof
 
