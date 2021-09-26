@@ -24,6 +24,7 @@ import Image from '../components/Image'
 import ListingMarker from '../components/ListingMarker'
 import FilterButton from '../components/FilterButton'
 import SearchFilter from '../components/SearchFilter'
+import WhatsNewModal from '../components/WhatsNewModal'
 
 
 import Colors from '../constants/Colors'
@@ -909,6 +910,8 @@ goToReserveSpace = () => {
     if(permissions.locationServices && this.region.current.latitude && this.region.current.longitude){
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
+
+            <WhatsNewModal />
 
           {/* Search Filter component */}
           <SafeAreaView style={Platform.OS === 'ios' ? {zIndex:  999999} : null}>
