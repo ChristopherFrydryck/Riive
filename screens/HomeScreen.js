@@ -1,6 +1,6 @@
 
 import React, {Component, createRef} from 'react'
-import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking} from 'react-native'
+import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking, ScrollView} from 'react-native'
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 import axios from 'axios'
@@ -105,6 +105,9 @@ class Home extends Component {
       rippleScaleAnimation: new Animated.Value(0.8),
       slideUpAnimation: new Animated.Value(-100),
 
+      whatsNewModalVisible: false,
+      currentActivePhoto: 0,
+
       inputFocus: false,
       searchedAddress: false,
       mapScrolled: false,
@@ -174,8 +177,13 @@ class Home extends Component {
 
   async componentDidMount(){
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
+
+    this.setState({whatsNewModalVisible: true})
+
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
+
+        
         
         
         this.mapLocationFunction();
@@ -904,6 +912,32 @@ goToReserveSpace = () => {
     clearInterval(this._interval)
   }
 
+  carouselUpdate = (xVal) => {
+    const {width} = Dimensions.get('window')
+
+    let newIndex = Math.round(xVal/width)
+
+    console.log(newIndex)
+    
+
+    this.setState({currentActivePhoto: newIndex})
+}
+
+renderDotsView = (numItems, position) =>{
+    var arr = [];
+    for(let i = 0; i <= numItems - 1; i++){
+        arr.push(
+            <Animated.View 
+                key={i}
+                style={{ opacity: position == i ? 1 : 0.3, height: 8, width: 8, backgroundColor: Colors.cosmos900, margin: 2, borderRadius: 8 }}
+              />
+        )
+    }
+
+    return(arr)
+    
+    }
+
   render() {
     const {width, height} = Dimensions.get('window')
     const {firstname, email, permissions} = this.props.UserStore
@@ -911,7 +945,41 @@ goToReserveSpace = () => {
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
 
-            <WhatsNewModal />
+            <WhatsNewModal closeModal={() => this.setState({whatsNewModalVisible: false})} visible={this.state.whatsNewModalVisible}>
+                {/* <View style={{flex: 1, flexDirection: 'column', backgroundColor: 'pink'}}> */}
+                    {/* <ScrollView
+                        horizontal={true}
+                        pagingEnabled={true}
+                        scrollEnabled={true}
+                        decelerationRate={0}
+                        snapToAlignment="start"
+                        snapToInterval={width - 48}
+                        onScroll={data =>  this.carouselUpdate(data.nativeEvent.contentOffset.x)}
+                        scrollEventThrottle={1}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{width: (width-48) * 3,}}
+                        // stickyHeaderIndices={[1]}
+                        
+                        // persistentScrollbar={true}
+                    > */}
+                    <WhatsNewModal.Item image="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg">
+                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
+                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
+                    </WhatsNewModal.Item>
+                    <WhatsNewModal.Item image="https://mathiasbynens.be/demo/animated-webp-supported.webp">
+                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
+                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
+                        </WhatsNewModal.Item>
+                    <WhatsNewModal.Item image="https://media.istockphoto.com/photos/colored-powder-explosion-on-black-background-picture-id1057506940?k=20&m=1057506940&s=612x612&w=0&h=3j5EA6YFVg3q-laNqTGtLxfCKVR3_o6gcVZZseNaWGk=">
+                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
+                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
+                    </WhatsNewModal.Item>
+                    <WhatsNewModal.Item image="https://media.istockphoto.com/photos/colored-powder-explosion-on-black-background-picture-id1057506940?k=20&m=1057506940&s=612x612&w=0&h=3j5EA6YFVg3q-laNqTGtLxfCKVR3_o6gcVZZseNaWGk=">
+                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
+                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
+                    </WhatsNewModal.Item>
+            </WhatsNewModal>
+      
 
           {/* Search Filter component */}
           <SafeAreaView style={Platform.OS === 'ios' ? {zIndex:  999999} : null}>
