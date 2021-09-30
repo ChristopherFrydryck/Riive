@@ -44,6 +44,7 @@ import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging'
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage'
 import 'firebase/firestore';
 import 'firebase/auth';
 import * as geofirestore from 'geofirestore'
@@ -107,6 +108,7 @@ class Home extends Component {
 
       whatsNewModalVisible: false,
       currentActivePhoto: 0,
+      changelogVersion: null,
 
       inputFocus: false,
       searchedAddress: false,
@@ -175,16 +177,47 @@ class Home extends Component {
     }
   }
 
+  checkVersion = () => {
+    let major = version.split('.')[0]
+    let minor = version.split('.')[1]
+    let patch = version.split('.')[2]
+
+     const storageRef = storage().ref().child("dev-team/changelog.json")
+
+   
+         storageRef.getDownloadURL().then((url) => {
+            let details = fetch(url)
+            return details
+        }, (err) => {
+            console.log(err)
+        }).then((res) => {
+            return res.json()
+        }).then((res) => {
+            
+            let V = res.versions.filter(x => x.release == version)[0]
+            this.setState({changelogVersion: V})
+            
+        })
+  }
+
   async componentDidMount(){
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
 
+    this.checkVersion();
+    this.forceUpdate();
+
+
     this.setState({whatsNewModalVisible: true})
+
+   
 
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
 
         
         
+
+   
         
         this.mapLocationFunction();
         this.getCurrentLocation(false);
@@ -202,6 +235,20 @@ class Home extends Component {
       this._navListener = this.props.navigation.addListener('didBlur', () => {
         
         clearInterval(this._interval)
+
+        // const storageRef = storage().ref().child("dev-team/changelog.json")
+   
+        // storageRef.getDownloadURL().then((url) => {
+        //     let details = fetch(url)
+        //     return details
+        // }, (err) => {
+        //     console.log(err)
+        // }).then((res) => {
+        //     return res.json()
+        // }).then((res) => {
+        //     console.log(res.versions[0].description)
+        // })
+
       })
 
       
@@ -945,40 +992,18 @@ renderDotsView = (numItems, position) =>{
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
 
-            <WhatsNewModal closeModal={() => this.setState({whatsNewModalVisible: false})} visible={this.state.whatsNewModalVisible}>
-                {/* <View style={{flex: 1, flexDirection: 'column', backgroundColor: 'pink'}}> */}
-                    {/* <ScrollView
-                        horizontal={true}
-                        pagingEnabled={true}
-                        scrollEnabled={true}
-                        decelerationRate={0}
-                        snapToAlignment="start"
-                        snapToInterval={width - 48}
-                        onScroll={data =>  this.carouselUpdate(data.nativeEvent.contentOffset.x)}
-                        scrollEventThrottle={1}
-                        showsHorizontalScrollIndicator={false}
-                        contentContainerStyle={{width: (width-48) * 3,}}
-                        // stickyHeaderIndices={[1]}
-                        
-                        // persistentScrollbar={true}
-                    > */}
-                    <WhatsNewModal.Item image="https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg">
-                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
-                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
-                    </WhatsNewModal.Item>
-                    <WhatsNewModal.Item image="https://mathiasbynens.be/demo/animated-webp-supported.webp">
-                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
-                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
-                        </WhatsNewModal.Item>
-                    <WhatsNewModal.Item image="https://media.istockphoto.com/photos/colored-powder-explosion-on-black-background-picture-id1057506940?k=20&m=1057506940&s=612x612&w=0&h=3j5EA6YFVg3q-laNqTGtLxfCKVR3_o6gcVZZseNaWGk=">
-                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
-                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
-                    </WhatsNewModal.Item>
-                    <WhatsNewModal.Item image="https://media.istockphoto.com/photos/colored-powder-explosion-on-black-background-picture-id1057506940?k=20&m=1057506940&s=612x612&w=0&h=3j5EA6YFVg3q-laNqTGtLxfCKVR3_o6gcVZZseNaWGk=">
-                        <Text>Hello worldsksjd fsdj fjs sjadj sdlkfdsa kl sadfj lasdfas jfjlksa lkdslk adslk fasdkl jlas</Text>
-                        <Text>fa dsklf dsajads jkadsk asdlkfs fjsdkf dslk fk sdjkfd jlaksdjlas jkskjlfjklfjakdsf kskdfdskj fas fsdk d s  fd as dsfkjas</Text>
-                    </WhatsNewModal.Item>
-            </WhatsNewModal>
+
+            {this.state.changelogVersion ? 
+                <WhatsNewModal closeModal={() => this.setState({whatsNewModalVisible: false})} visible={this.state.whatsNewModalVisible}>
+                        {this.state.changelogVersion.description.map((desc, i) => {
+                            return(
+                                <WhatsNewModal.Item key={i} image={this.state.changelogVersion.images[i]}>
+                                    <Text>{desc}</Text>
+                                </WhatsNewModal.Item>
+                            )
+                        })}
+                </WhatsNewModal>
+            : null}
       
 
           {/* Search Filter component */}
