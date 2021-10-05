@@ -185,8 +185,20 @@ class Home extends Component {
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
 
 
-    checkWhatsNew(this.props.UserStore.last_update.seconds).then((res) => {
-        this.setState({changelogVersion: res})
+    let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
+    
+    checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
+        if(res !== null){
+            this.setState({changelogVersion: res})
+            this.props.UserStore.versions.push({
+                code: res.release,
+                dateAdded: new Date(),
+                major: res.major,
+                minor: res.minor,
+                patch: res.patch,
+            })
+        }
+        // this.props.UserStore.versions: [res, ...this.props.UserStore.versions]
     })
 
     this.forceUpdate();

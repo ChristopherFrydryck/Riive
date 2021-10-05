@@ -10,6 +10,8 @@ import Colors from '../constants/Colors'
 import { version } from '../package.json'
 
 import storage from '@react-native-firebase/storage'
+import firestore from '@react-native-firebase/firestore'
+import auth, { firebase } from '@react-native-firebase/auth';
 
 
 class Item extends PureComponent{
@@ -121,15 +123,9 @@ export class WhatsNewModal extends PureComponent{
     }
 }
 
-export let checkWhatsNew = (lastUpdateUnix) => {
-    let major = version.split('.')[0]
-    let minor = version.split('.')[1]
-    let patch = version.split('.')[2]
-
+export let checkWhatsNew = (isNewUser, versionsUsed) => {
      const storageRef = storage().ref().child("dev-team/changelog.json")
-   
-     
-    
+
         return storageRef.getDownloadURL().then((url) => {
             let details = fetch(url)
             return details
@@ -139,34 +135,35 @@ export let checkWhatsNew = (lastUpdateUnix) => {
             return res.json()
         }).then((res) => {
 
-                var V = res.versions.filter(x => x.release == version)[0]
-                // console.log(`V is ${JSON.stringify(V)}`)
-                let userLastUpdate = parseInt(lastUpdateUnix+"000")
-
-        
-
-                if(userLastUpdate && userLastUpdate > V.dateUnix){
+            var V = res.versions.filter(x => x.release == version)[0]
+                
+            if(isNewUser){
+                return res.versions.filter(x => x.release == "0.0.0")[0]
+            }else{
+                if(versionsUsed.map(x => x.code).includes(version)){
                     return null
                 }else{
-                    if(!userLastUpdate){
-                        return res.versions.filter(x => x.release == "0.0.0")[0]
-                    }else{
-                        return V
-                    }
-                    // console.log(`Last update: ${userLastUpdate}`)
-                    // console.log(`Unix Date: ${V.dateUnix}`)
-                    
+                    addVersionToUserDB(version);
+                    return V
                 }
-                
-           
-            
-            // console.log(`res.versions is: ${res.versions.map(x => x.release)}, version is: ${version}`)
-  
+            }
+
         })
         
   }
 
+  let addVersionToUserDB = (version) => {
+    const db = firestore()
+     const user = db.collection('users').doc(auth().currentUser.uid)
 
 
-
-
+     user.update({
+         versions: firebase.firestore.FieldValue.arrayUnion({
+            code: version,
+            dateAdded: new Date(),
+            major: parseInt(version.split(".")[0]),
+            minor: parseInt(version.split(".")[1]),
+            patch: parseInt(version.split(".")[2])
+         })
+     })
+  }

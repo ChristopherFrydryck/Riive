@@ -21,6 +21,7 @@ class UserStore {
     @observable vehicles = [];
     @observable payments = [];
     @observable reports = [];
+    @observable versions = [];
     @observable searchHistory = [];
     @observable pushTokens = [];
     @observable permissions = {
