@@ -829,12 +829,12 @@ export default class HostedTrips extends Component{
                                         }
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Service Fee {isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : <Text style={{fontSize: 12}}>(charged to visitor)</Text>}</Text>
-                                        <Text style={visit.isCancelled && !visit.refundServiceFee ? {textDecorationLine: 'line-through'} : null}>{visit.price.serviceFee}</Text>
+                                        <Text>Service Fee {visit.price.serviceFeeCents !== 0 && isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : visit.price.serviceFeeCents !== 0 ? <Text style={{fontSize: 12}}>(charged to visitor)</Text> : null}</Text>
+                                        <Text style={visit.isCancelled && !visit.refundServiceFee ? {textDecorationLine: 'line-through'} : null}>{visit.price.serviceFeeCents === 0 ? "Free" : visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Processing Fee {isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : <Text style={{fontSize: 12}}>(charged to visitor)</Text>}</Text>
-                                        <Text style={visit.isCancelled && visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.processingFee}</Text>
+                                        <Text>Processing Fee {visit.price.processingFeeCents !== 0 &&isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : visit.price.processingFeeCents !== 0 ? <Text style={{fontSize: 12}}>(charged to visitor)</Text> : null}</Text>
+                                        <Text style={visit.isCancelled && visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.processingFeeCents === 0 ? "Free" : visit.price.processingFee}</Text>
                                     </View>
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
