@@ -24,7 +24,7 @@ import Image from '../components/Image'
 import ListingMarker from '../components/ListingMarker'
 import FilterButton from '../components/FilterButton'
 import SearchFilter from '../components/SearchFilter'
-import WhatsNewModal from '../components/WhatsNewModal'
+import {WhatsNewModal, checkWhatsNew} from '../components/WhatsNewModal'
 
 
 import Colors from '../constants/Colors'
@@ -177,33 +177,18 @@ class Home extends Component {
     }
   }
 
-  checkVersion = () => {
-    let major = version.split('.')[0]
-    let minor = version.split('.')[1]
-    let patch = version.split('.')[2]
+ 
 
-     const storageRef = storage().ref().child("dev-team/changelog.json")
-
-   
-         storageRef.getDownloadURL().then((url) => {
-            let details = fetch(url)
-            return details
-        }, (err) => {
-            console.log(err)
-        }).then((res) => {
-            return res.json()
-        }).then((res) => {
-            
-            let V = res.versions.filter(x => x.release == version)[0]
-            this.setState({changelogVersion: V})
-            
-        })
-  }
+//   this.setState({changelogVersion: V})
 
   async componentDidMount(){
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
 
-    this.checkVersion();
+
+    checkWhatsNew(this.props.UserStore.last_update.seconds).then((res) => {
+        this.setState({changelogVersion: res})
+    })
+
     this.forceUpdate();
 
 
@@ -994,7 +979,7 @@ renderDotsView = (numItems, position) =>{
 
 
             {this.state.changelogVersion ? 
-                <WhatsNewModal closeModal={() => this.setState({whatsNewModalVisible: false})} visible={this.state.whatsNewModalVisible}>
+                <WhatsNewModal title={this.state.changelogVersion.title || null} closeModal={() => this.setState({whatsNewModalVisible: false})} visible={this.state.whatsNewModalVisible}>
                         {this.state.changelogVersion.description.map((desc, i) => {
                             return(
                                 <WhatsNewModal.Item key={i} image={this.state.changelogVersion.images[i]}>

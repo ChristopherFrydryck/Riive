@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "devices": "adb devices",
+    "devices": "adb devices && xcrun instruments -s devices",
     "clean-android": "cd android && ./gradlew clean && cd ..",
     "clean-ios": "cd ios && xcodebuild clean && cd ..",
     "firebase-projects": "firebase projects:list",

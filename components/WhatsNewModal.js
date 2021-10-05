@@ -1,5 +1,5 @@
 import React, { PureComponent, Children } from 'react'
-import {View, StyleSheet, Dimensions, Modal, Button, Animated, Platform} from 'react-native'
+import {View, StyleSheet, Dimensions, Modal, Button, Animated, Platform, Vibration} from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 import Text from '../components/Txt'
@@ -7,6 +7,9 @@ import Icon from '../components/Icon'
 import Image from '../components/Image'
 
 import Colors from '../constants/Colors'
+import { version } from '../package.json'
+
+import storage from '@react-native-firebase/storage'
 
 
 class Item extends PureComponent{
@@ -33,7 +36,7 @@ class Item extends PureComponent{
     
 }
 
-class NewModal extends PureComponent{
+export class WhatsNewModal extends PureComponent{
     static Item = Item
 
     constructor(props){
@@ -118,8 +121,52 @@ class NewModal extends PureComponent{
     }
 }
 
+export let checkWhatsNew = (lastUpdateUnix) => {
+    let major = version.split('.')[0]
+    let minor = version.split('.')[1]
+    let patch = version.split('.')[2]
+
+     const storageRef = storage().ref().child("dev-team/changelog.json")
+   
+     
+    
+        return storageRef.getDownloadURL().then((url) => {
+            let details = fetch(url)
+            return details
+        }, (err) => {
+            return err
+        }).then((res) => {
+            return res.json()
+        }).then((res) => {
+
+                var V = res.versions.filter(x => x.release == version)[0]
+                // console.log(`V is ${JSON.stringify(V)}`)
+                let userLastUpdate = parseInt(lastUpdateUnix+"000")
+
+        
+
+                if(userLastUpdate && userLastUpdate > V.dateUnix){
+                    return null
+                }else{
+                    if(!userLastUpdate){
+                        return res.versions.filter(x => x.release == "0.0.0")[0]
+                    }else{
+                        return V
+                    }
+                    // console.log(`Last update: ${userLastUpdate}`)
+                    // console.log(`Unix Date: ${V.dateUnix}`)
+                    
+                }
+                
+           
+            
+            // console.log(`res.versions is: ${res.versions.map(x => x.release)}, version is: ${version}`)
+  
+        })
+        
+  }
 
 
 
 
-export default NewModal
+
