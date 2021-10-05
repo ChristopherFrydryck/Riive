@@ -55,8 +55,8 @@ class reserveSpace extends Component {
             hoursSpent: null,
             minutesSpent: null,
             
-            serviceFeePercentage: .15,
-            processingFeePercentage: 0.039, 
+            serviceFeePercentage: 0,
+            processingFeePercentage: 0, 
 
             price: null,
             priceCents: null,
