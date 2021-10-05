@@ -55,7 +55,8 @@ class reserveSpace extends Component {
             hoursSpent: null,
             minutesSpent: null,
             
-            serviceFeePercentage: .15, 
+            serviceFeePercentage: .15,
+            processingFeePercentage: 0.039, 
 
             price: null,
             priceCents: null,
@@ -84,6 +85,14 @@ class reserveSpace extends Component {
     async componentDidMount(){
         const { timeSearched } = this.props.navigation.state.params.homeState;
         await this.getDiffHours(timeSearched[0].label, timeSearched[1].label)
+
+        await this.getAppPricing().then(values => {
+            this.setState({
+                serviceFeePercentage: values.service_fee_percentage,
+                processingFeePercentage: values.processing_fee_percentage,
+                serviceFeeCents: values.service_fee,
+            })
+        })
 
         await this.getPrice();
 
@@ -134,6 +143,19 @@ class reserveSpace extends Component {
   
          
       }
+
+      getAppPricing = () => {
+        const db = firestore();
+        const pricing = db.collection("environment").doc("pricing") 
+
+        return pricing.get().then(res => {
+            return res.data()
+        }).then((res) => {
+            return res
+        }).catch(e => {
+            throw e
+        })
+      };
 
     carouselUpdate = (xVal) => {
         const {width} = Dimensions.get('window')
@@ -357,16 +379,14 @@ class reserveSpace extends Component {
             var dollarsCents = Math.ceil(price);
             dollars = dollars.toLocaleString("en-US", {style:"currency", currency:"USD"});
 
-
-            var dollarsServiceFee = price * this.state.serviceFeePercentage / 100 > 1.75 ? (price * this.state.serviceFeePercentage / 100) : 1.75;
-            var dollarsServiceFeeCents = price * this.state.serviceFeePercentage > 175 ? Math.ceil(price * this.state.serviceFeePercentage) : 175;
-            dollarsServiceFee = dollarsServiceFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
-
             
+            var dollarsServiceFeeCents = price * this.state.serviceFeePercentage > this.state.serviceFeeCents ? Math.ceil(price * this.state.serviceFeePercentage) : this.state.serviceFeeCents;
+            var dollarsServiceFee = (dollarsServiceFeeCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"});
 
-            var dollarsProcessingFee = Round((((price  * .039) + 30) / 100), 2);
-            var dollarsProcessingFeeCents = Math.ceil((price  * .039) + 30)
-            dollarsProcessingFee = dollarsProcessingFee.toLocaleString("en-US", {style:"currency", currency:"USD"});
+
+    
+            var dollarsProcessingFeeCents = Math.ceil((price  * this.state.processingFeePercentage) + 30)
+            var dollarsProcessingFee = (dollarsProcessingFeeCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"});
 
 
             this.setState({
@@ -801,11 +821,11 @@ class reserveSpace extends Component {
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                             <Text>Service Fee</Text>
-                            <Text>{this.state.serviceFee}</Text>
+                            <Text>{this.state.serviceFeeCents === 0 ? "Free" : this.state.serviceFee}</Text>
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                             <Text>Processing Fee</Text>
-                            <Text>{this.state.processingFee}</Text>
+                            <Text>{this.state.processingFeeCents === 0 ? "Free" : this.state.processingFee}</Text>
                         </View>
                         <View
                             style={{
