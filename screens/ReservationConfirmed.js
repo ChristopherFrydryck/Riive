@@ -127,11 +127,11 @@ class ReservationConfirmed extends Component {
                             </View>
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                 <Text>Service Fee</Text>
-                                <Text>{cost.serviceFee}</Text>
+                                <Text>{cost.serviceFeeCents === 0 ? "Free" : cost.serviceFee}</Text>
                             </View>
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                 <Text>Processing Fee</Text>
-                                <Text>{cost.processingFee}</Text>
+                                <Text>{cost.processingFeeCents === 0 ? "Free" : cost.processingFee}</Text>
                             </View>
                         </View>
                         <View style={{paddingVertical: 16, flexDirection: 'column'}}>

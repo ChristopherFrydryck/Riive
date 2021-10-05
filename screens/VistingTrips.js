@@ -499,12 +499,12 @@ export default class VisitingTrips extends Component{
                                        
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Service Fee {data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
-                                        <Text style={data.visit.isCancelled ? data.visit.refundServiceFee ? null : {textDecorationLine: 'line-through'}: null}>{data.visit.price.serviceFee}</Text>
+                                        <Text>Service Fee {data.visit.price.serviceFeeCents !== 0 && data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
+                                        <Text style={data.visit.isCancelled ? data.visit.refundServiceFee ? null : {textDecorationLine: 'line-through'}: null}>{data.visit.price.serviceFeeCents === 0 ? "Free" : data.visit.price.serviceFee}</Text>
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text>Processing Fee {data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
-                                        <Text style={data.visit.isCancelled && data.visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null}>{data.visit.price.processingFee}</Text>
+                                        <Text>Processing Fee {data.visit.price.processingFeeCents !== 0 && data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
+                                        <Text style={data.visit.isCancelled && data.visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null}>{data.visit.price.processingFeeCents === 0 ? "Free" : data.visit.price.processingFee}</Text>
                                     </View>
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>

@@ -1,6 +1,6 @@
 
 import React, {Component, createRef} from 'react'
-import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking} from 'react-native'
+import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking, ScrollView} from 'react-native'
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 import axios from 'axios'
@@ -24,6 +24,7 @@ import Image from '../components/Image'
 import ListingMarker from '../components/ListingMarker'
 import FilterButton from '../components/FilterButton'
 import SearchFilter from '../components/SearchFilter'
+import {WhatsNewModal, checkWhatsNew} from '../components/WhatsNewModal'
 
 
 import Colors from '../constants/Colors'
@@ -43,6 +44,7 @@ import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging'
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage'
 import 'firebase/firestore';
 import 'firebase/auth';
 import * as geofirestore from 'geofirestore'
@@ -103,6 +105,10 @@ class Home extends Component {
       rippleFadeAnimation: new Animated.Value(1),
       rippleScaleAnimation: new Animated.Value(0.8),
       slideUpAnimation: new Animated.Value(-100),
+
+      whatsNewModalVisible: false,
+      currentActivePhoto: 0,
+      changelogVersion: null,
 
       inputFocus: false,
       searchedAddress: false,
@@ -171,11 +177,44 @@ class Home extends Component {
     }
   }
 
+ 
+
+//   this.setState({changelogVersion: V})
+
   async componentDidMount(){
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
+
+
+    let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
+    
+    checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
+        if(res !== null){
+            this.setState({changelogVersion: res})
+            this.props.UserStore.versions.push({
+                code: res.release,
+                dateAdded: new Date(),
+                major: res.major,
+                minor: res.minor,
+                patch: res.patch,
+            })
+        }
+        // this.props.UserStore.versions: [res, ...this.props.UserStore.versions]
+    })
+
+    this.forceUpdate();
+
+
+    this.setState({whatsNewModalVisible: true})
+
+   
+
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
+
         
+        
+
+   
         
         this.mapLocationFunction();
         this.getCurrentLocation(false);
@@ -193,6 +232,20 @@ class Home extends Component {
       this._navListener = this.props.navigation.addListener('didBlur', () => {
         
         clearInterval(this._interval)
+
+        // const storageRef = storage().ref().child("dev-team/changelog.json")
+   
+        // storageRef.getDownloadURL().then((url) => {
+        //     let details = fetch(url)
+        //     return details
+        // }, (err) => {
+        //     console.log(err)
+        // }).then((res) => {
+        //     return res.json()
+        // }).then((res) => {
+        //     console.log(res.versions[0].description)
+        // })
+
       })
 
       
@@ -903,12 +956,52 @@ goToReserveSpace = () => {
     clearInterval(this._interval)
   }
 
+  carouselUpdate = (xVal) => {
+    const {width} = Dimensions.get('window')
+
+    let newIndex = Math.round(xVal/width)
+
+    console.log(newIndex)
+    
+
+    this.setState({currentActivePhoto: newIndex})
+}
+
+renderDotsView = (numItems, position) =>{
+    var arr = [];
+    for(let i = 0; i <= numItems - 1; i++){
+        arr.push(
+            <Animated.View 
+                key={i}
+                style={{ opacity: position == i ? 1 : 0.3, height: 8, width: 8, backgroundColor: Colors.cosmos900, margin: 2, borderRadius: 8 }}
+              />
+        )
+    }
+
+    return(arr)
+    
+    }
+
   render() {
     const {width, height} = Dimensions.get('window')
     const {firstname, email, permissions} = this.props.UserStore
     if(permissions.locationServices && this.region.current.latitude && this.region.current.longitude){
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
+
+
+            {this.state.changelogVersion ? 
+                <WhatsNewModal title={this.state.changelogVersion.title || null} closeModal={() => this.setState({whatsNewModalVisible: false})} visible={this.state.whatsNewModalVisible}>
+                        {this.state.changelogVersion.description.map((desc, i) => {
+                            return(
+                                <WhatsNewModal.Item key={i} image={this.state.changelogVersion.images[i]}>
+                                    <Text>{desc}</Text>
+                                </WhatsNewModal.Item>
+                            )
+                        })}
+                </WhatsNewModal>
+            : null}
+      
 
           {/* Search Filter component */}
           <SafeAreaView style={Platform.OS === 'ios' ? {zIndex:  999999} : null}>

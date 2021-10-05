@@ -12,6 +12,7 @@ import FloatingCircles from '../components/FloatingCircles'
 import { checkPermissionsStatus } from '../functions/in-app/permissions'
 
 import config from 'react-native-config'
+import { version } from '../package.json'
 
 import logo from '../assets/img/Logo_001.png'
 
@@ -257,7 +258,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
               this.props.UserStore.photo = doc.data().photo;
               this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
-              this.props.UserStore.last_update = doc.data().last_update;
+              this.props.UserStore.lastUpdate = doc.data().last_update;
               this.props.UserStore.vehicles = doc.data().vehicles;
               this.props.UserStore.listings = [];
               this.props.UserStore.reports = [];
@@ -270,6 +271,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.pushTokens = doc.data().pushTokens || [];
               this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
               this.props.UserStore.address = doc.data().primaryAddress || {};
+              this.props.UserStore.versions = doc.data().versions || [];
               // this.props.UserStore.permissions = doc.data().permissions || {
               //   notifications: {
               //     discountsAndNews: false,
@@ -529,7 +531,14 @@ export default class Authentication extends React.Component {
                           discountsAndNews: true,
                           tripsAndHosting: true,
                         }
-                      }
+                      },
+                      versions: [{
+                        code: version,
+                        dateAdded: new Date(),
+                        major: parseInt(version.split(".")[0]),
+                        minor: parseInt(version.split(".")[1]),
+                        patch: parseInt(version.split(".")[2])
+                      }]
                     })
                 return docData
               }).then((doc) => {
@@ -542,7 +551,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.directDepositInfo = {};
                     this.props.UserStore.photo = "";
                     this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
-                    this.props.UserStore.last_update = auth().currentUser.metadata.creationTime;
+                    this.props.UserStore.lastUpdate = auth().currentUser.metadata.creationTime;
                     this.props.UserStore.vehicles = [];
                     this.props.UserStore.listings = [];
                     this.props.UserStore.reports = [];
@@ -554,6 +563,15 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.pushTokens = [];
                     this.props.UserStore.ssnProvided = false;
                     this.props.UserStore.address = {};
+                    this.props.UserStore.versions = [{
+                      versions: [{
+                        code: version,
+                        dateAdded: new Date(),
+                        major: parseInt(version.split(".")[0]),
+                        minor: parseInt(version.split(".")[1]),
+                        patch: parseInt(version.split(".")[2])
+                      }]
+                    }]
                     // this.props.UserStore.permissions = {
                     //   notifications: {
                     //     discountsAndNews: true,
@@ -673,7 +691,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
                 this.props.UserStore.photo = doc.data().photo;
                 this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
-                this.props.UserStore.last_update = doc.data().last_update;
+                this.props.UserStore.lastUpdate = doc.data().last_update;
                 this.props.UserStore.vehicles = doc.data().vehicles;
                 this.props.UserStore.listings = [];
                 this.props.UserStore.reports = [];
@@ -685,6 +703,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.pushTokens = doc.data().pushTokens || [];
                 this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
                 this.props.UserStore.address = doc.data().primaryAddress || {};
+                this.props.UserStore.versions = doc.data().versions || [];
                 // Don't pull from data. we want all permissions, not just account level perms
                 // this.props.UserStore.permissions = this.props.UserStore.permissions;
 
