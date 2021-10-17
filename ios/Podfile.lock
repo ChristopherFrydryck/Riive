@@ -642,7 +642,7 @@ PODS:
     - React-jsi (= 0.63.4)
   - rn-fetch-blob (0.10.16):
     - React-Core
-  - RNCClipboard (1.8.4):
+  - RNCClipboard (1.9.0):
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
@@ -973,7 +973,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   rn-fetch-blob: 651b8d076b43d0d7aa294a3d9ec16c00aab8bef9
-  RNCClipboard: ddd4d291537f1667209c9c405aaa4307297e252e
+  RNCClipboard: 99fc8ad669a376b756fbc8098ae2fd05c0ed0668
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPicker: 914b557e20b3b8317b084aca9ff4b4edb95f61e4
   RNDeviceInfo: 8a06046616c6b5c03787b04f265fa3b52b37c80b
