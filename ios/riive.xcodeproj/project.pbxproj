@@ -115,12 +115,11 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2087B0E4F99A4D77A3C426D8 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD7031929B6D43F19C159855 /* FontAwesome5_Brands.ttf */; };
-		28AF385CCBF27231143827F7 /* libPods-riive-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A18119A178429F422B23E82 /* libPods-riive-tvOSTests.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* riiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* riiveTests.m */; };
-		2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		2DEED2859FE6BDA7E64C3C37 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		3288FC7EC44D40BE816E18CE /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
 		426BF18B55294F5DB372B1B1 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
 		452EF55B81C64293BC9C9524 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
@@ -140,7 +139,6 @@
 		D152BAA800554936A03D4285 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 147836BD4D724736861A8E01 /* Zocial.ttf */; };
 		DACAEFE9AFFF431B85603827 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E5B87A84E5440BA3B19619 /* FontAwesome.ttf */; };
 		E3BA10D9708302DC02B29AC8 /* libPods-riive-app-riive-riiveTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D54509CE31CC736A6365FB8 /* libPods-riive-app-riive-riiveTests.a */; };
-		E6E412C7B198462B68E24E01 /* libPods-riive-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 97A8A04C8C56ADC418BB608E /* libPods-riive-tvOS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -165,7 +163,6 @@
 		00E356EE1AD99517003FC87E /* riiveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = riiveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* riiveTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = riiveTests.m; sourceTree = "<group>"; };
-		0296863F3C8FAB9F114B0F18 /* Pods-riive-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOS.release.xcconfig"; path = "Target Support Files/Pods-riive-tvOS/Pods-riive-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		062D1E6825EF3D6200D03320 /* riive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = riive.entitlements; path = riive/riive.entitlements; sourceTree = "<group>"; };
 		066969FA26E022F600B6D907 /* riive-development.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "riive-development.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		066969FB26E022F600B6D907 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/riive-development/Info.plist"; sourceTree = "<absolute>"; };
@@ -196,7 +193,6 @@
 		0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0676146025DCC20900639434 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/lib/ios/AirGoogleMaps"; sourceTree = "<group>"; };
 		0686BD4726E01AB8006BCAE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/christopherfrydryck/Documents/Dev/Riive-RN/riive/ios/riive/Info.plist"; sourceTree = "<absolute>"; };
-		1013F37D17EBE19ADECF8532 /* Pods-riive-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-riive-tvOSTests/Pods-riive-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* riive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = riive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = riive/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = riive/AppDelegate.m; sourceTree = "<group>"; };
@@ -204,11 +200,9 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = riive/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = riive/main.m; sourceTree = "<group>"; };
 		147836BD4D724736861A8E01 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
-		1A18119A178429F422B23E82 /* libPods-riive-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09201FA71947298B36DCA5 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		1C8D38169D231671645BB2BD /* Pods-riive-app-riive-riiveTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-app-riive-riiveTests.release.xcconfig"; path = "Target Support Files/Pods-riive-app-riive-riiveTests/Pods-riive-app-riive-riiveTests.release.xcconfig"; sourceTree = "<group>"; };
 		1CE75CF82FE4C13C6F3D6EA2 /* libPods-riive-app-riive.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-app-riive.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2302199D1728E2DE1494FEF3 /* Pods-riive-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-riive-tvOS/Pods-riive-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		27E5B36EC5AF4CE5ABF9DF37 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		287B377928CA1B9B59B8D5FD /* Pods-riive-app-riive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-app-riive.release.xcconfig"; path = "Target Support Files/Pods-riive-app-riive/Pods-riive-app-riive.release.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* riive-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "riive-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -228,7 +222,6 @@
 		862BAFB6CAFF4883A2EC5982 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		9739E620D39E1870331CE21C /* Pods-riive.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive.debug.xcconfig"; path = "Target Support Files/Pods-riive/Pods-riive.debug.xcconfig"; sourceTree = "<group>"; };
 		977991583F8969C34C1B11E5 /* Pods-riive-app-riive-riive-staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-app-riive-riive-staging.release.xcconfig"; path = "Target Support Files/Pods-riive-app-riive-riive-staging/Pods-riive-app-riive-riive-staging.release.xcconfig"; sourceTree = "<group>"; };
-		97A8A04C8C56ADC418BB608E /* libPods-riive-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F4EC89B2581AC52CE2F1A54 /* Pods-riive-app-riive-riive-development.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-app-riive-riive-development.release.xcconfig"; path = "Target Support Files/Pods-riive-app-riive-riive-development/Pods-riive-app-riive-riive-development.release.xcconfig"; sourceTree = "<group>"; };
 		A338163F4A5A43D2B5C35BC1 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		A934C42BC3B7BA8F2F7803B9 /* libPods-riive-app-riive-riive-development.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-app-riive-riive-development.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -241,7 +234,6 @@
 		E4BBC97B46DD2C17E4E26EDD /* Pods-riive.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive.release.xcconfig"; path = "Target Support Files/Pods-riive/Pods-riive.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		EE909DF2B71E3CE72282756D /* Pods-riive-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-riive-tvOSTests/Pods-riive-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		F6E9A4128F1EAB005D1BEF3F /* libPods-riive-app-riive-riive-staging.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-riive-app-riive-riive-staging.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F95DC59E84FE48E7375DFD45 /* Pods-riive-development.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-riive-development.release.xcconfig"; path = "Target Support Files/Pods-riive-development/Pods-riive-development.release.xcconfig"; sourceTree = "<group>"; };
 		FC649892D9D3493CBFB7113A /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -277,7 +269,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */,
+				2DEED2859FE6BDA7E64C3C37 /* BuildFile in Frameworks */,
 				6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -286,7 +278,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6E412C7B198462B68E24E01 /* libPods-riive-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +285,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28AF385CCBF27231143827F7 /* libPods-riive-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,8 +372,6 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				97A8A04C8C56ADC418BB608E /* libPods-riive-tvOS.a */,
-				1A18119A178429F422B23E82 /* libPods-riive-tvOSTests.a */,
 				4D54509CE31CC736A6365FB8 /* libPods-riive-app-riive-riiveTests.a */,
 				A934C42BC3B7BA8F2F7803B9 /* libPods-riive-app-riive-riive-development.a */,
 				F6E9A4128F1EAB005D1BEF3F /* libPods-riive-app-riive-riive-staging.a */,
@@ -399,10 +387,6 @@
 				E4BBC97B46DD2C17E4E26EDD /* Pods-riive.release.xcconfig */,
 				79A780BFF7CE45BE5554ED22 /* Pods-riive-riiveTests.debug.xcconfig */,
 				493E28EBA9325054783E1D3B /* Pods-riive-riiveTests.release.xcconfig */,
-				2302199D1728E2DE1494FEF3 /* Pods-riive-tvOS.debug.xcconfig */,
-				0296863F3C8FAB9F114B0F18 /* Pods-riive-tvOS.release.xcconfig */,
-				1013F37D17EBE19ADECF8532 /* Pods-riive-tvOSTests.debug.xcconfig */,
-				EE909DF2B71E3CE72282756D /* Pods-riive-tvOSTests.release.xcconfig */,
 				CF96C478EBE2770B239AFA02 /* Pods-riive-app-riive.debug.xcconfig */,
 				287B377928CA1B9B59B8D5FD /* Pods-riive-app-riive.release.xcconfig */,
 				345C3B39F6754B78D5186399 /* Pods-riive-app-riive-riiveTests.debug.xcconfig */,
@@ -589,7 +573,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "riive-tvOS" */;
 			buildPhases = (
-				3C68CD0D14A6C53ACA27D0C5 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -609,7 +592,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "riive-tvOSTests" */;
 			buildPhases = (
-				1A21A94CFBA5FC1508A39E0C /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -1034,28 +1016,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-riive-app-riive-riive-staging/Pods-riive-app-riive-riive-staging-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1A21A94CFBA5FC1508A39E0C /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-riive-tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1069,28 +1029,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		3C68CD0D14A6C53ACA27D0C5 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-riive-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
 		};
 		5AEEB3316B088586C183B868 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2136,7 +2074,6 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2302199D1728E2DE1494FEF3 /* Pods-riive-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -2164,7 +2101,6 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0296863F3C8FAB9F114B0F18 /* Pods-riive-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -2192,7 +2128,6 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1013F37D17EBE19ADECF8532 /* Pods-riive-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2219,7 +2154,6 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE909DF2B71E3CE72282756D /* Pods-riive-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -2276,6 +2210,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2336,6 +2271,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 ";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
