@@ -41,7 +41,7 @@
  import FlashMessage from "react-native-flash-message";
  
  // Firebase imports
- import * as firebase from 'firebase'
+ import firebase from '@react-native-firebase/app'
  import auth from '@react-native-firebase/auth';
  import firestore from '@react-native-firebase/firestore';
  import messaging from '@react-native-firebase/messaging';
