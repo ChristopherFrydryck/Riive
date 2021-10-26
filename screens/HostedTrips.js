@@ -649,7 +649,7 @@ export default class HostedTrips extends Component{
                         delayActionSheetDrawTime={0}
                         initialOffsetFromBottom = {1}
                    >
-                       <View style={styles.actionSheetContent}>
+                       <ScrollView style={styles.actionSheetContent}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
                                         <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>Cancelling Trip</Text>
                                      </View>
@@ -674,7 +674,7 @@ export default class HostedTrips extends Component{
                                     : null}
                                       <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Pay ${amountChargedToHost}`}</Button>
                                      
-                        </View>
+                        </ScrollView>
                    </ActionSheet>
             )
     }
@@ -948,6 +948,7 @@ const styles = StyleSheet.create({
       },
       actionSheetContent:{
         paddingTop: 8,
+        paddingBottom: 32,
         paddingHorizontal: 16, 
     }
 })

@@ -1248,7 +1248,7 @@ renderDotsView = (numItems, position) =>{
                     initialOffsetFromBottom = {1}
                  
                    >
-                        <View>
+                        <View style={{paddingBottom: 32}}>
                             {this.state.selectedSpace && this.state.selectedSpaceHost ?
                             
                             <View style={{paddingTop: 8}}>
