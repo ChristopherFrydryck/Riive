@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, LogBox, Dimensions, KeyboardAvoidingView } from 'react-native';
+import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, LogBox, Dimensions, KeyboardAvoidingView} from 'react-native';
 import Text from '../../components/Txt'
 import Input from '../../components/Input'
 import Icon from '../../components/Icon'
@@ -12,7 +12,7 @@ import AddressTypes from '../../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import config from 'react-native-config'
 
 import * as firebase from 'firebase/app';
@@ -280,20 +280,22 @@ setLocation(text) {
 }
 
   render() {
-    
+      let {width, height} =  Dimensions.get("window")
       return(
         <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         // contentContainerStyle={{ backgroundColor: 'white'}} 
         scrollEnabled
+        horizontal={false}
         enableOnAndroid={true}
         extraScrollHeight={-150} //iOS
         extraHeight={2000} //Android
         style={{backgroundColor: 'white', paddingHorizontal: 16}}
           contentContainerStyle={{flex: 1,}}
         >
-    
-         <View style={{flex: 1, justifyContent: "center"}}>
+
+        {/* Needed to prevent error with scrollview and flatlist */}
+         <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', height: '100%',justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}} >
           <Icon 
                         iconName="card-account-details"
                         iconLib="MaterialCommunityIcons"
@@ -366,6 +368,7 @@ setLocation(text) {
                     paddingLeft: 0,
                     paddingBottom: 0,
                     color: '#333',
+                    backgroundColor: null,
                     fontSize: 18,
                     width: '100%',
                   },
@@ -409,7 +412,7 @@ setLocation(text) {
               /> */}
             <View style={{flex: 0, zIndex: -9, flexDirection: 'row'}}>
               <Dropdown
-                flex={2}
+                flex={3}
                 selectedValue = {this.state.address.line2Prefix}
                 label="Line 2 (optional)"
                 // error={this.state.error.make}
@@ -425,7 +428,7 @@ setLocation(text) {
                 }
               </Dropdown>
             <Input
-              flex={2}
+              flex={1}
               placeholder='107'        
               label= ""
               name="Apartment number"   
@@ -448,7 +451,7 @@ setLocation(text) {
               label= {"SSN"}
               secureTextEntry
               name="Apartment number"   
-              style={{marginTop: 1.5, zIndex: -9}}
+              style={{marginTop: 1.5, zIndex: -9, width: '100%'}}
               onChangeText= {(number) => this.setState({
                 ssn: number
               })}
@@ -456,7 +459,7 @@ setLocation(text) {
               maxLength = {9}
               keyboardType='number-pad'/>
             <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
-            </View>
+            </ScrollView>
         </KeyboardAwareScrollView>
       )
   }

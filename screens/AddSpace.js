@@ -871,6 +871,7 @@ clearAddress = () => {
       <KeyboardAwareScrollView
       keyboardShouldPersistTaps="handled"
       automaticallyAdjustContentInsets={false}
+      nestedScrollEnabled={true}
       contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }} scrollEnabled
       enableOnAndroid={true}
       extraScrollHeight={150} //iOS
@@ -886,8 +887,11 @@ clearAddress = () => {
           
           <View style={{flex: 1, paddingHorizontal: 16}}>
             <Text style={styles.label}>Address</Text>
+            {/* Needed to prevent error with scrollview and flatlist */}
+            <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', height: '100%', flexDirection: 'column'}} >
             <GooglePlacesAutocomplete
             placeholder='Your Address...'
+            
             returnKeyType={'search'}
             ref={(instance) => { this.GooglePlacesRef = instance }}
             currentLocation={false}
@@ -897,7 +901,8 @@ clearAddress = () => {
             fetchDetails={true}
             onPress={(data, details = null) => this.onSelectAddress(details)}
             textInputProps={{
-              clearButtonMode: 'never'
+              clearButtonMode: 'never',
+              placeholderTextColor: Colors.mist900,
             }}
             renderRightButton={() => 
               <Icon 
@@ -935,7 +940,7 @@ clearAddress = () => {
                 alignSelf: 'center',
                 backgroundColor: "white",
                 marginTop: -6,
-                borderColor: '#eee',
+                borderColor: '#adadad',
                 borderBottomWidth: 2,
                 borderTopWidth: 0,
                 backgroundColor: "none"
@@ -944,7 +949,8 @@ clearAddress = () => {
                 paddingRight: 0,
                 paddingLeft: 0,
                 paddingBottom: 0,
-                color: '#333',
+                color: Colors.apollo900,
+                backgroundColor: null,
                 fontSize: 18,
                 width: '100%'
               },
@@ -953,10 +959,11 @@ clearAddress = () => {
               },
               predefinedPlacesDescription: {
                 color: '#1faadb'
-              }
+              },
               
             }}
             />
+            </ScrollView>
             <Text style={styles.error}>{this.state.addressError}</Text>
             <View style={{flex: 1, flexDirection: "row"}}>
             <Input

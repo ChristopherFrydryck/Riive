@@ -1,7 +1,7 @@
-import React, {Component} from 'react'
+import React, {Component, useRef} from 'react'
 import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import {NavigationActions} from 'react-navigation'
+
 import Input from '../components/Input'
 import Button from '../components/Button'
 import AddressTypes from '../constants/AddressTypes'
@@ -25,13 +25,11 @@ import PaymentList from '../components/PaymentList'
 import SpacesList from '../components/SpacesList'
 import ClickableChip from '../components/ClickableChip'
 import DialogInput from 'react-native-dialog-input'
-import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// import Dialog from 'react-native-dialog'
-// import * as ImagePicker from 'expo-image-picker'
-// import * as Permissions from 'expo-permissions'
+
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-// import SnackBar from 'react-native-snackbar-component'
+
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 
@@ -149,8 +147,9 @@ class Profile extends Component{
             this.resetAddress();
           });
 
-          LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
-
+          LogBox.ignoreLogs(['VirtualizedLists should never be nested', 'EventEmitter.removeListener'])
+          
+          
       
       
 
@@ -178,6 +177,8 @@ class Profile extends Component{
         // Update when modal appears for edit profile
         if(!prevState.editAccountModalVisible && this.state.editAccountModalVisible){
             let {line1, line2, line2Prefix, zipCode, city, state, country} = this.state.address
+
+          
             // If an address is searched
             if(this.state.searchedAddress){
                 this.GooglePlacesRef.setAddressText(`${line1}, ${city} ${state}, ${zipCode} ${country}`)
@@ -1044,106 +1045,96 @@ class Profile extends Component{
                             error={this.state.dobError}
                         />
                         <Text style={{fontSize: 15}}>Address</Text>
-                        <GooglePlacesAutocomplete
-                            keyboardShouldPersistTaps="always"
-                            placeholder='Your Address...'
-                            returnKeyType={'search'}
-                            ref={(instance) => { this.GooglePlacesRef = instance }}
-                            currentLocation={false}
-                            minLength={2}
-                            autoFocus={false}
-                            listViewDisplayed={false}
-                            fetchDetails={true}
-                            onPress={(data, details = null) => {
+                        {/* Needed to prevent error with scrollview and flatlist */}
+                        <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', flexDirection: 'column', }} >
+                            
+                            <GooglePlacesAutocomplete
+                                placeholder='Your Address...'
+                                keyboardShouldPersistTaps="always"
+                                getDefaultValue={"UHH"}
+                                returnKeyType={'search'}
+                                ref={(instance) => { this.GooglePlacesRef = instance }}
+                                currentLocation={false}
+                                minLength={2}
+                                autoFocus={false}
+                                listViewDisplayed={false}
+                                fetchDetails={true}
+                                onPress={(data, details = null) => {
                                 this.onSelectAddress(details)
-                            }}
-                            textInputProps={{
-                                // clearButtonMode: 'never',
-                                onChangeText: (text) => this.setLocation(text),
-                            }}
-                            renderRightButton={() => 
-                            <Icon 
-                            iconName="x"
-                            iconColor={Colors.cosmos500}
-                            iconSize={24}
-                            onPress={() => this.clearAddress()}
-                            style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
-                            />}
-                            query={{
+                                }}
+                                textInputProps={{
+                                clearButtonMode: 'never',
+                                onChangeText: (text) => this.setLocation(text)
+                                }}
+                                renderRightButton={() => 
+                                <Icon 
+                                iconName="x"
+                                iconColor={Colors.cosmos500}
+                                iconSize={24}
+                                onPress={() => this.clearAddress()}
+                                style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
+                                />}
+                                query={{
                                 key: config.GOOGLE_API_KEY,
                                 language: 'en'
-                            }}
-                            GooglePlacesSearchQuery={{
+                                }}
+                                GooglePlacesSearchQuery={{
                                 rankby: 'distance',
                                 types: 'address',
                                 components: "country:us"
-                            }}
-                            // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-                            nearbyPlacesAPI={'GoogleReverseGeocoding'}
-                            debounce={200}
-                            predefinedPlacesAlwaysVisible={true}
-                            enablePoweredByContainer={false}
-                            
-                            
-                            styles={{
+                                }}
+                                // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
+                                nearbyPlacesAPI={'GoogleReverseGeocoding'}
+                                debounce={200}
+                                predefinedPlacesAlwaysVisible={true}
+                                enablePoweredByContainer={false}
+                                
+                                
+                                styles={{
                                 container: {
                                     border: 'none',
                                     flex: 0,
-                                  },
-                                  textInputContainer: {
+                                },
+                                textInputContainer: {
                                     width: '100%',
                                     display: 'flex',
                                     alignSelf: 'center',
                                     backgroundColor: "white",
                                     marginTop: -6,
-                                    borderColor: '#eee',
+                                    borderColor: '#a1a1a1',
                                     borderBottomWidth: 2,
                                     borderTopWidth: 0,
                                     backgroundColor: "none",
-                                  },
-                                  textInput: {
+                                },
+                                textInput: {
                                     paddingRight: 0,
                                     paddingLeft: 0,
                                     paddingBottom: 0,
                                     color: '#333',
+                                    backgroundColor: null,
                                     fontSize: 18,
                                     width: '100%',
-                                  },
-                                  description: {
+                                },
+                                description: {
                                     fontWeight: 'bold'
-                                  },
-                                  predefinedPlacesDescription: {
+                                },
+                                predefinedPlacesDescription: {
                                     color: '#1faadb'
-                                  },
-                                  listView:{
+                                },
+                                listView:{
                                     backgroundColor: 'white',
-                                    position: 'absolute',
-                                    top: 40,
+                                    // position: 'absolute',
+                                    top: 0,
                                     width: Dimensions.get("window").width - 32,
                                     zIndex: 999999,
-                                  },
+                                },
                             
-                            }}
-                        />
+                                
+                                }}
+                            />
+                        </ScrollView>
                             <Text style={styles.error}>{this.state.addressError}</Text>
-                        {/* </View> */}
-                        
-                        {/* <Input
-                            flex={1}
-                            placeholder='107'        
-                            label= "Apt # (optional)"
-                            name="Apartment number" 
-                            style={{marginRight: 16}}                
-                            onChangeText= {(number) => this.setState(prevState => ({
-                            address:{
-                                ...prevState.address,
-                                line2: number,
-                            }
-                            }))}
-                            value={this.state.address.line2}
-                            maxLength = {6}
-                            keyboardType='number-pad'
-                        /> */}
+                       
                         <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
                         <Dropdown
                             flex={2}
@@ -1186,7 +1177,7 @@ class Profile extends Component{
                                 disabled={this.state.savingChanges || this.state.failed || this.state.submitted}
                                 bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : this.state.failed ? 'rgba(190, 55, 55, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%
                                 textColor={this.state.submitted ? Colors.fortune700 : this.state.failed ? Colors.hal700 : Colors.tango700}
-                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? <FloatingCircles color={Colors.tango500}/> : "Save Changes"}</ClickableChip>
+                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? <FloatingCircles color={Colors.tango500}/> : "Save Changes"}</ClickableChip> 
 
                         
                     
