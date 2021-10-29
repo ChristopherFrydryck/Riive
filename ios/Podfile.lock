@@ -586,8 +586,8 @@ PODS:
     - React-Core
   - react-native-maps (0.29.3):
     - React-Core
-  - react-native-safe-area-context (0.6.4):
-    - React
+  - react-native-safe-area-context (3.3.2):
+    - React-Core
   - React-perflogger (0.66.0)
   - React-RCTActionSheet (0.66.0):
     - React-Core/RCTActionSheetHeaders (= 0.66.0)
@@ -659,7 +659,7 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.11):
     - React
-  - RNDeviceInfo (8.4.2):
+  - RNDeviceInfo (8.4.3):
     - React-Core
   - RNFBApp (10.8.1):
     - Firebase/CoreOnly (~> 7.6.0)
@@ -972,7 +972,7 @@ SPEC CHECKSUMS:
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-google-maps: d6a30377b40a338bd09d6ad36ce48dc5d12b5792
   react-native-maps: 41d01d8e0afcebe32bec9eea3bd945adc1b18f7a
-  react-native-safe-area-context: 52342d2d80ea8faadd0ffa76d83b6051f20c5329
+  react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   React-perflogger: 1f554c2b684e2f484f9edcdfdaeedab039fbaca8
   React-RCTActionSheet: 610d5a5d71ab4808734782c8bca6a12ec3563672
   React-RCTAnimation: ec6ed97370ace32724c253f29f0586cafcab8126
@@ -988,7 +988,7 @@ SPEC CHECKSUMS:
   rn-fetch-blob: 651b8d076b43d0d7aa294a3d9ec16c00aab8bef9
   RNCClipboard: 99fc8ad669a376b756fbc8098ae2fd05c0ed0668
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNDeviceInfo: cedc9766f284962d87465dd5611b67ee8e65850b
+  RNDeviceInfo: 25a16a2a03049e88e800f3f41ca540e645b8a95a
   RNFBApp: 02bde3edecf2e9694b908a5d3504e03449980f20
   RNFBAuth: 16f2b91bf53f398d83a15cff0dd52225967c1d78
   RNFBFirestore: 337b96bf5b1b2d32bb9fc4735afd47b16532dde8
