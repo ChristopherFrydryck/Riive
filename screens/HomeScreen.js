@@ -1140,7 +1140,7 @@ renderDotsView = (numItems, position) =>{
                fetchDetails={true}
                onPress={(data, details = null) => {this.onSelectAddress(details)}}
                textInputProps={{
-                  placeholderTextColor: Colors.mist900,
+                  placeholderTextColor: "a0a0a0",
                    onFocus: () => {
                        this.setState({
                            inputFocus: true,
@@ -1208,6 +1208,7 @@ renderDotsView = (numItems, position) =>{
                       marginTop: 6, 
                       alignSelf: 'center',
                       marginHorizontal: 1,
+                      color: '#333',
                       borderRadius: width/2,
                   },
                   listView:{
