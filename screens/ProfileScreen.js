@@ -145,10 +145,19 @@ class Profile extends Component{
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();
+
+
           });
+
+          
+
+          
+
+     
 
           LogBox.ignoreLogs(['VirtualizedLists should never be nested', 'EventEmitter.removeListener'])
           
+
           
       
       
@@ -178,12 +187,15 @@ class Profile extends Component{
         if(!prevState.editAccountModalVisible && this.state.editAccountModalVisible){
             let {line1, line2, line2Prefix, zipCode, city, state, country} = this.state.address
 
+            // ${line1}, ${city} ${state}, ${zipCode} ${country}
           
             // If an address is searched
             if(this.state.searchedAddress){
-                this.GooglePlacesRef.setAddressText(`${line1}, ${city} ${state}, ${zipCode} ${country}`)
+                this.GooglePlacesRef.setAddressText("HFDL")
+                console.log(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state}, ${this.state.address.zipCode} ${this.state.address.country}`)
             }else{
-                this.GooglePlacesRef.setAddressText(``)
+                this.GooglePlacesRef.setAddressText(`asfdasd`)
+                console.log(`No address searched or valid`)
             }
            
         }
@@ -312,7 +324,7 @@ class Profile extends Component{
       }
       
       clearAddress = () => {
-        this.GooglePlacesRef.setAddressText("")
+        // this.GooglePlacesRef.setAddressText("")
         this.setState({
           searchedAddress: false,
           addressSaveReady: false,
@@ -328,7 +340,7 @@ class Profile extends Component{
       }
       
       setLocation = (text) => {
-        this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
+        // this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
         // console.log("Set location")
         // console.log(this.state.address)
       }
@@ -1049,11 +1061,10 @@ class Profile extends Component{
                         <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', flexDirection: 'column', }} >
                             
                             <GooglePlacesAutocomplete
-                                placeholder='Your Address...'
+                                ref={(instance) => this.GooglePlacesRef = instance}
+                                placeholder={`Your address...`}
                                 keyboardShouldPersistTaps="always"
-                                getDefaultValue={"UHH"}
                                 returnKeyType={'search'}
-                                ref={(instance) => { this.GooglePlacesRef = instance }}
                                 currentLocation={false}
                                 minLength={2}
                                 autoFocus={false}

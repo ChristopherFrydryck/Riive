@@ -259,7 +259,7 @@ onSelectAddress = async(det) => {
 }
 
 clearAddress = () => {
-  this.GooglePlacesRef.setAddressText("")
+  this.addressRef.setAddressText("")
   this.setState({
     searchedAddress: false,
     address: {
@@ -274,7 +274,7 @@ clearAddress = () => {
 }
 
 setLocation(text) {
-  this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
+  this.addressRef.setAddressText(text)
   // console.log("Set location")
   // console.log(this.state.address)
 }
@@ -308,9 +308,9 @@ setLocation(text) {
             
               <Text style={styles.label}>Address</Text>
               <GooglePlacesAutocomplete
-                placeholder='Your Address...'
+                placeholder="Your Address..."
                 returnKeyType={'search'}
-                ref={(instance) => { this.GooglePlacesRef = instance }}
+                ref={(instance) => { this.addressRef = instance }}
                 currentLocation={false}
                 minLength={2}
                 autoFocus={true}
@@ -321,7 +321,7 @@ setLocation(text) {
                 }}
                 textInputProps={{
                   clearButtonMode: 'never',
-                  onChangeText: (text) => this.setLocation(text)
+       
                 }}
                 renderRightButton={() => 
                 <Icon 
