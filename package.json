@@ -67,16 +67,15 @@
     "react-native-reanimated": "~1.4.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^2.0.0-alpha.12",
-    "react-native-svg": "9.13.3",
-    "react-native-svg-animated-linear-gradient": "^0.3.3",
+    "react-native-svg": "12.1.1",
+    "react-native-svg-animated-linear-gradient": "^0.4.0",
     "react-native-swipeable-row": "^0.8.1",
     "react-native-unimodules": "^0.9.1",
-    "react-native-vector-icons": "^8.0.0",
+    "react-native-vector-icons": "^9.0.0",
     "react-navigation": "^4.4.0",
     "react-navigation-stack": "^2.10.0",
     "react-navigation-tabs": "^2.10.1",
-    "rn-fetch-blob": "0.10.16",
-    "stripe": "^7.13.1"
+    "stripe": "^8.184.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
