@@ -7,7 +7,7 @@ import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import LinearGradient from 'react-native-linear-gradient'
-import {Card, ThemeProvider} from 'react-native-paper';
+
 
 // import ImageBrowser from '../features/camera-roll/ImageBrowser'
 import ImagePicker from 'react-native-image-crop-picker';
@@ -163,6 +163,8 @@ class addSpace extends Component {
       const ref = db.collection("spaces").doc();
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
+
+      this.GooglePlacesRef.setAddressText("WHAT")
 
       this.setState({postID: ref.id})
       this._isMounted = true;
@@ -694,8 +696,7 @@ class addSpace extends Component {
 
      componentWillUnmount() {
       this._isMounted = false;
-          // Unmount status bar info
-         this._navListener.remove();
+
        }
 
       getCoordsFromName(loc) {
