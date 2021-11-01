@@ -6,6 +6,8 @@ import Input from '../components/Input'
 import Button from '../components/Button'
 import AddressTypes from '../constants/AddressTypes'
 
+import { AddressInput } from '../components/AddressInput'
+
 
 
 import config from 'react-native-config'
@@ -119,7 +121,6 @@ class Profile extends Component{
               state: this.props.UserStore.address.state,
               country: this.props.UserStore.address.country
             },
-            addressError: "",
             addressSaveReady: false,
 
 
@@ -189,14 +190,6 @@ class Profile extends Component{
 
             // ${line1}, ${city} ${state}, ${zipCode} ${country}
           
-            // If an address is searched
-            if(this.state.searchedAddress){
-                this.GooglePlacesRef.setAddressText("HFDL")
-                console.log(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state}, ${this.state.address.zipCode} ${this.state.address.country}`)
-            }else{
-                this.GooglePlacesRef.setAddressText(`asfdasd`)
-                console.log(`No address searched or valid`)
-            }
            
         }
     }
@@ -205,7 +198,7 @@ class Profile extends Component{
 
     componentWillUnmount() {
         // Unmount status bar info
-        this._navListener.remove();
+        // this._navListener.remove();
     }
 
 
@@ -267,7 +260,6 @@ class Profile extends Component{
             state: this.props.UserStore.address.state,
             country: this.props.UserStore.address.country
             },
-            addressError: "",
             addressSaveReady: false,
         })
       }
@@ -297,7 +289,6 @@ class Profile extends Component{
           // console.log(zip)
           this.setState({
             searchedAddress: true,
-            addressError: "",
             addressSaveReady: true,
             address:{
               ...this.state.address,
@@ -314,7 +305,7 @@ class Profile extends Component{
           
          
         }else{
-          this.setState({addressError: "Select a valid street address", addressSaveReady: false})
+          this.setState({addressSaveReady: false})
           this.clearAddress();
         }
       
@@ -535,6 +526,20 @@ class Profile extends Component{
         })
 
         
+    }
+
+    addressCallbackFunction  = (childData) => {
+
+        if(childData){
+            this.setState({
+                address:{
+                    ...this.state.address,
+                    ...childData.address
+                }
+              
+                
+            })
+         }
     }
 
       
@@ -905,6 +910,7 @@ class Profile extends Component{
             <Provider>
                 <View style={{flex: 1, backgroundColor: 'white'}}>
 
+
                 {/* Edit Account Modal!!! */}
                 <Modal
                     animationType="slide"
@@ -1058,93 +1064,13 @@ class Profile extends Component{
                         />
                         <Text style={{fontSize: 15}}>Address</Text>
                         {/* Needed to prevent error with scrollview and flatlist */}
-                        <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', flexDirection: 'column', }} >
-                            
-                            <GooglePlacesAutocomplete
-                                ref={(instance) => this.GooglePlacesRef = instance}
-                                placeholder={`Your address...`}
-                                keyboardShouldPersistTaps="always"
-                                returnKeyType={'search'}
-                                currentLocation={false}
-                                minLength={2}
-                                autoFocus={false}
-                                listViewDisplayed={false}
-                                fetchDetails={true}
-                                onPress={(data, details = null) => {
-                                this.onSelectAddress(details)
-                                }}
-                                textInputProps={{
-                                clearButtonMode: 'never',
-                                onChangeText: (text) => this.setLocation(text)
-                                }}
-                                renderRightButton={() => 
-                                <Icon 
-                                iconName="x"
-                                iconColor={Colors.cosmos500}
-                                iconSize={24}
-                                onPress={() => this.clearAddress()}
-                                style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
-                                />}
-                                query={{
-                                key: config.GOOGLE_API_KEY,
-                                language: 'en'
-                                }}
-                                GooglePlacesSearchQuery={{
-                                rankby: 'distance',
-                                types: 'address',
-                                components: "country:us"
-                                }}
-                                // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-                                nearbyPlacesAPI={'GoogleReverseGeocoding'}
-                                debounce={200}
-                                predefinedPlacesAlwaysVisible={true}
-                                enablePoweredByContainer={false}
-                                
-                                
-                                styles={{
-                                container: {
-                                    border: 'none',
-                                    flex: 0,
-                                },
-                                textInputContainer: {
-                                    width: '100%',
-                                    display: 'flex',
-                                    alignSelf: 'center',
-                                    backgroundColor: "white",
-                                    marginTop: -6,
-                                    borderColor: '#a1a1a1',
-                                    borderBottomWidth: 2,
-                                    borderTopWidth: 0,
-                                    backgroundColor: "none",
-                                },
-                                textInput: {
-                                    paddingRight: 0,
-                                    paddingLeft: 0,
-                                    paddingBottom: 0,
-                                    color: '#333',
-                                    backgroundColor: null,
-                                    fontSize: 18,
-                                    width: '100%',
-                                },
-                                description: {
-                                    fontWeight: 'bold'
-                                },
-                                predefinedPlacesDescription: {
-                                    color: '#1faadb'
-                                },
-                                listView:{
-                                    backgroundColor: 'white',
-                                    // position: 'absolute',
-                                    top: 0,
-                                    width: Dimensions.get("window").width - 32,
-                                    zIndex: 999999,
-                                },
-                            
-                                
-                                }}
+                
+                            <View style={{zIndex: 999999999}}>
+                            <AddressInput 
+                                defaultValue={`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}`}
+                                returnValue={this.addressCallbackFunction}
                             />
-                        </ScrollView>
-                            <Text style={styles.error}>{this.state.addressError}</Text>
+                            </View>
                        
                         <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
                         <Dropdown
@@ -1205,6 +1131,8 @@ class Profile extends Component{
             <SafeAreaView style={{ flexDirection: "column", backgroundColor: Colors.tango900}} />
 
             <View style={{flex: 1}}>
+                
+         
 
                 <LinearGradient
                     colors={['#FF8708', '#FFB33D']}
@@ -1321,10 +1249,13 @@ class Profile extends Component{
                             </Circle>
 
                    
-                    <ScrollView style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
-                        
+                    <ScrollView keyboardShouldPersistTaps="handled" style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
+
+                    
+                            
+                 
                         <View style={styles.contentBox}>
-                            <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
+                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
                                 {listings == undefined || listings.length <= 1 ? <Text style={styles.categoryTitle}>My Space</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>}
                                 <ClickableChip
                                     bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%

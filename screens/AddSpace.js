@@ -164,7 +164,8 @@ class addSpace extends Component {
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-      this.GooglePlacesRef.setAddressText("WHAT")
+      
+     
 
       this.setState({postID: ref.id})
       this._isMounted = true;
@@ -180,7 +181,12 @@ class addSpace extends Component {
         this.setState({directDepositProvided: false})
       }else{
        this.setState({directDepositProvided: true})
+       this.GooglePlacesRef.setAddressText("Hello")
       }
+
+     
+
+
 
       // this.props.navigation.navigate("BankLinkNavigator")
     }
@@ -573,6 +579,8 @@ class addSpace extends Component {
   submitSpace = async() => {
     
     await this.verifyInputs();
+
+    
 
     const db = firestore();
 
