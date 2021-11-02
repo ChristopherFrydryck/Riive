@@ -6,7 +6,7 @@ import Input from '../components/Input'
 import Button from '../components/Button'
 import AddressTypes from '../constants/AddressTypes'
 
-import { AddressInput } from '../components/AddressInput'
+import AddressInput from '../components/AddressInput'
 
 
 
@@ -113,10 +113,11 @@ class Profile extends Component{
 
             searchedAddress: this.props.UserStore.address.line1 ? true : false,
             address: {
+              box: null,
               line1: this.props.UserStore.address.line1,
               line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
               line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
-              zipCode: this.props.UserStore.address.postal_code,
+              zip: this.props.UserStore.address.postal_code,
               city: this.props.UserStore.address.city,
               state: this.props.UserStore.address.state,
               country: this.props.UserStore.address.country
@@ -186,9 +187,9 @@ class Profile extends Component{
     componentDidUpdate(prevState){
         // Update when modal appears for edit profile
         if(!prevState.editAccountModalVisible && this.state.editAccountModalVisible){
-            let {line1, line2, line2Prefix, zipCode, city, state, country} = this.state.address
+            let {line1, line2, line2Prefix, zip, city, state, country} = this.state.address
 
-            // ${line1}, ${city} ${state}, ${zipCode} ${country}
+            // ${line1}, ${city} ${state}, ${zip} ${country}
           
            
         }
@@ -217,7 +218,7 @@ class Profile extends Component{
       
             lineOne: this.state.address.line1,
             lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-            zipCode: this.state.address.zipCode,
+            zipCode: this.state.address.zip,
             city: this.state.address.city,
             state: this.state.address.state,
           })
@@ -233,7 +234,7 @@ class Profile extends Component{
             this.props.UserStore.address = {
               line1: this.state.address.line1,
               line2: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-              postal_code: this.state.address.zipCode,
+              postal_code: this.state.address.zip,
               city: this.state.address.city,
               state: this.state.address.state,
               country: this.state.address.country
@@ -255,7 +256,7 @@ class Profile extends Component{
             line1: this.props.UserStore.address.line1,
             line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
             line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
-            zipCode: this.props.UserStore.address.postal_code,
+            zip: this.props.UserStore.address.postal_code,
             city: this.props.UserStore.address.city,
             state: this.props.UserStore.address.state,
             country: this.props.UserStore.address.country
@@ -293,7 +294,7 @@ class Profile extends Component{
             address:{
               ...this.state.address,
               line1: `${number.long_name} ${street.short_name}`,
-              zipCode: zip.short_name,
+              zip: zip.short_name,
               city: city.long_name,
               state: state.short_name,
               country: country.short_name
@@ -322,7 +323,7 @@ class Profile extends Component{
           address: {
             ...this.state.address,
             line1: "",
-            zipCode: "",
+            zip: "",
             city: "",
             state: "",
             country: ""
@@ -529,8 +530,9 @@ class Profile extends Component{
     }
 
     addressCallbackFunction  = (childData) => {
-
+       
         if(childData){
+            console.log(childData)
             this.setState({
                 address:{
                     ...this.state.address,
@@ -698,7 +700,7 @@ class Profile extends Component{
             let checkLine2 = this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
 
             // Check if address is updated
-            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode || checkLine2){
+            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zip || checkLine2){
             
 
                 
@@ -1067,7 +1069,7 @@ class Profile extends Component{
                 
                             <View style={{zIndex: 999999999}}>
                             <AddressInput 
-                                defaultValue={`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}`}
+                                defaultValue={`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}`}
                                 returnValue={this.addressCallbackFunction}
                             />
                             </View>

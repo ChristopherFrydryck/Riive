@@ -14,7 +14,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import config from 'react-native-config'
 
 
-
+import AddressInput from '../components/AddressInput';
 import Input from '../components/Input'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
@@ -181,7 +181,7 @@ class addSpace extends Component {
         this.setState({directDepositProvided: false})
       }else{
        this.setState({directDepositProvided: true})
-       this.GooglePlacesRef.setAddressText("Hello")
+
       }
 
      
@@ -688,6 +688,21 @@ class addSpace extends Component {
     this.setState({daily: data})
   }
 
+  addressCallbackFunction  = (childData) => {
+
+    if(childData){
+      console.log(childData)
+        // this.setState({
+        //     address:{
+        //         ...this.state.address,
+        //         ...childData.address
+        //     }
+          
+            
+        // })
+     }
+}
+
   resendVerification = () => {
     const user = auth().currentUser;
     user.sendEmailVerification().then(() => {
@@ -897,83 +912,13 @@ clearAddress = () => {
           <View style={{flex: 1, paddingHorizontal: 16}}>
             <Text style={styles.label}>Address</Text>
             {/* Needed to prevent error with scrollview and flatlist */}
-            <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', height: '100%', flexDirection: 'column'}} >
-            <GooglePlacesAutocomplete
-            placeholder='Your Address...'
             
-            returnKeyType={'search'}
-            ref={(instance) => { this.GooglePlacesRef = instance }}
-            currentLocation={false}
-            minLength={2}
-            autoFocus={false}
-            listViewDisplayed={false}
-            fetchDetails={true}
-            onPress={(data, details = null) => this.onSelectAddress(details)}
-            textInputProps={{
-              clearButtonMode: 'never',
-              placeholderTextColor: Colors.mist900,
-            }}
-            renderRightButton={() => 
-              <Icon 
-                iconName="x"
-                iconColor={Colors.cosmos500}
-                iconSize={24}
-                onPress={() => this.clearAddress()}
-                style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
-              />
-            }
-            query={{
-              key: config.GOOGLE_API_KEY,
-              language: 'en'
-            }}
-            GooglePlacesSearchQuery={{
-              rankby: 'distance',
-              types: 'address',
-              components: "country:us"
-            }}
-            // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-            nearbyPlacesAPI={'GoogleReverseGeocoding'}
-            debounce={200}
-            predefinedPlacesAlwaysVisible={true}
-            enablePoweredByContainer={false}
-            
-            
-            styles={{
-              container: {
-                border: 'none',
-                marginBottom: 8,
-              },
-              textInputContainer: {
-                width: '100%',
-                display: 'flex',
-                alignSelf: 'center',
-                backgroundColor: "white",
-                marginTop: -6,
-                borderColor: '#adadad',
-                borderBottomWidth: 2,
-                borderTopWidth: 0,
-                backgroundColor: "none"
-              },
-              textInput: {
-                paddingRight: 0,
-                paddingLeft: 0,
-                paddingBottom: 0,
-                color: Colors.apollo900,
-                backgroundColor: null,
-                fontSize: 18,
-                width: '100%'
-              },
-              description: {
-                fontWeight: 'bold'
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb'
-              },
-              
-            }}
-            />
-            </ScrollView>
-            <Text style={styles.error}>{this.state.addressError}</Text>
+            <View style={{zIndex: 999999999}}>
+                <AddressInput 
+                  returnValue={this.addressCallbackFunction}
+
+                />
+              </View>
             <View style={{flex: 1, flexDirection: "row"}}>
             <Input
             flex={0.35}
@@ -1382,6 +1327,7 @@ const styles = StyleSheet.create({
   },
   mapStyle: {
     width: Dimensions.get('window').width,
+    zIndex: -999,
     height: 175,
   },
   numHoriz:{
