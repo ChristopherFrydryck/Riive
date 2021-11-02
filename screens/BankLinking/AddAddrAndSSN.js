@@ -4,6 +4,7 @@ import Text from '../../components/Txt'
 import Input from '../../components/Input'
 import Icon from '../../components/Icon'
 import Dropdown from '../../components/Dropdown'
+import AddressInput from '../../components/AddressInput';
 import DropdownItem from '../../components/DropdownItem'
 import Button from '../../components/Button'
 import Colors from '../../constants/Colors'
@@ -82,7 +83,7 @@ class addPayment extends Component {
               line1: this.props.UserStore.address.line1,
               line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
               line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
-              zipCode: this.props.UserStore.address.postal_code,
+              zip: this.props.UserStore.address.postal_code,
               city: this.props.UserStore.address.city,
               state: this.props.UserStore.address.state,
               country: this.props.UserStore.address.country
@@ -104,7 +105,7 @@ class addPayment extends Component {
        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
        if(this.state.address.line1){
-         this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}, ${this.state.address.country}`)
+         this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}, ${this.state.address.country}`)
        }else{
         this.setLocation("")
        }
@@ -127,7 +128,7 @@ addAddress = async () => {
 
       lineOne: this.state.address.line1,
       lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-      zipCode: this.state.address.zipCode,
+      zipCode: this.state.address.zip,
       city: this.state.address.city,
       state: this.state.address.state,
     })
@@ -143,7 +144,7 @@ addAddress = async () => {
       this.props.UserStore.address = {
         line1: this.state.address.line1,
         line2: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-        postal_code: this.state.address.zipCode,
+        postal_code: this.state.address.zip,
         city: this.state.address.city,
         state: this.state.address.state,
         country: this.state.address.country
@@ -156,6 +157,36 @@ addAddress = async () => {
     throw "Failure to save address."
   }
     
+}
+
+addressCallbackFunction  = (childData) => {
+
+  // searchedAddress: false,
+  //           address: {
+  //             line1: this.props.UserStore.address.line1,
+  //             line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
+  //             line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
+  //             zip: this.props.UserStore.address.postal_code,
+  //             city: this.props.UserStore.address.city,
+  //             state: this.props.UserStore.address.state,
+  //             country: this.props.UserStore.address.country
+  //           },
+       
+  if(childData){
+      this.setState({
+          searchedAddress: true,
+          address:{
+              ...this.state.address,
+              line1: childData.address.line1,
+              city: childData.address.city,
+              state: childData.address.state_abbr,
+              zip: childData.address.zip,
+              country: childData.address.country_abbr
+          }
+      })
+   }else{
+     this.setState({searchedAddress: false})
+   }
 }
 
 
@@ -239,7 +270,7 @@ onSelectAddress = async(det) => {
       address:{
         ...this.state.address,
         line1: `${number.long_name} ${street.short_name}`,
-        zipCode: zip.short_name,
+        zip: zip.short_name,
         city: city.long_name,
         state: state.short_name,
         country: country.short_name
@@ -265,7 +296,7 @@ clearAddress = () => {
     address: {
       ...this.state.address,
       line1: "",
-      zipCode: "",
+      zip: "",
       city: "",
       state: "",
       country: ""
@@ -291,11 +322,10 @@ setLocation(text) {
         extraScrollHeight={-150} //iOS
         extraHeight={2000} //Android
         style={{backgroundColor: 'white', paddingHorizontal: 16}}
-          contentContainerStyle={{flex: 1,}}
+          contentContainerStyle={{flex: 1, justifyContent: 'center'}}
         >
 
         {/* Needed to prevent error with scrollview and flatlist */}
-         <ScrollView horizontal={true} contentContainerStyle={{flexGrow: 1, width: '100%', height: '100%',justifyContent: 'center', alignItems: 'flex-start', flexDirection: 'column'}} >
           <Icon 
                         iconName="card-account-details"
                         iconLib="MaterialCommunityIcons"
@@ -307,7 +337,13 @@ setLocation(text) {
           {/* <View style={{flex: 1, paddingBottom: 0, zIndex: 99999, backgroundColor: 'orange',}}> */}
             
               <Text style={styles.label}>Address</Text>
-              <GooglePlacesAutocomplete
+              <View style={{height: 40}}>
+                <AddressInput 
+                  defaultValue={`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}` || null}
+                  returnValue={this.addressCallbackFunction}
+                />
+              </View>
+              {/* <GooglePlacesAutocomplete
                 placeholder="Your Address..."
                 returnKeyType={'search'}
                 ref={(instance) => { this.addressRef = instance }}
@@ -391,25 +427,8 @@ setLocation(text) {
                   
                 }}
               />
-                <Text style={styles.error}>{this.state.addressError}</Text>
-              {/* </View> */}
-              
-              {/* <Input
-                flex={1}
-                placeholder='107'        
-                label= "Apt # (optional)"
-                name="Apartment number" 
-                style={{marginRight: 16}}                
-                onChangeText= {(number) => this.setState(prevState => ({
-                  address:{
-                    ...prevState.address,
-                    line2: number,
-                  }
-                }))}
-                value={this.state.address.line2}
-                maxLength = {6}
-                keyboardType='number-pad'
-              /> */}
+                <Text style={styles.error}>{this.state.addressError}</Text> */}
+             
             <View style={{flex: 0, zIndex: -9, flexDirection: 'row'}}>
               <Dropdown
                 flex={3}
@@ -459,7 +478,6 @@ setLocation(text) {
               maxLength = {9}
               keyboardType='number-pad'/>
             <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
-            </ScrollView>
         </KeyboardAwareScrollView>
       )
   }

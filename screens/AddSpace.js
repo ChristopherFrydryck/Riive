@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox, Alert, Linking} from 'react-native';
 import Text from '../components/Txt'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
@@ -829,88 +828,6 @@ class addSpace extends Component {
           })
         }).catch((e) => console.log(e))
       }
-
-
-onSelectAddress = (det) => {
-  // console.log(det.formatted_address)
-  // console.log(det.geometry.location.lat);
-  // console.log(det.address_c omponents)
-
-  
-  
-
-
-
- 
-  
-  var number = det.address_components.filter(x => x.types.includes('street_number'))[0]
-  var street = det.address_components.filter(x => x.types.includes('route'))[0]
-  var city = det.address_components.filter(x => x.types.includes('locality'))[0]
-  var county = det.address_components.filter(x => x.types.includes('administrative_area_level_2'))[0]
-  var state = det.address_components.filter(x => x.types.includes('administrative_area_level_1'))[0]
-  var country = det.address_components.filter(x => x.types.includes('country'))[0]
-  var zip = det.address_components.filter(x => x.types.includes('postal_code'))[0]
-
-  if(number && street && city && county && state){
-    this.setState(prevState => ({
-      searchedAddress: true,
-      timezone: timeZoneDB,
-      region:{
-        latitude: det.geometry.location.lat,
-        longitude: det.geometry.location.lng,
-        latitudeDelta: .006,
-        longitudeDelta: .006
-      },
-      address:{
-        ...prevState.address,
-        full: det.formatted_address,
-        number: number.long_name,
-        street: street.long_name,
-        city: city.long_name,
-        county: county.long_name,
-        state: state.long_name,
-        state_abbr: state.short_name,
-        country: country.long_name,
-        zip: zip.long_name,
-      }
-    }))
-    this.setState({addressError: ""})
-  }else{
-    this.setState({addressError: "Select a valid street address"})
-    this.clearAddress();
-  }
-
-
-
-  
-}
-
-clearAddress = () => {
-  this.GooglePlacesRef.setAddressText("")
-  this.setState(prevState => ({
-    searchedAddress: false,
-    timezone: null,
-    address:{
-      ...prevState.address,
-      full: null,
-      number: null,
-      street: null,
-      city: null,
-      county: null,
-      state: null,
-      state_abbr: null,
-      country: null,
-      zip: null,
-    }
-  }))
-}
-
-
-
-
-
-
-
 
 
 
