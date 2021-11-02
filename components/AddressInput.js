@@ -8,6 +8,7 @@ import Colors from '../constants/Colors'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import config from 'react-native-config';
 
+navigator.geolocation = require('@react-native-community/geolocation');
 
 let AddressInput = ({...props}) => {
     const GooglePlacesRef = useRef();
@@ -69,7 +70,7 @@ let AddressInput = ({...props}) => {
         // console.log(det.geometry.location.lat);
         // console.log(det.address_c omponents)
 
-        
+        console.log(det.description)
         var number = det.address_components.filter(x => x.types.includes('street_number'))[0]
         var street = det.address_components.filter(x => x.types.includes('route'))[0]
         var city = det.address_components.filter(x => x.types.includes('locality'))[0]
@@ -132,11 +133,11 @@ let AddressInput = ({...props}) => {
             <View style={{position: 'absolute'}}>
                 <ScrollView bounces={false} keyboardShouldPersistTaps="handled" horizontal={true} contentContainerStyle={{width: "100%", height: "100%", flexDirection: 'column'}}>
                     <GooglePlacesAutocomplete
-                    placeholder='Your Address...'
+                    placeholder={props.placeholder || 'Your Address...'}
                     
                     returnKeyType={'search'}
                     ref={GooglePlacesRef}
-                    currentLocation={false}
+                    currentLocation={props.currentLocation || false}
                     minLength={2}
                     autoFocus={false}
                     listViewDisplayed={false}
@@ -154,7 +155,7 @@ let AddressInput = ({...props}) => {
                         iconColor={Colors.cosmos500}
                         iconSize={24}
                         onPress={() => clearAddress()}
-                        style={{marginTop: 8, display: searchedAddress ? "flex" : "none"}}
+                        style={{marginTop: 12, display: searchedAddress ? "flex" : "none"}}
                     />
                     }
                     query={{
@@ -166,7 +167,6 @@ let AddressInput = ({...props}) => {
                     types: 'address',
                     components: "country:us"
                     }}
-                    // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
                     nearbyPlacesAPI={'GoogleReverseGeocoding'}
                     debounce={200}
                     predefinedPlacesAlwaysVisible={true}
@@ -185,7 +185,7 @@ let AddressInput = ({...props}) => {
                         backgroundColor: "white",
                         marginTop: -12,
                         borderColor: '#adadad',
-                        borderBottomWidth: 2,
+                        borderBottomWidth: props.bottomBorder === false ? 0 : 2,
                         borderTopWidth: 0,
                         backgroundColor: "none",
                 

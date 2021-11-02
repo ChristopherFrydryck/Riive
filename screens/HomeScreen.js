@@ -16,6 +16,7 @@ import { checkPermissionsStatus } from '../functions/in-app/permissions'
 
 import logo from '../assets/img/Logo_Abbreviated_001.png'
 
+import AddressInput from '../components/AddressInput';
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
@@ -746,6 +747,36 @@ clickSpace = async(data) => {
   
 }
 
+addressCallbackFunction  = (childData) => {
+    if(childData){
+        const db = firestore();
+        const date = new Date();
+        let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        let dateString = date.toLocaleString('en-US', {timezone: timeZone});
+        let ref = db.collection("users").doc(this.props.UserStore.userID).collection("searchHistory").doc();
+
+        this.region = {
+            current: {
+                ...this.region.current,
+                latitude: childData.region.latitude,
+                longitude: childData.region.longitude
+            },
+            searched: {
+                ...this.region.current,
+                latitude: childData.region.latitude,
+                longitude: childData.region.longitude
+            }
+        }
+
+        this.setState(prevState => ({
+            mapScrolled: false,
+            searchedAddress: true,
+            // searchInputValue: det.description == "Current Location" ? "Current Location" : det.name,
+      
+        }));
+    }
+}
+
 
 onSelectAddress = async(det) => {
   const db = firestore();
@@ -768,7 +799,7 @@ onSelectAddress = async(det) => {
           longitude: det.geometry.location.lng
       }
   }
-  this.setState(prevState => ({
+this.setState(prevState => ({
       mapScrolled: false,
       searchedAddress: true,
       searchInputValue: det.description == "Current Location" ? "Current Location" : det.name,
@@ -1127,7 +1158,14 @@ renderDotsView = (numItems, position) =>{
                             />)
                 })}
             </MapView>
-            <View style={{zIndex: 9, position: 'absolute', top: -16}}>
+            {/* <View style={{ position: 'absolute', top: -16, left: '5%', width: "90%", height: 48, paddingHorizontal: 12, paddingTop: 10, borderRadius: 50, backgroundColor: "white", zIndex: 9999999, shadowColor: '#000', shadowOpacity: 0.2, shadowOffset:{width: 1, height: 1}, shadowRadius: 4,elevation: 12,}}>
+                <AddressInput 
+                    returnValue={this.addressCallbackFunction}
+                    placeholder="Search for a location..."
+                    bottomBorder={false}
+                    currentLocation={true}
+                /> */}
+                <View  style={{position: 'absolute', top: -16, zIndex: 9}}>
              <GooglePlacesAutocomplete
                placeholder='Search by destination...'
                returnKeyType={'done'}  
