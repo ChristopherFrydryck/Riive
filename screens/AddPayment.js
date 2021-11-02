@@ -8,7 +8,6 @@ import Colors from '../constants/Colors'
 import FloatingCircles from '../components/FloatingCircles'
 import AddressTypes from '../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
@@ -116,7 +115,7 @@ class addPayment extends Component {
      componentWillUnmount() {
       this._isMounted = false;
           // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
        }
 
 getCardType = (cardNum) => {

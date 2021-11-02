@@ -326,7 +326,7 @@ class AddVehicle extends React.Component{
         this._isMounted = false;
 
          // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
     }
 
 

@@ -952,7 +952,7 @@ goToReserveSpace = () => {
 
   componentWillUnmount() {
     // Unmount status bar info
-    this._navListener.remove();
+    // this._navListener.remove();
     clearInterval(this._interval)
   }
 

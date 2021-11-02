@@ -24,6 +24,7 @@ import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 import FloatingCircles from '../components/FloatingCircles'
 
 import Timezones from '../constants/Timezones'
+import isDSTObserved from '../functions/in-app/daylightSavings';
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -688,69 +689,15 @@ class addSpace extends Component {
     this.setState({daily: data})
   }
 
-  addressCallbackFunction  = (childData) => {
+  timezonePicker = (offset) => {
+    let gmtValue = null;
 
-    if(childData){
-      console.log(childData)
-        // this.setState({
-        //     address:{
-        //         ...this.state.address,
-        //         ...childData.address
-        //     }
-          
-            
-        // })
-     }
-}
+    let dstActive = isDSTObserved();
 
-  resendVerification = () => {
-    const user = auth().currentUser;
-    user.sendEmailVerification().then(() => {
-        this.setState({verificationSent: true})
-    }).catch((e) => {
-        alert(e)
-    })
-}
-   
-
-
-       
-   
-
-     componentWillUnmount() {
-      this._isMounted = false;
-
-       }
-
-      getCoordsFromName(loc) {
-        this.setState({
-          latitude: loc.lat,
-          longitude: loc.lng,
-        })
-      }
-
-      imageBrowserCallback = (callback) => {
-        callback.then((photos) => {
-  
-          this.setState({
-            imageBrowserOpen: false,
-            photos: photos,
-          })
-        }).catch((e) => console.log(e))
-      }
-
-
-onSelectAddress = (det) => {
-  // console.log(det.formatted_address)
-  // console.log(det.geometry.location.lat);
-  // console.log(det.address_c omponents)
-
-  
-  let gmtValue = null;
   
   // If it is not UTC 0
-  if(det.utc_offset !== 0){
-    let gmtOffset = det.utc_offset/60;
+  if(offset !== 0){
+    let gmtOffset = dstActive ? (offset-60)/60 : offset/60;
     let gmtAbs = Math.abs(gmtOffset)
     // If the GMT offset is one whole number
     if(gmtAbs.toString().length == 1){
@@ -806,11 +753,91 @@ onSelectAddress = (det) => {
   let tzDB = tzdbArray.filter(x => x.name === deviceTimeZone)
   let timeZoneDB;
   
-  if(tzDB.length > 0){
-    timeZoneDB = tzDB[0]
-  }else{
-    timeZoneDB = tzdbArray[0]
+    if(tzDB.length > 0){
+      timeZoneDB = tzDB[0]
+    }else{
+      timeZoneDB = tzdbArray[0]
+    }
+
+    return timeZoneDB
   }
+
+  addressCallbackFunction  = (childData) => {
+
+    if(childData){
+        this.setState({
+            searchedAddress: true,
+            timezone: this.timezonePicker(childData.utc_offset),
+            address:{
+                ...this.state.address,
+                full: childData.address.full,
+                number: childData.address.line1.split(" ")[0],
+                street: childData.address.line1.split(",")[0].split(" ").slice(1).join(" "),
+                city: childData.address.city,
+                county: childData.address.county,
+                state: childData.address.state,
+                state_abbr: childData.address.state_abbr,
+                country: childData.address.country_abbr,
+                zip: childData.address.zip,
+            },
+            region:{
+              latitude: childData.region.latitude,
+              longitude: childData.region.longitude,
+              latitudeDelta: childData.region.latitudeDelta,
+              longitudeDelta: childData.region.longitudeDelta
+            },
+        })
+     }else{
+       this.setState({
+         searchedAddress: false
+       })
+     }
+}
+
+  resendVerification = () => {
+    const user = auth().currentUser;
+    user.sendEmailVerification().then(() => {
+        this.setState({verificationSent: true})
+    }).catch((e) => {
+        alert(e)
+    })
+}
+   
+
+
+       
+   
+
+     componentWillUnmount() {
+      this._isMounted = false;
+
+       }
+
+      getCoordsFromName(loc) {
+        this.setState({
+          latitude: loc.lat,
+          longitude: loc.lng,
+        })
+      }
+
+      imageBrowserCallback = (callback) => {
+        callback.then((photos) => {
+  
+          this.setState({
+            imageBrowserOpen: false,
+            photos: photos,
+          })
+        }).catch((e) => console.log(e))
+      }
+
+
+onSelectAddress = (det) => {
+  // console.log(det.formatted_address)
+  // console.log(det.geometry.location.lat);
+  // console.log(det.address_c omponents)
+
+  
+  
 
 
 

@@ -535,7 +535,7 @@ class editSpace extends Component {
      componentWillUnmount() {
       this._isMounted = false;
           // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
        }
 
    

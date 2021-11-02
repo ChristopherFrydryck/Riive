@@ -114,7 +114,7 @@ export default class Authentication extends React.Component {
 
   componentWillUnmount() {
     // Unmount status bar info
-   this._navListener.remove();
+  //  this._navListener.remove();
   }
 
   createStripeCustomer = async() => {
