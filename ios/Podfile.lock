@@ -580,11 +580,11 @@ PODS:
     - React-Core
   - react-native-geolocation (2.0.2):
     - React
-  - react-native-google-maps (0.29.3):
+  - react-native-google-maps (0.29.4):
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 3.5.0)
     - React-Core
-  - react-native-maps (0.29.3):
+  - react-native-maps (0.29.4):
     - React-Core
   - react-native-safe-area-context (3.3.2):
     - React-Core
@@ -710,7 +710,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - GoogleMaps
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera`)
   - Permission-LocationAccuracy (from `../node_modules/react-native-permissions/ios/LocationAccuracy`)
   - Permission-LocationAlways (from `../node_modules/react-native-permissions/ios/LocationAlways`)
@@ -965,8 +964,8 @@ SPEC CHECKSUMS:
   React-logger: 9a9cd87d4ea681ae929b32ef580638ff1b50fb24
   react-native-config: 6502b1879f97ed5ac570a029961fc35ea606cd14
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
-  react-native-google-maps: d6a30377b40a338bd09d6ad36ce48dc5d12b5792
-  react-native-maps: 41d01d8e0afcebe32bec9eea3bd945adc1b18f7a
+  react-native-google-maps: 34517207071d54f3bc23c68752bbec0217bfc79e
+  react-native-maps: a421fe6aeb74279597c4ea9598f25796108e2d89
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   React-perflogger: 1f554c2b684e2f484f9edcdfdaeedab039fbaca8
   React-RCTActionSheet: 610d5a5d71ab4808734782c8bca6a12ec3563672
@@ -999,6 +998,6 @@ SPEC CHECKSUMS:
   TOCropViewController: 3105367e808b7d3d886a74ff59bf4804e7d3ab38
   Yoga: c11abbf5809216c91fcd62f5571078b83d9b6720
 
-PODFILE CHECKSUM: dfd545657947ca997f575ee75786f219947efa96
+PODFILE CHECKSUM: caf37c0814e1a758dc4e5f7062b3d702930c95f4
 
 COCOAPODS: 1.11.2
