@@ -3,6 +3,7 @@ import { Platform, Animated, Dimensions, StatusBar, ScrollView, View, StyleSheet
 
 import Text from '../components/Txt'
 import Button from '../components/Button'
+import StripeTOSModal from '../components/StripeTOSModal'
 import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
@@ -78,6 +79,8 @@ class reserveSpace extends Component {
             spaceAvailabilityWorks: true,
             spaceCancelledOrHidden: false,
             authenticatingReservation: false,
+
+            stripeModalVisible: false,
         }
         
     }
@@ -473,7 +476,13 @@ class reserveSpace extends Component {
 
                             await this.payForSpace(hostDoc.stripeConnectID, ref.id).then(res => {
                                 if(res.statusCode !== 200){
-                                    throw `Error ${res.statusCode}: ${res.raw.message}`
+                                    if(res.statusCode == 400){
+                                        this.setState({stripeModalVisible: true})
+                                        throw null
+                                    }else{
+                                        throw `Error ${res.statusCode}: ${res.raw.message}`
+                                    }
+
                                 }else{
                                     paymentIntent = res.data.id
                                 }
@@ -719,6 +728,7 @@ class reserveSpace extends Component {
                 stickyHeaderIndices={searchedAddress ? [2] : [1]}
                 style={{backgroundColor: 'white'}}
               >
+                  <StripeTOSModal visible={this.state.stripeModalVisible} closeModal={() => this.setState({stripeModalVisible: false})}/>
                     <MapView
                         provider={MapView.PROVIDER_GOOGLE}
                         mapStyle={NightMap}
