@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox, Alert, Linking} from 'react-native';
 import Text from '../../components/Txt'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../../constants/DayMap'
 import NightMap from '../../constants/NightMap'
@@ -9,8 +8,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import LinearGradient from 'react-native-linear-gradient'
 import {Card, ThemeProvider} from 'react-native-paper';
 
-// import ImageBrowser from '../features/camera-roll/ImageBrowser'
-import ImagePicker from 'react-native-image-crop-picker';
 import config from 'react-native-config'
 
 

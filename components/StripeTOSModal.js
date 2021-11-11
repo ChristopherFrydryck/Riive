@@ -7,6 +7,7 @@ import Button from '../components/Button'
 import Image from '../components/Image'
 
 import Colors from '../constants/Colors'
+import config from 'react-native-config'
 
 import { Checkbox } from 'react-native-paper';
 
@@ -30,35 +31,7 @@ export default class StripeTOSModal extends React.Component{
         }
     }
 
-    updateStripeTOS = async () => {
-
-        const settings = {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            stripeConnectID: this.props.UserStore.stripeConnectID,
-        })
-        }
     
-        if(this.state.ssn != ""){
-        try{  
-            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/agreeToStripeTOS`, settings)
-            const data = await fetchResponse;
-            if(data.status !== 200){
-            throw "Failure to agree to TOS."
-            }
-            return data;
-        }catch(e){
-            throw e
-        }  
-        }else{
-        throw "Failure to agree to TOS.";
-        }
-        
-    }
 
     render(){
         return(
@@ -67,13 +40,13 @@ export default class StripeTOSModal extends React.Component{
                     <View style={{backgroundColor: 'white', borderRadius: 8, marginHorizontal: 8, paddingHorizontal: 16, paddingVertical: 16, height: Dimensions.get('window').height*(.7)}}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', paddingBottom: 8}}>
                                    <Text numberOfLines={1} type="Medium" style={{fontSize: 24}}>Stripe Terms of Service</Text>
-                                   <Icon 
+                                   {/* <Icon 
                                         iconName="x"
                                         iconColor={Colors.cosmos500}
                                         iconSize={28}
                                         onPress={this.props.closeModal}
                                         style={{flex: 0}}
-                                    />
+                                    /> */}
                         </View>
                         {/* <View style={{flex: 1, backgroundColor: 'orange'}}> */}
                                 <ScrollView>
@@ -82,14 +55,13 @@ export default class StripeTOSModal extends React.Component{
                                 <Pressable style={{height: 40, flexDirection: 'row', alignItems: 'center'}}
                                  onPress={() => {
                                     this.setState({agreedToTOS: this.state.agreedToTOS === "checked" ? "unchecked" : "checked"})
-                                    console.log("Pressed")
                                 }}>
                                 <Checkbox.Android
                                     status={this.state.agreedToTOS}
                                 />
                                 <Text>I agree to the Stripe Terms of service</Text>
                             </Pressable>
-                            <Button disabled={this.state.agreedToTOS !== "checked"} style={this.state.agreedToTOS === "checked" ? {flex: 1, backgroundColor: Colors.apollo900} : {flex: 1, backgroundColor: Colors.cosmos300}} textStyle={{color: Colors.mist300}} onPress={() => console.log("Pressed")}>Continue</Button>
+                            <Button disabled={this.state.agreedToTOS !== "checked"} style={this.state.agreedToTOS === "checked" ? {flexGrow: 1, backgroundColor: Colors.apollo900} : {flexGrow: 1, backgroundColor: Colors.cosmos300}} textStyle={{color: Colors.mist300}} onPress={this.props.onClose}>Continue</Button>
                     </View>
                 </View>
             </Modal>

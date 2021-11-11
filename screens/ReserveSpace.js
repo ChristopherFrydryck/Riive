@@ -3,7 +3,6 @@ import { Platform, Animated, Dimensions, StatusBar, ScrollView, View, StyleSheet
 
 import Text from '../components/Txt'
 import Button from '../components/Button'
-import StripeTOSModal from '../components/StripeTOSModal'
 import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
@@ -728,7 +727,6 @@ class reserveSpace extends Component {
                 stickyHeaderIndices={searchedAddress ? [2] : [1]}
                 style={{backgroundColor: 'white'}}
               >
-                  <StripeTOSModal visible={this.state.stripeModalVisible} closeModal={() => this.setState({stripeModalVisible: false})}/>
                     <MapView
                         provider={MapView.PROVIDER_GOOGLE}
                         mapStyle={NightMap}

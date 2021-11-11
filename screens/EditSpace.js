@@ -7,10 +7,8 @@ import NightMap from '../constants/NightMap'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {Card, ThemeProvider} from 'react-native-paper';
 
-// import * as ImagePicker from 'expo-image-picker'
 import ImagePicker from 'react-native-image-crop-picker';
-// import RNImagePicker from 'react-native-image-crop-picker';
-// import * as Permissions from 'expo-permissions'
+
 
 import 'intl'
 

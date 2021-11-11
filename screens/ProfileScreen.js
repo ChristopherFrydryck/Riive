@@ -27,7 +27,6 @@ import PaymentList from '../components/PaymentList'
 import SpacesList from '../components/SpacesList'
 import ClickableChip from '../components/ClickableChip'
 import DialogInput from 'react-native-dialog-input'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
@@ -314,28 +313,8 @@ class Profile extends Component{
       
         
       }
+    
       
-      clearAddress = () => {
-        // this.GooglePlacesRef.setAddressText("")
-        this.setState({
-          searchedAddress: false,
-          addressSaveReady: false,
-          address: {
-            ...this.state.address,
-            line1: "",
-            zip: "",
-            city: "",
-            state: "",
-            country: ""
-          }
-        })
-      }
-      
-      setLocation = (text) => {
-        // this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
-        // console.log("Set location")
-        // console.log(this.state.address)
-      }
 
     updateProfile = () => {
         const db = firestore();
@@ -532,7 +511,6 @@ class Profile extends Component{
     addressCallbackFunction  = (childData) => {
        
         if(childData){
-            console.log(childData)
             this.setState({
                 address:{
                     ...this.state.address,

@@ -433,29 +433,6 @@ onSelectAddress = async(det) => {
   
 }
 
-clearAddress = () => {
-  this.GooglePlacesRef.setAddressText("")
-  this.setState({
-    searchedAddress: false,
-    address: {
-      ...this.state.address,
-      line1: "",
-      zipCode: "",
-      city: "",
-      state: "",
-      country: ""
-    }
-  })
-}
-
-setLocation(text) {
-  this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
-  // console.log("Set location")
-  // console.log(this.state.address)
-}
-
-
-
 
 
 

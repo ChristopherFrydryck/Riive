@@ -90,17 +90,17 @@ const fs = require('fs');
     })
 
     exports.agreeToStripeTOS = functions.https.onRequest((request, response) => {
-        stripe.accounts.update(
+        return stripe.accounts.update(
             request.body.stripeConnectID,
             {
-                individual: {
-                    tos_acceptance: {
-                        date: Math.floor(Date.now() / 1000),
-                        ip: request.socket.remoteAddress,
-                    },
-                }, 
+                tos_acceptance: {
+                    date: Math.floor(Date.now() / 1000),
+                    ip: request.socket.remoteAddress,
+                },
             }
-        )
+        ).then((res) => {
+            return response.send("")
+        })
     })
 
     exports.addCustomerSSN = functions.https.onRequest((request, response) => {
