@@ -866,17 +866,17 @@ class Profile extends Component{
  
 
     signOut = () => {
-        auth().signOut().then(() => {
-            // alert(this.props.UserStore.firstname + " has signed out.");
-            this.props.navigation.navigate('Auth')
+        this.props.navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          });
+        // auth().signOut().then(() => {
+        //     // alert(this.props.UserStore.firstname + " has signed out.");
+            
 
-            this.props.UserStore.email = ""
-            this.props.UserStore.fullname = ""
-            this.props.UserStore.password = ""
-            this.props.UserStore.phone = ""
-            this.props.UserStore.userID = ""
-            this.props.UserStore.dob = ""
-        })
+        //     // this.props.UserStore.reset();
+
+        // })
     }   
 
     render(){

@@ -19,7 +19,7 @@
    LogBox
  } from 'react-native';
  
- import AuthNavigator from './navigators/AuthNavigator'
+ import AppNavigator from './navigators/AppNavigator'
 
  import config from 'react-native-config';
  
@@ -74,7 +74,7 @@
        return (        
          <Provider {...stores}>
              <View style={{flex: 1}}>
-               <AuthNavigator />
+               <AppNavigator />
                <FlashMessage position="top" />
              </View>
          </Provider>

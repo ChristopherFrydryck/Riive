@@ -5,7 +5,7 @@ import Navigator from './MainNavigator'
 
 const AuthNavigator = createSwitchNavigator({
     Auth: Authentication,
-    Home: Navigator
+    Home: Navigator,
 },
 {
     
