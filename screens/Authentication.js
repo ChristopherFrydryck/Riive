@@ -394,6 +394,9 @@ export default class Authentication extends React.Component {
   // also sends an email verification to the user
   onPressSignUp = () => {
 
+    let namevalid = null;
+    let phoneValid = null;
+
      // Begin ActivityIndicator since auth == true
     this.setState ({ authenticating: true})
 
@@ -649,7 +652,7 @@ onPressSignIn = async() => {
   
 
 
-  auth().signInWithEmailAndPassword(this.props.UserStore.email, this.props.UserStore.password).then(async() => {
+  auth().signInWithEmailAndPassword(this.props.UserStore.email || " ", this.props.UserStore.password || " ").then(async() => {
     // define user id before calling the db from it
     this.props.UserStore.userID = auth().currentUser.uid;
     this.setPermissions();
@@ -657,6 +660,8 @@ onPressSignIn = async() => {
       emailError: '',
       passwordError: '',
     })
+
+  
 
 
     const db = firestore();
@@ -677,7 +682,6 @@ onPressSignIn = async() => {
    })
     
     
-
     
 
     // MOBX is not cached upon force close. Reinitalize data to mobx here!
@@ -813,6 +817,9 @@ onPressSignIn = async() => {
     var errorCode = error.code;
     var errorMessage = error.message;
     this.setState ({ authenticating: false})
+
+    console.log(error.code)
+
     // alert(errorCode + ': ' + errorMessage)
     if(errorCode == 'auth/invalid-email'){
       this.setState({
