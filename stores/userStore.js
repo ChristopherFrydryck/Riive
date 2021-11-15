@@ -1,4 +1,4 @@
-import {observable, computed, action} from 'mobx'
+import {observable, computed, action, makeObservable} from 'mobx'
 
 var today = new Date();
 
@@ -49,6 +49,10 @@ class UserStore {
 
     @computed get monthJoined() {
         return this.joinedDate;
+    }
+
+    constructor() {
+        makeObservable(this)
     }
 
     @action

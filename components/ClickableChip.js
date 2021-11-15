@@ -10,7 +10,7 @@ const ClickableChip = ({ onPress, bgColor, textColor, ...props}) => {
     return(
         <View>
             <TouchableOpacity onPress={onPress} {...allProps}>
-                <Text type="Medium" style={{alignSelf: "center", color: textColor}}>{props.children}</Text>
+                <Text type="Medium" style={{color: textColor}}>{props.children}</Text>
             </TouchableOpacity>
         </View>
     )
