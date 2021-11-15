@@ -1313,7 +1313,7 @@ renderDotsView = (numItems, position) =>{
                                 <View style={styles.actionSheetContent}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
                                         <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>{this.state.selectedSpace.spaceName}</Text>
-                                        <ProfilePic 
+                                        {/* <ProfilePic 
                                             source={{ uri: this.state.selectedSpaceHost.photo }}
                                             imgWidth = {32}
                                             imgHeight = {32}
@@ -1323,7 +1323,7 @@ renderDotsView = (numItems, position) =>{
                                             fontColor="#1D2951"
                                             onPress={() => this.goToHostProfile()}
                                             alt="Your profile picture"
-                                        />
+                                        /> */}
                                     </View>
                                     <Text style={{fontSize: 16}}>{this.state.selectedSpace.spacePrice}/hr</Text>
                                     <Text style={{marginBottom: 16}}>No ratings yet</Text>
