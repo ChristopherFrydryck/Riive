@@ -49,7 +49,7 @@ import {inject, observer} from 'mobx-react/native'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 import Colors from '../constants/Colors';
-import FloatingCircles from '../components/FloatingCircles'
+
 
 
 
@@ -1094,7 +1094,7 @@ class Profile extends Component{
                                 disabled={this.state.savingChanges || this.state.failed || this.state.submitted}
                                 bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : this.state.failed ? 'rgba(190, 55, 55, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%
                                 textColor={this.state.submitted ? Colors.fortune700 : this.state.failed ? Colors.hal700 : Colors.tango700}
-                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? <FloatingCircles color={Colors.tango500}/> : "Save Changes"}</ClickableChip> 
+                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? null : "Save Changes"}</ClickableChip> 
 
                         
                     

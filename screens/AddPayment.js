@@ -5,7 +5,6 @@ import Input from '../components/Input'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
-import FloatingCircles from '../components/FloatingCircles'
 import AddressTypes from '../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 
@@ -627,7 +626,7 @@ verifyInput = () => {
                 />
             </View>  
             </View>
-          <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Card"}</Button>
+          <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? null : "Save Card"}</Button>
         </View>
         </ScrollView>
       );

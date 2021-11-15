@@ -5,7 +5,6 @@ import Text from '../components/Txt'
 import Icon from '../components/Icon'
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
-import FloatingCircles from '../components/FloatingCircles'
 import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
@@ -672,7 +671,7 @@ export default class HostedTrips extends Component{
                                             {paymentsArray}
                                         </RadioList>
                                     : null}
-                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Pay ${amountChargedToHost}`}</Button>
+                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? null : `Cancel & Pay ${amountChargedToHost}`}</Button>
                                      
                         </ScrollView>
                    </ActionSheet>

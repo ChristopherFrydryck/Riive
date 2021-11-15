@@ -18,7 +18,6 @@ import Icon from '../../components/Icon'
 import Button from '../../components/Button'
 import Colors from '../../constants/Colors'
 import Image from '../../components/Image'
-import FloatingCircles from '../../components/FloatingCircles'
 
 import Timezones from '../../constants/Timezones'
 
@@ -491,7 +490,7 @@ class addDebitCard extends Component {
               />
             </View>
             
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? null : "Save Bank Account"}</Button>
             
           </View>
           

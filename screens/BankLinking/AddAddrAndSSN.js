@@ -9,7 +9,6 @@ import AddressInput from '../../components/AddressInput';
 import DropdownItem from '../../components/DropdownItem'
 import Button from '../../components/Button'
 import Colors from '../../constants/Colors'
-import FloatingCircles from '../../components/FloatingCircles'
 import AddressTypes from '../../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 
@@ -338,7 +337,7 @@ addPreData = async() => {
               value={this.state.ssn}
               maxLength = {9}
               keyboardType='number-pad'/>
-            <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? <FloatingCircles color="white"/> : "Update Profile"}</Button>
+            <Button textStyle={{color: "white"}} style={{zIndex: -99, backgroundColor: Colors.apollo500, height: 48}} onPress={() => this.addPreData()}>{this.state.savingAddrAndSSN ? null : "Update Profile"}</Button>
         </KeyboardAwareScrollView>
       )
   }

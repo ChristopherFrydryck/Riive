@@ -53,6 +53,7 @@ class UserStore {
 
     @action
     reset = () => {
+        this.loggedIn = false;
         this.userID = '';
         this.stripeID = '';
         this.stripeConnectID = '';
