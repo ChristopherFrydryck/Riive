@@ -1,6 +1,10 @@
-import {observable, computed, action, makeObservable} from 'mobx'
+import {observable, computed, action, makeObservable, configure} from 'mobx'
 
 var today = new Date();
+
+configure({
+    enforceActions: "never",
+})
 
 class UserStore {
     @observable loggedIn = false;
