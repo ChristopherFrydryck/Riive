@@ -1,6 +1,6 @@
 
 import React, {Component, createRef} from 'react'
-import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking, ScrollView} from 'react-native'
+import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking, ScrollView, DevSettings} from 'react-native'
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 import axios from 'axios'
@@ -212,6 +212,16 @@ class Home extends Component {
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
 
+
+        // If user is not signed in anymore
+        if(!this.props.UserStore.loggedIn){
+            // Sign user out
+            auth().signOut().then(() => {
+                // Once sign out, reload app and reset UserStore
+                this.props.UserStore.reset();
+                DevSettings.reload();
+            })
+        }
         
         
 

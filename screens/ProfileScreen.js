@@ -130,7 +130,7 @@ class Profile extends Component{
 
         
         
-
+        this.AuthImg = this.AuthImg || null;
         this.signOut = this.signOut.bind(this);
         this.updateAccountInfo =  this.updateAccountInfo.bind(this);
         this.resetPassword = this.resetPassword.bind(this);
@@ -865,18 +865,18 @@ class Profile extends Component{
 
  
 
-    signOut = () => {
-        this.props.navigation.reset({
-            index: 0,
-            routes: [{ name: 'Home' }],
-          });
-        // auth().signOut().then(() => {
-        //     // alert(this.props.UserStore.firstname + " has signed out.");
+    signOut = async() => {
+       
+        try {
+            this.props.UserStore.loggedIn = false;
+            this.props.navigation.navigate("Home")
             
-
-        //     // this.props.UserStore.reset();
-
-        // })
+        }catch(e){
+            console.log(e)
+        }
+  
+       
+       
     }   
 
     render(){
@@ -947,10 +947,10 @@ class Profile extends Component{
                             alt="Your profile picture"
                         />
                         
-                        : auth().currentUser.photoURL && !this.state.imageUploading ?
+                        : this.AuthImg && !this.state.imageUploading ?
                      
                         <ProfilePic 
-                            source={{ uri: auth().currentUser.photoURL }}
+                            source={{ uri: this.AuthImg }}
                             imgWidth = {60}
                             imgHeight = {60}
                             initals={initals}
@@ -1145,7 +1145,7 @@ class Profile extends Component{
                                 <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
                                 <Divider />
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" />
-                                <Menu.Item onPress={this.signOut} title="Sign out" />
+                                <Menu.Item onPress={() => this.signOut()} title="Sign out" />
                             </Menu>
                         </View>
                         
@@ -1162,7 +1162,7 @@ class Profile extends Component{
 
 
                 {/* returns if we know the user has a profile photo via Firebase Auth or uploaded to UserStore  */}
-                 {this.props.UserStore.photo || auth().currentUser.photoURL ? 
+                 {this.props.UserStore.photo || this.AuthImg ? 
                  <View>
                     {/* if we are hosting user image ourselves */}
                     {this.props.UserStore.photo ?
@@ -1190,7 +1190,7 @@ class Profile extends Component{
                             style={{backgroundColor: "#ffffff", top: -45, alignSelf: "center", position: "absolute"}}
                             fontSize={24}
                             fontColor="#1D2951"
-                            source={{ uri: auth().currentUser.photoURL }}
+                            source={{ uri: this.AuthImg }}
 
                         />
                     </View>

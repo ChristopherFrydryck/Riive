@@ -249,6 +249,7 @@ export default class Authentication extends React.Component {
     doc.get().then((doc) => {
       if (doc.exists){
               // alert(`${doc.id} => ${doc.data().fullname}`);
+              this.props.UserStore.loggedIn = true;
               this.props.UserStore.fullname = doc.data().fullname;
               this.props.UserStore.phone = doc.data().phone;
               this.props.UserStore.dob = doc.data().dob || null,
@@ -543,6 +544,7 @@ export default class Authentication extends React.Component {
                 return docData
               }).then((doc) => {
                     // console.log(doc.data())
+                    this.props.UserStore.loggedIn = true;
                     this.props.UserStore.fullname = this.props.UserStore.fullname;
                     this.props.UserStore.phone = this.props.UserStore.phone;
                     this.props.UserStore.dob = this.props.UserStore.dob,
@@ -682,6 +684,7 @@ onPressSignIn = async() => {
       doc.get().then((doc) => {
         if (doc.exists){
                 // alert(`${doc.id} => ${doc.data().fullname}`);
+                this.props.UserStore.loggedIn = true;
                 this.props.UserStore.fullname = doc.data().fullname;
                 this.props.UserStore.phone = doc.data().phone;
                 this.props.UserStore.userID = doc.data().id;

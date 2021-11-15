@@ -3,6 +3,7 @@ import {observable, computed, action} from 'mobx'
 var today = new Date();
 
 class UserStore {
+    @observable loggedIn = false;
     @observable userID = '';
     @observable stripeID = '';
     @observable stripeConnectID = '';
