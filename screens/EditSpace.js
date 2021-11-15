@@ -27,7 +27,7 @@ import storage from '@react-native-firebase/storage'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import ClickableChip from '../components/ClickableChip';
 
 

@@ -45,7 +45,7 @@ import 'firebase/auth';
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 import Colors from '../constants/Colors';

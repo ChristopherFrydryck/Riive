@@ -17,7 +17,7 @@ import { version } from '../package.json'
 import logo from '../assets/img/Logo_001.png'
 
 //MobX Imports
-import { inject, observer } from 'mobx-react/native'
+import { inject, observer } from 'mobx-react'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 

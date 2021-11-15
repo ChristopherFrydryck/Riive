@@ -34,7 +34,7 @@
  import Icon from './components/Icon'
  import Colors from './constants/Colors'
  
- import { observer, Provider } from 'mobx-react/native'
+ import { observer, Provider } from 'mobx-react'
  import UserStore from './stores/userStore'
  import ComponentStore from './stores/componentStore'
  

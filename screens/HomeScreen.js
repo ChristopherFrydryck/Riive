@@ -36,7 +36,7 @@ import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient
 import Svg, {Circle, Rect} from 'react-native-svg'
 
 // MobX
-import { observer, inject } from 'mobx-react/native'
+import { observer, inject } from 'mobx-react'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 

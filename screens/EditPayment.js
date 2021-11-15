@@ -10,7 +10,7 @@ import LinearGradient from 'react-native-linear-gradient'
 import config from 'react-native-config'
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';

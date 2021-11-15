@@ -32,7 +32,7 @@ import * as geofirestore from 'geofirestore'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 
 

@@ -16,7 +16,7 @@ import config from 'react-native-config'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import { requireNativeViewManager } from '@unimodules/core';
 
 
