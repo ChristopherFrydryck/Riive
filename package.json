@@ -51,12 +51,12 @@
     "react-native": "0.66.0",
     "react-native-actions-sheet": "^0.5.7",
     "react-native-config": "^1.4.5",
-    "react-native-device-info": "^8.4.5",
+    "react-native-device-info": "^8.4.7",
     "react-native-dialog-input": "^1.0.8",
     "react-native-flash-message": "^0.2.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-google-places-autocomplete": "^2.4.1",
-    "react-native-image-crop-picker": "^0.37.1",
+    "react-native-image-crop-picker": "^0.37.2",
     "react-native-keyboard-aware-scroll-view": "github:APSL/react-native-keyboard-aware-scroll-view#pull/501/head",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-maps": "0.29.4",
@@ -74,8 +74,7 @@
     "react-native-vector-icons": "^9.0.0",
     "react-navigation": "^4.4.4",
     "react-navigation-stack": "^2.10.4",
-    "react-navigation-tabs": "^2.11.1",
-    "stripe": "^7.13.1"
+    "react-navigation-tabs": "^2.11.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
