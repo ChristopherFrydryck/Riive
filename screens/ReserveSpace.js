@@ -372,33 +372,6 @@ class reserveSpace extends Component {
                
         }
 
-        updateStripeTOS = async() => {
-
-            const settings = {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                stripeConnectID: this.props.UserStore.stripeConnectID,
-            })
-            }
-      
-            try{  
-                const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/agreeToStripeTOS`, settings)
-                const data = await fetchResponse;
-      
-                if(data.status !== 200){
-                    throw "Failure to agree to TOS."
-                }
-                this.setState({stripeModalVisible: false})
-                return data;
-            }catch(e){
-                throw e
-            }  
-            
-        }
 
         getPrice = () => {
             // console.log(`${this.state.hoursSpent} hours and ${this.state.minutesSpent} minutes`)
@@ -757,7 +730,6 @@ class reserveSpace extends Component {
                 stickyHeaderIndices={searchedAddress ? [2] : [1]}
                 style={{backgroundColor: 'white'}}
               >
-                  <StripeTOSModal visible={this.state.stripeModalVisible} onClose={() => this.updateStripeTOS()}/>
                     <MapView
                         provider={MapView.PROVIDER_GOOGLE}
                         mapStyle={NightMap}

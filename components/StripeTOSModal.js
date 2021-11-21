@@ -28,14 +28,46 @@ export default class StripeTOSModal extends React.Component{
 
         this.state = {
             agreedToTOS: "unchecked",
+            authenticating: false,
+            visible: true,
         }
+    }
+
+    updateStripeTOS = async() => {
+
+        const settings = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            stripeConnectID: this.props.UserStore.stripeConnectID,
+        })
+        }
+  
+        try{  
+            this.setState({authenticating: true})
+            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/agreeToStripeTOS`, settings)
+            const data = await fetchResponse;
+  
+            if(data.status !== 200){
+                throw "Failure to agree to TOS."
+            }
+            this.setState({authenticating: false, visible: false})
+            return data;
+        }catch(e){
+            this.setState({authenticating: false})
+            throw e
+        }  
+        
     }
 
     
 
     render(){
         return(
-            <Modal style={{zIndex: 99999, elevation: 99999, flex: 1}} visible={this.props.visible} transparent={true}>
+            <Modal style={{zIndex: 99999, elevation: 99999, flex: 1}} visible={this.state.visible} transparent={true}>
                 <View style={{height: Dimensions.get('window').height, width:  Dimensions.get('window').width, backgroundColor: 'rgba(176, 176, 176, 0.33)', justifyContent: 'center'}}>
                     <View style={{backgroundColor: 'white', borderRadius: 8, marginHorizontal: 8, paddingHorizontal: 16, paddingVertical: 16, height: Dimensions.get('window').height*(.7)}}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'white', paddingBottom: 8}}>
@@ -61,7 +93,7 @@ export default class StripeTOSModal extends React.Component{
                                 />
                                 <Text>I agree to the Stripe Terms of service</Text>
                             </Pressable>
-                            <Button disabled={this.state.agreedToTOS !== "checked"} style={this.state.agreedToTOS === "checked" ? {flexGrow: 1, backgroundColor: Colors.apollo900} : {flexGrow: 1, backgroundColor: Colors.cosmos300}} textStyle={{color: Colors.mist300}} onPress={this.props.onClose}>Continue</Button>
+                            <Button disabled={this.state.agreedToTOS !== "checked"} style={this.state.agreedToTOS === "checked" ? {flexGrow: 1, backgroundColor: Colors.apollo900} : {flexGrow: 1, backgroundColor: Colors.cosmos300}} textStyle={{color: Colors.mist300}} onPress={() => this.updateStripeTOS()}>{this.state.authenticating ? null : "I Agree"}</Button>
                     </View>
                 </View>
             </Modal>
