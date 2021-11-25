@@ -205,6 +205,8 @@ class Profile extends Component{
 
     addAddress = async () => {
 
+        console.log(`LineOne: ${this.state.address.line1} lineTwo: ${this.state.address.line2 == "" ? null : this.state.address.line2Prefix} ${this.state.address.line2} zipCode: ${this.state.address.zip} city: ${this.state.address.city} state: ${this.state.address.state}`)
+
         const settings = {
           method: 'POST',
           headers: {
@@ -241,6 +243,7 @@ class Profile extends Component{
             }
             return data;
           }catch(e){
+            console.log(e)
             throw e
           }  
         }else{
@@ -287,7 +290,6 @@ class Profile extends Component{
           // console.log(county)
           // console.log(state)
           // console.log(country)
-          // console.log(zip)
           this.setState({
             searchedAddress: true,
             addressSaveReady: true,
@@ -513,13 +515,14 @@ class Profile extends Component{
        
         if(childData){
             this.setState({
+                searchedAddress: true,
                 address:{
                     ...this.state.address,
                     ...childData.address
                 }
-              
-                
             })
+         }else{
+             this.setState({searchedAddress: false,})
          }
     }
 
@@ -675,8 +678,11 @@ class Profile extends Component{
                             throw error
                 }
             }
+
+            let line2PropsEmpty = this.props.UserStore.address.line2 == null || undefined;
+            let line2StateEmpty = this.state.address.line2 == "";
             // Variable to check if line 2 has changed
-            let checkLine2 = this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
+            let checkLine2 = line2PropsEmpty && !line2StateEmpty || !line2PropsEmpty && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
 
             // Check if address is updated
             if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zip || checkLine2){
@@ -688,7 +694,7 @@ class Profile extends Component{
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
-                console.log(this.state.fullNameUpdate)
+
                 let error = null;
                 if (this.state.fullNameUpdate.match(regexFullname)){
                     const settings = {
@@ -885,7 +891,6 @@ class Profile extends Component{
         const initals = this.props.UserStore.firstname.charAt(0).toUpperCase() + "" + this.props.UserStore.lastname.charAt(0).toUpperCase()
         const {firstname, lastname, vehicles, payments, listings} = this.props.UserStore 
         var {height, width} = Dimensions.get('window');
-   
 
         return(
             <Provider>
@@ -1048,7 +1053,7 @@ class Profile extends Component{
                 
                             <View style={{zIndex: 999999999}}>
                             <AddressInput 
-                                defaultValue={`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}`}
+                                defaultValue={this.props.UserStore.address.line1 ? `${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}` : null}
                                 returnValue={this.addressCallbackFunction}
                             />
                             </View>

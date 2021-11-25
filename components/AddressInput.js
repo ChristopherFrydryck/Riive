@@ -62,6 +62,7 @@ let AddressInput = ({...props}) => {
     }, [address])
 
 
+
     
 
 
@@ -70,7 +71,6 @@ let AddressInput = ({...props}) => {
         // console.log(det.geometry.location.lat);
         // console.log(det.address_c omponents)
 
-        console.log(det.description)
         var number = det.address_components.filter(x => x.types.includes('street_number'))[0]
         var street = det.address_components.filter(x => x.types.includes('route'))[0]
         var city = det.address_components.filter(x => x.types.includes('locality'))[0]
