@@ -423,7 +423,7 @@ export default class SearchFilter extends React.PureComponent{
          const wait = new Promise((resolve) => setTimeout(resolve, 0));
         wait.then( () => {
             // this.arrivalFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2});
-            this.timesList.scrollTo({x: i*this.timeWidth + i/2, animated: animated})
+            this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
         });
     }
 
@@ -431,7 +431,7 @@ export default class SearchFilter extends React.PureComponent{
         const wait = new Promise((resolve) => setTimeout(resolve, 0));
        wait.then( () => {
         //    this.departureFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2}); 
-        this.timesList.scrollTo({x: i*this.timeWidth + i/2, animated: animated})
+        this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
        });
    }
 
