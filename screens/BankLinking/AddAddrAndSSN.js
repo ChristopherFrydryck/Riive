@@ -284,7 +284,7 @@ addPreData = async() => {
               <Text style={styles.label}>Address</Text>
               <View style={{height: 40}}>
                 <AddressInput 
-                  defaultValue={`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}` || null}
+                  defaultValue={this.state.address.line1 ? `${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}` : null}
                   returnValue={this.addressCallbackFunction}
                 />
               </View>
