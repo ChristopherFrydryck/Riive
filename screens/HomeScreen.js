@@ -144,7 +144,7 @@ class Home extends Component {
           duration: null,
       },
 
-      locationSnackbarVisible: false,
+      locationAvailable: false,
     }
 
     this.mapScrolling = true;
@@ -228,6 +228,7 @@ class Home extends Component {
    
         
         this.mapLocationFunction();
+        this.rippleAnimation();
         this.getCurrentLocation(false);
         
         if(this.state.searchFilterOpen){
@@ -377,43 +378,47 @@ class Home extends Component {
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
       )
 
-
-
      
       if(permission !== "granted"){
+        
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
           },
           error => {
-            if(isFirstTime){
-                Alert.alert(
-                    "Location Services Disabled",
-                    "Enable location permissions and restart Riive to discover parking nearby.",
-                    [
-                    {
-                        text: "No thanks",
-                        onPress: () => { this.setState({locationSnackbarVisible: true})},
-                        style: "cancel"
-                    },
-                    { text: "Enable location services", onPress: () => Linking.openSettings()}
-                    ],
-                    { cancelable: false }
-                );
-            }
+            this.setState({locationAvailable: false})
+            // if(isFirstTime){
+            //     Alert.alert(
+            //         "Location Services Disabled",
+            //         "Enable location permissions and restart Riive to discover parking nearby.",
+            //         [
+            //         {
+            //             text: "No thanks",
+            //             onPress: () => { 
+            //                 this.setState({locationAvailable: false}) 
+            //             },
+            //             style: "cancel"s
+            //         },
+            //         { text: "Enable location services", onPress: () => Linking.openSettings()}
+            //         ],
+            //         { cancelable: false }
+            //     );
+            // }
                 
             }
         );
       }else{
-       
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
-        },  error => alert(`There was an issue getting your location. ${error.message}`),
+        },  error => {
+            alert(`There was an issue getting your location. ${error.message}`)
+            this.setState({locationAvailable: false})
+        },
         {
             enableHighAccuracy: false,
             timeout: 10000,
             maximumAge: 3600000
         })
-        this.setState({locationSnackbarVisible: false})
+        this.setState({locationAvailable: true})
       }
 
      
@@ -421,19 +426,20 @@ class Home extends Component {
         
     
     }catch(e){
-          Alert.alert(
-          "Location Unavailable",
-          "Enable location permissions and restart Riive to discover parking nearby.",
-          [
-            {
-              text: "No thanks",
-              onPress: () => {},
-              style: "cancel"
-            },
-            { text: "Enable location services", onPress: () => Linking.openSettings()}
-          ],
-          { cancelable: false }
-        );
+          this.setState({locationAvailable: false})
+        //   Alert.alert(
+        //   "Location Unavailable",
+        //   "Enable location permissions and restart Riive to discover parking nearby.",
+        //   [
+        //     {
+        //       text: "No thanksss",
+        //       onPress: () => {},
+        //       style: "cancel"
+        //     },
+        //     { text: "Enable location services", onPress: () => Linking.openSettings()}
+        //   ],
+        //   { cancelable: false }
+        // );
     }
   }
 
@@ -1026,7 +1032,7 @@ renderDotsView = (numItems, position) =>{
   render() {
     const {width, height} = Dimensions.get('window')
     const {firstname, email, permissions} = this.props.UserStore
-    if(permissions.locationServices && this.region.current.latitude && this.region.current.longitude){
+    if(this.state.locationAvailable && this.region.current.latitude && this.region.current.longitude){
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
 
@@ -1410,7 +1416,7 @@ renderDotsView = (numItems, position) =>{
                       <Rect x="0" y="48" width={width} height={height} />
               </SvgAnimatedLinearGradient>
               <Snackbar
-                    visible={this.state.locationSnackbarVisible}
+                    visible={!this.state.locationAvailable}
                     onDismiss={() => this.setState({ verificationSnackbarVisible: false })}
                     theme={{ colors: { accent: "#1eeb7a" }}}
                     action={{
