@@ -19,6 +19,7 @@ import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import Image from '../components/Image'
+import ClickableChip from '../components/ClickableChip';
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 
 import Timezones from '../constants/Timezones'
@@ -957,34 +958,53 @@ class addSpace extends Component {
             <Text style={styles.numTitle}>Upload Photo</Text>
           </View>
           <View style={{paddingHorizontal: 16}}>
-            <View style={{display: "flex", flexDirection: 'row', marginBottom: 16}}>
-              <Button style={this.state.photo ? {flex: 1, marginLeft: 8, backgroundColor: Colors.mist900} :{flex: 1, marginLeft: 8, backgroundColor: "#FF8708"}} textStyle={ this.state.photo ? {color: Colors.cosmos300} : {color:"#FFFFFF"}} disabled={this.state.photo ? true : false} onPress={() => this.pickImage()}>Add Photo</Button>
-              <Button style={this.state.photo ? {flex: 1, marginLeft: 8, backgroundColor: Colors.mist900} :{flex: 1, marginLeft: 8, backgroundColor: "#FF8708"}} textStyle={ this.state.photo ? {color: Colors.cosmos300} : {color:"#FFFFFF"}} disabled={this.state.photo  ? true : false} onPress={() => this.launchCamera()}>Take Photo</Button>
-            </View>
-          {/* <Text>Upload Pictures</Text> */}
-          {/* <View style={{display: 'flex', flexDirection: 'row', marginBottom: 16}}> */}
-              {/* <Button style={{flex: 1, marginRight:4, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => alert("Something...")}>Upload Image</Button>
-              <Button style={{flex: 1, marginLeft:4, borderColor: "#FF8708", borderWidth: 3}} textStyle={{color:"#FF8708"}} onPress={() => alert("Something...")}>Take Photo</Button> */}
-            {/* </View> */}
+            
+
             {this.state.photo ? 
             <View>
-              <View style={{position: "absolute", top: 8, right: 8, zIndex: 999, padding: 4, backgroundColor: 'rgba(54, 55, 59, 0.7)', borderRadius: Dimensions.get('window').width/2}}>
-                <Icon 
-                  iconName="x"
-                  iconColor={Colors.mist300}
-                  iconSize={24}
-                  onPress={() => this.setState({photo: null})}
-                />
+              <View style={{position: "absolute", top: 8, right: 8, zIndex: 999}}>
+                <View style={{flexDirection: 'row'}}>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)', marginRight: 4}}
+                                textColor='white'
+                                onPress={() => this.pickImage()}
+                  >Change Photo</ClickableChip>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)'}}
+                                textColor='white'
+                                onPress={() => this.launchCamera()}
+                  >Take Photo</ClickableChip>
+                 
+                </View>
               </View>
               <Image 
-                style={{width: Dimensions.get("window").width - 32}}
+                style={{width: Dimensions.get("window").width - 32, borderRadius: 4}}
                 aspectRatio={16/9}
                 source={{uri: this.state.photo}}
                 backupSource={require('../assets/img/Logo_001.png')}
                 resizeMode={'cover'}
               /> 
               </View>
-              : null}
+              : <View style={{backgroundColor: Colors.mist900, borderRadius: 4, width: '100%', aspectRatio: 16/9}}>
+                  <View style={{position: "absolute", top: 8, right: 8, zIndex: 999}}>
+                <View style={{flexDirection: 'row'}}>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)', marginRight: 4}}
+                                textColor='white'
+                                onPress={() => this.pickImage()}
+                  >Add Photo</ClickableChip>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)'}}
+                                textColor='white'
+                                onPress={() => this.launchCamera()}
+                  >Take Photo</ClickableChip>
+                 
+                </View>
+              </View>
+            </View>}
+
+
+           
           
             
             </View>
@@ -1093,7 +1113,7 @@ class addSpace extends Component {
                   </Card>
                 )}}
               /> */}
-              <Button disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>Add Photo</Button>
+              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color: 'white'}} disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>Add Space</Button>
 
             </View>
             
