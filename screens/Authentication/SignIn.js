@@ -585,7 +585,7 @@ renderCurrentState() {
           error={this.state.passwordError}
           />
           <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignIn()}>Log In</Button>
-          <Text onPress={() => this.resetPassword()} style={styles.hyperlink}>Forgot Password?</Text>
+          <Text onPress={() => this.props.navigation.navigate("TOS")} style={styles.hyperlink}>Forgot Password?</Text>
         </View>
     )
   }

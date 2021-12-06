@@ -481,7 +481,7 @@ renderCurrentState() {
     )
   }else{
     return(
-     <View style={styles.form}>
+     <ScrollView style={styles.form}>
         <Input 
         placeholder='Your name...'
         label="Full Name"
@@ -548,7 +548,7 @@ renderCurrentState() {
         error={null}
         />
         <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignUp("HomeScreen")}>Sign Up</Button>
-      </View>
+      </ScrollView>
     )
   }
   
@@ -557,20 +557,24 @@ renderCurrentState() {
   render() {
 
       return (
-          <View 
-            style={{flex: 1, justifyContent: 'center', backgroundColor: 'white'}}
+          <ScrollView 
+            style={{backgroundColor: 'white'}}
+            contentContainerStyle={{ flex: 1, justifyContent: 'center'}}
           >
             <KeyboardAwareScrollView  
                 style={styles.primaryView} 
                 contentContainerStyle={{justifyContent: 'center'}}
                 behavior={"padding"} 
-                keyboardVerticalOffset={120}
+                keyboardVerticalOffset={60}
+                enableOnAndroid={true}
+                enableAutomaticScroll={(Platform.OS === 'ios')}
+                extraHeight={220}
                 enabled 
             >
               <Image source={logo} style={styles.img}/>
               {this.renderCurrentState()}
              </KeyboardAwareScrollView >
-          </View>      
+          </ScrollView>      
     
       )
     }
@@ -592,6 +596,7 @@ const styles = StyleSheet.create({
   form: {
     // flexGrow: 1,
     // backgroundColor: 'green'
+    // backgroundColor: 'orange',
   },
   hyperlink: {
     color: 'blue',

@@ -43,9 +43,8 @@ const PrivacyNavigator = createMaterialTopTabNavigator({
           backgroundColor: "white",
           borderTop: 'transparent',
         },
-      }
+      },
     
-    // headerMode: "none", 
 });
 
 export default PrivacyNavigator;
