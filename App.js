@@ -19,7 +19,7 @@
    LogBox
  } from 'react-native';
  
- import AppNavigator from './navigators/AppNavigator'
+ import AppNavigator from './navigators/AuthNavigator'
 
  import config from 'react-native-config';
  

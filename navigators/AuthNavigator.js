@@ -1,5 +1,5 @@
-import { createSwitchNavigator } from 'react-navigation';
-import Authentication from '../screens/Authentication'
+import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+import Authentication from './AuthTabNavigator'
 import Navigator from './MainNavigator'
 
 
@@ -12,4 +12,4 @@ const AuthNavigator = createSwitchNavigator({
     initialRouteName: "Auth",
 });
 
-export default AuthNavigator;
+export default createAppContainer(AuthNavigator);

@@ -19,6 +19,7 @@ class UserStore {
     @observable address = {};
     @observable ssnProvided = false;
     @observable password = '';
+    @observable password2 = '';
     @observable photo = '';
     @observable joinedDate = null;
     @observable lastUpdate = null;
@@ -73,6 +74,7 @@ class UserStore {
         this.address = {};
         this.ssnProvided = false;
         this.password = '';
+        this.password2 = '';
         this.photo = '';
         this.joinedDate = null;
         this.lastUpdate = null;
