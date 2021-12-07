@@ -567,6 +567,7 @@ renderCurrentState() {
           placeholder='Enter email...'
           label="Email"
           name="email"
+          rightText={<Text onPress={() => this.props.navigation.navigate("TOS")} style={styles.hyperlink}>Forgot Password</Text>}
           onChangeText = {(email) => this.props.UserStore.email = email}
           value={this.props.UserStore.email}
           keyboardType='email-address'
@@ -585,7 +586,6 @@ renderCurrentState() {
           error={this.state.passwordError}
           />
           <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignIn()}>Log In</Button>
-          <Text onPress={() => this.props.navigation.navigate("TOS")} style={styles.hyperlink}>Forgot Password?</Text>
         </View>
     )
   }
@@ -632,10 +632,8 @@ const styles = StyleSheet.create({
     // backgroundColor: 'green'
   },
   hyperlink: {
-    color: 'blue',
+    color: Colors.apollo500,
     textDecorationLine: 'underline',
-    fontSize: 18,
-    alignSelf: 'center',
-    marginTop: 24
+    fontSize: 12,
   }
 });

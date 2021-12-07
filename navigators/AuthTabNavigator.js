@@ -48,7 +48,7 @@ const AuthenticationTabNav = createMaterialTopTabNavigator({
         screen: SignUp,
         navigationOptions: {
             tabBarLabel: 'Sign Up',
-        }
+        },
     },
     
 },
