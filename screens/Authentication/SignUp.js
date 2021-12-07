@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { ActivityIndicator, StyleSheet, StatusBar, Platform, View, ScrollView, SafeAreaView, Dimensions, Image, LogBox} from 'react-native';
+import { ActivityIndicator, StyleSheet, StatusBar, Platform, View, ScrollView, SafeAreaView, Dimensions, Image, Pressable} from 'react-native';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Checkbox } from 'react-native-paper';
 
 import Text from '../../components/Txt'
 import Icon from '../../components/Icon'
@@ -67,6 +68,7 @@ export default class Authentication extends React.Component {
       stripeID: 'invalid',
       authenticating: false,
       toggleLogIn: false,
+      agreedToTOS: "unchecked",
 
       // Errors that may show if firebase catches them.
       emailError: '',
@@ -547,7 +549,13 @@ renderCurrentState() {
         keyboardType='default'
         error={null}
         />
-        <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignUp("HomeScreen")}>Sign Up</Button>
+        <Pressable style={{height: 40, flexDirection: 'row', alignItems: 'center'}} onPress={() => { this.setState({agreedToTOS: this.state.agreedToTOS === "checked" ? "unchecked" : "checked"})}}>
+          <Checkbox.Android
+              status={this.state.agreedToTOS}
+          />
+          <Text style={{fontSize: 12}}>I agree to the <Text style={styles.tos} onPress={() => this.props.navigation.navigate("TOS")}>terms of service and privacy policy</Text>.</Text>
+        </Pressable>
+        <Button disabled={this.state.agreedToTOS !== "checked"} style={this.state.agreedToTOS !== "checked" ? {backgroundColor: Colors.cosmos300} : {backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignUp("HomeScreen")}>Sign Up</Button>
       </ScrollView>
     )
   }
@@ -597,6 +605,11 @@ const styles = StyleSheet.create({
     // flexGrow: 1,
     // backgroundColor: 'green'
     // backgroundColor: 'orange',
+  },
+  tos:{
+    fontSize: 12,
+    textDecorationLine: 'underline',
+    color: Colors.cosmos500
   },
   hyperlink: {
     color: 'blue',
