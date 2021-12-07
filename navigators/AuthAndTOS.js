@@ -8,7 +8,7 @@ const AuthAndTOSNavigator = createStackNavigator({
     Auth: {
         screen: Authentication,
         navigationOptions: {
-            title: "Sign Up",
+            title: "Sign In",
             headerShown: false,
         }
     },
