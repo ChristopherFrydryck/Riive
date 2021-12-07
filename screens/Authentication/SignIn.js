@@ -118,15 +118,6 @@ export default class Authentication extends React.Component {
     // Unmount status bar info
   //  this._navListener.remove();
   }
-
-  // Resets the password of the state with email
-  resetPassword = () =>{
-    auth().sendPasswordResetEmail(this.props.UserStore.email).then(function() {
-        alert('Check your email for a password reset link.')
-      }).catch(function(error) {
-        alert('Failed to send password reset. ' + error.message)
-    });
-  }
   
 
 
@@ -567,7 +558,7 @@ renderCurrentState() {
           placeholder='Enter email...'
           label="Email"
           name="email"
-          rightText={<Text onPress={() => this.props.navigation.navigate("TOS")} style={styles.hyperlink}>Forgot Password</Text>}
+          rightText={<Text onPress={() => this.props.navigation.navigate("PWReset")} style={styles.hyperlink}>Forgot Password</Text>}
           onChangeText = {(email) => this.props.UserStore.email = email}
           value={this.props.UserStore.email}
           keyboardType='email-address'
@@ -585,7 +576,7 @@ renderCurrentState() {
           keyboardType='default'
           error={this.state.passwordError}
           />
-          <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignIn()}>Log In</Button>
+          <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress = {() => this.onPressSignIn()}>Sign In</Button>
         </View>
     )
   }
