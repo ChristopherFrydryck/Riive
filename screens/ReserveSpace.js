@@ -632,6 +632,8 @@ class reserveSpace extends Component {
             
         }
 
+       nth = (n) => { return["st","nd","rd"][((n+90)%100-10)%10-1]||"th" }
+
         isToday = (someDate) => {
             const today = new Date()
             return someDate.getDate() == today.getDate() &&
@@ -769,7 +771,7 @@ class reserveSpace extends Component {
 
                     {/* Date and Time */}
                     <View style={[styles.container, {backgroundColor: 'white', paddingBottom: 8}]}>
-                        <Text type="light" numberOfLines={1} style={{marginTop: 16, fontSize: 24, textAlign: 'center'}}>{new Date().getDay() === daySearched.dayValue ? "Today" : daySearched.dayName}, {daySearched.monthName} {daySearched.dateName}{daySearched.dateName.toString().split("")[daySearched.dateName.toString().split("").length - 1] == 1 && (daySearched.dateName > 20 || daySearched < 3)  ? "st" : daySearched.dateName == 2  && (daySearched.dateName > 20 || daySearched < 3) ? "nd" : "th"}</Text>
+                        <Text type="light" numberOfLines={1} style={{marginTop: 16, fontSize: 24, textAlign: 'center'}}>{new Date().getDay() === daySearched.dayValue ? "Today" : daySearched.dayName}, {daySearched.monthName} {daySearched.dateName}{this.nth(daySearched.dateName)}</Text>
 
                         <View style={{flexDirection: 'row', alignItems: "flex-end", justifyContent: 'space-between', marginTop: 16}}>
                             <View style={{flexDirection: 'column', alignItems: 'center', flex: 1}}>
