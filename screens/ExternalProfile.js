@@ -16,7 +16,7 @@ import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 @inject("UserStore", "ComponentStore")
 @observer

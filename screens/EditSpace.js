@@ -7,10 +7,8 @@ import NightMap from '../constants/NightMap'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {Card, ThemeProvider} from 'react-native-paper';
 
-// import * as ImagePicker from 'expo-image-picker'
 import ImagePicker from 'react-native-image-crop-picker';
-// import RNImagePicker from 'react-native-image-crop-picker';
-// import * as Permissions from 'expo-permissions'
+
 
 import 'intl'
 
@@ -29,7 +27,7 @@ import storage from '@react-native-firebase/storage'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import ClickableChip from '../components/ClickableChip';
 
 
@@ -535,7 +533,7 @@ class editSpace extends Component {
      componentWillUnmount() {
       this._isMounted = false;
           // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
        }
 
    
@@ -637,26 +635,26 @@ renderDotsView = (numItems, position) =>{
                           resizeMode={'cover'}
                         /> 
 
-                        <View style={{flexDirection: 'row', position: 'absolute', bottom: 8, left: 8, width: Dimensions.get("window").width - 32}}>
-                          <ClickableChip onPress={() => this.pickImage()} bgColor='rgba(0, 0, 0, 0.6)' style={{height: 30, alignItems: 'center', justifyContent: 'center', marginRight: 8}}>
-                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                        <View style={{flexDirection: 'row', position: 'absolute', bottom: 8, left: 8, width: Dimensions.get("window").width - 32, paddingBottom: 2}}>
+                          <ClickableChip onPress={() => this.pickImage()} bgColor='rgba(0, 0, 0, 0.6)' style={{marginRight: 8}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', paddingTop: Platform.OS == 'ios' ? 4 : 0}}>
                               <Icon 
                                     iconName="photo"
                                     iconLib="Foundation"
                                     iconColor={Colors.mist300}
                                     iconSize={16}
-                                    style={{paddingRight: 6, marginTop: 4}}
+                                    style={{paddingRight: 6}}
                                 />
                                 <Text style={{color: Colors.mist300}}>Change Photo</Text>
                             </View>
                           </ClickableChip>
-                          <ClickableChip onPress={() => this.launchCamera()} bgColor='rgba(0, 0, 0, 0.6)' style={{height: 30, alignItems: 'center', justifyContent: 'center'}}>
-                            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                          <ClickableChip onPress={() => this.launchCamera()} bgColor='rgba(0, 0, 0, 0.6)' style={{}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', paddingTop: Platform.OS == 'ios' ? 4 : 0}}>
                               <Icon 
                                     iconName="camera"
                                     iconColor={Colors.mist300}
                                     iconSize={16}
-                                    style={{paddingRight: 6, marginTop: 4}}
+                                    style={{paddingRight: 6}}
                                 />
                                 <Text style={{color: Colors.mist300}}>Take Photo</Text>
                             </View>

@@ -1,10 +1,12 @@
-import React, {Component} from 'react'
+import React, {Component, useRef} from 'react'
 import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
-import {NavigationActions} from 'react-navigation'
+
 import Input from '../components/Input'
 import Button from '../components/Button'
 import AddressTypes from '../constants/AddressTypes'
+
+import AddressInput from '../components/AddressInput'
 
 
 
@@ -25,13 +27,10 @@ import PaymentList from '../components/PaymentList'
 import SpacesList from '../components/SpacesList'
 import ClickableChip from '../components/ClickableChip'
 import DialogInput from 'react-native-dialog-input'
-import GooglePlacesAutocomplete from 'react-native-google-places-autocomplete'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// import Dialog from 'react-native-dialog'
-// import * as ImagePicker from 'expo-image-picker'
-// import * as Permissions from 'expo-permissions'
+
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings} from 'react-native-permissions';
-// import SnackBar from 'react-native-snackbar-component'
+
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 
@@ -46,11 +45,12 @@ import 'firebase/auth';
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 import Colors from '../constants/Colors';
 import FloatingCircles from '../components/FloatingCircles'
+
 
 
 
@@ -113,15 +113,15 @@ class Profile extends Component{
 
             searchedAddress: this.props.UserStore.address.line1 ? true : false,
             address: {
+              box: null,
               line1: this.props.UserStore.address.line1,
               line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
               line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
-              zipCode: this.props.UserStore.address.postal_code,
+              zip: this.props.UserStore.address.postal_code,
               city: this.props.UserStore.address.city,
               state: this.props.UserStore.address.state,
               country: this.props.UserStore.address.country
             },
-            addressError: "",
             addressSaveReady: false,
 
 
@@ -131,7 +131,7 @@ class Profile extends Component{
 
         
         
-
+        this.AuthImg = this.AuthImg || null;
         this.signOut = this.signOut.bind(this);
         this.updateAccountInfo =  this.updateAccountInfo.bind(this);
         this.resetPassword = this.resetPassword.bind(this);
@@ -147,10 +147,20 @@ class Profile extends Component{
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();
+
+
           });
 
-          LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
+          
 
+          
+
+     
+
+          LogBox.ignoreLogs(['VirtualizedLists should never be nested', 'EventEmitter.removeListener'])
+          
+
+          
       
       
 
@@ -177,13 +187,10 @@ class Profile extends Component{
     componentDidUpdate(prevState){
         // Update when modal appears for edit profile
         if(!prevState.editAccountModalVisible && this.state.editAccountModalVisible){
-            let {line1, line2, line2Prefix, zipCode, city, state, country} = this.state.address
-            // If an address is searched
-            if(this.state.searchedAddress){
-                this.GooglePlacesRef.setAddressText(`${line1}, ${city} ${state}, ${zipCode} ${country}`)
-            }else{
-                this.GooglePlacesRef.setAddressText(``)
-            }
+            let {line1, line2, line2Prefix, zip, city, state, country} = this.state.address
+
+            // ${line1}, ${city} ${state}, ${zip} ${country}
+          
            
         }
     }
@@ -192,11 +199,13 @@ class Profile extends Component{
 
     componentWillUnmount() {
         // Unmount status bar info
-        this._navListener.remove();
+        // this._navListener.remove();
     }
 
 
     addAddress = async () => {
+
+        console.log(`LineOne: ${this.state.address.line1} lineTwo: ${this.state.address.line2 == "" ? null : this.state.address.line2Prefix} ${this.state.address.line2} zipCode: ${this.state.address.zip} city: ${this.state.address.city} state: ${this.state.address.state}`)
 
         const settings = {
           method: 'POST',
@@ -211,7 +220,7 @@ class Profile extends Component{
       
             lineOne: this.state.address.line1,
             lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-            zipCode: this.state.address.zipCode,
+            zipCode: this.state.address.zip,
             city: this.state.address.city,
             state: this.state.address.state,
           })
@@ -227,13 +236,14 @@ class Profile extends Component{
             this.props.UserStore.address = {
               line1: this.state.address.line1,
               line2: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-              postal_code: this.state.address.zipCode,
+              postal_code: this.state.address.zip,
               city: this.state.address.city,
               state: this.state.address.state,
               country: this.state.address.country
             }
             return data;
           }catch(e){
+            console.log(e)
             throw e
           }  
         }else{
@@ -249,12 +259,11 @@ class Profile extends Component{
             line1: this.props.UserStore.address.line1,
             line2: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[1] : "",
             line2Prefix: this.props.UserStore.address.line2 ? this.props.UserStore.address.line2.split(" ")[0] : "Apartment",
-            zipCode: this.props.UserStore.address.postal_code,
+            zip: this.props.UserStore.address.postal_code,
             city: this.props.UserStore.address.city,
             state: this.props.UserStore.address.state,
             country: this.props.UserStore.address.country
             },
-            addressError: "",
             addressSaveReady: false,
         })
       }
@@ -281,15 +290,13 @@ class Profile extends Component{
           // console.log(county)
           // console.log(state)
           // console.log(country)
-          // console.log(zip)
           this.setState({
             searchedAddress: true,
-            addressError: "",
             addressSaveReady: true,
             address:{
               ...this.state.address,
               line1: `${number.long_name} ${street.short_name}`,
-              zipCode: zip.short_name,
+              zip: zip.short_name,
               city: city.long_name,
               state: state.short_name,
               country: country.short_name
@@ -301,7 +308,7 @@ class Profile extends Component{
           
          
         }else{
-          this.setState({addressError: "Select a valid street address", addressSaveReady: false})
+          this.setState({addressSaveReady: false})
           this.clearAddress();
         }
       
@@ -309,28 +316,8 @@ class Profile extends Component{
       
         
       }
+    
       
-      clearAddress = () => {
-        this.GooglePlacesRef.setAddressText("")
-        this.setState({
-          searchedAddress: false,
-          addressSaveReady: false,
-          address: {
-            ...this.state.address,
-            line1: "",
-            zipCode: "",
-            city: "",
-            state: "",
-            country: ""
-          }
-        })
-      }
-      
-      setLocation = (text) => {
-        this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
-        // console.log("Set location")
-        // console.log(this.state.address)
-      }
 
     updateProfile = () => {
         const db = firestore();
@@ -524,6 +511,21 @@ class Profile extends Component{
         
     }
 
+    addressCallbackFunction  = (childData) => {
+       
+        if(childData){
+            this.setState({
+                searchedAddress: true,
+                address:{
+                    ...this.state.address,
+                    ...childData.address
+                }
+            })
+         }else{
+             this.setState({searchedAddress: false,})
+         }
+    }
+
       
 
 
@@ -676,11 +678,14 @@ class Profile extends Component{
                             throw error
                 }
             }
+
+            let line2PropsEmpty = this.props.UserStore.address.line2 == null || undefined;
+            let line2StateEmpty = this.state.address.line2 == "";
             // Variable to check if line 2 has changed
-            let checkLine2 = this.props.UserStore.address.line2 == null && this.state.address.line2 !== "" || this.props.UserStore.address.line2 !== null && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
+            let checkLine2 = line2PropsEmpty && !line2StateEmpty || !line2PropsEmpty && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
 
             // Check if address is updated
-            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zipCode || checkLine2){
+            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zip || checkLine2){
             
 
                 
@@ -689,7 +694,7 @@ class Profile extends Component{
                 setTimeout(() => this.setState({submitted: false}), 3000)
             }
             if (this.state.fullNameUpdate != this.props.UserStore.fullname){
-                console.log(this.state.fullNameUpdate)
+
                 let error = null;
                 if (this.state.fullNameUpdate.match(regexFullname)){
                     const settings = {
@@ -867,18 +872,18 @@ class Profile extends Component{
 
  
 
-    signOut = () => {
-        auth().signOut().then(() => {
-            // alert(this.props.UserStore.firstname + " has signed out.");
-            this.props.navigation.navigate('Auth')
-
-            this.props.UserStore.email = ""
-            this.props.UserStore.fullname = ""
-            this.props.UserStore.password = ""
-            this.props.UserStore.phone = ""
-            this.props.UserStore.userID = ""
-            this.props.UserStore.dob = ""
-        })
+    signOut = async() => {
+       
+        try {
+            this.props.UserStore.loggedIn = false;
+            this.props.navigation.navigate("Home")
+            
+        }catch(e){
+            console.log(e)
+        }
+  
+       
+       
     }   
 
     render(){
@@ -886,11 +891,11 @@ class Profile extends Component{
         const initals = this.props.UserStore.firstname.charAt(0).toUpperCase() + "" + this.props.UserStore.lastname.charAt(0).toUpperCase()
         const {firstname, lastname, vehicles, payments, listings} = this.props.UserStore 
         var {height, width} = Dimensions.get('window');
-   
 
         return(
             <Provider>
                 <View style={{flex: 1, backgroundColor: 'white'}}>
+
 
                 {/* Edit Account Modal!!! */}
                 <Modal
@@ -948,10 +953,10 @@ class Profile extends Component{
                             alt="Your profile picture"
                         />
                         
-                        : auth().currentUser.photoURL && !this.state.imageUploading ?
+                        : this.AuthImg && !this.state.imageUploading ?
                      
                         <ProfilePic 
-                            source={{ uri: auth().currentUser.photoURL }}
+                            source={{ uri: this.AuthImg }}
                             imgWidth = {60}
                             imgHeight = {60}
                             initals={initals}
@@ -1044,106 +1049,15 @@ class Profile extends Component{
                             error={this.state.dobError}
                         />
                         <Text style={{fontSize: 15}}>Address</Text>
-                        <GooglePlacesAutocomplete
-                            keyboardShouldPersistTaps="always"
-                            placeholder='Your Address...'
-                            returnKeyType={'search'}
-                            ref={(instance) => { this.GooglePlacesRef = instance }}
-                            currentLocation={false}
-                            minLength={2}
-                            autoFocus={false}
-                            listViewDisplayed={false}
-                            fetchDetails={true}
-                            onPress={(data, details = null) => {
-                                this.onSelectAddress(details)
-                            }}
-                            textInputProps={{
-                                // clearButtonMode: 'never',
-                                onChangeText: (text) => this.setLocation(text),
-                            }}
-                            renderRightButton={() => 
-                            <Icon 
-                            iconName="x"
-                            iconColor={Colors.cosmos500}
-                            iconSize={24}
-                            onPress={() => this.clearAddress()}
-                            style={{marginTop: 8, display: this.state.searchedAddress || this.state.address.line1 !== "" ? "flex" : "none",}}
-                            />}
-                            query={{
-                                key: config.GOOGLE_API_KEY,
-                                language: 'en'
-                            }}
-                            GooglePlacesSearchQuery={{
-                                rankby: 'distance',
-                                types: 'address',
-                                components: "country:us"
-                            }}
-                            // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-                            nearbyPlacesAPI={'GoogleReverseGeocoding'}
-                            debounce={200}
-                            predefinedPlacesAlwaysVisible={true}
-                            enablePoweredByContainer={false}
-                            
-                            
-                            styles={{
-                                container: {
-                                    border: 'none',
-                                    flex: 0,
-                                  },
-                                  textInputContainer: {
-                                    width: '100%',
-                                    display: 'flex',
-                                    alignSelf: 'center',
-                                    backgroundColor: "white",
-                                    marginTop: -6,
-                                    borderColor: '#eee',
-                                    borderBottomWidth: 2,
-                                    borderTopWidth: 0,
-                                    backgroundColor: "none",
-                                  },
-                                  textInput: {
-                                    paddingRight: 0,
-                                    paddingLeft: 0,
-                                    paddingBottom: 0,
-                                    color: '#333',
-                                    fontSize: 18,
-                                    width: '100%',
-                                  },
-                                  description: {
-                                    fontWeight: 'bold'
-                                  },
-                                  predefinedPlacesDescription: {
-                                    color: '#1faadb'
-                                  },
-                                  listView:{
-                                    backgroundColor: 'white',
-                                    position: 'absolute',
-                                    top: 40,
-                                    width: Dimensions.get("window").width - 32,
-                                    zIndex: 999999,
-                                  },
-                            
-                            }}
-                        />
-                            <Text style={styles.error}>{this.state.addressError}</Text>
-                        {/* </View> */}
-                        
-                        {/* <Input
-                            flex={1}
-                            placeholder='107'        
-                            label= "Apt # (optional)"
-                            name="Apartment number" 
-                            style={{marginRight: 16}}                
-                            onChangeText= {(number) => this.setState(prevState => ({
-                            address:{
-                                ...prevState.address,
-                                line2: number,
-                            }
-                            }))}
-                            value={this.state.address.line2}
-                            maxLength = {6}
-                            keyboardType='number-pad'
-                        /> */}
+                        {/* Needed to prevent error with scrollview and flatlist */}
+                
+                            <View style={{zIndex: 999999999}}>
+                            <AddressInput 
+                                defaultValue={this.props.UserStore.address.line1 ? `${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zip}` : null}
+                                returnValue={this.addressCallbackFunction}
+                            />
+                            </View>
+                       
                         <View style={{flex: 1, zIndex: -9, flexDirection: 'row'}}>
                         <Dropdown
                             flex={2}
@@ -1186,7 +1100,7 @@ class Profile extends Component{
                                 disabled={this.state.savingChanges || this.state.failed || this.state.submitted}
                                 bgColor={this.state.submitted ? 'rgba(53, 154, 106, 0.3)' : this.state.failed ? 'rgba(190, 55, 55, 0.3)' : 'rgba(255, 193, 76, 0.3)' }// Colors.Tango300 with opacity of 30%
                                 textColor={this.state.submitted ? Colors.fortune700 : this.state.failed ? Colors.hal700 : Colors.tango700}
-                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? <FloatingCircles color={Colors.tango500}/> : "Save Changes"}</ClickableChip>
+                        >{this.state.submitted ? "Submitted" : this.state.failed ? "Failed to save changes" : this.state.savingChanges ? null : "Save Changes"}</ClickableChip> 
 
                         
                     
@@ -1203,6 +1117,8 @@ class Profile extends Component{
             <SafeAreaView style={{ flexDirection: "column", backgroundColor: Colors.tango900}} />
 
             <View style={{flex: 1}}>
+                
+         
 
                 <LinearGradient
                     colors={['#FF8708', '#FFB33D']}
@@ -1235,7 +1151,7 @@ class Profile extends Component{
                                 <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
                                 <Divider />
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" />
-                                <Menu.Item onPress={this.signOut} title="Sign out" />
+                                <Menu.Item onPress={() => this.signOut()} title="Sign out" />
                             </Menu>
                         </View>
                         
@@ -1252,7 +1168,7 @@ class Profile extends Component{
 
 
                 {/* returns if we know the user has a profile photo via Firebase Auth or uploaded to UserStore  */}
-                 {this.props.UserStore.photo || auth().currentUser.photoURL ? 
+                 {this.props.UserStore.photo || this.AuthImg ? 
                  <View>
                     {/* if we are hosting user image ourselves */}
                     {this.props.UserStore.photo ?
@@ -1280,7 +1196,7 @@ class Profile extends Component{
                             style={{backgroundColor: "#ffffff", top: -45, alignSelf: "center", position: "absolute"}}
                             fontSize={24}
                             fontColor="#1D2951"
-                            source={{ uri: auth().currentUser.photoURL }}
+                            source={{ uri: this.AuthImg }}
 
                         />
                     </View>
@@ -1319,10 +1235,13 @@ class Profile extends Component{
                             </Circle>
 
                    
-                    <ScrollView style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
-                        
+                    <ScrollView keyboardShouldPersistTaps="handled" style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
+
+                    
+                            
+                 
                         <View style={styles.contentBox}>
-                            <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
+                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
                                 {listings == undefined || listings.length <= 1 ? <Text style={styles.categoryTitle}>My Space</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>}
                                 <ClickableChip
                                     bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%

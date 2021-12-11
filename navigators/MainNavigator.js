@@ -11,6 +11,7 @@ import TabBarIcon from './TabBarIcon'
 import { TabBar } from 'react-native-tab-view';
 import Colors from '../constants/Colors';
 
+
 const navBar =  createBottomTabNavigator(
     {
         Home: {

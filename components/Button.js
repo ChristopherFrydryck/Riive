@@ -1,7 +1,8 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Text from './Txt'
 import Icon from './Icon'
+import FloatingCircles from './FloatingCircles'
 
 
 const button = ({onPress, iconLib, iconStyle, iconName, iconColor, iconSize, type, ...props}) => {
@@ -12,19 +13,24 @@ const button = ({onPress, iconLib, iconStyle, iconName, iconColor, iconSize, typ
   const textProps = Object.assign({}, props,{style:textStyle})
 
 
-
         
             return(
                 <TouchableOpacity {...allProps} onPress={onPress}>
-                    <Icon 
-                        iconLib={iconLib}
-                        iconName={iconName}
-                        iconColor={iconColor}
-                        iconSize={iconSize}
-                        style={iconStyle}
-                            
-                            />
-                    <Text {...textProps} type={type}>{props.children}</Text>
+                    {props.children ? 
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Icon 
+                            iconLib={iconLib}
+                            iconName={iconName}
+                            iconColor={iconColor}
+                            iconSize={iconSize}
+                            style={iconStyle}
+                                
+                                />
+                        <Text {...textProps} type={type}>{props.children}</Text>
+                    </View>
+                    :
+                    <FloatingCircles color={textProps.textStyle.color || "white"} />
+                    }
                 </TouchableOpacity>
             )
         }

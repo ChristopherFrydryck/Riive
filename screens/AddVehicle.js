@@ -4,7 +4,6 @@ import Input from '../components/Input'
 import Dropdown from '../components/Dropdown'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
-import FloatingCircles from '../components/FloatingCircles'
 import axios from 'axios'
 
 import * as firebase from 'firebase/app';
@@ -12,7 +11,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 import Cars from '../constants/CarManufacturers'
 
@@ -258,7 +257,7 @@ class AddVehicle extends React.Component{
         this._isMounted = false;
 
          // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
     }
     
 

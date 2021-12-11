@@ -1,5 +1,8 @@
-import {observable, computed, action} from 'mobx'
+import {observable, computed, action, makeObservable, configure} from 'mobx'
 
+configure({
+    enforceActions: "never",
+})
 
 class ComponentStore {
     @observable vehiclesLoaded = false;
@@ -21,7 +24,9 @@ class ComponentStore {
     @observable listeningToNotifications = false;
 
 
-
+    constructor() {
+        makeObservable(this)
+    }
 
 }
 

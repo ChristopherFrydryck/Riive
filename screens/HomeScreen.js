@@ -1,6 +1,6 @@
 
 import React, {Component, createRef} from 'react'
-import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking, ScrollView} from 'react-native'
+import {Alert, View, ActivityIndicator, SafeAreaView, StatusBar, Platform, StyleSheet, Dimensions, Animated, Easing, TouchableOpacity, LogBox, PermissionsAndroid, Linking, ScrollView, DevSettings} from 'react-native'
 import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 import axios from 'axios'
@@ -16,6 +16,7 @@ import { checkPermissionsStatus } from '../functions/in-app/permissions'
 
 import logo from '../assets/img/Logo_Abbreviated_001.png'
 
+import AddressInput from '../components/AddressInput';
 import Button from '../components/Button'
 import Text from '../components/Txt'
 import Icon from '../components/Icon'
@@ -35,7 +36,7 @@ import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient
 import Svg, {Circle, Rect} from 'react-native-svg'
 
 // MobX
-import { observer, inject } from 'mobx-react/native'
+import { observer, inject } from 'mobx-react'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 
@@ -143,7 +144,7 @@ class Home extends Component {
           duration: null,
       },
 
-      locationSnackbarVisible: false,
+      locationAvailable: false,
     }
 
     this.mapScrolling = true;
@@ -211,12 +212,23 @@ class Home extends Component {
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
 
+
+        // If user is not signed in anymore
+        if(!this.props.UserStore.loggedIn){
+            // Sign user out
+            auth().signOut().then(() => {
+                // Once sign out, reload app and reset UserStore
+                this.props.UserStore.reset();
+                DevSettings.reload();
+            })
+        }
         
         
 
    
         
         this.mapLocationFunction();
+        this.rippleAnimation();
         this.getCurrentLocation(false);
         
         if(this.state.searchFilterOpen){
@@ -366,43 +378,47 @@ class Home extends Component {
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
       )
 
-
-
      
       if(permission !== "granted"){
+        
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
           },
           error => {
-            if(isFirstTime){
-                Alert.alert(
-                    "Location Services Disabled",
-                    "Enable location permissions and restart Riive to discover parking nearby.",
-                    [
-                    {
-                        text: "No thanks",
-                        onPress: () => { this.setState({locationSnackbarVisible: true})},
-                        style: "cancel"
-                    },
-                    { text: "Enable location services", onPress: () => Linking.openSettings()}
-                    ],
-                    { cancelable: false }
-                );
-            }
+            this.setState({locationAvailable: false})
+            // if(isFirstTime){
+            //     Alert.alert(
+            //         "Location Services Disabled",
+            //         "Enable location permissions and restart Riive to discover parking nearby.",
+            //         [
+            //         {
+            //             text: "No thanks",
+            //             onPress: () => { 
+            //                 this.setState({locationAvailable: false}) 
+            //             },
+            //             style: "cancel"s
+            //         },
+            //         { text: "Enable location services", onPress: () => Linking.openSettings()}
+            //         ],
+            //         { cancelable: false }
+            //     );
+            // }
                 
             }
         );
       }else{
-       
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
-        },  error => alert(`There was an issue getting your location. ${error.message}`),
+        },  error => {
+            alert(`There was an issue getting your location. ${error.message}`)
+            this.setState({locationAvailable: false})
+        },
         {
             enableHighAccuracy: false,
             timeout: 10000,
             maximumAge: 3600000
         })
-        this.setState({locationSnackbarVisible: false})
+        this.setState({locationAvailable: true})
       }
 
      
@@ -410,19 +426,20 @@ class Home extends Component {
         
     
     }catch(e){
-          Alert.alert(
-          "Location Unavailable",
-          "Enable location permissions and restart Riive to discover parking nearby.",
-          [
-            {
-              text: "No thanks",
-              onPress: () => {},
-              style: "cancel"
-            },
-            { text: "Enable location services", onPress: () => Linking.openSettings()}
-          ],
-          { cancelable: false }
-        );
+          this.setState({locationAvailable: false})
+        //   Alert.alert(
+        //   "Location Unavailable",
+        //   "Enable location permissions and restart Riive to discover parking nearby.",
+        //   [
+        //     {
+        //       text: "No thanksss",
+        //       onPress: () => {},
+        //       style: "cancel"
+        //     },
+        //     { text: "Enable location services", onPress: () => Linking.openSettings()}
+        //   ],
+        //   { cancelable: false }
+        // );
     }
   }
 
@@ -746,6 +763,36 @@ clickSpace = async(data) => {
   
 }
 
+addressCallbackFunction  = (childData) => {
+    if(childData){
+        const db = firestore();
+        const date = new Date();
+        let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        let dateString = date.toLocaleString('en-US', {timezone: timeZone});
+        let ref = db.collection("users").doc(this.props.UserStore.userID).collection("searchHistory").doc();
+
+        this.region = {
+            current: {
+                ...this.region.current,
+                latitude: childData.region.latitude,
+                longitude: childData.region.longitude
+            },
+            searched: {
+                ...this.region.current,
+                latitude: childData.region.latitude,
+                longitude: childData.region.longitude
+            }
+        }
+
+        this.setState(prevState => ({
+            mapScrolled: false,
+            searchedAddress: true,
+            // searchInputValue: det.description == "Current Location" ? "Current Location" : det.name,
+      
+        }));
+    }
+}
+
 
 onSelectAddress = async(det) => {
   const db = firestore();
@@ -768,7 +815,7 @@ onSelectAddress = async(det) => {
           longitude: det.geometry.location.lng
       }
   }
-  this.setState(prevState => ({
+this.setState(prevState => ({
       mapScrolled: false,
       searchedAddress: true,
       searchInputValue: det.description == "Current Location" ? "Current Location" : det.name,
@@ -952,7 +999,7 @@ goToReserveSpace = () => {
 
   componentWillUnmount() {
     // Unmount status bar info
-    this._navListener.remove();
+    // this._navListener.remove();
     clearInterval(this._interval)
   }
 
@@ -985,7 +1032,7 @@ renderDotsView = (numItems, position) =>{
   render() {
     const {width, height} = Dimensions.get('window')
     const {firstname, email, permissions} = this.props.UserStore
-    if(permissions.locationServices && this.region.current.latitude && this.region.current.longitude){
+    if(this.state.locationAvailable && this.region.current.latitude && this.region.current.longitude){
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
 
@@ -1018,9 +1065,9 @@ renderDotsView = (numItems, position) =>{
                 {/* <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text> */}
                 <Image 
                     localImage={true} 
-                    source={require('../assets/img/Logo_Abbreviated_001.png')} 
-                    width={48}
-                    aspectRatio={1/1}
+                    source={config.ENVIRONMENT == "production" ? require('../assets/img/Logo_001.png') : require('../assets/img/Logo_Abbreviated_001.png')} 
+                    width={config.ENVIRONMENT == "production" ? 108 : 48}
+                    aspectRatio={config.ENVIRONMENT == "production" ? 4/1 : 1/1}
                     style={styles.img} />
                     {config.ENVIRONMENT !== "production" ? 
                     <View>
@@ -1127,7 +1174,14 @@ renderDotsView = (numItems, position) =>{
                             />)
                 })}
             </MapView>
-            <View style={{zIndex: 9, position: 'absolute', top: -16}}>
+            {/* <View style={{ position: 'absolute', top: -16, left: '5%', width: "90%", height: 48, paddingHorizontal: 12, paddingTop: 10, borderRadius: 50, backgroundColor: "white", zIndex: 9999999, shadowColor: '#000', shadowOpacity: 0.2, shadowOffset:{width: 1, height: 1}, shadowRadius: 4,elevation: 12,}}>
+                <AddressInput 
+                    returnValue={this.addressCallbackFunction}
+                    placeholder="Search for a location..."
+                    bottomBorder={false}
+                    currentLocation={true}
+                /> */}
+                <View  style={{position: 'absolute', top: -16, zIndex: 9}}>
              <GooglePlacesAutocomplete
                placeholder='Search by destination...'
                returnKeyType={'done'}  
@@ -1140,6 +1194,7 @@ renderDotsView = (numItems, position) =>{
                fetchDetails={true}
                onPress={(data, details = null) => {this.onSelectAddress(details)}}
                textInputProps={{
+                  placeholderTextColor: "#a0a0a0",
                    onFocus: () => {
                        this.setState({
                            inputFocus: true,
@@ -1201,12 +1256,14 @@ renderDotsView = (numItems, position) =>{
                       shadowOffset:{width: 1, height: 1}, 
                       shadowRadius: 4, 
                       elevation: 12,
+                      
                   },
                   textInput:{
-                      marginTop: 0, 
-                      height: 40,
+                      marginTop: 6, 
                       alignSelf: 'center',
-                      paddingRight: 0,
+                      marginHorizontal: 1,
+                      color: '#333',
+                      borderRadius: width/2,
                   },
                   listView:{
                       paddingVertical: 6,
@@ -1248,7 +1305,7 @@ renderDotsView = (numItems, position) =>{
                     initialOffsetFromBottom = {1}
                  
                    >
-                        <View>
+                        <View style={{paddingBottom: 32}}>
                             {this.state.selectedSpace && this.state.selectedSpaceHost ?
                             
                             <View style={{paddingTop: 8}}>
@@ -1262,7 +1319,7 @@ renderDotsView = (numItems, position) =>{
                                 <View style={styles.actionSheetContent}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
                                         <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>{this.state.selectedSpace.spaceName}</Text>
-                                        <ProfilePic 
+                                        {/* <ProfilePic 
                                             source={{ uri: this.state.selectedSpaceHost.photo }}
                                             imgWidth = {32}
                                             imgHeight = {32}
@@ -1272,7 +1329,7 @@ renderDotsView = (numItems, position) =>{
                                             fontColor="#1D2951"
                                             onPress={() => this.goToHostProfile()}
                                             alt="Your profile picture"
-                                        />
+                                        /> */}
                                     </View>
                                     <Text style={{fontSize: 16}}>{this.state.selectedSpace.spacePrice}/hr</Text>
                                     <Text style={{marginBottom: 16}}>No ratings yet</Text>
@@ -1359,7 +1416,7 @@ renderDotsView = (numItems, position) =>{
                       <Rect x="0" y="48" width={width} height={height} />
               </SvgAnimatedLinearGradient>
               <Snackbar
-                    visible={this.state.locationSnackbarVisible}
+                    visible={!this.state.locationAvailable}
                     onDismiss={() => this.setState({ verificationSnackbarVisible: false })}
                     theme={{ colors: { accent: "#1eeb7a" }}}
                     action={{

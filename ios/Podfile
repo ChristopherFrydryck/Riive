@@ -1,12 +1,16 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '10.0'
+platform :ios, '11.0'
 
 abstract_target 'riive-app' do
   config = use_native_modules!
 
-  use_react_native!(:path => config["reactNativePath"])
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => false
+  )
 
   target 'riive' do
 
@@ -57,23 +61,16 @@ abstract_target 'riive-app' do
 
 end
 
-  # Enables Flipper.
-  #
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable these next few lines.
-  # use_flipper!
-  # post_install do |installer|
-  #   flipper_post_install(installer)
-  # end
-end
-
-
-
-target 'riive-tvOS' do
-  # Pods for riive-tvOS
-
-  target 'riive-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
+    # Enables Flipper.
+    #
+    # Note that if you have use_frameworks! enabled, Flipper will not work and
+    # you should disable these next few lines.
+    # use_flipper!
+    # post_install do |installer|
+    #   flipper_post_install(installer)
+    # end
+    post_install do |installer|
+      react_native_post_install(installer)
+      __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

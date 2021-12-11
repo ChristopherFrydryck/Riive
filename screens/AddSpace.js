@@ -1,29 +1,29 @@
 import React, { Component } from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox, Alert, Linking} from 'react-native';
 import Text from '../components/Txt'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import LinearGradient from 'react-native-linear-gradient'
-import {Card, ThemeProvider} from 'react-native-paper';
+
 
 // import ImageBrowser from '../features/camera-roll/ImageBrowser'
 import ImagePicker from 'react-native-image-crop-picker';
 import config from 'react-native-config'
 
 
-
+import AddressInput from '../components/AddressInput';
 import Input from '../components/Input'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import Image from '../components/Image'
+import ClickableChip from '../components/ClickableChip';
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
-import FloatingCircles from '../components/FloatingCircles'
 
 import Timezones from '../constants/Timezones'
+import isDSTObserved from '../functions/in-app/daylightSavings';
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -33,7 +33,7 @@ import * as geofirestore from 'geofirestore'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 
 
@@ -164,6 +164,9 @@ class addSpace extends Component {
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
+      
+     
+
       this.setState({postID: ref.id})
       this._isMounted = true;
       this._navListener = this.props.navigation.addListener('didFocus', () => {
@@ -178,7 +181,12 @@ class addSpace extends Component {
         this.setState({directDepositProvided: false})
       }else{
        this.setState({directDepositProvided: true})
+
       }
+
+     
+
+
 
       // this.props.navigation.navigate("BankLinkNavigator")
     }
@@ -572,6 +580,8 @@ class addSpace extends Component {
     
     await this.verifyInputs();
 
+    
+
     const db = firestore();
 
     // Create a GeoFirestore reference
@@ -678,55 +688,15 @@ class addSpace extends Component {
     this.setState({daily: data})
   }
 
-  resendVerification = () => {
-    const user = auth().currentUser;
-    user.sendEmailVerification().then(() => {
-        this.setState({verificationSent: true})
-    }).catch((e) => {
-        alert(e)
-    })
-}
-   
+  timezonePicker = (offset) => {
+    let gmtValue = null;
 
+    let dstActive = isDSTObserved();
 
-       
-   
-
-     componentWillUnmount() {
-      this._isMounted = false;
-          // Unmount status bar info
-         this._navListener.remove();
-       }
-
-      getCoordsFromName(loc) {
-        this.setState({
-          latitude: loc.lat,
-          longitude: loc.lng,
-        })
-      }
-
-      imageBrowserCallback = (callback) => {
-        callback.then((photos) => {
-  
-          this.setState({
-            imageBrowserOpen: false,
-            photos: photos,
-          })
-        }).catch((e) => console.log(e))
-      }
-
-
-onSelectAddress = (det) => {
-  // console.log(det.formatted_address)
-  // console.log(det.geometry.location.lat);
-  // console.log(det.address_c omponents)
-
-  
-  let gmtValue = null;
   
   // If it is not UTC 0
-  if(det.utc_offset !== 0){
-    let gmtOffset = det.utc_offset/60;
+  if(offset !== 0){
+    let gmtOffset = dstActive ? (offset-60)/60 : offset/60;
     let gmtAbs = Math.abs(gmtOffset)
     // If the GMT offset is one whole number
     if(gmtAbs.toString().length == 1){
@@ -782,84 +752,82 @@ onSelectAddress = (det) => {
   let tzDB = tzdbArray.filter(x => x.name === deviceTimeZone)
   let timeZoneDB;
   
-  if(tzDB.length > 0){
-    timeZoneDB = tzDB[0]
-  }else{
-    timeZoneDB = tzdbArray[0]
-  }
-
-
-
- 
-  
-  var number = det.address_components.filter(x => x.types.includes('street_number'))[0]
-  var street = det.address_components.filter(x => x.types.includes('route'))[0]
-  var city = det.address_components.filter(x => x.types.includes('locality'))[0]
-  var county = det.address_components.filter(x => x.types.includes('administrative_area_level_2'))[0]
-  var state = det.address_components.filter(x => x.types.includes('administrative_area_level_1'))[0]
-  var country = det.address_components.filter(x => x.types.includes('country'))[0]
-  var zip = det.address_components.filter(x => x.types.includes('postal_code'))[0]
-
-  if(number && street && city && county && state){
-    this.setState(prevState => ({
-      searchedAddress: true,
-      timezone: timeZoneDB,
-      region:{
-        latitude: det.geometry.location.lat,
-        longitude: det.geometry.location.lng,
-        latitudeDelta: .006,
-        longitudeDelta: .006
-      },
-      address:{
-        ...prevState.address,
-        full: det.formatted_address,
-        number: number.long_name,
-        street: street.long_name,
-        city: city.long_name,
-        county: county.long_name,
-        state: state.long_name,
-        state_abbr: state.short_name,
-        country: country.long_name,
-        zip: zip.long_name,
-      }
-    }))
-    this.setState({addressError: ""})
-  }else{
-    this.setState({addressError: "Select a valid street address"})
-    this.clearAddress();
-  }
-
-
-
-  
-}
-
-clearAddress = () => {
-  this.GooglePlacesRef.setAddressText("")
-  this.setState(prevState => ({
-    searchedAddress: false,
-    timezone: null,
-    address:{
-      ...prevState.address,
-      full: null,
-      number: null,
-      street: null,
-      city: null,
-      county: null,
-      state: null,
-      state_abbr: null,
-      country: null,
-      zip: null,
+    if(tzDB.length > 0){
+      timeZoneDB = tzDB[0]
+    }else{
+      timeZoneDB = tzdbArray[0]
     }
-  }))
+
+    return timeZoneDB
+  }
+
+  addressCallbackFunction  = (childData) => {
+
+    if(childData){
+        this.setState({
+            searchedAddress: true,
+            timezone: this.timezonePicker(childData.utc_offset),
+            address:{
+                ...this.state.address,
+                full: childData.address.full,
+                number: childData.address.line1.split(" ")[0],
+                street: childData.address.line1.split(",")[0].split(" ").slice(1).join(" "),
+                city: childData.address.city,
+                county: childData.address.county,
+                state: childData.address.state,
+                state_abbr: childData.address.state_abbr,
+                country: childData.address.country_abbr,
+                zip: childData.address.zip,
+            },
+            region:{
+              latitude: childData.region.latitude,
+              longitude: childData.region.longitude,
+              latitudeDelta: childData.region.latitudeDelta,
+              longitudeDelta: childData.region.longitudeDelta
+            },
+        })
+     }else{
+       this.setState({
+         searchedAddress: false
+       })
+     }
 }
 
+  resendVerification = () => {
+    const user = auth().currentUser;
+    user.sendEmailVerification().then(() => {
+        this.setState({verificationSent: true})
+    }).catch((e) => {
+        alert(e)
+    })
+}
+   
 
 
+       
+   
 
+     componentWillUnmount() {
+      this._isMounted = false;
 
+       }
 
+      getCoordsFromName(loc) {
+        this.setState({
+          latitude: loc.lat,
+          longitude: loc.lng,
+        })
+      }
 
+      imageBrowserCallback = (callback) => {
+        callback.then((photos) => {
+  
+          this.setState({
+            imageBrowserOpen: false,
+            photos: photos,
+          })
+        }).catch((e) => console.log(e))
+      }
 
 
 
@@ -871,6 +839,7 @@ clearAddress = () => {
       <KeyboardAwareScrollView
       keyboardShouldPersistTaps="handled"
       automaticallyAdjustContentInsets={false}
+      nestedScrollEnabled={true}
       contentContainerStyle={{ flexGrow: 1, backgroundColor: 'white' }} scrollEnabled
       enableOnAndroid={true}
       extraScrollHeight={150} //iOS
@@ -886,78 +855,14 @@ clearAddress = () => {
           
           <View style={{flex: 1, paddingHorizontal: 16}}>
             <Text style={styles.label}>Address</Text>
-            <GooglePlacesAutocomplete
-            placeholder='Your Address...'
-            returnKeyType={'search'}
-            ref={(instance) => { this.GooglePlacesRef = instance }}
-            currentLocation={false}
-            minLength={2}
-            autoFocus={false}
-            listViewDisplayed={false}
-            fetchDetails={true}
-            onPress={(data, details = null) => this.onSelectAddress(details)}
-            textInputProps={{
-              clearButtonMode: 'never'
-            }}
-            renderRightButton={() => 
-              <Icon 
-                iconName="x"
-                iconColor={Colors.cosmos500}
-                iconSize={24}
-                onPress={() => this.clearAddress()}
-                style={{marginTop: 8, display: this.state.searchedAddress ? "flex" : "none"}}
-              />
-            }
-            query={{
-              key: config.GOOGLE_API_KEY,
-              language: 'en'
-            }}
-            GooglePlacesSearchQuery={{
-              rankby: 'distance',
-              types: 'address',
-              components: "country:us"
-            }}
-            // GooglePlacesDetailsQuery={{ fields: 'geometry', }}
-            nearbyPlacesAPI={'GoogleReverseGeocoding'}
-            debounce={200}
-            predefinedPlacesAlwaysVisible={true}
-            enablePoweredByContainer={false}
+            {/* Needed to prevent error with scrollview and flatlist */}
             
-            
-            styles={{
-              container: {
-                border: 'none',
-                marginBottom: 8,
-              },
-              textInputContainer: {
-                width: '100%',
-                display: 'flex',
-                alignSelf: 'center',
-                backgroundColor: "white",
-                marginTop: -6,
-                borderColor: '#eee',
-                borderBottomWidth: 2,
-                borderTopWidth: 0,
-                backgroundColor: "none"
-              },
-              textInput: {
-                paddingRight: 0,
-                paddingLeft: 0,
-                paddingBottom: 0,
-                color: '#333',
-                fontSize: 18,
-                width: '100%'
-              },
-              description: {
-                fontWeight: 'bold'
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb'
-              }
-              
-            }}
-            />
-            <Text style={styles.error}>{this.state.addressError}</Text>
+            <View style={{zIndex: 999999999}}>
+                <AddressInput 
+                  returnValue={this.addressCallbackFunction}
+
+                />
+              </View>
             <View style={{flex: 1, flexDirection: "row"}}>
             <Input
             flex={0.35}
@@ -1053,34 +958,53 @@ clearAddress = () => {
             <Text style={styles.numTitle}>Upload Photo</Text>
           </View>
           <View style={{paddingHorizontal: 16}}>
-            <View style={{display: "flex", flexDirection: 'row', marginBottom: 16}}>
-              <Button style={this.state.photo ? {flex: 1, marginLeft: 8, backgroundColor: Colors.mist900} :{flex: 1, marginLeft: 8, backgroundColor: "#FF8708"}} textStyle={ this.state.photo ? {color: Colors.cosmos300} : {color:"#FFFFFF"}} disabled={this.state.photo ? true : false} onPress={() => this.pickImage()}>Add Photo</Button>
-              <Button style={this.state.photo ? {flex: 1, marginLeft: 8, backgroundColor: Colors.mist900} :{flex: 1, marginLeft: 8, backgroundColor: "#FF8708"}} textStyle={ this.state.photo ? {color: Colors.cosmos300} : {color:"#FFFFFF"}} disabled={this.state.photo  ? true : false} onPress={() => this.launchCamera()}>Take Photo</Button>
-            </View>
-          {/* <Text>Upload Pictures</Text> */}
-          {/* <View style={{display: 'flex', flexDirection: 'row', marginBottom: 16}}> */}
-              {/* <Button style={{flex: 1, marginRight:4, backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => alert("Something...")}>Upload Image</Button>
-              <Button style={{flex: 1, marginLeft:4, borderColor: "#FF8708", borderWidth: 3}} textStyle={{color:"#FF8708"}} onPress={() => alert("Something...")}>Take Photo</Button> */}
-            {/* </View> */}
+            
+
             {this.state.photo ? 
             <View>
-              <View style={{position: "absolute", top: 8, right: 8, zIndex: 999, padding: 4, backgroundColor: 'rgba(54, 55, 59, 0.7)', borderRadius: Dimensions.get('window').width/2}}>
-                <Icon 
-                  iconName="x"
-                  iconColor={Colors.mist300}
-                  iconSize={24}
-                  onPress={() => this.setState({photo: null})}
-                />
+              <View style={{position: "absolute", top: 8, right: 8, zIndex: 999}}>
+                <View style={{flexDirection: 'row'}}>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)', marginRight: 4}}
+                                textColor='white'
+                                onPress={() => this.pickImage()}
+                  >Change Photo</ClickableChip>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)'}}
+                                textColor='white'
+                                onPress={() => this.launchCamera()}
+                  >Take Photo</ClickableChip>
+                 
+                </View>
               </View>
               <Image 
-                style={{width: Dimensions.get("window").width - 32}}
+                style={{width: Dimensions.get("window").width - 32, borderRadius: 4}}
                 aspectRatio={16/9}
                 source={{uri: this.state.photo}}
                 backupSource={require('../assets/img/Logo_001.png')}
                 resizeMode={'cover'}
               /> 
               </View>
-              : null}
+              : <View style={{backgroundColor: Colors.mist900, borderRadius: 4, width: '100%', aspectRatio: 16/9}}>
+                  <View style={{position: "absolute", top: 8, right: 8, zIndex: 999}}>
+                <View style={{flexDirection: 'row'}}>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)', marginRight: 4}}
+                                textColor='white'
+                                onPress={() => this.pickImage()}
+                  >Add Photo</ClickableChip>
+                  <ClickableChip
+                                style={{backgroundColor: 'rgba(54, 55, 59, 0.7)'}}
+                                textColor='white'
+                                onPress={() => this.launchCamera()}
+                  >Take Photo</ClickableChip>
+                 
+                </View>
+              </View>
+            </View>}
+
+
+           
           
             
             </View>
@@ -1189,7 +1113,7 @@ clearAddress = () => {
                   </Card>
                 )}}
               /> */}
-              <Button disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>Add Photo</Button>
+              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color: 'white'}} disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>Add Space</Button>
 
             </View>
             
@@ -1303,7 +1227,7 @@ clearAddress = () => {
               />
             </View>
             
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button> */}
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? null : "Save Bank Account"}</Button> */}
 
 
           <Icon 
@@ -1366,6 +1290,7 @@ const styles = StyleSheet.create({
   },
   mapStyle: {
     width: Dimensions.get('window').width,
+    zIndex: -999,
     height: 175,
   },
   numHoriz:{

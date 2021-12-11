@@ -7,7 +7,7 @@ import Button from '../../components/Button'
 import Colors from '../../constants/Colors'
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 
 @inject("UserStore", "ComponentStore")

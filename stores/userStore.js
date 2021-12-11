@@ -1,8 +1,13 @@
-import {observable, computed, action} from 'mobx'
+import {observable, computed, action, makeObservable, configure} from 'mobx'
 
 var today = new Date();
 
+configure({
+    enforceActions: "never",
+})
+
 class UserStore {
+    @observable loggedIn = false;
     @observable userID = '';
     @observable stripeID = '';
     @observable stripeConnectID = '';
@@ -14,6 +19,7 @@ class UserStore {
     @observable address = {};
     @observable ssnProvided = false;
     @observable password = '';
+    @observable password2 = '';
     @observable photo = '';
     @observable joinedDate = null;
     @observable lastUpdate = null;
@@ -48,6 +54,50 @@ class UserStore {
 
     @computed get monthJoined() {
         return this.joinedDate;
+    }
+
+    constructor() {
+        makeObservable(this)
+    }
+
+    @action
+    reset = () => {
+        this.loggedIn = false;
+        this.userID = '';
+        this.stripeID = '';
+        this.stripeConnectID = '';
+        this.directDepositInfo = {};
+        this.fullname = '';
+        this.email = '';
+        this.dob = '';
+        this.phone = '';
+        this.address = {};
+        this.ssnProvided = false;
+        this.password = '';
+        this.password2 = '';
+        this.photo = '';
+        this.joinedDate = null;
+        this.lastUpdate = null;
+        this.listings = [];
+        this.vehicles = [];
+        this.payments = [];
+        this.reports = [];
+        this.versions = [];
+        this.searchHistory = [];
+        this.pushTokens = [];
+        this.permissions = {
+            notifications: {
+                discountsAndNews: false,
+                tripsAndHosting: false,
+            }
+        }
+
+        this.disabled = false;
+        this.deleted = false;
+
+
+        this.signInProvider = "";
+    
     }
 
 

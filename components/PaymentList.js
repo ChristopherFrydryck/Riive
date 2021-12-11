@@ -8,7 +8,7 @@ import { withNavigation } from 'react-navigation';
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 

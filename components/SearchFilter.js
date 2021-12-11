@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import {View, StyleSheet, Switch, Modal, SafeAreaView, ScrollView, Dimensions, Animated, Picker, Platform, FlatList, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, Switch, Modal, SafeAreaView, Dimensions, Animated, Picker, Platform, ScrollView, FlatList, TouchableOpacity} from 'react-native'
 
 
 
@@ -165,13 +165,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = [styles.timeText, styles.timeTextActive];
                 // if first item in list
                 if(item.key === firstItemCurrentDay.key){
-                    hourStyle = [styles.wholeHour, styles.activeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 21}]
+                    hourStyle = [styles.wholeHour, styles.activeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 === 0){
                     hourStyle = [styles.wholeHour, styles.activeHour]
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, styles.activeHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.activeHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = [styles.halfHour, styles.activeHour]
@@ -181,13 +181,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = styles.timeText;
                 // if first item in list
                 if(index === firstItemCurrentDay.key){
-                    hourStyle = [styles.wholeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 21}]
+                    hourStyle = [styles.wholeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 === 0){
                     hourStyle = styles.wholeHour
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = styles.halfHour
@@ -200,13 +200,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = [styles.timeText, styles.timeTextActive];
                 // if first item in list
                 if(item.key === 0){
-                    hourStyle = [styles.wholeHour, styles.activeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 21}]
+                    hourStyle = [styles.wholeHour, styles.activeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 === 0){
                     hourStyle = [styles.wholeHour, styles.activeHour]
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, styles.activeHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.activeHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = [styles.halfHour, styles.activeHour]
@@ -216,13 +216,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = styles.timeText;
                 // if first item in list
                 if(index === 0){
-                    hourStyle = [styles.wholeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 21}]
+                    hourStyle = [styles.wholeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 === 0){
                     hourStyle = styles.wholeHour
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = styles.halfHour
@@ -280,13 +280,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = [styles.timeTextDepart, styles.timeTextActive];
                 // if first item in list
                 if(item.key === firstItemCurrentDay.key){
-                    hourStyle = [styles.wholeHour, styles.activeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 22,}]
+                    hourStyle = [styles.wholeHour, styles.activeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 != 0){
                     hourStyle = [styles.wholeHour, styles.activeHour]
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, styles.activeHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.activeHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = [styles.halfHour, styles.activeHour]
@@ -296,13 +296,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = styles.timeTextDepart;
                 // if first item in list
                 if(index === firstItemCurrentDay.key){
-                    hourStyle = [styles.wholeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 22}]
+                    hourStyle = [styles.wholeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 != 0){
                     hourStyle = styles.wholeHour
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = styles.halfHour
@@ -315,13 +315,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = [styles.timeTextDepart, styles.timeTextActive];
                 // if first item in list
                 if(item.key === 0){
-                    hourStyle = [styles.wholeHour, styles.activeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 22}]
+                    hourStyle = [styles.wholeHour, styles.activeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 != 0){
                     hourStyle = [styles.wholeHour, styles.activeHour]
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, styles.activeHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.activeHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = [styles.halfHour, styles.activeHour]
@@ -331,13 +331,13 @@ export default class SearchFilter extends React.PureComponent{
                 textStyle = styles.timeTextDepart;
                 // if first item in list
                 if(index === 0){
-                    hourStyle = [styles.wholeHour, {width: this.timeWidth/2, borderLeftWidth: 0, borderRightWidth: 22}]
+                    hourStyle = [styles.wholeHour, styles.firstHour]
                 // If a whole hour X:00
                 }else if(index % 2 != 0){
                     hourStyle = styles.wholeHour
                 // If last item in list
                 }else if(index === this.state.startTimes.length - 1){
-                    hourStyle = [styles.halfHour, {width: this.timeWidth/2, borderRightWidth: 0}]
+                    hourStyle = [styles.halfHour, styles.lastHour]
                 // Every other item
                 }else{
                     hourStyle = styles.halfHour
@@ -423,7 +423,7 @@ export default class SearchFilter extends React.PureComponent{
          const wait = new Promise((resolve) => setTimeout(resolve, 0));
         wait.then( () => {
             // this.arrivalFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2});
-            this.timesList.scrollTo({x: i*this.timeWidth + i/2, animated: animated})
+            this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
         });
     }
 
@@ -431,7 +431,7 @@ export default class SearchFilter extends React.PureComponent{
         const wait = new Promise((resolve) => setTimeout(resolve, 0));
        wait.then( () => {
         //    this.departureFlatlist.scrollToIndex({animated: animated, index: i, viewOffset: Dimensions.get("window").width/2}); 
-        this.timesList.scrollTo({x: i*this.timeWidth + i/2, animated: animated})
+        this.timesList.scrollTo({x: i*this.timeWidth, animated: animated})
        });
    }
 
@@ -760,7 +760,7 @@ export default class SearchFilter extends React.PureComponent{
                                 onMomentumScrollBegin={() => this.setState({scrollingTimes: true})}
                                 onMomentumScrollEnd={() => this.setState({scrollingTimes: false})}
                                 horizontal
-                                snapToOffsets = {this.state.arriveActive ? [...Array(this.state.startTimes.length)].map((x, i) => i * (this.timeWidth + .5)) : [...Array(this.state.endTimes.length)].map((x, i) => i * (this.timeWidth + .5))}
+                                snapToOffsets = {this.state.arriveActive ? [...Array(this.state.startTimes.length)].map((x, i) => i * (48)) : [...Array(this.state.endTimes.length)].map((x, i) => i * (48))}
                                 bounces={false}
                                 maxToRenderPerBatch={2}
                                 scrollEventThrottle={16}
@@ -827,35 +827,82 @@ const styles = StyleSheet.create({
         borderBottomColor: 'white'
       },
     wholeHour:{
-        paddingLeft: 1, 
-        overflow: 'visible',
-        width: 48, 
         height: 40,
         backgroundColor: Colors.mist900, 
-        borderLeftWidth: 22, 
-        borderRightWidth: 22, 
+        
         borderColor: 'white',
         overflow: 'visible',
         zIndex: 999,
+        ...Platform.select({
+            ios: {
+                width: 48, 
+                borderLeftWidth: 22, 
+                borderRightWidth: 22, 
+            },
+            android: {
+                width: 3, 
+                marginHorizontal: 22.5,
+                borderLeftWidth: 0, 
+                borderRightWidth: 0, 
+
+            }        
+        }),
     },
     halfHour:{
-        paddingLeft: 1,
-        width: 48, 
         height: 32,
         backgroundColor: Colors.mist900, 
-        borderLeftWidth: 24, 
-        borderRightWidth: 24, 
         borderColor: 'white',
         zIndex: 999,
+        ...Platform.select({    
+            ios: {
+                width: 48, 
+                borderLeftWidth: 23, 
+                borderRightWidth: 23, 
+            },
+            android: {
+                width: 2, 
+                marginHorizontal: 23,
+                borderLeftWidth: 0, 
+                borderRightWidth: 0, 
+
+            } 
+        }),
     },
     activeHour:{
         backgroundColor: Colors.tango500,
+        
         ...Platform.select({
             ios: {
                 height: 52,
                 marginTop: -16,
+            }, 
+            android: {
+               
             }        
         }),
+    },
+    firstHour:{
+        ...Platform.select({
+            ios: {
+                width: 24, 
+                borderLeftWidth: 0, borderRightWidth: 21
+            }, 
+            android: {
+               marginLeft: 8
+            }     
+        })  
+    },
+    lastHour:{
+        ...Platform.select({
+            ios: {
+                width: 24, 
+                borderRightWidth: 0
+            }, 
+            android: {
+               marginRight: 0
+            }     
+        })
+        
     },
     timeText:{
         fontSize: 22,

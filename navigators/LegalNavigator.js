@@ -1,8 +1,23 @@
-import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
+import React from 'react';
+import { SafeAreaView } from 'react-native';
+import { MaterialTopTabBar, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import Colors from '../constants/Colors'
 
 import PrivacyPolicy from '../screens/LegalScreens/PrivacyPolicy'
 import TOS from '../screens/LegalScreens/Tos'
+
+class MaterialTopTabBarWrapper extends React.Component {
+    render() {
+      return (
+        <SafeAreaView
+          forceInset={{ top: 'always', horizontal: 'never', bottom: 'never'}}
+          style={{backgroundColor: 'white'}}
+          >
+          <MaterialTopTabBar {...this.props} />
+        </SafeAreaView>
+      );
+    }
+  }
 
 const PrivacyNavigator = createMaterialTopTabNavigator({
     TOS: {
@@ -20,7 +35,7 @@ const PrivacyNavigator = createMaterialTopTabNavigator({
     
 },
 {
-    
+    tabBarComponent: MaterialTopTabBarWrapper,
     initialRouteName: "TOS",
     navigationOptions:{
         title:"Terms and Privacy Policy",
@@ -43,9 +58,8 @@ const PrivacyNavigator = createMaterialTopTabNavigator({
           backgroundColor: "white",
           borderTop: 'transparent',
         },
-      }
+      },
     
-    // headerMode: "none", 
 });
 
 export default PrivacyNavigator;

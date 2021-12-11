@@ -22,7 +22,7 @@ import firestore from '@react-native-firebase/firestore';
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 
 
@@ -211,7 +211,7 @@ class externalSpace extends React.Component {
                                     iconSize={16}
                                     style={{marginRight: 8, marginTop: 4}}
                                 />
-                                <TouchableWithoutFeedback onPress={() => this.goToHostProfile()}><Text>Hosted by <Text style={{textDecorationLine: 'underline'}}>{this.state.host.firstname} {this.state.host.lastname.charAt(0).toUpperCase()}</Text>.</Text></TouchableWithoutFeedback>
+                                <Text>Hosted by {this.state.host.firstname} {this.state.host.lastname.charAt(0).toUpperCase()}</Text>
                             </View>
                             
                             {this.props.ComponentStore.selectedExternalSpot[0].spaceBio.split("").length > 0 ? 

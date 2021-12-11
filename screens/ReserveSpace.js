@@ -17,7 +17,7 @@ import NightMap from '../constants/NightMap'
 // import { RadioButton } from 'react-native-paper';
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
-import FloatingCircles from '../components/FloatingCircles'
+import StripeTOSModal from '../components/StripeTOSModal';
 
 
 import * as firebase from 'firebase/app';
@@ -25,7 +25,7 @@ import firestore from '@react-native-firebase/firestore';
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
     
 // if (Platform.OS === "android") {
@@ -78,6 +78,8 @@ class reserveSpace extends Component {
             spaceAvailabilityWorks: true,
             spaceCancelledOrHidden: false,
             authenticatingReservation: false,
+
+            stripeModalVisible: false,
         }
         
     }
@@ -370,6 +372,7 @@ class reserveSpace extends Component {
                
         }
 
+
         getPrice = () => {
             // console.log(`${this.state.hoursSpent} hours and ${this.state.minutesSpent} minutes`)
             let price = (this.state.hoursSpent * this.props.ComponentStore.selectedExternalSpot[0].spacePriceCents) + (this.state.minutesSpent === 0 ? 0 : Math.ceil(this.props.ComponentStore.selectedExternalSpot[0].spacePriceCents / 2));
@@ -473,11 +476,15 @@ class reserveSpace extends Component {
 
                             await this.payForSpace(hostDoc.stripeConnectID, ref.id).then(res => {
                                 if(res.statusCode !== 200){
+                                    
                                     throw `Error ${res.statusCode}: ${res.raw.message}`
+
                                 }else{
                                     paymentIntent = res.data.id
                                 }
                             })
+
+                            
 
                             
 
@@ -598,7 +605,9 @@ class reserveSpace extends Component {
                             throw e
                         }
                     }).catch(e => {
-                        alert(e)
+                        if(e !== null){
+                            alert(e)
+                        }
                     })
 
 
@@ -622,6 +631,8 @@ class reserveSpace extends Component {
 
             
         }
+
+       nth = (n) => { return["st","nd","rd"][((n+90)%100-10)%10-1]||"th" }
 
         isToday = (someDate) => {
             const today = new Date()
@@ -760,7 +771,7 @@ class reserveSpace extends Component {
 
                     {/* Date and Time */}
                     <View style={[styles.container, {backgroundColor: 'white', paddingBottom: 8}]}>
-                        <Text type="light" numberOfLines={1} style={{marginTop: 16, fontSize: 24, textAlign: 'center'}}>{new Date().getDay() === daySearched.dayValue ? "Today" : daySearched.dayName}, {daySearched.monthName} {daySearched.dateName}{daySearched.dateName.toString().split("")[daySearched.dateName.toString().split("").length - 1] == 1 && (daySearched.dateName > 20 || daySearched < 3)  ? "st" : daySearched.dateName == 2  && (daySearched.dateName > 20 || daySearched < 3) ? "nd" : "th"}</Text>
+                        <Text type="light" numberOfLines={1} style={{marginTop: 16, fontSize: 24, textAlign: 'center'}}>{new Date().getDay() === daySearched.dayValue ? "Today" : daySearched.dayName}, {daySearched.monthName} {daySearched.dateName}{this.nth(daySearched.dateName)}</Text>
 
                         <View style={{flexDirection: 'row', alignItems: "flex-end", justifyContent: 'space-between', marginTop: 16}}>
                             <View style={{flexDirection: 'column', alignItems: 'center', flex: 1}}>
@@ -839,7 +850,7 @@ class reserveSpace extends Component {
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.total}</Text>
                         </View>
                         <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
-                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.spaceCancelledOrHidden || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? this.state.authenticatingReservation ? <FloatingCircles color="white"/> : "Reserve Space" : this.state.spaceCancelledOrHidden ? `Space Unavailable` :`Booked at ${timeSearched[0].labelFormatted}`}</Button>
+                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.spaceCancelledOrHidden || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? this.state.authenticatingReservation ? null : "Reserve Space" : this.state.spaceCancelledOrHidden ? `Space Unavailable` :`Booked at ${timeSearched[0].labelFormatted}`}</Button>
                     </View>
                     
                 </ScrollView>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { View, ScrollView, StatusBar, Platform, StyleSheet, SafeAreaView, Dimensions, KeyboardAvoidingView, FlatList, Switch, Modal, Picker, LogBox, Alert, Linking} from 'react-native';
 import Text from '../../components/Txt'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../../constants/DayMap'
 import NightMap from '../../constants/NightMap'
@@ -9,8 +8,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import LinearGradient from 'react-native-linear-gradient'
 import {Card, ThemeProvider} from 'react-native-paper';
 
-// import ImageBrowser from '../features/camera-roll/ImageBrowser'
-import ImagePicker from 'react-native-image-crop-picker';
 import config from 'react-native-config'
 
 
@@ -21,7 +18,6 @@ import Icon from '../../components/Icon'
 import Button from '../../components/Button'
 import Colors from '../../constants/Colors'
 import Image from '../../components/Image'
-import FloatingCircles from '../../components/FloatingCircles'
 
 import Timezones from '../../constants/Timezones'
 
@@ -33,7 +29,7 @@ import * as geofirestore from 'geofirestore'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 
 
@@ -384,7 +380,7 @@ class addDebitCard extends Component {
      componentWillUnmount() {
       this._isMounted = false;
           // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
        }
 
 
@@ -494,7 +490,7 @@ class addDebitCard extends Component {
               />
             </View>
             
-            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Bank Account"}</Button>
+            <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? null : "Save Bank Account"}</Button>
             
           </View>
           

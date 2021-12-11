@@ -19,7 +19,7 @@
    LogBox
  } from 'react-native';
  
- import AuthNavigator from './navigators/AuthNavigator'
+ import AppNavigator from './navigators/AppNavigator'
 
  import config from 'react-native-config';
  
@@ -34,14 +34,14 @@
  import Icon from './components/Icon'
  import Colors from './constants/Colors'
  
- import { observer, Provider } from 'mobx-react/native'
+ import { observer, Provider } from 'mobx-react'
  import UserStore from './stores/userStore'
  import ComponentStore from './stores/componentStore'
  
  import FlashMessage from "react-native-flash-message";
  
  // Firebase imports
- import * as firebase from 'firebase'
+ import firebase from '@react-native-firebase/app'
  import auth from '@react-native-firebase/auth';
  import firestore from '@react-native-firebase/firestore';
  import messaging from '@react-native-firebase/messaging';
@@ -61,7 +61,7 @@
  class App extends React.Component {
    constructor(props){
      super(props);
-     LogBox.ignoreLogs(['Setting a timer', 'Animated: `useNativeDriver`', 'Cannot update during an existing state transition', "Require cycle:"])
+     LogBox.ignoreLogs(['Setting a timer', 'Animated: `useNativeDriver`', 'Cannot update during an existing state transition', "Require cycle:", 'Reanimated 2', 'new NativeEventEmitter', 'EventEmitter.removeListener'])
      this.state ={
        notificationVisible: false,
      }
@@ -74,7 +74,7 @@
        return (        
          <Provider {...stores}>
              <View style={{flex: 1}}>
-               <AuthNavigator />
+               <AppNavigator />
                <FlashMessage position="top" />
              </View>
          </Provider>

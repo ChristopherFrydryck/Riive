@@ -5,7 +5,6 @@ import Text from '../components/Txt'
 import Icon from '../components/Icon'
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
-import FloatingCircles from '../components/FloatingCircles'
 import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
@@ -22,7 +21,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import ClickableChip from '../components/ClickableChip'
 
 const actionSheetRef = createRef();
@@ -649,7 +648,7 @@ export default class HostedTrips extends Component{
                         delayActionSheetDrawTime={0}
                         initialOffsetFromBottom = {1}
                    >
-                       <View style={styles.actionSheetContent}>
+                       <ScrollView style={styles.actionSheetContent}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 8}}>
                                         <Text type="Medium" style={{flex: 8, fontSize: 24, flexWrap: 'wrap', paddingRight: 16}} numberOfLines={2}>Cancelling Trip</Text>
                                      </View>
@@ -672,9 +671,9 @@ export default class HostedTrips extends Component{
                                             {paymentsArray}
                                         </RadioList>
                                     : null}
-                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? <FloatingCircles color="white"/> : `Cancel & Pay ${amountChargedToHost}`}</Button>
+                                      <Button disabled={active && !isCancelled || this.state.cancellingTrip} onPress={() => this.cancelTrip()} style = {active ? {flex: 1, height: 48, backgroundColor: Colors.mist900} : { flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>{this.state.cancellingTrip ? null : `Cancel & Pay ${amountChargedToHost}`}</Button>
                                      
-                        </View>
+                        </ScrollView>
                    </ActionSheet>
             )
     }
@@ -704,7 +703,7 @@ export default class HostedTrips extends Component{
 
             const isReported = this.props.UserStore.reports.map(x => x.visit ? x.visit.visitID : null ).includes(visit.tripID)
 
-            const hostName = `${visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
+            const visitorName = `${visit.visitorName.split(" ")[0]} ${data.visit.visitorName.split(" ")[1].slice(0,1)}.`
 
             const timeDiffEnd = visit.visit.time.end.unix - new Date().getTime()
             const timeDiffStart = visit.visit.time.start.unix - new Date().getTime()
@@ -726,7 +725,7 @@ export default class HostedTrips extends Component{
                         <View style={{flex: 0}}>
                             <View style={{flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: Platform.OS === 'ios' ? 0 : 16}}>
                                 <Text numberOfLines={1}  ellipsizeMode='tail' style={{ fontSize: 18}}>{data.listing.spaceName}</Text>
-                                <Text type="Regular" numberOfLines={1} ellipsizeMode='tail' style={{paddingBottom: 8}}>Visit by {hostName}</Text>
+                                <Text type="Regular" numberOfLines={1} ellipsizeMode='tail' style={{paddingBottom: 8}}>Visit by {visitorName}</Text>
                             </View>
                                 <Icon 
                                     iconName="x"
@@ -948,6 +947,7 @@ const styles = StyleSheet.create({
       },
       actionSheetContent:{
         paddingTop: 8,
+        paddingBottom: 32,
         paddingHorizontal: 16, 
     }
 })

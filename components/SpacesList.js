@@ -8,7 +8,7 @@ import Image from '../components/Image'
 
 import { withNavigation } from 'react-navigation';
 
-import { inject, observer } from 'mobx-react/native';
+import { inject, observer } from 'mobx-react';
 
 //For Shimmer
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'

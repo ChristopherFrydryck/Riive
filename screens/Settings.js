@@ -17,7 +17,7 @@ import DialogInput from 'react-native-dialog-input';
 import DeviceInfo from 'react-native-device-info'
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';

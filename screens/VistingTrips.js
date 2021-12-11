@@ -20,7 +20,7 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 
 
 @inject("UserStore", "ComponentStore")

@@ -5,10 +5,8 @@ import Input from '../components/Input'
 import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
-import FloatingCircles from '../components/FloatingCircles'
 import AddressTypes from '../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
@@ -18,7 +16,7 @@ import config from 'react-native-config'
 
 
 //MobX Imports
-import {inject, observer} from 'mobx-react/native'
+import {inject, observer} from 'mobx-react'
 import { requireNativeViewManager } from '@unimodules/core';
 
 
@@ -116,7 +114,7 @@ class addPayment extends Component {
      componentWillUnmount() {
       this._isMounted = false;
           // Unmount status bar info
-         this._navListener.remove();
+        //  this._navListener.remove();
        }
 
 getCardType = (cardNum) => {
@@ -434,29 +432,6 @@ onSelectAddress = async(det) => {
   
 }
 
-clearAddress = () => {
-  this.GooglePlacesRef.setAddressText("")
-  this.setState({
-    searchedAddress: false,
-    address: {
-      ...this.state.address,
-      line1: "",
-      zipCode: "",
-      city: "",
-      state: "",
-      country: ""
-    }
-  })
-}
-
-setLocation(text) {
-  this.GooglePlacesRef && this.GooglePlacesRef.setAddressText(text)
-  // console.log("Set location")
-  // console.log(this.state.address)
-}
-
-
-
 
 
 
@@ -651,7 +626,7 @@ verifyInput = () => {
                 />
             </View>  
             </View>
-          <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? <FloatingCircles color="white"/> : "Save Card"}</Button>
+          <Button style={{backgroundColor: Colors.apollo700}} disabled={this.state.authenticating} textStyle={{color: 'white'}} onPress={() => this.submitPayment()}>{this.state.authenticating ? null : "Save Card"}</Button>
         </View>
         </ScrollView>
       );
