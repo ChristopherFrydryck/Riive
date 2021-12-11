@@ -476,17 +476,15 @@ class reserveSpace extends Component {
 
                             await this.payForSpace(hostDoc.stripeConnectID, ref.id).then(res => {
                                 if(res.statusCode !== 200){
-                                    if(res.statusCode == 400){
-                                        this.setState({stripeModalVisible: true})
-                                        throw null
-                                    }else{
-                                        throw `Error ${res.statusCode}: ${res.raw.message}`
-                                    }
+                                    
+                                    throw `Error ${res.statusCode}: ${res.raw.message}`
 
                                 }else{
                                     paymentIntent = res.data.id
                                 }
                             })
+
+                            
 
                             
 

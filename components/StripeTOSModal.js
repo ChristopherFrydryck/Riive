@@ -50,7 +50,8 @@ export default class StripeTOSModal extends React.Component{
             this.setState({authenticating: true})
             const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/agreeToStripeTOS`, settings)
             const data = await fetchResponse;
-  
+            
+            console.log(data.status)
             if(data.status !== 200){
                 throw "Failure to agree to TOS."
             }

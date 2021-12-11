@@ -1065,9 +1065,9 @@ renderDotsView = (numItems, position) =>{
                 {/* <Text type="Medium" numberOfLines={1} style={{flex: this.state.searchFilterOpen ? 0 : 4,fontSize: 24, paddingTop: 8}}>{this.state.searchFilterOpen ? "" : `Hello, ${firstname || 'traveler'}`}</Text> */}
                 <Image 
                     localImage={true} 
-                    source={require('../assets/img/Logo_Abbreviated_001.png')} 
-                    width={48}
-                    aspectRatio={1/1}
+                    source={config.ENVIRONMENT == "production" ? require('../assets/img/Logo_001.png') : require('../assets/img/Logo_Abbreviated_001.png')} 
+                    width={config.ENVIRONMENT == "production" ? 108 : 48}
+                    aspectRatio={config.ENVIRONMENT == "production" ? 4/1 : 1/1}
                     style={styles.img} />
                     {config.ENVIRONMENT !== "production" ? 
                     <View>

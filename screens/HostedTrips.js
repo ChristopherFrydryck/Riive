@@ -703,7 +703,7 @@ export default class HostedTrips extends Component{
 
             const isReported = this.props.UserStore.reports.map(x => x.visit ? x.visit.visitID : null ).includes(visit.tripID)
 
-            const hostName = `${visit.hostName.split(" ")[0]} ${data.visit.hostName.split(" ")[1].slice(0,1)}.`
+            const visitorName = `${visit.visitorName.split(" ")[0]} ${data.visit.visitorName.split(" ")[1].slice(0,1)}.`
 
             const timeDiffEnd = visit.visit.time.end.unix - new Date().getTime()
             const timeDiffStart = visit.visit.time.start.unix - new Date().getTime()
@@ -725,7 +725,7 @@ export default class HostedTrips extends Component{
                         <View style={{flex: 0}}>
                             <View style={{flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start', paddingTop: Platform.OS === 'ios' ? 0 : 16}}>
                                 <Text numberOfLines={1}  ellipsizeMode='tail' style={{ fontSize: 18}}>{data.listing.spaceName}</Text>
-                                <Text type="Regular" numberOfLines={1} ellipsizeMode='tail' style={{paddingBottom: 8}}>Visit by {hostName}</Text>
+                                <Text type="Regular" numberOfLines={1} ellipsizeMode='tail' style={{paddingBottom: 8}}>Visit by {visitorName}</Text>
                             </View>
                                 <Icon 
                                     iconName="x"
