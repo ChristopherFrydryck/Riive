@@ -86,6 +86,8 @@ class externalSpace extends React.Component {
 
         this._isMounted = true;
 
+
+
        this.checkIfRefundable()
 
        this._navListener = this.props.navigation.addListener('didFocus', () => {
@@ -385,6 +387,10 @@ class externalSpace extends React.Component {
                             hostChargedCents: null,
                             cancelledBy: "guest",
                             updated: currentTime
+                        }).then(async() => {
+                            db.collection("listings").doc(this.props.navigation.state.params.visit.listingID).collection("trips").doc(this.props.navigation.state.params.visit.tripID).update({
+                                isCancelled: true,
+                            })
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().hostID).get().then((host) => {
                                 if(!host.exists){

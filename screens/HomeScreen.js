@@ -184,8 +184,7 @@ class Home extends Component {
 
   async componentDidMount(){
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
-
-
+   
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
     checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {

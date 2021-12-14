@@ -204,6 +204,10 @@ export default class HostedTrips extends Component{
                                 cancelledBy: "host",
                                 updated: currentTime
                             })
+                        }).then(() => {
+                            db.collection("listings").doc(this.props.navigation.state.params.visit.listingID).collection("trips").doc(this.props.navigation.state.params.visit.tripID).update({
+                                isCancelled: true,
+                            })
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
                                 if(!visitor.exists){

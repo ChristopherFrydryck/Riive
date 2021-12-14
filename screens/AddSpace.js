@@ -635,7 +635,7 @@ class addSpace extends Component {
                       hidden: false,
                       toBeDeleted: false,
                       deleteDate: null,
-                      visits: []
+                      // visits: []
                })
 
                // add space to mobx UserStore

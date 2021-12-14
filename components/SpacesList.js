@@ -14,7 +14,14 @@ import { inject, observer } from 'mobx-react';
 import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient'
 import Svg, {Circle, Rect} from 'react-native-svg'
 
-
+// Firebase imports
+import * as firebase from 'firebase/app';
+import auth from '@react-native-firebase/auth';
+import messaging from '@react-native-firebase/messaging'
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage'
+import 'firebase/firestore';
+import 'firebase/auth';
 
 
 
@@ -66,8 +73,17 @@ class SpacesList extends React.Component{
         ).start();                  
     }
 
-    selectSpace = (spot) => {
-            // console.log(spot.listingID)
+    selectSpace = async(spot) => {
+            let visitsArray = [];
+            let snapshot = await firestore().collection('listings')
+                .doc(spot.listingID)
+                .collection('trips')
+                .get()
+        
+            await snapshot.forEach(doc =>{
+                visitsArray.push(doc.data().id)
+            })
+
             this.props.ComponentStore.selectedSpot = []
             this.props.ComponentStore.selectedSpot.push({
                 listingID: spot.listingID,
@@ -85,7 +101,7 @@ class SpacesList extends React.Component{
                 hidden: spot.hidden,
                 toBeDeleted: spot.toBeDeleted,
                 deleteDate: spot.deleteDate,
-                visits: spot.visits,
+                visits: visitsArray,
             })
             // console.log(this.props.ComponentStore.selectedSpot[0].spaceName)
             this.props.navigation.navigate("EditSpace")

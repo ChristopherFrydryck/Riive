@@ -549,12 +549,24 @@ class reserveSpace extends Component {
                                 },
                             }
 
+                            var shortObj = {
+                                hostID: hostDoc.id,
+                                listingID: this.props.ComponentStore.selectedExternalSpot[0].listingID,
+                                listingSubSpaceID: null,
+                                id: ref.id,
+                                created: currentTime,
+                                isCancelled: false,
+                                visitorID: this.props.UserStore.userID,
+                            }
+
                             
 
                             db.collection("trips").doc(ref.id).set(obj)
-                            db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
-                                visits: firestore.FieldValue.arrayUnion(ref.id)
-                            });
+                            // This fails the current rules set in the firbase db
+                            // db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
+                            //     visits: firestore.FieldValue.arrayUnion(ref.id)
+                            // });
+                            db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).collection("trips").doc(ref.id).set(shortObj);
                             db.collection("users").doc(this.props.UserStore.userID).update({
                                 trips: firestore.FieldValue.arrayUnion(ref.id)
                             })
