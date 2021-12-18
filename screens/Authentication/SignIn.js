@@ -80,8 +80,8 @@ export default class Authentication extends React.Component {
   async componentDidMount(){
     // Remove after testing!!
     // this.setState({email: 'admin@riive.net', password: 'Fallon430'})
-    // this.props.UserStore.email = 'admin@riive.net'
-    // this.props.UserStore.password = "Fallon430"
+    this.props.UserStore.email = 'chris@riive.net'
+    this.props.UserStore.password = "Fallon430"
 
 
 
@@ -208,33 +208,65 @@ export default class Authentication extends React.Component {
     }
   }).then((doc) => {
   const length = doc.data().listings.length;
-    if( length > 0 && length <= 10){
+    if ( length > 0 ){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
         for(let i = 0; i < qs.docs.length; i++){
           listingsData.push(qs.docs[i].data())
         }
         this.props.UserStore.listings = listingsData;
-    })
+        return listingsData
+    }).then((listingsData) => {
+
+      // gets every listing
+      for (let i = 0; i < listingsData.length; i++){
+          db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
+              this.props.UserStore.listings[i].visits = [];
+              if(data.docs.length > 0){
+                  // gets every trip
+                  data.forEach(snap => {
+                      this.props.UserStore.listings[i].visits.push(snap.data().id)
+                  })
+              }else{
+                  this.props.UserStore.listings[i].visits = [];
+              }
+          })
+      }
+  })
 
 
-    }else if(length > 0 && length > 10){
-    let listings = doc.data().listings;
-    let allArrs = [];
-    var listingsData = [];
-    while(listings.length > 0){
-      allArrs.push(listings.splice(0, 10))
-    }
+    // }else if(length > 0 && length > 10){
+    // let listings = doc.data().listings;
+    // let allArrs = [];
+    // var listingsData = [];
+    // while(listings.length > 0){
+    //   allArrs.push(listings.splice(0, 10))
+    // }
 
-    for(let i = 0; i < allArrs.length; i++){
-      db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-        for(let i = 0; i < qs.docs.length; i++){
-          listingsData.push(qs.docs[i].data())
-        }
-      }).then(() => {
-        this.props.UserStore.listings = listingsData;
-      })
-    }
+    // for(let i = 0; i < allArrs.length; i++){
+    //   db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+    //     for(let i = 0; i < qs.docs.length; i++){
+    //       listingsData.push(qs.docs[i].data())
+    //     }
+    //   }).then(() => {
+    //       listingsData.forEach(async(data, i) => {
+    //         let visitsArray = [];
+    //         let snapshot = await firestore().collection('listings')
+    //             .doc(data.listingID)
+    //             .collection('trips')
+    //             .get()
+        
+    //         await snapshot.forEach(doc =>{
+    //             visitsArray.push(doc.data().id)
+    //         })
+
+    //         listingsData[i].visits = visitsArray
+
+    //         this.props.UserStore.listings = listingsData;
+            
+    //     })
+    //   })
+    // }
 
   }else{
     this.props.UserStore.listings = []
@@ -383,32 +415,46 @@ export default class Authentication extends React.Component {
       }
   }).then((doc) => {
     const length = doc.data().listings.length;
-    if( length > 0 && length <= 10){
+    if ( length > 0 ){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
         for(let i = 0; i < qs.docs.length; i++){
           listingsData.push(qs.docs[i].data())
         }
         this.props.UserStore.listings = listingsData;
-    })
-    }else if(length > 0 && length > 10){
-      let listings = doc.data().listings;
-      let allArrs = [];
-      var listingsData = [];
-      while(listings.length > 0){
-        allArrs.push(listings.splice(0, 10))
+        return listingsData
+    }).then((listingsData) => {
+      // gets every listing
+      for (let i = 0; i < listingsData.length; i++){
+          db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
+              this.props.UserStore.listings[i].visits = [];
+              if(data.docs.length > 0){
+                  // gets every trip
+                  data.forEach(snap => {
+                      this.props.UserStore.listings[i].visits.push(snap.data().id)
+                  })
+              }else{
+                  this.props.UserStore.listings[i].visits = [];
+              }
+          })
       }
+  })
+    // }else if(length > 0 && length > 10){
+    //   let listings = doc.data().listings;
+    //   let allArrs = [];
+    //   var listingsData = [];
+    //   while(listings.length > 0){
+    //     allArrs.push(listings.splice(0, 10))
+    //   }
 
-      for(let i = 0; i < allArrs.length; i++){
-        db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-          for(let i = 0; i < qs.docs.length; i++){
-            listingsData.push(qs.docs[i].data())
-          }
-        }).then(() => {
-          this.props.UserStore.listings = listingsData;
-          
-        })
-      }
+    //   for(let i = 0; i < allArrs.length; i++){
+    //     db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+    //       for(let i = 0; i < qs.docs.length; i++){
+    //         listingsData.push(qs.docs[i].data())
+    //       }
+    //     })
+        
+    //   }
     
     }else{
       this.props.UserStore.listings = [];

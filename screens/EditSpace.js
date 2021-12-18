@@ -173,8 +173,6 @@ class editSpace extends Component {
       const db = firestore();
       const ref = db.collection("spaces").doc();
 
-      console.log(this.state.visits)
-
       
 
 

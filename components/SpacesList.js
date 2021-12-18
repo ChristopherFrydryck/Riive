@@ -74,17 +74,8 @@ class SpacesList extends React.Component{
     }
 
     selectSpace = async(spot) => {
-            let visitsArray = [];
-            let snapshot = await firestore().collection('listings')
-                .doc(spot.listingID)
-                .collection('trips')
-                .get()
-        
-            await snapshot.forEach(doc =>{
-                visitsArray.push(doc.data().id)
-            })
 
-            this.props.ComponentStore.selectedSpot = []
+            this.props.ComponentStore.selectedSpot = [];
             this.props.ComponentStore.selectedSpot.push({
                 listingID: spot.listingID,
                 address: spot.address,
@@ -101,7 +92,7 @@ class SpacesList extends React.Component{
                 hidden: spot.hidden,
                 toBeDeleted: spot.toBeDeleted,
                 deleteDate: spot.deleteDate,
-                visits: visitsArray,
+                visits: spot.visits,
             })
             // console.log(this.props.ComponentStore.selectedSpot[0].spaceName)
             this.props.navigation.navigate("EditSpace")

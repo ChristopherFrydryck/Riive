@@ -184,7 +184,7 @@ class Home extends Component {
 
   async componentDidMount(){
     // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
-   
+  
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
     checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
@@ -211,6 +211,9 @@ class Home extends Component {
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
 
+
+        // this.props.UserStore.listings.forEach(x => console.log(x.visits))
+        // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
 
         // If user is not signed in anymore
         if(!this.props.UserStore.loggedIn){
@@ -1007,7 +1010,7 @@ goToReserveSpace = () => {
 
     let newIndex = Math.round(xVal/width)
 
-    console.log(newIndex)
+    // console.log(newIndex)
     
 
     this.setState({currentActivePhoto: newIndex})

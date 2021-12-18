@@ -327,73 +327,68 @@ class Profile extends Component{
 
         auth().currentUser.reload();
        
+        if(!this.state.isRefreshing){
+
+            doc.get().then(doc => {
+                const listingsSorted = doc.data().listings.sort()
+                const listingsIDMobXSorted = this.props.UserStore.listings.map(x => x.listingID).sort()
+                const length = doc.data().listings.length;
+
+                const vehiclesIDSorted = doc.data().vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
+                const vehiclesIDMobXSorted = this.props.UserStore.vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
+                const vehicleData = doc.data().vehicles.sort((a, b) => a.VehicleID > b.VehicleID)
+                const vehicleDataMobx = this.props.UserStore.vehicles.map(x => x).sort((a, b) => a.VehicleID > b.VehicleID)
+
+                const paymentsIDSorted = doc.data().payments.map(x => x.PaymentID).sort((a, b) => a.PaymentID > b.PaymentID)
+                const paymentsIDMobXSorted = this.props.UserStore.payments.map(x => x.PaymentID).sort((a, b) => a.PaymentID > b.PaymentID)
+                const paymentData = doc.data().payments.sort((a, b) => a.PaymentID > b.PaymentID)
+                const paymentDataMobx = this.props.UserStore.payments.map(x => x).sort((a, b) => a.PaymentID > b.PaymentID)
+    
+                // Check if vehicles are updated
+                if(vehiclesIDSorted.length === vehiclesIDMobXSorted.length && vehiclesIDSorted.every((value, index) => value === vehiclesIDMobXSorted[index]) && JSON.stringify(vehicleData) === JSON.stringify(vehicleDataMobx)){
+                    // do nothing
+                }else{
+                    this.props.UserStore.vehicles = doc.data().vehicles
+                }
 
 
-        doc.get().then(doc => {
-            const listingsSorted = doc.data().listings.sort()
-            const listingsIDMobXSorted = this.props.UserStore.listings.map(x => x.listingID).sort()
-            const length = doc.data().listings.length;
-
-            const vehiclesIDSorted = doc.data().vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
-            const vehiclesIDMobXSorted = this.props.UserStore.vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
-            const vehicleData = doc.data().vehicles.sort((a, b) => a.VehicleID > b.VehicleID)
-            const vehicleDataMobx = this.props.UserStore.vehicles.map(x => x).sort((a, b) => a.VehicleID > b.VehicleID)
-
-            const paymentsIDSorted = doc.data().payments.map(x => x.PaymentID).sort((a, b) => a.PaymentID > b.PaymentID)
-            const paymentsIDMobXSorted = this.props.UserStore.payments.map(x => x.PaymentID).sort((a, b) => a.PaymentID > b.PaymentID)
-            const paymentData = doc.data().payments.sort((a, b) => a.PaymentID > b.PaymentID)
-            const paymentDataMobx = this.props.UserStore.payments.map(x => x).sort((a, b) => a.PaymentID > b.PaymentID)
-   
-            // Check if vehicles are updated
-            if(vehiclesIDSorted.length === vehiclesIDMobXSorted.length && vehiclesIDSorted.every((value, index) => value === vehiclesIDMobXSorted[index]) && JSON.stringify(vehicleData) === JSON.stringify(vehicleDataMobx)){
-                // do nothing
-            }else{
-                this.props.UserStore.vehicles = doc.data().vehicles
-            }
-
-
-            // Check if payments are updated
-            if(paymentsIDSorted.length === paymentsIDMobXSorted.length && paymentsIDSorted.every((value, index) => value === paymentsIDMobXSorted[index]) && JSON.stringify(paymentData) === JSON.stringify(paymentDataMobx)){
-                // do nothing
-            }else{
-                this.props.UserStore.payments = doc.data().payments
-            }
-            
-            // Check if spaces are updated
-                if( length > 0 && length <= 10){
+                // Check if payments are updated
+                if(paymentsIDSorted.length === paymentsIDMobXSorted.length && paymentsIDSorted.every((value, index) => value === paymentsIDMobXSorted[index]) && JSON.stringify(paymentData) === JSON.stringify(paymentDataMobx)){
+                    // do nothing
+                }else{
+                    this.props.UserStore.payments = doc.data().payments
+                }
+                
+                // Check if spaces are updated
+                if ( length > 0 ){
                     db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
                     let listingsData = [];
-                    
                     for(let i = 0; i < qs.docs.length; i++){
                         listingsData.push(qs.docs[i].data())
                     }
-                    
-                    this.props.UserStore.listings = listingsData;
-             })
-
-            }else if(length > 0 && length > 10){
-                let listings = doc.data().listings;
-                let allArrs = [];
-                var listingsData = [];
-
-                while(listings.length > 0){
-                    allArrs.push(listings.splice(0, 10))
-                }
-      
-                for(let i = 0; i < allArrs.length; i++){
-                    db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-                        for(let i = 0; i < qs.docs.length; i++){
-                            listingsData.push(qs.docs[i].data())
-                        } 
-                    }).then(() => {
-                        this.props.UserStore.listings = listingsData;
+                    return listingsData
+                }).then((listingsData) => {
+                        // gets every listing
+                        for (let i = 0; i < listingsData.length; i++){
+                            db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
+                                this.props.UserStore.listings[i].visits = [];
+                                if(data.docs.length > 0){
+                                    // gets every trip
+                                    data.forEach(snap => {
+                                        this.props.UserStore.listings[i].visits.push(snap.data().id)
+                                    })
+                                }else{
+                                    this.props.UserStore.listings[i].visits = [];
+                                }
+                            })
+                        }
                     })
+                }else{
+                    this.props.UserStore.listings = [];
                 }
-            }else{
-                this.props.UserStore.listings = [];
-            }
-        })
-        this.setState({isRefreshing: false})
+            })
+            this.setState({isRefreshing: false})
+        }
     }
 
 
@@ -1235,7 +1230,7 @@ class Profile extends Component{
                             </Circle>
 
                    
-                    <ScrollView keyboardShouldPersistTaps="handled" style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={this.updateProfile}/>}>
+                    <ScrollView keyboardShouldPersistTaps="handled" style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => this.updateProfile()}/>}>
 
                     
                             
