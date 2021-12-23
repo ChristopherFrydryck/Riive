@@ -493,6 +493,12 @@ class editSpace extends Component {
       toBeDeleted: true,
       deleteDate: date.getTime()
     }).then(() => {
+      let idArray = this.props.UserStore.listings.map(x => x.listingID)
+      let index = idArray.indexOf(this.state.postID)
+
+      this.props.UserStore.listings[index].toBeDeleted = true;
+      this.props.UserStore.listings[index].deleteDate = date.getTime();
+    }).then(() => {
       this.props.navigation.goBack(null)
     })
   }
@@ -514,6 +520,12 @@ class editSpace extends Component {
     await db.collection("listings").doc(this.state.postID).update({
       toBeDeleted: false,
       deleteDate: null,
+    }).then(() => {
+      let idArray = this.props.UserStore.listings.map(x => x.listingID)
+      let index = idArray.indexOf(this.state.postID)
+
+      this.props.UserStore.listings[index].toBeDeleted = false;
+      this.props.UserStore.listings[index].deleteDate = null;
     }).then(() => {
       this.props.navigation.goBack(null)
     })

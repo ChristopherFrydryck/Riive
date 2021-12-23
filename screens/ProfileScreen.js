@@ -109,6 +109,8 @@ class Profile extends Component{
             verificationSnackbarVisible: false,
             menuVisible: false,
 
+            listings: this.props.UserStore.listings,
+
 
 
             searchedAddress: this.props.UserStore.address.line1 ? true : false,
@@ -143,7 +145,7 @@ class Profile extends Component{
         // Set Status Bar page info here!
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
-            this.updateProfile()
+            this.updateProfile();
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();
@@ -191,7 +193,6 @@ class Profile extends Component{
 
             // ${line1}, ${city} ${state}, ${zip} ${country}
           
-           
         }
     }
 
@@ -205,7 +206,7 @@ class Profile extends Component{
 
     addAddress = async () => {
 
-        console.log(`LineOne: ${this.state.address.line1} lineTwo: ${this.state.address.line2 == "" ? null : this.state.address.line2Prefix} ${this.state.address.line2} zipCode: ${this.state.address.zip} city: ${this.state.address.city} state: ${this.state.address.state}`)
+        // console.log(`LineOne: ${this.state.address.line1} lineTwo: ${this.state.address.line2 == "" ? null : this.state.address.line2Prefix} ${this.state.address.line2} zipCode: ${this.state.address.zip} city: ${this.state.address.city} state: ${this.state.address.state}`)
 
         const settings = {
           method: 'POST',
@@ -325,6 +326,8 @@ class Profile extends Component{
 
         this.setState({isRefreshing: true})
 
+
+
         auth().currentUser.reload();
        
         if(!this.state.isRefreshing){
@@ -382,9 +385,11 @@ class Profile extends Component{
                                 }
                             })
                         }
+                        this.setState({listings: this.props.UserStore.listings})
                     })
                 }else{
                     this.props.UserStore.listings = [];
+                    this.setState({listings: []})
                 }
             })
             this.setState({isRefreshing: false})
@@ -619,6 +624,8 @@ class Profile extends Component{
       }
 
     updateAccountInfo = async() => {
+
+        
 
         // console.log(`Customer: ${this.props.UserStore.stripeID}, connect acct: ${this.props.UserStore.stripeConnectID}`)
         const db = firestore();
@@ -882,6 +889,7 @@ class Profile extends Component{
     }   
 
     render(){
+        // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home"))
 
         const initals = this.props.UserStore.firstname.charAt(0).toUpperCase() + "" + this.props.UserStore.lastname.charAt(0).toUpperCase()
         const {firstname, lastname, vehicles, payments, listings} = this.props.UserStore 
@@ -1246,7 +1254,7 @@ class Profile extends Component{
                             </View>                            
                         </View>
                         <View>
-                            {listings == undefined ? null : <SpacesList listings={this.props.UserStore.listings}/>}
+                            {listings == undefined ? null : <SpacesList listings={this.state.listings}/>}
                         </View>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>

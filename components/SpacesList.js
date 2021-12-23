@@ -35,6 +35,7 @@ class SpacesList extends React.Component{
         this.state = {
             data: this.props.UserStore.listings,
             activeTimeFadeAnimation: new Animated.Value(0),
+            refresh: true,
         }
     }
 
@@ -42,6 +43,13 @@ class SpacesList extends React.Component{
         this.setState({data: this.props.UserStore.listings})
         this.props.ComponentStore.spotsLoaded = true;
         this.fadeAnimation();
+
+        this._navListener = this.props.navigation.addListener('didFocus', () => {
+            // Updates component on every focus of it.
+            this.forceUpdate();
+        })
+
+        
     }
 
     componentDidUpdate(prevProps){
@@ -49,6 +57,7 @@ class SpacesList extends React.Component{
             this.setState({          
                 data: this.props.UserStore.listings
             });
+           
         }
     }
 
@@ -112,6 +121,8 @@ class SpacesList extends React.Component{
         
         
         let currentActive = orderedData[index].availability[dayToday].data.filter((x) => parseInt(x.start.substring(0,2)) <= hourToday && parseInt(x.end.substring(0,2)) >= hourToday)
+
+        // console.log(`${spot.spaceName} is hidden? ${spot.hidden}`)
 
        let cardStyle
        if(orderedData.length > 1){
@@ -211,6 +222,7 @@ class SpacesList extends React.Component{
     }
 
     render(){
+
         let {spotsLoaded} =  this.props.ComponentStore;
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
