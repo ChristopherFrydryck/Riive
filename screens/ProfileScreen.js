@@ -374,6 +374,7 @@ class Profile extends Component{
                         // gets every listing
                         for (let i = 0; i < listingsData.length; i++){
                             db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
+                                this.props.UserStore.listings[i] = listingsData[i]
                                 this.props.UserStore.listings[i].visits = [];
                                 if(data.docs.length > 0){
                                     // gets every trip
