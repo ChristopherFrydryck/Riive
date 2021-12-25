@@ -183,7 +183,16 @@ class Home extends Component {
 //   this.setState({changelogVersion: V})
 
   async componentDidMount(){
-    // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
+    setInterval(() => {
+        // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`), (e) => console.log(e), {
+        //     enableHighAccuracy: true,
+        //     timeout: 20000,
+        //     maximumAge: 36000,
+        //   },);
+    // Geolocation.watchPosition((info) => console.log(info))
+    }, 3000)
+ 
+   
   
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
@@ -228,7 +237,6 @@ class Home extends Component {
         
 
    
-        
         this.mapLocationFunction();
         this.rippleAnimation();
         this.getCurrentLocation(false);
@@ -364,11 +372,11 @@ class Home extends Component {
   }
 
   mapLocationFunction = () => {
-     
     this._interval = setInterval(() => {
         if(this.mapScrolling === false){
           this.getCurrentLocation(false)
         }
+       
       }, 5000)
       
 }
@@ -406,19 +414,24 @@ class Home extends Component {
             //     );
             // }
                 
+            },{
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 36000,
             }
         );
       }else{
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
+            // console.log(`Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`)
         },  error => {
             alert(`There was an issue getting your location. ${error.message}`)
             this.setState({locationAvailable: false})
         },
         {
-            enableHighAccuracy: false,
-            timeout: 10000,
-            maximumAge: 3600000
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 36000,
         })
         this.setState({locationAvailable: true})
       }
@@ -1003,6 +1016,7 @@ goToReserveSpace = () => {
     // Unmount status bar info
     // this._navListener.remove();
     clearInterval(this._interval)
+    Geolocation.stopObserving();
   }
 
   carouselUpdate = (xVal) => {
