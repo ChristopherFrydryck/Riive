@@ -10,7 +10,7 @@ export default function TabBarIcon(props) {
       iconLib="Feather"
       iconSize={24}
       iconName={props.name}
-      style={{ paddingBottom: 8 }}
+      style={{ paddingBottom: 0, }}
       iconColor={props.focused ? Colors.tango700 : Colors.cosmos300}
     />
   );

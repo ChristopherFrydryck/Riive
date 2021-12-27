@@ -69,7 +69,7 @@ const navBar =  createBottomTabNavigator(
             style: {
 
                 borderTopColor: "transparent",
-                paddingTop: 8,
+                paddingTop: 4,
                 marginBottom: 4,
                 height: 56,
                 // backgroundColor: "#efefef"
