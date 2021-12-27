@@ -362,6 +362,8 @@ class Profile extends Component{
                     this.props.UserStore.payments = doc.data().payments
                 }
                 
+                console.log(length > 0)
+                    
                 // Check if spaces are updated
                 if ( length > 0 ){
                     db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
@@ -389,8 +391,8 @@ class Profile extends Component{
                         this.setState({listings: this.props.UserStore.listings})
                     })
                 }else{
-                    this.props.UserStore.listings = [];
-                    this.setState({listings: []})
+                    this.props.UserStore.listings = undefined;
+                    this.setState({listings: undefined})
                 }
             })
             this.setState({isRefreshing: false})
