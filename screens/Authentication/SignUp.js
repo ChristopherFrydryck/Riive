@@ -83,8 +83,12 @@ export default class Authentication extends React.Component {
   async componentDidMount(){
     // Remove after testing!!
     // this.setState({email: 'admin@riive.net', password: 'Fallon430'})
-    // this.props.UserStore.email = 'admin@riive.net'
-    // this.props.UserStore.password = "Fallon430"
+    this.props.UserStore.email = 'cfrydryck+000@gmail.com'
+    this.props.UserStore.phone = "7247665452"
+    this.props.UserStore.dob = "05/31/1990"
+    this.props.UserStore.fullname="New Fallonname"
+    this.props.UserStore.password = "Fallon430"
+    this.props.UserStore.password2 = "Fallon430"
 
 
 

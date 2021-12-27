@@ -547,7 +547,7 @@ verifyInput = () => {
 
 
   render() {
-    if(this.props.UserStore.address !== {} && this.props.UserStore.ssnProvided){
+    if(this.props.UserStore.address !== {} && this.props.UserStore.ssnProvided && auth().currentUser.emailVerified){
       return (
         
         <ScrollView style={{backgroundColor: 'white'}}>
@@ -630,6 +630,25 @@ verifyInput = () => {
         </View>
         </ScrollView>
       );
+    }else if(auth().currentUser.emailVerified == false){
+
+        return(
+          <ScrollView 
+            style={{backgroundColor: "white", paddingHorizontal: 16}} 
+            contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
+          > 
+            <Icon 
+              iconName="alternate-email"
+              iconLib="MaterialIcons"
+              iconColor={Colors.cosmos500}
+              iconSize={120}
+              style={{marginBottom: 16}}
+            />
+            <Text style={{textAlign: "center"}}>To add a payment method, you must verify your email at {this.props.UserStore.email}.</Text>
+            <Button disabled={this.state.verificationSent} style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.resendVerification()}>{this.state.verificationSent ? "Email Sent" : "Resend Verification Email"}</Button>
+          </ScrollView>
+        )
+
     }else{
       return( 
         <ScrollView 

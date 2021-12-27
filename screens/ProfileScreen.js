@@ -333,8 +333,6 @@ class Profile extends Component{
         if(!this.state.isRefreshing){
 
             doc.get().then(doc => {
-                const listingsSorted = doc.data().listings.sort()
-                const listingsIDMobXSorted = this.props.UserStore.listings.map(x => x.listingID).sort()
                 const length = doc.data().listings.length;
 
                 const vehiclesIDSorted = doc.data().vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
@@ -362,7 +360,6 @@ class Profile extends Component{
                     this.props.UserStore.payments = doc.data().payments
                 }
                 
-                console.log(length > 0)
                     
                 // Check if spaces are updated
                 if ( length > 0 ){
