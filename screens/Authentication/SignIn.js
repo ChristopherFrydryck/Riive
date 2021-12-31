@@ -594,7 +594,7 @@ renderCurrentState() {
     return(
       <View style={[styles.form, {alignItems: 'center'}]}>
         {/* <ActivityIndicator size="large" color={Colors.cosmos300} /> */}
-        <FloatingCircles color={Colors.tango500}/>
+        <FloatingCircles height={30} color={Colors.tango500}/>
       </View>
     )
   }else{
@@ -666,7 +666,6 @@ const styles = StyleSheet.create({
   },
   form: {
     // flexGrow: 1,
-    // backgroundColor: 'green'
   },
   hyperlink: {
     color: Colors.apollo500,

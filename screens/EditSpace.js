@@ -360,7 +360,7 @@ class editSpace extends Component {
 
   submitSpace = async() => {
 
-
+    await this.setState({savingSpace: true})
     await this.verifyInputs();
 
     const db = firestore();
@@ -377,14 +377,10 @@ class editSpace extends Component {
 
        
           await this.uploadImage(this.state.photo)
-          this.setState({savingSpace: true})
           try{  
              let spaceCentsArray = this.state.spacePrice.split(".")
              let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
              let createdTime = new Date().getTime();
-                 
-           
-              await this.setState({savingSpace: true})
 
               
               
@@ -744,7 +740,7 @@ renderDotsView = (numItems, position) =>{
                    
                 </KeyboardAwareScrollView>
                 <View style={{paddingHorizontal: 16, marginBottom: 24, height: 60, alignItems: 'center', justifyContent: 'center'}}>
-                  <Button style={ this.state.changesMade ? {backgroundColor: "#FF8708", height: 48} : {backgroundColor:  Colors.mist900, height: 48}} textStyle={this.state.changesMade ? {color:"#FFFFFF"} : {color: Colors.cosmos300}} disabled={!this.state.changesMade} onPress={() => this.submitSpace()}>Save Changes</Button>
+                  <Button style={ this.state.changesMade ? {backgroundColor: "#FF8708", height: 48} : {backgroundColor:  Colors.mist900, height: 48}} textStyle={this.state.changesMade ? {color:"#FFFFFF"} : {color: Colors.cosmos300}} disabled={!this.state.changesMade} onPress={() => this.submitSpace()}>{this.state.savingSpace  ? null : "Save Changes"}</Button>
                 </View>
            
 
