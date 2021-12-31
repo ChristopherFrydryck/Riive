@@ -590,7 +590,7 @@ class addSpace extends Component {
     // Create a GeoCollection reference
     const geocollection = GeoFirestore.collection('listings');
  
-
+    this.setState({savingSpace: true})
 
 
       if(this.state.searchedAddress && this.state.spacePrice && this.state.nameValid && this.state.bioValid && this.state.photo){
@@ -600,16 +600,14 @@ class addSpace extends Component {
         // console.log(`${this.state.address.number} ${this.state.address.street}${this.state.address.box && this.state.address.box.split('').length > 0 ? " APT #" + this.state.address.box :""}, ${this.state.address.city}, ${this.state.address.state_abbr} ${this.state.address.zip}...${this.state.address.country}`)
         // console.log(`${this.state.address.spaceNumber}`)
                 await this.uploadImage(this.state.photo)
-                this.setState({savingSpace: true})
                 try{  
-
+              
                 let spaceCentsArray = this.state.spacePrice.split(".")
                 let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
 
                 let createdTime = new Date().getTime();
                  
                  
-                 await this.setState({savingSpace: true})
 
                  await db.collection("users").doc(this.props.UserStore.userID).update({
                     listings: firestore.FieldValue.arrayUnion(
@@ -1113,7 +1111,7 @@ class addSpace extends Component {
                   </Card>
                 )}}
               /> */}
-              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color: 'white'}} disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>Add Space</Button>
+              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color: 'white'}} disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>{this.state.savingSpace ? null : "Add Space"}</Button>
 
             </View>
             

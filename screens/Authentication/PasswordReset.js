@@ -38,13 +38,16 @@ export default class PasswordReset extends React.Component {
 
     this.state = {
       // Errors that may show if firebase catches them.
+      sendingEmail: false,
       emailError: '',
     }
   }
 
     // Resets the password of the state with email
     resetPassword = () => {
+      this.setState({sendingEmail: true})
       auth().sendPasswordResetEmail(this.props.UserStore.email || " ").then(() => {
+          this.setState({sendingEmail: false})
           Alert.alert(
               'Reset Email Sent',
               'Check your email for a password reset email. If you did not recieve it, try again.',
@@ -54,7 +57,7 @@ export default class PasswordReset extends React.Component {
           )
         }).catch((error) => {
           let errorMessage = error.message.split("] ")[1]
-          this.setState({emailError: errorMessage})
+          this.setState({emailError: errorMessage, sendingEmail: false})
       });
     }
 
@@ -73,7 +76,7 @@ export default class PasswordReset extends React.Component {
               maxLength = {55} 
               error={this.state.emailError}
               />
-              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.resetPassword()}>Send Password Reset</Button>
+              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color:"#FFFFFF"}} onPress={() => this.resetPassword()}>{this.state.sendingEmail ? null : "Send Password Reset"}</Button>
           </View>
         </ScrollView>
       )
