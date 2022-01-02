@@ -27,38 +27,5 @@
         "security": "",
         "date": "Tue 25 Sep 2020 22:07:13 GMT-0400",
         "dateUnix": 1601093235528
-    },
-    {
-        "release": "0.0.1",
-        "major": 0,
-        "minor": 0,
-        "patch": 1,
-        "isBeta": true,
-        "isReleased": false,
-        "title": "What's New",
-        "contributors": [{
-            "name": "Christopher Frydryck",
-            "email": "chris@riive.net",
-            "userID": "e8clD1B96thKlXRSA2lKUQW74mU2",
-            "photo": "https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/users%2Fe8clD1B96thKlXRSA2lKUQW74mU2%2Fprofile-pic?alt=media&token=f79aed94-2030-4ef7-b72b-65b01d6bf414"
-        }],
-        "description": [
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. On the other hand, we denounce with righteous indignation and dislike men who are so beguiled and demoralized by the charms of pleasure of the moment, so blinded by desire, that they cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs to those who fail in their duty through weakness of will, which is the same as saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise man therefore always holds in these matters to this principle of selection: he rejects pleasures to secure other greater pleasures, or else he endures pains to avoid worse pains.",
-            "The first paragraph goes here. Here is some more text to make this longer and more lengthy to explain what is going on above the scenes for a user.", 
-            "The second paragraph goes here. There may be less to put here.", 
-            "The third paragraph goes here. There is a lot of security stuff that goes here that you should be known of that we updated. For more information, contact us at support@riive.net."],
-        "images": [
-            "https://images.ctfassets.net/hrltx12pl8hq/3MbF54EhWUhsXunc5Keueb/60774fbbff86e6bf6776f1e17a8016b4/04-nature_721703848.jpg?fit=fill&w=480&h=270", 
-            "https://st.depositphotos.com/1428083/2946/i/600/depositphotos_29460297-stock-photo-bird-cage.jpg", 
-            "https://www.howtogeek.com/wp-content/uploads/2018/06/shutterstock_1006988770.png?width=1198&trim=1,1&bg-color=000&pad=1,1",
-            "https://buffer.com/library/content/images/2020/09/Frame-47.png"],
-        "added": "",
-        "changed": "",
-        "deprecated": "",
-        "removed": "",
-        "fixed": "",
-        "security": "",
-        "date": null,
-        "dateUnix": 1601093235528
     }]
 }

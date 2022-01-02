@@ -562,10 +562,6 @@ class reserveSpace extends Component {
                             
 
                             db.collection("trips").doc(ref.id).set(obj)
-                            // This fails the current rules set in the firbase db
-                            // db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
-                            //     visits: firestore.FieldValue.arrayUnion(ref.id)
-                            // });
                             db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).collection("trips").doc(ref.id).set(shortObj);
                             db.collection("users").doc(this.props.UserStore.userID).update({
                                 trips: firestore.FieldValue.arrayUnion(ref.id)
