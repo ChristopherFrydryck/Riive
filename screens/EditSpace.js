@@ -291,7 +291,7 @@ class editSpace extends Component {
 
 
   verifyInputs = () => {
-    const nameValidation = /^[A-Za-z0-9.?!;,()\-$@%&'"“”‘’]+[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’]+[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’]{1}$/;
+    const nameValidation = /^[A-Za-z0-9.?!;,()\-$@%&'"“”‘’]+[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’]+[A-Za-z0-9.?!;,()\-$@%&'"“”‘’]{1}$/;
     const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’]{1,299}$/;
 
     let nameValid = nameValidation.test(this.state.spaceName)
