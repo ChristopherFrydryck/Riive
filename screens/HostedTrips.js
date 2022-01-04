@@ -777,7 +777,7 @@ export default class HostedTrips extends Component{
                                 }
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8, marginBottom: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Visit Details</Text>
-                                        <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{visit.tripID}</Text>
+                                        {/* <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{visit.tripID}</Text> */}
                                 </View>
                                 {listing.spaceBio ? <Text style={{color: Colors.cosmos500, lineHeight: Platform.OS === 'ios' ? 18 : 20}}>{listing.spaceBio}</Text> : null}
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'row'}}>
@@ -797,7 +797,7 @@ export default class HostedTrips extends Component{
                                         scrollEnabled={false}
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
-                                        <Text>{listing.address.full}</Text>
+                                        <Text numberOfLines={2}>{listing.address.full}</Text>
                                         <Button onPress={() => this.openEditSpace(listing)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Edit Details</Button>
                                     </View>
                                 </View>
