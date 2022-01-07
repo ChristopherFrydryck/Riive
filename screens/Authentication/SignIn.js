@@ -558,6 +558,7 @@ export default class Authentication extends React.Component {
           return doc.get()
         }).then((user) => {
           if(user.exists){
+            console.log(user.data().disabled)
             if(user.data().disabled.numTimesDisabled < 3){
               var date = new Date(user.data().disabled.disabledEnds * 1000 + (24*60*60*1000));
               var daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]

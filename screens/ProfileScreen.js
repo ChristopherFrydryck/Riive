@@ -1,5 +1,5 @@
 import React, {Component, useRef} from 'react'
-import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking } from 'react-native'
+import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking, DevSettings } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import Input from '../components/Input'
@@ -878,7 +878,9 @@ class Profile extends Component{
        
         try {
             this.props.UserStore.loggedIn = false;
-            this.props.navigation.navigate("Home")
+            this.props.UserStore.reset();
+            await auth().signOut();
+            DevSettings.reload();
             
         }catch(e){
             console.log(e)

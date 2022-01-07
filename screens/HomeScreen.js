@@ -224,15 +224,7 @@ class Home extends Component {
         // this.props.UserStore.listings.forEach(x => console.log(x.visits))
         // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
 
-        // If user is not signed in anymore
-        if(!this.props.UserStore.loggedIn){
-            // Sign user out
-            auth().signOut().then(() => {
-                // Once sign out, reload app and reset UserStore
-                this.props.UserStore.reset();
-                DevSettings.reload();
-            })
-        }
+        
         
         
 
