@@ -558,14 +558,13 @@ export default class Authentication extends React.Component {
           return doc.get()
         }).then((user) => {
           if(user.exists){
-            console.log(user.data().disabled)
             if(user.data().disabled.numTimesDisabled < 3){
               var date = new Date(user.data().disabled.disabledEnds * 1000 + (24*60*60*1000));
               var daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
               var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
               this.setState({
                 passwordError: '',
-                emailError: `This account has been suspended until ${daysOfWeek[date.getDay()]} ${months[date.getMonth()]} ${date.getDate()}`,
+                emailError: `This account has been suspended until ${daysOfWeek[date.getDay()]} ${months[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`,
               })
             }else{
               this.setState({
