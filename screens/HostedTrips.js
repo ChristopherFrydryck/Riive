@@ -139,7 +139,7 @@ export default class HostedTrips extends Component{
         this.setState({cancellingTrip: true})
 
 
-        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHostCents = (serviceFeeCents + processingFeeCents) >= 50 ? serviceFeeCents + processingFeeCents : 50;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
         let refundAmountCents = serviceFeeCents + processingFeeCents + priceCents
@@ -601,7 +601,7 @@ export default class HostedTrips extends Component{
 
         let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
 
-        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHostCents = (serviceFeeCents + processingFeeCents) >= 50 ? serviceFeeCents + processingFeeCents : 50;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
             if(visible){
