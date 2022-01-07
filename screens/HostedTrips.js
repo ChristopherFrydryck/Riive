@@ -8,6 +8,8 @@ import RadioButton from '../components/RadioButton'
 import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
+import checkUserStatus from '../functions/in-app/checkUserStatus';
+
 import MapView, {Marker} from 'react-native-maps';
 import ActionSheet from "react-native-actions-sheet";
 import config from 'react-native-config'
@@ -51,6 +53,7 @@ export default class HostedTrips extends Component{
    componentDidMount(){
         // Set Status Bar page info here!
         this._navListener = this.props.navigation.addListener('didFocus', () => {
+            checkUserStatus();
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
             this.updateVisits();

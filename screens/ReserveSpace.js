@@ -7,6 +7,7 @@ import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
 import Round from '../functions/in-app/round'
+import checkUserStatus from '../functions/in-app/checkUserStatus';
 
 import MapView, {Marker} from 'react-native-maps';
 import config from 'react-native-config'
@@ -109,6 +110,7 @@ class reserveSpace extends Component {
 
         this._isMounted = true;
         this._navListener = this.props.navigation.addListener('didFocus', () => {
+           checkUserStatus();
            StatusBar.setBarStyle('dark-content', true);
            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 

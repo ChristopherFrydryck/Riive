@@ -11,6 +11,7 @@ import { version } from '../package.json'
 import {requestLocationAccuracy, checkMultiple, checkNotifications, requestNotifications, PERMISSIONS, openSettings, check, request} from 'react-native-permissions';
 import { getToken, disabledWarningAlert } from '../functions/in-app/notifications'
 import { checkPermissionsStatus } from '../functions/in-app/permissions'
+import checkUserStatus from '../functions/in-app/checkUserStatus';
 
 import { Switch } from 'react-native-paper';
 import DialogInput from 'react-native-dialog-input';
@@ -226,6 +227,7 @@ class Settings extends React.Component{
         this._isMounted = true;
         AppState.addEventListener("change", this._handleAppStateChange);
         this._navListener = this.props.navigation.addListener('didFocus', () => {
+         checkUserStatus();
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
          this.setPermissions();

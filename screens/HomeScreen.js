@@ -13,6 +13,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 import { pushNotification, getToken } from '../functions/in-app/notifications'
 import { checkPermissionsStatus } from '../functions/in-app/permissions'
+import checkUserStatus from '../functions/in-app/checkUserStatus';
 
 import logo from '../assets/img/Logo_Abbreviated_001.png'
 
@@ -224,6 +225,7 @@ class Home extends Component {
         // this.props.UserStore.listings.forEach(x => console.log(x.visits))
         // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
 
+        checkUserStatus();
         
         
         

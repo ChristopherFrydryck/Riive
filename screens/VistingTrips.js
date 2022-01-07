@@ -13,6 +13,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
+import checkUserStatus from '../functions/in-app/checkUserStatus';
+
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -48,6 +50,7 @@ export default class VisitingTrips extends Component{
    componentDidMount(){
         // Set Status Bar page info here!
     this._navListener = this.props.navigation.addListener('didFocus', () => {
+            checkUserStatus();
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');   
             this.updateVisits();  

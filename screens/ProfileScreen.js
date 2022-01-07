@@ -8,7 +8,7 @@ import AddressTypes from '../constants/AddressTypes'
 
 import AddressInput from '../components/AddressInput'
 
-
+import checkUserStatus from '../functions/in-app/checkUserStatus';
 
 import config from 'react-native-config'
 
@@ -146,6 +146,7 @@ class Profile extends Component{
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
             this.updateProfile();
+            checkUserStatus();
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();

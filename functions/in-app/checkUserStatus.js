@@ -1,14 +1,5 @@
 import React from 'react'
-import { Alert, Linking, Platform, DevSettings } from 'react-native'
-
-import DeviceInfo from 'react-native-device-info'
-
-import { showMessage, hideMessage, renderFlashMessageIcon } from "react-native-flash-message";
-
-//MobX Imports
-import {inject, observer} from 'mobx-react'
-import UserStore from '../../stores/userStore'
-import ComponentStore from '../../stores/componentStore'
+import { Alert, DevSettings } from 'react-native'
 
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
