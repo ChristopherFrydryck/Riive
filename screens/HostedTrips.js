@@ -205,7 +205,7 @@ export default class HostedTrips extends Component{
                                 updated: currentTime
                             })
                         }).then(() => {
-                            db.collection("listings").doc(this.props.navigation.state.params.visit.listingID).collection("trips").doc(this.props.navigation.state.params.visit.tripID).update({
+                            db.collection("listings").doc(this.state.selectedVisit.visit.listingID).collection("trips").doc(this.state.selectedVisit.visit.tripID).update({
                                 isCancelled: true,
                             })
                         }).then(async() => {
