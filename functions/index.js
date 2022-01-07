@@ -281,17 +281,101 @@ const fs = require('fs');
         })
     })
 
-    exports.backupAll = functions.pubsub.schedule('every 24 hours').timeZone('America/New_York').onRun(() => {
+    exports.backupUsers = functions.pubsub.schedule('0 */4 * * *').timeZone('America/New_York').onRun(() => {
         let date = new Date();
 
         
         const client = new admin.firestore.v1.FirestoreAdminClient();
         const databaseName = client.databasePath(functions.config().project.id, '(default)')
-        const bucket = `gs://${functions.config().project.id}.appspot.com/backups/all-collections/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        const bucket = `gs://${functions.config().project.id}-backup-data/backups/users/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
 
         return client.exportDocuments({
             name: databaseName,
-            collectionIds: [],
+            collectionIds: ["users"],
+            outputUriPrefix: bucket,
+        }).then(([response]) => {
+            console.log(`Operation Name: ${response.name}`)
+            return response
+        }).catch(err => {
+            console.error(err)
+            throw new Error('Export operation failed')
+        })
+    })
+
+    exports.backupTrips = functions.pubsub.schedule('0 */4 * * *').timeZone('America/New_York').onRun(() => {
+        let date = new Date();
+
+        
+        const client = new admin.firestore.v1.FirestoreAdminClient();
+        const databaseName = client.databasePath(functions.config().project.id, '(default)')
+        const bucket = `gs://${functions.config().project.id}-backup-data/backups/trips/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+
+        return client.exportDocuments({
+            name: databaseName,
+            collectionIds: ["trips"],
+            outputUriPrefix: bucket,
+        }).then(([response]) => {
+            console.log(`Operation Name: ${response.name}`)
+            return response
+        }).catch(err => {
+            console.error(err)
+            throw new Error('Export operation failed')
+        })
+    })
+
+    exports.backupListings = functions.pubsub.schedule('0 */4 * * *').timeZone('America/New_York').onRun(() => {
+        let date = new Date();
+
+        
+        const client = new admin.firestore.v1.FirestoreAdminClient();
+        const databaseName = client.databasePath(functions.config().project.id, '(default)')
+        const bucket = `gs://${functions.config().project.id}-backup-data/backups/listings/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+
+        return client.exportDocuments({
+            name: databaseName,
+            collectionIds: ["listings"],
+            outputUriPrefix: bucket,
+        }).then(([response]) => {
+            console.log(`Operation Name: ${response.name}`)
+            return response
+        }).catch(err => {
+            console.error(err)
+            throw new Error('Export operation failed')
+        })
+    })
+
+    exports.backupReports = functions.pubsub.schedule('0 0 */2 * *').timeZone('America/New_York').onRun(() => {
+        let date = new Date();
+
+        
+        const client = new admin.firestore.v1.FirestoreAdminClient();
+        const databaseName = client.databasePath(functions.config().project.id, '(default)')
+        const bucket = `gs://${functions.config().project.id}-backup-data/backups/reports/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+
+        return client.exportDocuments({
+            name: databaseName,
+            collectionIds: ["reports"],
+            outputUriPrefix: bucket,
+        }).then(([response]) => {
+            console.log(`Operation Name: ${response.name}`)
+            return response
+        }).catch(err => {
+            console.error(err)
+            throw new Error('Export operation failed')
+        })
+    })
+
+    exports.backupEnvironment = functions.pubsub.schedule('0 0 */2 * *').timeZone('America/New_York').onRun(() => {
+        let date = new Date();
+
+        
+        const client = new admin.firestore.v1.FirestoreAdminClient();
+        const databaseName = client.databasePath(functions.config().project.id, '(default)')
+        const bucket = `gs://${functions.config().project.id}-backup-data/backups/environment/${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} @ ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+
+        return client.exportDocuments({
+            name: databaseName,
+            collectionIds: ["environment"],
             outputUriPrefix: bucket,
         }).then(([response]) => {
             console.log(`Operation Name: ${response.name}`)
