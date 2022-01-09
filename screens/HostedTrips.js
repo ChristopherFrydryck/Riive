@@ -535,7 +535,7 @@ export default class HostedTrips extends Component{
                     {isCancelled ? 
                       <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {visit.cancelledBy === 'host' ? 'you' : 'guest'}</Text>
                     : 
-                      <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visited by {visitorName}</Text>
+                      <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visit{isInPast ? "ed" : null} by {visitorName}</Text>
                     }
                     {isCancelled ? 
                         <Text numberOfLines={1} ellipsizeMode='tail' style={{color: "#adadad", textDecorationLine: "line-through"}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text> 
