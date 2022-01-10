@@ -233,7 +233,7 @@ class Home extends Component {
    
         this.mapLocationFunction();
         this.rippleAnimation();
-        this.getCurrentLocation(false);
+        this.getCurrentLocation(true);
         
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);
@@ -263,6 +263,7 @@ class Home extends Component {
         // })
 
       })
+
 
       
 
@@ -297,6 +298,8 @@ class Home extends Component {
    
 
   }
+
+
 
   setPermissions = () => {
     checkPermissionsStatus().then(res => {
@@ -413,7 +416,9 @@ class Home extends Component {
                 timeout: 20000,
                 maximumAge: 36000,
             }
-        );
+        ).then(() => {
+            this.setState({locationAvailable: true})
+        })
       }else{
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
@@ -426,8 +431,10 @@ class Home extends Component {
             enableHighAccuracy: true,
             timeout: 20000,
             maximumAge: 36000,
+        }).then(() => {
+            this.setState({locationAvailable: true})
         })
-        this.setState({locationAvailable: true})
+        
       }
 
      
