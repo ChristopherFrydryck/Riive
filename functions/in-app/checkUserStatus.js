@@ -14,7 +14,7 @@ export default checkUserStatus = async(userID) => {
     try{
         await auth().currentUser.reload();
     }catch(e){
-        // if(e.code == "auth/user-disabled"){
+        if(e.code == "auth/user-disabled"){
             const settings = {
                 method: 'POST',
                 headers: {
@@ -55,17 +55,17 @@ export default checkUserStatus = async(userID) => {
                     return e
                 }  
                 
-        // }else{
-        //     Alert.alert(
-        //         "Whoops! Something went wrong.",
-        //         "We had issues gathering your user data. Try logging back in.",
-        //         [
-        //             { text: 'Close' , onPress: () =>{
-        //                 DevSettings.reload();
-        //             }}
-        //         ]
-        //     )
-        // }
+        }else{
+            Alert.alert(
+                "Whoops! Something went wrong.",
+                "We had issues gathering your user data. Try logging back in.",
+                [
+                    { text: 'Close' , onPress: () =>{
+                        DevSettings.reload();
+                    }}
+                ]
+            )
+        }
        
     }
    
