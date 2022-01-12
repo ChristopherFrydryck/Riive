@@ -414,7 +414,7 @@ class Home extends Component {
             },{
                 enableHighAccuracy: true,
                 timeout: 20000,
-                maximumAge: 36000,
+                // maximumAge: 36000,
             }
         ).then(() => {
             this.setState({locationAvailable: true})
@@ -430,7 +430,7 @@ class Home extends Component {
         {
             enableHighAccuracy: true,
             timeout: 20000,
-            maximumAge: 36000,
+            // maximumAge: 36000,
         }).then(() => {
             this.setState({locationAvailable: true})
         })
