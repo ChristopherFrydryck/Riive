@@ -2,6 +2,12 @@ import React from 'react'
 import { Alert, Linking, Platform } from 'react-native'
 
 import DeviceInfo from 'react-native-device-info'
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false
+};
 
 import { showMessage, hideMessage, renderFlashMessageIcon } from "react-native-flash-message";
 
@@ -71,7 +77,7 @@ export let getToken = async() => {
 
 
 export let pushNotification = (title, body, onPress) => {
-
+    ReactNativeHapticFeedback.trigger("notificationSuccess", options);
     return showMessage({
         titleStyle: {fontFamily: 'Poppins-SemiBold'},
         message: title,
