@@ -225,7 +225,7 @@ class Home extends Component {
         // this.props.UserStore.listings.forEach(x => console.log(x.visits))
         // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
 
-        checkUserStatus();
+        checkUserStatus(auth().currentUser.uid);
         
         
         

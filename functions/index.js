@@ -1121,6 +1121,82 @@ const fs = require('fs');
         // }).catch(e => {return e})
 
     })
+
+    exports.suspendUser = functions.https.onRequest((request, response) => {
+        // var beforeUser = snap.before.data() 
+        // var afterUser = snap.after.data()
+        // var currentTime = admin.firestore.Timestamp.now();
+        // var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
+        // var date = new Date();
+
+
+        
+         // 10 second latency before we will update the last_update field in someone's profile
+        // if(currentTime - beforeUser.last_update >= 10 || !beforeUser.last_update){
+        db.collection('users').doc(request.body.user_id).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("User does not exist")
+                error.statusCode = 401;
+                error.name = 'User/DoesNotExist'
+                throw error
+            }else{
+                console.log(doc.data().id)
+                return doc.data();
+            }
+        }).then((user) => {
+             // Suspension check
+             if(!user.disabled.isDisabled){
+                 // First suspension
+                 if(user.disabled.numTimesDisabled === 0){
+                     admin.auth().updateUser(user.id, {
+                         disabled: true,
+                     });
+                     db.collection('users').doc(user.id).update({
+                         disabled: {
+                             isDisabled: true,
+                             numTimesDisabled: 1,
+                             disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+                         }
+                     })
+                 // Second Suspension
+                 }else if(user.disabled.numTimesDisabled === 1){
+                     admin.auth().updateUser(user.id, {
+                         disabled: true,
+                     });
+                     db.collection('users').doc(user.id).update({
+                         disabled: {
+                             isDisabled: true,
+                             numTimesDisabled: 2,
+                             disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+                         }
+                     })
+                 // Third Suspension
+                 }else if (user.disabled.numTimesDisabled >= 2){
+                     admin.auth().updateUser(user.id, {
+                         disabled: true,
+                     });
+                     db.collection('users').doc(user.id).update({
+                         disabled: {
+                             isDisabled: true,
+                             numTimesDisabled: 3,
+                             disabledEnds: 9999999999,
+                         }
+                     })
+                 }
+             }
+            }).then(() => {
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS IN SUSPENSION",
+                })
+            }).catch(e => {
+                console.log(e)
+                return e
+            })
+        // }else{
+        //     return null
+        // }
+    })
     
 
   
@@ -1146,54 +1222,53 @@ const fs = require('fs');
         // 10 second latency before we will update the last_update field in someone's profile
        if(currentTime - beforeUser.last_update >= 10 || !beforeUser.last_update){
 
-        db.collection('users').doc(context.params.user_id).update({
-            last_update: currentTime
-        }).then(() => {
-            // Suspension check
-            if(afterUser.disabled.isDisabled && disabledUntilDate < date){
-                // First suspension
-                if(beforeUser.disabled.numTimesDisabled === 0){
-                    admin.auth().updateUser(context.params.user_id, {
-                        disabled: true,
-                    });
-                    db.collection('users').doc(context.params.user_id).update({
-                        disabled: {
-                            isDisabled: true,
-                            numTimesDisabled: 1,
-                            disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
-                        }
-                    })
-                // Second Suspension
-                }else if(beforeUser.disabled.numTimesDisabled === 1){
-                    admin.auth().updateUser(context.params.user_id, {
-                        disabled: true,
-                    });
-                    db.collection('users').doc(context.params.user_id).update({
-                        disabled: {
-                            isDisabled: true,
-                            numTimesDisabled: 2,
-                            disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
-                        }
-                    })
-                // Third Suspension
-                }else if (beforeUser.disabled.numTimesDisabled >= 2){
-                    admin.auth().updateUser(context.params.user_id, {
-                        disabled: true,
-                    });
-                    db.collection('users').doc(context.params.user_id).update({
-                        disabled: {
-                            isDisabled: true,
-                            numTimesDisabled: 3,
-                            disabledEnds: 9999999999,
-                        }
-                    })
-                }
-            }
+    //     db.collection('users').doc(context.params.user_id).update({
+    //         last_update: currentTime
+    //     }).then(() => {
+    //         // Suspension check
+    //         if(afterUser.disabled.isDisabled && disabledUntilDate < date){
+    //             // First suspension
+    //             if(beforeUser.disabled.numTimesDisabled === 0){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 1,
+    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+    //                     }
+    //                 })
+    //             // Second Suspension
+    //             }else if(beforeUser.disabled.numTimesDisabled === 1){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 2,
+    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+    //                     }
+    //                 })
+    //             // Third Suspension
+    //             }else if (beforeUser.disabled.numTimesDisabled >= 2){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 3,
+    //                         disabledEnds: 9999999999,
+    //                     }
+    //                 })
+    //             }
+    //         }
 
-            return null
-        }).then(() => {
-            return admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com').file('dev-team/changelog.json`).download()
-        }).then((res) => {
+    //         return null
+    //     }).then(() => {
+           admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`).file(`dev-team/changelog.json`).download().then((res) => {
             return JSON.parse(res)
         }).then((changelog) => {
 

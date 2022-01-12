@@ -53,7 +53,7 @@ export default class HostedTrips extends Component{
    componentDidMount(){
         // Set Status Bar page info here!
         this._navListener = this.props.navigation.addListener('didFocus', () => {
-            checkUserStatus();
+            checkUserStatus(auth().currentUser.uid);
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
             this.updateVisits();

@@ -146,7 +146,7 @@ class Profile extends Component{
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
             this.updateProfile();
-            checkUserStatus();
+            checkUserStatus(auth().currentUser.uid);
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();

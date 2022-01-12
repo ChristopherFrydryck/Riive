@@ -110,7 +110,7 @@ class reserveSpace extends Component {
 
         this._isMounted = true;
         this._navListener = this.props.navigation.addListener('didFocus', () => {
-           checkUserStatus();
+           checkUserStatus(auth().currentUser.uid);
            StatusBar.setBarStyle('dark-content', true);
            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 
