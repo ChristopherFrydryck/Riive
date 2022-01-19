@@ -162,6 +162,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.userID = doc.data().id;
               this.props.UserStore.stripeID = doc.data().stripeID;
               this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
+              this.props.UserStore.mailchimpID = doc.data().mailchimpID;
               this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
               this.props.UserStore.photo = doc.data().photo;
               this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
@@ -374,6 +375,7 @@ export default class Authentication extends React.Component {
                 this.props.UserStore.dob = doc.data().dob || null,
                 this.props.UserStore.stripeID = doc.data().stripeID;
                 this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
+                this.props.UserStore.mailchimpID = doc.data().mailchimpID;
                 this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
                 this.props.UserStore.photo = doc.data().photo;
                 this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;

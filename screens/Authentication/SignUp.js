@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ActivityIndicator, StyleSheet, StatusBar, Platform, View, ScrollView, SafeAreaView, Dimensions, Image, Pressable} from 'react-native';
+import { ActivityIndicator, StyleSheet, StatusBar, Platform, View, ScrollView, SafeAreaView, Dimensions, Image, Pressable, Alert} from 'react-native';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -113,6 +113,47 @@ export default class Authentication extends React.Component {
   //  this._navListener.remove();
   }
 
+  createMailchimpCustomer = async() => {
+    let res = null;
+    let error = null;
+
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: this.props.UserStore.fullname,
+        email: this.props.UserStore.email,
+        phone: this.props.UserStore.phone,
+        FBID: auth().currentUser.uid,
+        dob: this.props.UserStore.dob,
+      })
+    }
+
+    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUserCreated`, settings).then((res) => {
+      let data = res.json()
+      // console.log(`fnRes: ${JSON.stringify(res)}`)
+      // console.log(`fnResStatus: ${res.status}`)
+      if(res.status === 200){
+        return data
+      }else{
+        error = new Error(`There was an issue saving your email for promotional information.`)
+        error.code = res.status;
+        throw error
+      }
+  }).then(body => {
+      this.props.UserStore.mailchimpID = body.id;
+      res = body;
+      return body
+  }).catch(e => {
+    res = error;
+    throw error
+  })
+
+}
+
   createStripeCustomer = async() => {
     let res = null;
     let error = null;
@@ -184,7 +225,6 @@ export default class Authentication extends React.Component {
         throw error
       })
 
-      return res
       
   }
 
@@ -417,7 +457,12 @@ export default class Authentication extends React.Component {
      
      
               }).then(async() => {
-                return await this.createStripeCustomer()
+                try {
+                  await this.createMailchimpCustomer()
+                  await this.createStripeCustomer()
+                }catch(e) {
+                  throw e
+                }
 
               }).then((res) =>  {
                 // console.log(`res is: ${res}`)
@@ -426,10 +471,17 @@ export default class Authentication extends React.Component {
                 this.setState({ authenticating: false});
                 this.props.navigation.navigate('Home')
               })
-              .catch((e) => {
-                alert('Whoops! We ran into an issue creating your account. ' + e.message)
-                firestore().collection("users").doc(auth().currentUser.uid).delete()
-                auth().currentUser.delete();
+              .catch(async(e) => {
+                  await auth().currentUser.delete();
+                
+                Alert.alert("Whoops!", 'We ran into an issue creating your account. ' + e.message, 
+                  [
+                    { text: 'Retry Sign Up' , onPress: () => {
+                        this.setState({authenticating: false})
+                        this.props.navigation.navigate("Auth")
+                    }}
+                  ]
+                )
               })
         
                   

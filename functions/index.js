@@ -4,6 +4,15 @@ const stripe = require('stripe')('sk_test_rhRKZJYIAphopgJZcoKX32yD00ciJsrqFl');
 admin.initializeApp();
 const db = admin.firestore();
 
+// import and initialize Mailchimp instance
+const mailchimp = require("@mailchimp/mailchimp_marketing");
+
+mailchimp.setConfig({
+  apiKey: functions.config().mailchimp.api_key,
+  server: functions.config().mailchimp.server_prefix,
+});
+
+
 const fs = require('fs');
 
 // exports.payWithStripe = functions.https.onRequest((request, response) => {
@@ -101,6 +110,65 @@ const fs = require('fs');
         ).then((res) => {
             return response.send("")
         })
+    })
+
+    // create a Cloud Function which will trigger every time a new user is created
+    exports.mailchimpUserCreated = functions.https.onRequest(async(request, response) => {
+    // const { email, displayName } = user;
+         return mailchimp.lists.addListMember(functions.config().mailchimp.audience_id, {
+            email_address: request.body.email,
+            status: "subscribed",
+            merge_fields: {
+                FNAME: request.body.name.split(' ', 1).toString(),
+                LNAME: request.body.name.split(' ').slice(-1).join(),
+                BIRTHDAY: request.body.dob.slice(0,5),
+                PHONE: request.body.phone,
+                TEXT: `FBID: ${request.body.FBID}`
+            }
+        }).then((res) => {
+            db.collection('users').doc(request.body.FBID).get().then(doc => {
+                if(!doc.exists){
+                    error = new Error("User does not exist")
+                    error.statusCode = 401;
+                    error.name = 'Mailchimp/ID-Error'
+                    throw error
+                }else{
+                    return db.collection('users').doc(request.body.FBID).update({
+                        mailchimpID: res.id
+                    })
+                }
+            })
+            return res
+        }).then((res) => {
+            return response.status(200).send(res)
+        }).catch(e => {
+            console.log(e)
+            return response.status(e.statusCode || 500).send()
+        })
+    });
+
+    exports.mailchimpUpdateUser = functions.https.onRequest(async(request, response) => {
+        const res = await mailchimp.lists.setListMember(
+            functions.config().mailchimp.audience_id,
+            request.body.mailchimp_id,
+            {   email_address: request.body.email,
+                merge_fields: {
+                    FNAME: request.body.name.split(' ', 1).toString(),
+                    LNAME: request.body.name.split(' ').slice(-1).join(),
+                    BIRTHDAY: request.body.dob.slice(0,5),
+                    PHONE: request.body.phone,
+                    ADDRESS: {
+                        addr1: request.body.lineOne || null,
+                        addr2: request.body.lineTwo || null,
+                        city: request.body.city || null,
+                        state: request.body.state || null,
+                        zip: request.body.zipCode || null,
+                    },
+                    ZIP: request.body.zipCode || null,
+                } 
+            }
+          );
+          console.log(response);
     })
 
     exports.addCustomerSSN = functions.https.onRequest((request, response) => {
@@ -1024,6 +1092,7 @@ const fs = require('fs');
             }else{
                 let userData = doc.data()
                 
+                
 
                 return userData;
 
@@ -1051,12 +1120,14 @@ const fs = require('fs');
                 // })
             
             }
-        }).then((userData) => {
+        }).then(async(userData) => {
             let allListings = [];
 
 
-            if(userData.listings.length > 0 && userData.listings.length <= 10){
-                db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", userData.listings).get().then((qs) => {
+            if(userData.listings.length > 0){
+                await db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", userData.listings).get().then((qs) => {
+                    console.log(qs.docs[0].data())
+                    console.log(qs.docs.length)
                     for(let i = 0; i < qs.docs.length; i++){
                         allListings.push(qs.docs[i].data())
                     }
@@ -1064,41 +1135,32 @@ const fs = require('fs');
                 }).catch(e => {
                     throw new Error("Failed to gather listing data")
                 })
-
-                return [userData, allListings]
-
-            }else if(userData.listings.length > 10){
-                let allArrs = [];
-                while(userData.listings.length > 0){
-                    allArrs.push(userData.listings.splice(0, 10))
-                }
-                for(let i = 0; i < allArrs.length; i++){
-                    db.collection('listings').where(admin.firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-                        for(let i = 0; i < qs.docs.length; i++){
-                            allListings.push(qs.docs[i].data())
-                        }
-                        return allListings;
-                    }).catch(e => {
-                        throw new Error("Failed to gather listing data")
-                    })
-                }
-
+                console.log(allListings)
                 return [userData, allListings]
 
             }else{
                 console.log("User had no listings")
                 return [userData, null]
             }
-
             
 
         
         }).then((data) => {
-            console.log(`
-                user data: ${JSON.stringify(data[0])}
-                listing data: ${JSON.stringify(data[1])}
-            `)
-            return null;
+            console.log(`All listings are ${data[1]}`)
+            let listings = data[1];
+            // If user has any listings
+            if(listings){
+                for(let i = 0 ; i < listings.length; i++){
+                    db.collection("listings").doc(listings[i].listingID).update({
+                        hidden: true,
+                        toBeDeleted: true,
+                        deleteDate: 0
+                    })
+                }
+            }
+            return data[0]
+        }).then((userData) => {
+            return db.collection('users').doc(userData.id).delete();
         }).catch(e => {
             return console.error(e)
         })

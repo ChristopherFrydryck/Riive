@@ -522,7 +522,12 @@ export default class SearchFilter extends React.PureComponent{
         this.slideAnimate(true)
 
         if(eRounded !== this.state.dayValue && eRounded < availDays.length){
-            ReactNativeHapticFeedback.trigger("impactMedium", options);
+            if(Platform.OS == 'ios'){
+                ReactNativeHapticFeedback.trigger("impactMedium", options);
+            }else{
+                ReactNativeHapticFeedback.trigger("effectClick", options);
+            }
+           
         }
 
         
@@ -622,10 +627,18 @@ export default class SearchFilter extends React.PureComponent{
             }
 
             if(eRounded !== this.state.arriveIndex && eRounded < this.state.startTimes.length){
-                if(this.state.arriveValue.key % 2){
-                    ReactNativeHapticFeedback.trigger("rigid", options);
+                if(Platform.OS == 'ios'){
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("rigid", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("soft", options);
+                    }
                 }else{
-                    ReactNativeHapticFeedback.trigger("soft", options);
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("effectClick", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("effectTick", options);
+                    }
                 }
             }
 
@@ -677,10 +690,18 @@ export default class SearchFilter extends React.PureComponent{
             }
 
             if(eRounded !== this.state.departIndex && eRounded < this.state.endTimes.length){
-                if(this.state.departValue.key % 2 == 0){
-                    ReactNativeHapticFeedback.trigger("rigid", options);
+                if(Platform.OS == 'ios'){
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("rigid", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("soft", options);
+                    }
                 }else{
-                    ReactNativeHapticFeedback.trigger("soft", options);
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("effectClick", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("effectTick", options);
+                    }
                 }
             }
             

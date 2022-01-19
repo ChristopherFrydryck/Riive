@@ -204,6 +204,41 @@ class Profile extends Component{
         // this._navListener.remove();
     }
 
+    mailchimpUpdateUser = async () => {
+        const settings = {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              phone: this.state.phoneUpdate,
+              name: this.state.fullNameUpdate,
+              dob: this.state.dobUpdate,
+
+              lineOne: this.state.address.line1,
+              lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
+              zipCode: this.state.address.zip,
+              city: this.state.address.city,
+              state: this.state.address.state,
+            })
+          }
+
+          await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUpdateUser`, settings).then((res) => {
+            let data = res.json()
+            // console.log(`fnRes: ${JSON.stringify(res)}`)
+            // console.log(`fnResStatus: ${res.status}`)
+            if(res.status === 200){
+              return data
+            }else{
+              alert(`${res.status}: an error has occurred in updating your marketing email info}`)
+              throw res.status;
+            }
+          })
+
+
+    }
+
 
     addAddress = async () => {
 
@@ -363,7 +398,7 @@ class Profile extends Component{
                 
                     
                 // Check if spaces are updated
-                if ( length > 0 ){
+                // if ( length > 0 ){
                     db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
                     let listingsData = [];
                     for(let i = 0; i < qs.docs.length; i++){
@@ -388,10 +423,10 @@ class Profile extends Component{
                         }
                         this.setState({listings: this.props.UserStore.listings})
                     })
-                }else{
-                    this.props.UserStore.listings = undefined;
-                    this.setState({listings: undefined})
-                }
+                // }else{
+                //     this.props.UserStore.listings = [];
+                //     this.setState({listings: []})
+                // }
             })
             this.setState({isRefreshing: false})
         }
@@ -633,214 +668,226 @@ class Profile extends Component{
         const doc = db.collection('users').doc(this.props.UserStore.userID);
         const user = auth().currentUser;
 
+        let line2PropsEmpty = this.props.UserStore.address.line2 == null || undefined;
+        let line2StateEmpty = this.state.address.line2 == "";
+        // Variable to check if line 2 has changed
+        let checkLine2 = line2PropsEmpty && !line2StateEmpty || !line2PropsEmpty && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
+
+        let phoneChanged = this.state.phoneUpdate !== this.props.UserStore.phone
+        let nameChanged = this.state.fullNameUpdate != this.props.UserStore.fullname
+        let dobChanged = this.state.dobUpdate != this.props.UserStore.dob
+        let addressChanged = this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zip || checkLine2;
+
         this.setState({savingChanges: true})
 
         user.reload();
         
         try{
-            if (this.state.phoneUpdate !== this.props.UserStore.phone){
-                if (this.state.phoneUpdate.match(regexPhone) || this.state.phoneUpdate == ""){
-                    const settings = {
-                        method: 'POST',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        "Access-Control-Request-Method": "POST"
-                        },
-                        body: JSON.stringify({
-                            stripeID: this.props.UserStore.stripeID,
-                            stripeConnectID: this.props.UserStore.stripeConnectID,
-                            phone: this.state.phoneUpdate,
-                        })
-                    }
-                    let error = null;
+            // Check for any changes
+            if(phoneChanged || nameChanged || dobChanged || addressChanged ){
+                    if (phoneChanged){
+                        if (this.state.phoneUpdate.match(regexPhone) || this.state.phoneUpdate == ""){
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                'Content-Type': 'application/json',
+                                "Access-Control-Request-Method": "POST"
+                                },
+                                body: JSON.stringify({
+                                    stripeID: this.props.UserStore.stripeID,
+                                    stripeConnectID: this.props.UserStore.stripeConnectID,
+                                    phone: this.state.phoneUpdate,
+                                })
+                            }
+                            let error = null;
 
-                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editPhoneNumber`, settings).then((res) => {
-                        if(res.status === 200){
-                            this.props.UserStore.phone = this.state.phoneUpdate;
-                            doc.update({ phone: this.props.UserStore.phone})
-                            this.setState({phoneError: '', submitted: true})
-                            setTimeout(() => this.setState({submitted: false}), 3000)
+                            await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editPhoneNumber`, settings).then((res) => {
+                                if(res.status === 200){
+                                    this.props.UserStore.phone = this.state.phoneUpdate;
+                                    doc.update({ phone: this.props.UserStore.phone})
+                                    this.setState({phoneError: '', submitted: true})
+                                    setTimeout(() => this.setState({submitted: false}), 3000)
+                                }else{
+                                    // If response is not 200
+                                    error = new Error(`Please ensure your phone number is valid.`)
+                                    error.code = res.status
+                                    error.name = "Phone/StripeInvalid"
+                                    throw error
+                                }
+                                
+                            }).catch(e => {
+                                // If fetch is not 200 or function fails
+                                throw e
+                            })
+                            
                         }else{
-                            // If response is not 200
+                            // If phone number is not long enough
                             error = new Error(`Please ensure your phone number is valid.`)
-                            error.code = res.status
-                            error.name = "Phone/StripeInvalid"
-                            throw error
+                                    error.code = 410
+                                    error.name = "Phone/NumberTooShort"
+                                    throw error
                         }
-                        
-                    }).catch(e => {
-                        // If fetch is not 200 or function fails
-                        throw e
-                    })
-                    
-                }else{
-                    // If phone number is not long enough
-                    error = new Error(`Please ensure your phone number is valid.`)
-                            error.code = 410
-                            error.name = "Phone/NumberTooShort"
-                            throw error
-                }
-            }
-
-            let line2PropsEmpty = this.props.UserStore.address.line2 == null || undefined;
-            let line2StateEmpty = this.state.address.line2 == "";
-            // Variable to check if line 2 has changed
-            let checkLine2 = line2PropsEmpty && !line2StateEmpty || !line2PropsEmpty && this.state.address.line2Prefix + " " + this.state.address.line2 !== this.props.UserStore.address.line2;
-
-            // Check if address is updated
-            if(this.props.UserStore.address.line1 !== this.state.address.line1 || this.props.UserStore.address.city !== this.state.address.city || this.props.UserStore.address.state !== this.state.address.state || this.props.UserStore.address.postal_code !== this.state.address.zip || checkLine2){
-            
+                    }
 
                 
-                await this.addAddress()                
-                await this.setState({fullnameError: "", submitted: true}) 
-                setTimeout(() => this.setState({submitted: false}), 3000)
-            }
-            if (this.state.fullNameUpdate != this.props.UserStore.fullname){
 
-                let error = null;
-                if (this.state.fullNameUpdate.match(regexFullname)){
-                    const settings = {
-                        method: 'POST',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        "Access-Control-Request-Method": "POST"
-                        },
-                        body: JSON.stringify({
-                            stripeID: this.props.UserStore.stripeID,
-                            stripeConnectID: this.props.UserStore.stripeConnectID,
-                            name: this.state.fullNameUpdate
-                        })
-                    }
-
-                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editFullName`, settings).then((res) => {
-                        if(res.status === 200){
-                            this.props.UserStore.fullname = this.state.fullNameUpdate
-                            doc.update({ 
-                                fullname: this.props.UserStore.fullname,
-                                firstname: this.props.UserStore.firstname,
-                                lastname: this.props.UserStore.lastname
-                            })
-                            this.setState({fullnameError: "", submitted: true}) 
-                            setTimeout(() => this.setState({submitted: false}), 3000)
-                        }else{
-                            // If response is not 200
-                            error = new Error(`Please ensure your name includes a first and last name.`)
-                            error.code = res.status
-                            error.name = "Name/StripeFailure"
-                            throw error
-                        }
-                    }).catch(e => {
-                        throw e
-                    })
-
-                   
-                }else{
-                    error = new Error("Please provide first and last name with a space.")
-                    error.code = 410
-                    error.name = "Name/Invalid"
-                    throw error
-                }           
-            }
-            if (this.state.dobUpdate != this.props.UserStore.dob){
-                // Checks DOB for valid format
-                let month = parseInt(this.state.dobUpdate.split("/")[0]) || 0
-                let day = parseInt(this.state.dobUpdate.split("/")[1]) || 0
-                let year = parseInt(this.state.dobUpdate.split("/")[2]) || 0
-
-                let error = null;
-
-                if(month <= 12 && month.toString() !== "0" && day <= this.getDaysInMonth(year, month) && day.toString() !== "0" && year > 1900 && year < new Date().getFullYear() - 15){
-
-                    const settings = {
-                        method: 'POST',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        "Access-Control-Request-Method": "POST"
-                        },
-                        body: JSON.stringify({
-                            stripeConnectID: this.props.UserStore.stripeConnectID,
-                            dob: this.state.dobUpdate
-                        })
-                    }
-             
-
-                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editDOB`, settings).then((res) => {
-                        if(res.status === 200){
-                            this.props.UserStore.dob = this.state.dobUpdate;
-                            doc.update({
-                                dob: this.state.dobUpdate
-                            })
-                            this.setState({dobError: "", submitted: true}) 
-                            setTimeout(() => this.setState({submitted: false}), 3000)
-                        }else{
-                            // If response is not 200
-                            error = new Error(`Please ensure your date of birth is valid.`)
-                            error.code = res.status
-                            error.name = "DOB/StripeInvalid"
-                            throw error
-                        }
-                    }).catch(e => {
-                        throw e
-                    })
-              
+                    // Check if address is updated
+                    if(addressChanged){
                     
-                }else{
-                    if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
-                        error = new Error('Please ensure your year is valid and you are 16 or older')
-                        error.code = 410
-                        error.name = "DOB/UserTooYoung"
-                        throw error
-                    }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
-                        error = new Error('Please ensure your day is valid.')
-                        error.code = 411
-                        error.name = "DOB/DayInvalid"
-                        throw error
-                    }else if(month !== 0 && month > 12 || month.toString() == "0"){
-                        error = new Error('Please ensure your month is valid.')
-                        error.code = 412
-                        error.name = "DOB/MonthInvalid"
-                        throw error
-                    }else{
-                        error = new Error('Please ensure your date is in the proper format (MM/DD/YYYY).')
-                        error.code = 413
-                        error.name = "DOB/FormatInvalid"
-                        throw error
+
+                        
+                        await this.addAddress()                
+                        await this.setState({fullnameError: "", submitted: true}) 
+                        setTimeout(() => this.setState({submitted: false}), 3000)
                     }
-                }      
-            }
-            if (this.state.emailUpdate !== this.props.UserStore.email){
-                if (this.state.emailUpdate.match(regexEmail)){
-                // See requirePasswordAuthentication function for more detail!
-                this.setState({passwordAlert: true, emailError: ""})
-                }else{
-                    this.setState({emailError: 'Email format must be name@domain.com'})
+                    if (nameChanged){
+
+                        let error = null;
+                        if (this.state.fullNameUpdate.match(regexFullname)){
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                'Content-Type': 'application/json',
+                                "Access-Control-Request-Method": "POST"
+                                },
+                                body: JSON.stringify({
+                                    stripeID: this.props.UserStore.stripeID,
+                                    stripeConnectID: this.props.UserStore.stripeConnectID,
+                                    name: this.state.fullNameUpdate
+                                })
+                            }
+
+                            await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editFullName`, settings).then((res) => {
+                                if(res.status === 200){
+                                    this.props.UserStore.fullname = this.state.fullNameUpdate
+                                    doc.update({ 
+                                        fullname: this.props.UserStore.fullname,
+                                        firstname: this.props.UserStore.firstname,
+                                        lastname: this.props.UserStore.lastname
+                                    })
+                                    this.setState({fullnameError: "", submitted: true}) 
+                                    setTimeout(() => this.setState({submitted: false}), 3000)
+                                }else{
+                                    // If response is not 200
+                                    error = new Error(`Please ensure your name includes a first and last name.`)
+                                    error.code = res.status
+                                    error.name = "Name/StripeFailure"
+                                    throw error
+                                }
+                            }).catch(e => {
+                                throw e
+                            })
+
+                        
+                        }else{
+                            error = new Error("Please provide first and last name with a space.")
+                            error.code = 410
+                            error.name = "Name/Invalid"
+                            throw error
+                        }           
+                    }
+                    if (dobChanged){
+                        // Checks DOB for valid format
+                        let month = parseInt(this.state.dobUpdate.split("/")[0]) || 0
+                        let day = parseInt(this.state.dobUpdate.split("/")[1]) || 0
+                        let year = parseInt(this.state.dobUpdate.split("/")[2]) || 0
+
+                        let error = null;
+
+                        if(month <= 12 && month.toString() !== "0" && day <= this.getDaysInMonth(year, month) && day.toString() !== "0" && year > 1900 && year < new Date().getFullYear() - 15){
+
+                            const settings = {
+                                method: 'POST',
+                                headers: {
+                                'Content-Type': 'application/json',
+                                "Access-Control-Request-Method": "POST"
+                                },
+                                body: JSON.stringify({
+                                    stripeConnectID: this.props.UserStore.stripeConnectID,
+                                    dob: this.state.dobUpdate
+                                })
+                            }
+                    
+
+                            await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editDOB`, settings).then((res) => {
+                                if(res.status === 200){
+                                    this.props.UserStore.dob = this.state.dobUpdate;
+                                    doc.update({
+                                        dob: this.state.dobUpdate
+                                    })
+                                    this.setState({dobError: "", submitted: true}) 
+                                    setTimeout(() => this.setState({submitted: false}), 3000)
+                                }else{
+                                    // If response is not 200
+                                    error = new Error(`Please ensure your date of birth is valid.`)
+                                    error.code = res.status
+                                    error.name = "DOB/StripeInvalid"
+                                    throw error
+                                }
+                            }).catch(e => {
+                                throw e
+                            })
+                    
+                            
+                        }else{
+                            if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
+                                error = new Error('Please ensure your year is valid and you are 16 or older')
+                                error.code = 410
+                                error.name = "DOB/UserTooYoung"
+                                throw error
+                            }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
+                                error = new Error('Please ensure your day is valid.')
+                                error.code = 411
+                                error.name = "DOB/DayInvalid"
+                                throw error
+                            }else if(month !== 0 && month > 12 || month.toString() == "0"){
+                                error = new Error('Please ensure your month is valid.')
+                                error.code = 412
+                                error.name = "DOB/MonthInvalid"
+                                throw error
+                            }else{
+                                error = new Error('Please ensure your date is in the proper format (MM/DD/YYYY).')
+                                error.code = 413
+                                error.name = "DOB/FormatInvalid"
+                                throw error
+                            }
+                        }      
+                    }
+                    if (this.state.emailUpdate !== this.props.UserStore.email){
+                        if (this.state.emailUpdate.match(regexEmail)){
+                        // See requirePasswordAuthentication function for more detail!
+                        this.setState({passwordAlert: true, emailError: ""})
+                        }else{
+                            this.setState({emailError: 'Email format must be name@domain.com'})
+                        }
+                    }
+                    await this.mailchimpUpdateUser();
                 }
+            }catch(e){
+                console.log(e)
+            
+                    if(e.name.split("/")[0] === "Phone"){
+                        this.setState({phoneError: e.message, failed: true})
+                        setTimeout(() => this.setState({failed: false}), 3000)
+                    }else if(e.name.split("/")[0] === "DOB"){
+                        this.setState({dobError: e.message, failed: true})
+                        setTimeout(() => this.setState({failed: false}), 3000)
+                    }else if(e.name.split("/")[0] === "Name"){
+                        this.setState({fullnameError: e.message, failed: true})
+                        setTimeout(() => this.setState({failed: false}), 3000)
+                    }else{
+                        alert(e.message)
+                        this.setState({failed: true})
+                        setTimeout(() => this.setState({failed: false}), 3000)
+                    }
+                    this.setState({savingChanges: false})
+                
             }
-        }catch(e){
-            console.log(e)
-           
-                if(e.name.split("/")[0] === "Phone"){
-                    this.setState({phoneError: e.message, failed: true})
-                    setTimeout(() => this.setState({failed: false}), 3000)
-                }else if(e.name.split("/")[0] === "DOB"){
-                    this.setState({dobError: e.message, failed: true})
-                    setTimeout(() => this.setState({failed: false}), 3000)
-                }else if(e.name.split("/")[0] === "Name"){
-                    this.setState({fullnameError: e.message, failed: true})
-                    setTimeout(() => this.setState({failed: false}), 3000)
-                }else{
-                    alert(e.message)
-                    this.setState({failed: true})
-                    setTimeout(() => this.setState({failed: false}), 3000)
-                }
-                this.setState({savingChanges: false})
+
+            this.setState({savingChanges: false})
             
         }
 
-        this.setState({savingChanges: false})
-        
-    }
 
     passwordInputDialogue(visible){
         this.setState({passwordAlert: visible})

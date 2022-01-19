@@ -192,9 +192,7 @@ class Home extends Component {
         //   },);
     // Geolocation.watchPosition((info) => console.log(info))
     }, 3000)
- 
-   
-  
+
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
     checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
@@ -220,7 +218,7 @@ class Home extends Component {
 
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
-
+        console.log(`Mailchimp id is ${this.props.UserStore.mailchimpID}`)
 
         // this.props.UserStore.listings.forEach(x => console.log(x.visits))
         // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
