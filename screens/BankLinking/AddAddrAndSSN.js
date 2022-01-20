@@ -148,6 +148,7 @@ addAddress = async () => {
       FBID: auth().currentUser.uid,
       stripeID: this.props.UserStore.stripeID,
       stripeConnectID: this.props.UserStore.stripeConnectID,
+      mailchimpID: this.props.UserStore.mailchimpID || null,
 
       lineOne: this.state.address.line1,
       lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
