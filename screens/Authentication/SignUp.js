@@ -134,9 +134,10 @@ export default class Authentication extends React.Component {
 
     await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUserCreated`, settings).then((res) => {
       let data = res.json()
-      // console.log(`fnRes: ${JSON.stringify(res)}`)
-      // console.log(`fnResStatus: ${res.status}`)
+      console.log(`fnRes: ${JSON.stringify(res)}`)
+      console.log(`fnResStatus: ${res.status}`)
       if(res.status === 200){
+   
         return data
       }else{
         error = new Error(`There was an issue saving your email for promotional information.`)
@@ -144,6 +145,7 @@ export default class Authentication extends React.Component {
         throw error
       }
   }).then(body => {
+      console.log(body)
       this.props.UserStore.mailchimpID = body.id;
       res = body;
       return body
@@ -171,6 +173,8 @@ export default class Authentication extends React.Component {
         dob: this.props.UserStore.dob,
       })
     }
+
+
     
     await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/addCustomer`, settings).then((res) => {
         let data = res.json()

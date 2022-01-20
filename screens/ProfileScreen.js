@@ -204,40 +204,6 @@ class Profile extends Component{
         // this._navListener.remove();
     }
 
-    mailchimpUpdateUser = async () => {
-        const settings = {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              phone: this.state.phoneUpdate,
-              name: this.state.fullNameUpdate,
-              dob: this.state.dobUpdate,
-
-              lineOne: this.state.address.line1,
-              lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
-              zipCode: this.state.address.zip,
-              city: this.state.address.city,
-              state: this.state.address.state,
-            })
-          }
-
-          await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUpdateUser`, settings).then((res) => {
-            let data = res.json()
-            // console.log(`fnRes: ${JSON.stringify(res)}`)
-            // console.log(`fnResStatus: ${res.status}`)
-            if(res.status === 200){
-              return data
-            }else{
-              alert(`${res.status}: an error has occurred in updating your marketing email info}`)
-              throw res.status;
-            }
-          })
-
-
-    }
 
 
     addAddress = async () => {
@@ -254,6 +220,7 @@ class Profile extends Component{
             FBID: auth().currentUser.uid,
             stripeID: this.props.UserStore.stripeID,
             stripeConnectID: this.props.UserStore.stripeConnectID,
+            mailchimpID: this.props.UserStore.mailchimpID || null,
       
             lineOne: this.state.address.line1,
             lineTwo: this.state.address.line2 == "" ? null : `${this.state.address.line2Prefix} ${this.state.address.line2}`,
@@ -697,6 +664,7 @@ class Profile extends Component{
                                     stripeID: this.props.UserStore.stripeID,
                                     stripeConnectID: this.props.UserStore.stripeConnectID,
                                     phone: this.state.phoneUpdate,
+                                    mailchimpID: this.props.UserStore.mailchimpID || null
                                 })
                             }
                             let error = null;
@@ -753,9 +721,11 @@ class Profile extends Component{
                                 body: JSON.stringify({
                                     stripeID: this.props.UserStore.stripeID,
                                     stripeConnectID: this.props.UserStore.stripeConnectID,
-                                    name: this.state.fullNameUpdate
+                                    name: this.state.fullNameUpdate,
+                                    mailchimpID: this.props.UserStore.mailchimpID || null
                                 })
                             }
+
 
                             await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/editFullName`, settings).then((res) => {
                                 if(res.status === 200){
@@ -804,7 +774,8 @@ class Profile extends Component{
                                 },
                                 body: JSON.stringify({
                                     stripeConnectID: this.props.UserStore.stripeConnectID,
-                                    dob: this.state.dobUpdate
+                                    dob: this.state.dobUpdate,
+                                    mailchimpID: this.props.UserStore.mailchimpID || null
                                 })
                             }
                     
@@ -861,7 +832,6 @@ class Profile extends Component{
                             this.setState({emailError: 'Email format must be name@domain.com'})
                         }
                     }
-                    await this.mailchimpUpdateUser();
                 }
             }catch(e){
                 console.log(e)

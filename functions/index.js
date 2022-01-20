@@ -5,12 +5,16 @@ admin.initializeApp();
 const db = admin.firestore();
 
 // import and initialize Mailchimp instance
-const mailchimp = require("@mailchimp/mailchimp_marketing");
+// const mailchimp = require("@mailchimp/mailchimp_marketing");
 
-mailchimp.setConfig({
-  apiKey: functions.config().mailchimp.api_key,
-  server: functions.config().mailchimp.server_prefix,
-});
+// mailchimp.setConfig({
+//   apiKey: functions.config().mailchimp.api_key,
+//   server: functions.config().mailchimp.server_prefix,
+// });
+
+// import and initialize Mailchimp instance
+const Mailchimp = require('mailchimp-api-v3');
+const mailchimp = new Mailchimp(functions.config().mailchimp.api_key);
 
 
 const fs = require('fs');
@@ -69,6 +73,26 @@ const fs = require('fs');
                     // id_number: request.body.ssn,
                 }
             )
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        ADDRESS: {
+                            ADDR1: request.body.lineOne,
+                            ADDR2: request.body.lineTwo || null,
+                            CITY: request.body.city,
+                            STATE: request.body.state,
+                            ZIP: request.body.zipCode,
+                            COUNTRY: "US"
+                        },
+                        ZIP: request.body.zipCode,            
+                    }
+                })
+            }else{
+                return null
+            }
         }).then(async() => {
             await db.collection('users').doc(request.body.FBID).get()
             .then(doc => {
@@ -114,18 +138,26 @@ const fs = require('fs');
 
     // create a Cloud Function which will trigger every time a new user is created
     exports.mailchimpUserCreated = functions.https.onRequest(async(request, response) => {
-    // const { email, displayName } = user;
-         return mailchimp.lists.addListMember(functions.config().mailchimp.audience_id, {
-            email_address: request.body.email,
-            status: "subscribed",
+
+
+        // make Mailchimp API request to add user
+        mailchimp
+        .post(`/lists/${functions.config().mailchimp.audience_id}/members`, {
+            email_address:request.body.email,
+            status: 'subscribed',
+            // optional: requires additional setup
             merge_fields: {
+            // default empty string value included for type safety in case displayName is undefined
                 FNAME: request.body.name.split(' ', 1).toString(),
                 LNAME: request.body.name.split(' ').slice(-1).join(),
                 BIRTHDAY: request.body.dob.slice(0,5),
                 PHONE: request.body.phone,
                 TEXT: `FBID: ${request.body.FBID}`
+                
             }
-        }).then((res) => {
+        })
+        .then(function(results) {
+            console.log('Successfully added new Firebase user', request.body.email, 'to Mailchimp list');
             db.collection('users').doc(request.body.FBID).get().then(doc => {
                 if(!doc.exists){
                     error = new Error("User does not exist")
@@ -134,42 +166,19 @@ const fs = require('fs');
                     throw error
                 }else{
                     return db.collection('users').doc(request.body.FBID).update({
-                        mailchimpID: res.id
+                        mailchimpID: results.id
                     })
                 }
             })
-            return res
-        }).then((res) => {
-            return response.status(200).send(res)
-        }).catch(e => {
-            console.log(e)
-            return response.status(e.statusCode || 500).send()
+            return response.status(200).send(results)
         })
+        .catch(function(err) {
+            console.log('Mailchimp: Error while attempting to add registered subscriber —', err.status);
+            return response.status(err.statusCode || 499).send()
+        });
+
     });
 
-    exports.mailchimpUpdateUser = functions.https.onRequest(async(request, response) => {
-        const res = await mailchimp.lists.setListMember(
-            functions.config().mailchimp.audience_id,
-            request.body.mailchimp_id,
-            {   email_address: request.body.email,
-                merge_fields: {
-                    FNAME: request.body.name.split(' ', 1).toString(),
-                    LNAME: request.body.name.split(' ').slice(-1).join(),
-                    BIRTHDAY: request.body.dob.slice(0,5),
-                    PHONE: request.body.phone,
-                    ADDRESS: {
-                        addr1: request.body.lineOne || null,
-                        addr2: request.body.lineTwo || null,
-                        city: request.body.city || null,
-                        state: request.body.state || null,
-                        zip: request.body.zipCode || null,
-                    },
-                    ZIP: request.body.zipCode || null,
-                } 
-            }
-          );
-          console.log(response);
-    })
 
     exports.addCustomerSSN = functions.https.onRequest((request, response) => {
         let error = null;
@@ -218,10 +227,24 @@ const fs = require('fs');
                 }
             )
             return[account, customer]
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        FNAME: request.body.name.split(' ', 1).toString(),
+                        LNAME: request.body.name.split(' ').slice(-1).join()                
+                    }
+                })
+            }else{
+                return null
+            }
         }).then(res => {
             return response.status(200).send("Successfully saved user full name")
         }).catch(err => {
-            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user name")
+            console.log(err)
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update third-party provider name")
         })
     })
 
@@ -238,6 +261,18 @@ const fs = require('fs');
                 phone: request.body.phone,
             })
             return null
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        PHONE: request.body.phone,                
+                    }
+                })
+            }else{
+                return null
+            }
         }).then((res) => {
             return response.status(200).send("Successfully saved phone number")
         }).catch(err => {
@@ -255,6 +290,18 @@ const fs = require('fs');
                     month: request.body.dob.split("/")[0],
                     year: request.body.dob.split("/")[2]
                 },
+            }
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        BIRTHDAY: request.body.dob.slice(0,5),                
+                    }
+                })
+            }else{
+                return null
             }
         }).then(() => {
             return response.status(200).send()
@@ -1096,28 +1143,6 @@ const fs = require('fs');
 
                 return userData;
 
-
-
-
-                
-
-
-
-                // console.log(doc.data().listings)
-
-
-
-                // for(let i = 0 ; i < userData.listings.length; i++){
-                //     db.collection("listings").doc(userData.listings[i]).update({
-                //         hidden: true,
-                //         toBeDeleted: true
-                //     })
-                // }
-
-                // return null
-                // bucket.deleteFiles({
-                //     prefix: `users/${uid}`
-                // })
             
             }
         }).then(async(userData) => {
