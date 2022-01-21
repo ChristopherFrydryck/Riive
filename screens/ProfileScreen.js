@@ -363,19 +363,18 @@ class Profile extends Component{
                     this.props.UserStore.payments = doc.data().payments
                 }
                 
-                    
                 // Check if spaces are updated
-                // if ( length > 0 ){
-                    db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
+                if(doc.data().listings.length > 0){
+                db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
                     let listingsData = [];
                     for(let i = 0; i < qs.docs.length; i++){
                         listingsData.push(qs.docs[i].data())
                     }
                     return listingsData
-                }).then((listingsData) => {
+                }).then(async(listingsData) => {
                         // gets every listing
                         for (let i = 0; i < listingsData.length; i++){
-                            db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
+                           await  db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
                                 this.props.UserStore.listings[i] = listingsData[i]
                                 this.props.UserStore.listings[i].visits = [];
                                 if(data.docs.length > 0){
@@ -390,10 +389,10 @@ class Profile extends Component{
                         }
                         this.setState({listings: this.props.UserStore.listings})
                     })
-                // }else{
-                //     this.props.UserStore.listings = [];
-                //     this.setState({listings: []})
-                // }
+                }else{
+                    this.props.UserStore.listings = [];
+                    this.setState({listings: []})
+                }
             })
             this.setState({isRefreshing: false})
         }
@@ -909,7 +908,6 @@ class Profile extends Component{
     }   
 
     render(){
-        // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home"))
 
         const initals = this.props.UserStore.firstname.charAt(0).toUpperCase() + "" + this.props.UserStore.lastname.charAt(0).toUpperCase()
         const {firstname, lastname, vehicles, payments, listings} = this.props.UserStore 
@@ -1265,7 +1263,7 @@ class Profile extends Component{
                  
                         <View style={styles.contentBox}>
                              <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
-                                {listings == undefined || listings.length <= 1 ? <Text style={styles.categoryTitle}>My Space</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>}
+                                { listings.length <= 1 ? <Text style={styles.categoryTitle}>My Space</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>}
                                 <ClickableChip
                                     bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%
                                     onPress={() => this.props.navigation.navigate("AddSpace")}
@@ -1274,7 +1272,7 @@ class Profile extends Component{
                             </View>                            
                         </View>
                         <View>
-                            {listings == undefined ? null : <SpacesList listings={this.state.listings}/>}
+                            {listings.length == 0 ? null : <SpacesList listings={this.state.listings}/>}
                         </View>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>

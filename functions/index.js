@@ -297,7 +297,7 @@ const fs = require('fs');
                 .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
                     merge_fields: {
                     // default empty string value included for type safety in case displayName is undefined
-                        BIRTHDAY: request.body.dob.slice(0,5),                
+                        BIRTHDAY: `${request.body.dob.split("/")[0]}/${request.body.dob.split("/")[1]}`,                
                     }
                 })
             }else{

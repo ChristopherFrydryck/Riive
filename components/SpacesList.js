@@ -53,10 +53,12 @@ class SpacesList extends React.Component{
     }
 
     componentDidUpdate(prevProps){
-        if(prevProps.listings !== this.props.UserStore.listings){
-            this.setState({          
-                data: this.props.UserStore.listings
-            });
+        console.log(`Prevprops: ${prevProps.listings.length}, current props: ${this.props.listings.length}`)
+        if(prevProps.listings !== this.props.listings){
+            console.log("TRUE")
+            // this.setState({          
+            //     data: this.props.UserStore.listings
+            // });
            
         }
     }

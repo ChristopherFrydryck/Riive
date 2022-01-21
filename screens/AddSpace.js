@@ -662,9 +662,12 @@ class addSpace extends Component {
                   visits: [],
                })
 
+               console.log(this.props.UserStore.listings.length)
+
                   // navigate back to profile
-                  this.props.navigation.navigate("Profile")
+                  
                   this.setState({savingSpace: false})
+                  this.props.navigation.navigate("Profile")
                 }catch{
                   this.setState({savingSpace: false})
                 }
