@@ -1094,6 +1094,13 @@ const fs = require('fs');
                 return usersNeedingUpdated
         }).then(users => {
             users.forEach(async (x, i) => {
+                if(x.mailchimpID){
+                    mailchimp
+                    .post(`/lists/${functions.config().mailchimp.audience_id}/members`, {
+                        email_address: x.email,
+                        status: 'subscribed',
+                    })
+                }
                 await db.collection("users").doc(x.id).update({
                     "disabled.isDisabled": false
                 })
@@ -1227,7 +1234,6 @@ const fs = require('fs');
                 error.name = 'User/DoesNotExist'
                 throw error
             }else{
-                console.log(doc.data().id)
                 return doc.data();
             }
         }).then((user) => {
@@ -1235,6 +1241,9 @@ const fs = require('fs');
              if(!user.disabled.isDisabled){
                  // First suspension
                  if(user.disabled.numTimesDisabled === 0){
+                    if(user.mailchimpID){
+                        mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${user.mailchimpID}`);
+                     }
                      admin.auth().updateUser(user.id, {
                          disabled: true,
                      });
@@ -1247,6 +1256,9 @@ const fs = require('fs');
                      })
                  // Second Suspension
                  }else if(user.disabled.numTimesDisabled === 1){
+                    if(user.mailchimpID){
+                        mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${user.mailchimpID}`);
+                     }
                      admin.auth().updateUser(user.id, {
                          disabled: true,
                      });
@@ -1259,6 +1271,9 @@ const fs = require('fs');
                      })
                  // Third Suspension
                  }else if (user.disabled.numTimesDisabled >= 2){
+                     if(user.mailchimpID){
+                        mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${user.mailchimpID}`);
+                     }
                      admin.auth().updateUser(user.id, {
                          disabled: true,
                      });
@@ -1306,8 +1321,8 @@ const fs = require('fs');
         
         
        
-        // 10 second latency before we will update the last_update field in someone's profile
-       if(currentTime - beforeUser.last_update >= 10 || !beforeUser.last_update){
+        // 60 second latency before we will update the last_update field in someone's profile
+       if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
 
     //     db.collection('users').doc(context.params.user_id).update({
     //         last_update: currentTime
