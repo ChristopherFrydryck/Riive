@@ -706,6 +706,8 @@ PODS:
     - React-Core
   - react-native-geolocation (2.0.2):
     - React
+  - react-native-geolocation-service (5.3.0-beta.4):
+    - React
   - react-native-google-maps (0.29.4):
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 3.5.0)
@@ -888,6 +890,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-config (from `../node_modules/react-native-config`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
+  - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1000,6 +1003,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-config"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
+  react-native-geolocation-service:
+    :path: "../node_modules/react-native-geolocation-service"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
   react-native-maps:
@@ -1121,6 +1126,7 @@ SPEC CHECKSUMS:
   React-logger: 9a9cd87d4ea681ae929b32ef580638ff1b50fb24
   react-native-config: 6502b1879f97ed5ac570a029961fc35ea606cd14
   react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
+  react-native-geolocation-service: c0efb872258ed9240f1003a70fca9e9757e5c785
   react-native-google-maps: 34517207071d54f3bc23c68752bbec0217bfc79e
   react-native-maps: a421fe6aeb74279597c4ea9598f25796108e2d89
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
