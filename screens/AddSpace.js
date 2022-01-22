@@ -581,6 +581,34 @@ class addSpace extends Component {
     }
   }
 
+  mailchimpHostTag = () => {
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.props.UserStore.email,
+        mailchimpID: this.props.UserStore.mailchimpID || null,
+        // Tags should be the anatomy of objects which are [{ name: "name", status: "active" }]
+        tags: [{name: "host", status: "active"}]
+      })
+    }
+    
+    fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpAddTag`, settings).then(response => {
+      return response.json();
+    }).then(response => {
+      console.log(response)
+      return response
+    }).catch(e => {
+      console.warn(e)
+      throw e
+    })
+
+    return null
+  }
+
   submitSpace = async() => {
     
     await this.verifyInputs();
@@ -613,7 +641,7 @@ class addSpace extends Component {
                 let createdTime = new Date().getTime();
                  
                  
-
+                 await this.mailchimpHostTag();
                  await db.collection("users").doc(this.props.UserStore.userID).update({
                     listings: firestore.FieldValue.arrayUnion(
                       this.state.postID
@@ -662,7 +690,7 @@ class addSpace extends Component {
                   visits: [],
                })
 
-               console.log(this.props.UserStore.listings.length)
+  
 
                   // navigate back to profile
                   

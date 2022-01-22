@@ -136,6 +136,29 @@ const fs = require('fs');
         })
     })
 
+    exports.mailchimpAddTag = functions.https.onRequest(async(request, response) => {
+
+        if(request.body.mailchimpID){
+            return mailchimp
+            .post(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}/tags`, {
+            // Tags should be the anatomy of objects which are [{ name: "name", status: "active" }]
+                TAGS: request.body.tags
+            }).then((res) => {
+                console.log("Successfully added mailchimp tags")
+                return res
+            }).catch(e => {
+                throw e
+            })
+
+            return response.status(200).send(res)
+        }else{
+            console.log("User mailchimp ID is not in DB")
+            return response.status(301).send("Failure to add mailchimp tag")
+        }
+
+
+    })
+
     // create a Cloud Function which will trigger every time a new user is created
     exports.mailchimpUserCreated = functions.https.onRequest(async(request, response) => {
 

@@ -110,6 +110,7 @@ class Profile extends Component{
             menuVisible: false,
 
             listings: this.props.UserStore.listings,
+            listingsLoaded: false,
 
 
 
@@ -327,7 +328,7 @@ class Profile extends Component{
         const db = firestore();
         const doc = db.collection('users').doc(this.props.UserStore.userID);
 
-        this.setState({isRefreshing: true})
+        this.setState({isRefreshing: true, listingsLoaded: false})
 
 
 
@@ -364,7 +365,7 @@ class Profile extends Component{
                 }
                 
                 // Check if spaces are updated
-                if(doc.data().listings.length > 0){
+                if(length > 0 && length <= 10){
                 db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
                     let listingsData = [];
                     for(let i = 0; i < qs.docs.length; i++){
@@ -373,6 +374,8 @@ class Profile extends Component{
                     return listingsData
                 }).then(async(listingsData) => {
                         // gets every listing
+                        this.props.UserStore.listings = [];
+                        setTimeout(async() => {
                         for (let i = 0; i < listingsData.length; i++){
                            await  db.collection('listings').doc(listingsData[i].listingID).collection('trips').get().then((data) => {
                                 this.props.UserStore.listings[i] = listingsData[i]
@@ -387,15 +390,61 @@ class Profile extends Component{
                                 }
                             })
                         }
-                        this.setState({listings: this.props.UserStore.listings})
+                        
+                            this.setState({listings: this.props.UserStore.listings, listingsLoaded: true})
+                        }, 300)
+                        
                     })
+                }else if(length > 10){
+                    let listings = doc.data().listings;
+                    let allArrs = [];
+                    var listingsData = [];
+                    while(listings.length > 0){
+                        allArrs.push(listings.splice(0, 10))
+                    }
+
+                    for(let i = 0; i < allArrs.length; i++){
+                    db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+                        for(let i = 0; i < qs.docs.length; i++){
+                        listingsData.push(qs.docs[i].data())
+                        }
+                    }).then(() => {
+                        setTimeout(async() => {
+                            listingsData.forEach(async(data, i) => {
+                                let visitsArray = [];
+                                let snapshot = await firestore().collection('listings')
+                                    .doc(data.listingID)
+                                    .collection('trips')
+                                    .get()
+                            
+                                await snapshot.forEach(doc =>{
+                                    visitsArray.push(doc.data().id)
+                                })
+
+                                listingsData[i].visits = visitsArray
+                                this.props.UserStore.listings = [];
+                                this.props.UserStore.listings = listingsData;
+                                
+                            })
+
+                            this.setState({listings: this.props.UserStore.listings, listingsLoaded: true})
+                        }, 300)
+                    })
+                    }
+
+  
                 }else{
-                    this.props.UserStore.listings = [];
-                    this.setState({listings: []})
+                    setTimeout(async() => {
+                        this.props.UserStore.listings = [];
+                        this.setState({listings: [], listingsLoaded: true})
+                    }, 300)
                 }
             })
+        
+
             this.setState({isRefreshing: false})
         }
+        
     }
 
 
@@ -1263,7 +1312,7 @@ class Profile extends Component{
                  
                         <View style={styles.contentBox}>
                              <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
-                                { listings.length <= 1 ? <Text style={styles.categoryTitle}>My Space</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>}
+                                <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>
                                 <ClickableChip
                                     bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%
                                     onPress={() => this.props.navigation.navigate("AddSpace")}
@@ -1272,7 +1321,7 @@ class Profile extends Component{
                             </View>                            
                         </View>
                         <View>
-                            {listings.length == 0 ? null : <SpacesList listings={this.state.listings}/>}
+                            {<SpacesList isLoaded={this.state.listingsLoaded} listings={this.state.listings}/>}
                         </View>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>

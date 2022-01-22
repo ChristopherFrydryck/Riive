@@ -209,7 +209,7 @@ export default class Authentication extends React.Component {
     }
   }).then((doc) => {
   const length = doc.data().listings.length;
-    if ( length > 0 ){
+    if ( length > 0 && length <= 10 ){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
         for(let i = 0; i < qs.docs.length; i++){
@@ -236,38 +236,38 @@ export default class Authentication extends React.Component {
   })
 
 
-    // }else if(length > 0 && length > 10){
-    // let listings = doc.data().listings;
-    // let allArrs = [];
-    // var listingsData = [];
-    // while(listings.length > 0){
-    //   allArrs.push(listings.splice(0, 10))
-    // }
+    }else if(length > 10){
+    let listings = doc.data().listings;
+    let allArrs = [];
+    var listingsData = [];
+    while(listings.length > 0){
+      allArrs.push(listings.splice(0, 10))
+    }
 
-    // for(let i = 0; i < allArrs.length; i++){
-    //   db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-    //     for(let i = 0; i < qs.docs.length; i++){
-    //       listingsData.push(qs.docs[i].data())
-    //     }
-    //   }).then(() => {
-    //       listingsData.forEach(async(data, i) => {
-    //         let visitsArray = [];
-    //         let snapshot = await firestore().collection('listings')
-    //             .doc(data.listingID)
-    //             .collection('trips')
-    //             .get()
+    for(let i = 0; i < allArrs.length; i++){
+      db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+        for(let i = 0; i < qs.docs.length; i++){
+          listingsData.push(qs.docs[i].data())
+        }
+      }).then(() => {
+          listingsData.forEach(async(data, i) => {
+            let visitsArray = [];
+            let snapshot = await firestore().collection('listings')
+                .doc(data.listingID)
+                .collection('trips')
+                .get()
         
-    //         await snapshot.forEach(doc =>{
-    //             visitsArray.push(doc.data().id)
-    //         })
+            await snapshot.forEach(doc =>{
+                visitsArray.push(doc.data().id)
+            })
 
-    //         listingsData[i].visits = visitsArray
+            listingsData[i].visits = visitsArray
 
-    //         this.props.UserStore.listings = listingsData;
+            this.props.UserStore.listings = listingsData;
             
-    //     })
-    //   })
-    // }
+        })
+      })
+    }
 
   }else{
     this.props.UserStore.listings = []
