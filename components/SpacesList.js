@@ -57,10 +57,9 @@ class SpacesList extends React.Component{
     componentDidUpdate(prevProps){
         // console.log(`Prevprops: ${prevProps.listings.length}, current props: ${this.props.listings.length}`)
         if(prevProps.listings !== this.props.listings){
-            // console.log("TRUE")
-            // this.setState({          
-            //     data: this.props.UserStore.listings
-            // });
+            this.setState({          
+                data: this.props.UserStore.listings
+            });
            
         }
     }
@@ -238,8 +237,7 @@ class SpacesList extends React.Component{
         var {width} = Dimensions.get('window');
 
 
-
-        if((!spotsLoaded || !isLoaded) && orderedData.length > 1){
+        if((!spotsLoaded || !isLoaded) && orderedData.length >= 1){
             return(
                 <View style={[styles.container, {flexDirection: 'row', justifyContent: 'space-evenly', marginLeft: 16}]}>
                     <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height="160">
