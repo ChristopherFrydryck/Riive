@@ -339,8 +339,6 @@ class Profile extends Component{
             doc.get().then(doc => {
                 const length = doc.data().listings.length;
 
-                console.log(length)
-
                 const vehiclesIDSorted = doc.data().vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
                 const vehiclesIDMobXSorted = this.props.UserStore.vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
                 const vehicleData = doc.data().vehicles.sort((a, b) => a.VehicleID > b.VehicleID)
@@ -471,7 +469,7 @@ class Profile extends Component{
         }catch(e){
             alert(e)
         }
-        }
+      }
       
 
 
