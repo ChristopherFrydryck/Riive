@@ -122,6 +122,8 @@ class SpacesList extends React.Component{
         var currentDate = new Date().getTime()
         var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => x.deleteDate > currentDate || !x.deleteDate)
 
+       
+
         
         
         let currentActive = orderedData[index].availability[dayToday].data.filter((x) => parseInt(x.start.substring(0,2)) <= hourToday && parseInt(x.end.substring(0,2)) >= hourToday)
@@ -238,6 +240,7 @@ class SpacesList extends React.Component{
         var {width} = Dimensions.get('window');
 
 
+
         if((!spotsLoaded || !isLoaded) && orderedData.length >= 1){
             return(
                 <View style={[styles.container, {flexDirection: 'row', justifyContent: 'space-evenly', marginLeft: 16}]}>
@@ -251,7 +254,7 @@ class SpacesList extends React.Component{
         return(
         <View style={styles.container}>
                         
-            {this.renderSpaceCard(this.state.data[0], 0)} 
+            {this.renderSpaceCard(orderedData[0], 0)} 
                
         </View>
             

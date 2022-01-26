@@ -392,6 +392,7 @@ class Profile extends Component{
                         }
                         
                             this.setState({listings: this.props.UserStore.listings, listingsLoaded: true})
+                          
                         }, 300)
                         
                     })
@@ -957,7 +958,7 @@ class Profile extends Component{
     }   
 
     render(){
-
+        console.log(this.state.listings.length)
         const initals = this.props.UserStore.firstname.charAt(0).toUpperCase() + "" + this.props.UserStore.lastname.charAt(0).toUpperCase()
         const {firstname, lastname, vehicles, payments, listings} = this.props.UserStore 
         var {height, width} = Dimensions.get('window');
