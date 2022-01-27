@@ -244,7 +244,7 @@ class SpacesList extends React.Component{
         if((!spotsLoaded || !isLoaded) && orderedData.length >= 1){
             return(
                 <View style={[styles.container, {flexDirection: 'row', justifyContent: 'space-evenly', marginLeft: 16}]}>
-                    <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height="160">
+                    <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height="180">
                         <Rect x="0" width={Dimensions.get('window').width * .75} height="180" rx="4" ry="4" />
                         <Rect x={Dimensions.get('window').width * .75 + 16} width={Dimensions.get('window').width * .75} height="180" rx="4" ry="4" />
                     </SvgAnimatedLinearGradient>
@@ -314,7 +314,7 @@ class SpacesList extends React.Component{
 
 const styles = StyleSheet.create({
     container:{
-        marginTop: 8,
+        marginTop: 0,
     },
     image: {
         overflow: 'hidden',

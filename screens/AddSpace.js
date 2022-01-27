@@ -599,8 +599,11 @@ class addSpace extends Component {
     fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpAddTag`, settings).then(response => {
       return response.json();
     }).then(response => {
-      console.log(response)
-      return response
+      if(response.statusCode == 204){
+        return response
+      }else{
+        throw response
+      }      
     }).catch(e => {
       console.warn(e)
       throw e
