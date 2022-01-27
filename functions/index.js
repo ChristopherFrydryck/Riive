@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const stripe = require('stripe')('sk_test_rhRKZJYIAphopgJZcoKX32yD00ciJsrqFl');
+const stripe = require('stripe')(functions.config().stripe.api_key);
 admin.initializeApp();
 const db = admin.firestore();
 
