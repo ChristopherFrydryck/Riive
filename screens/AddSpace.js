@@ -544,11 +544,11 @@ class addSpace extends Component {
     if(this.state.spacePrice){
       let spaceCentsArray = this.state.spacePrice.split(".")
       let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
-        if(spaceCents > 0){
+        if(spaceCents > 49){
           this.setState({spacePriceValid: true, priceError: ''})
           // console.log("Price is valid")
         }else{
-          this.setState({spacePriceValid: false, priceError: 'Price must be greater than $0.00'})
+          this.setState({spacePriceValid: false, priceError: 'Price must be at least than $0.50'})
           // console.log("Price must be greater than $0.00")
         }
     }else{

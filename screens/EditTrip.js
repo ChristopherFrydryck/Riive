@@ -632,7 +632,7 @@ class externalSpace extends React.Component {
                              placeholder='Visitor name...'
                              label="Visitor Name"
                              name="visitor name"
-                             editable={!this.state.visit.isCancelled || !this.isInPast ? true : false}
+                             editable={!this.state.visit.isCancelled && !this.isInPast ? true : false}
                              onChangeText = {value => {
                                 this.setState({
                                     visit: {
