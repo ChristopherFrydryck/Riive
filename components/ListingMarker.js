@@ -17,13 +17,18 @@ const ListingMarker = ({ onPress, listing, ...props}) => {
                     longitude: listing.region.longitude,
                 }} 
                 // title={listing.spaceName}
-                style={{display: 'flex', alignItems: 'center'}}
+                style={{display: 'flex', alignItems: 'center',}}
                 onPress={onPress}
             >
                 <View
                     {...allProps}
+                    // style={{display: 'flex', flexDirection: 'row', width: 40}}
                 >
-                    <Text style={{color: "white"}}>{listing.spacePrice}</Text>
+                    <View style={{display: 'flex', flexDirection: 'row', height: 22,}}>
+                        <Text style={{color: "white", fontWeight: '600', fontSize: 16, lineHeight: 20, marginRight: 2}}>{listing.spacePrice}</Text>
+                        <Text style={{color: "white", fontWeight: '600', fontSize: 12}}>/hr</Text>
+                    </View>
+                    
                     
                 </View>
                 <View style={styles.triangle} />

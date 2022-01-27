@@ -9,7 +9,7 @@ import MapView, {Marker} from 'react-native-maps';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 import { pushNotification, getToken } from '../functions/in-app/notifications'
 import { checkPermissionsStatus } from '../functions/in-app/permissions'
@@ -192,9 +192,9 @@ class Home extends Component {
         //   },);
     // Geolocation.watchPosition((info) => console.log(info))
     }, 3000)
- 
-   
-  
+
+    this.mapLocationFunction();
+
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
     checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
@@ -221,11 +221,10 @@ class Home extends Component {
        // Set Status Bar page info here!
        this._navListener = this.props.navigation.addListener('didFocus', () => {
 
-
         // this.props.UserStore.listings.forEach(x => console.log(x.visits))
         // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
 
-        checkUserStatus();
+        checkUserStatus(auth().currentUser.uid);
         
         
         
@@ -327,6 +326,7 @@ class Home extends Component {
  
 
   setLocationState = (isFirstTime, lat, lng) => {
+    //   console.log(`On ${Platform.OS}:  ${lat}, ${lng}    (${isFirstTime})`)
     try{
         if(isFirstTime){
             
@@ -379,7 +379,6 @@ class Home extends Component {
 }
 
   getCurrentLocation = async(isFirstTime) => {
-    // console.log("Getting location")
     try{
       const permission = await check(
         Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
@@ -414,7 +413,7 @@ class Home extends Component {
             },{
                 enableHighAccuracy: true,
                 timeout: 20000,
-                maximumAge: 36000,
+                maximumAge: 0,
             }
         ).then(() => {
             this.setState({locationAvailable: true})
@@ -422,7 +421,7 @@ class Home extends Component {
       }else{
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
-            // console.log(`Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`)
+            // console.log(`${JSON.stringify(position)}`)
         },  error => {
             alert(`There was an issue getting your location. ${error.message}`)
             this.setState({locationAvailable: false})
@@ -430,10 +429,10 @@ class Home extends Component {
         {
             enableHighAccuracy: true,
             timeout: 20000,
-            maximumAge: 36000,
-        }).then(() => {
-            this.setState({locationAvailable: true})
+            maximumAge: 0,
         })
+
+        // console.log(`On platform ${Platform.OS} is at lat: ${this.currentLocation.geometry.location.lat} and lng: ${this.currentLocation.geometry.location.lng}`)
         
       }
 
@@ -1049,7 +1048,7 @@ renderDotsView = (numItems, position) =>{
   render() {
     const {width, height} = Dimensions.get('window')
     const {firstname, email, permissions} = this.props.UserStore
-    if(this.state.locationAvailable && this.region.current.latitude && this.region.current.longitude){
+    if(this.region.current.latitude && this.region.current.longitude){
       return (
         <SafeAreaView style={{flex: 1, backgroundColor: this.state.searchFilterOpen ? Colors.tango500 : 'white',}}>
 

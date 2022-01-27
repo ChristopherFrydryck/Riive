@@ -1,8 +1,21 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const stripe = require('stripe')('sk_test_rhRKZJYIAphopgJZcoKX32yD00ciJsrqFl');
+const stripe = require('stripe')(functions.config().stripe.api_key);
 admin.initializeApp();
 const db = admin.firestore();
+
+// import and initialize Mailchimp instance
+// const mailchimp = require("@mailchimp/mailchimp_marketing");
+
+// mailchimp.setConfig({
+//   apiKey: functions.config().mailchimp.api_key,
+//   server: functions.config().mailchimp.server_prefix,
+// });
+
+// import and initialize Mailchimp instance
+const Mailchimp = require('mailchimp-api-v3');
+const mailchimp = new Mailchimp(functions.config().mailchimp.api_key);
+
 
 const fs = require('fs');
 
@@ -60,6 +73,26 @@ const fs = require('fs');
                     // id_number: request.body.ssn,
                 }
             )
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        ADDRESS: {
+                            ADDR1: request.body.lineOne,
+                            ADDR2: request.body.lineTwo || null,
+                            CITY: request.body.city,
+                            STATE: request.body.state,
+                            ZIP: request.body.zipCode,
+                            COUNTRY: "US"
+                        },
+                        ZIP: request.body.zipCode,            
+                    }
+                })
+            }else{
+                return null
+            }
         }).then(async() => {
             await db.collection('users').doc(request.body.FBID).get()
             .then(doc => {
@@ -102,6 +135,74 @@ const fs = require('fs');
             return response.send("")
         })
     })
+
+    exports.mailchimpAddTag = functions.https.onRequest(async(request, response) => {
+
+        if(request.body.mailchimpID){
+            return mailchimp
+            .post(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}/tags`, {
+            // Tags should be the anatomy of objects which are [{ name: "name", status: "active" }]
+                tags: request.body.tags
+            }).then((res) => {
+                // console.log("Successfully added mailchimp tags")
+                return response.status(200).send(res)
+            }).catch(e => {
+                console.log(e)
+                return response.status(310).send(e)
+            })
+
+            
+        }else{
+            console.log("User mailchimp ID is not in DB")
+            return response.status(301).send("Failure to add mailchimp tag")
+        }
+
+
+    })
+
+    // create a Cloud Function which will trigger every time a new user is created
+    exports.mailchimpUserCreated = functions.https.onRequest(async(request, response) => {
+
+
+        // make Mailchimp API request to add user
+        mailchimp
+        .post(`/lists/${functions.config().mailchimp.audience_id}/members`, {
+            email_address:request.body.email,
+            status: 'subscribed',
+            // optional: requires additional setup
+            merge_fields: {
+            // default empty string value included for type safety in case displayName is undefined
+                FNAME: request.body.name.split(' ', 1).toString(),
+                LNAME: request.body.name.split(' ').slice(-1).join(),
+                BIRTHDAY: request.body.dob.slice(0,5),
+                PHONE: request.body.phone,
+                TEXT: `FBID: ${request.body.FBID}`
+                
+            }
+        })
+        .then(function(results) {
+            console.log('Successfully added new Firebase user', request.body.email, 'to Mailchimp list');
+            db.collection('users').doc(request.body.FBID).get().then(doc => {
+                if(!doc.exists){
+                    error = new Error("User does not exist")
+                    error.statusCode = 401;
+                    error.name = 'Mailchimp/ID-Error'
+                    throw error
+                }else{
+                    return db.collection('users').doc(request.body.FBID).update({
+                        mailchimpID: results.id
+                    })
+                }
+            })
+            return response.status(200).send(results)
+        })
+        .catch(function(err) {
+            console.log('Mailchimp: Error while attempting to add registered subscriber —', err.status);
+            return response.status(err.statusCode || 499).send()
+        });
+
+    });
+
 
     exports.addCustomerSSN = functions.https.onRequest((request, response) => {
         let error = null;
@@ -150,10 +251,24 @@ const fs = require('fs');
                 }
             )
             return[account, customer]
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        FNAME: request.body.name.split(' ', 1).toString(),
+                        LNAME: request.body.name.split(' ').slice(-1).join()                
+                    }
+                })
+            }else{
+                return null
+            }
         }).then(res => {
             return response.status(200).send("Successfully saved user full name")
         }).catch(err => {
-            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update Stripe user name")
+            console.log(err)
+            return response.status(err.statusCode || 500).send(err.raw.message || "Failure to update third-party provider name")
         })
     })
 
@@ -170,6 +285,18 @@ const fs = require('fs');
                 phone: request.body.phone,
             })
             return null
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        PHONE: request.body.phone,                
+                    }
+                })
+            }else{
+                return null
+            }
         }).then((res) => {
             return response.status(200).send("Successfully saved phone number")
         }).catch(err => {
@@ -187,6 +314,18 @@ const fs = require('fs');
                     month: request.body.dob.split("/")[0],
                     year: request.body.dob.split("/")[2]
                 },
+            }
+        }).then(() => {
+            if(request.body.mailchimpID){
+                return mailchimp
+                .put(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}`, {
+                    merge_fields: {
+                    // default empty string value included for type safety in case displayName is undefined
+                        BIRTHDAY: `${request.body.dob.split("/")[0]}/${request.body.dob.split("/")[1]}`,                
+                    }
+                })
+            }else{
+                return null
             }
         }).then(() => {
             return response.status(200).send()
@@ -979,6 +1118,13 @@ const fs = require('fs');
                 return usersNeedingUpdated
         }).then(users => {
             users.forEach(async (x, i) => {
+                if(x.mailchimpID){
+                    mailchimp
+                    .post(`/lists/${functions.config().mailchimp.audience_id}/members`, {
+                        email_address: x.email,
+                        status: 'subscribed',
+                    })
+                }
                 await db.collection("users").doc(x.id).update({
                     "disabled.isDisabled": false
                 })
@@ -1024,39 +1170,20 @@ const fs = require('fs');
             }else{
                 let userData = doc.data()
                 
+                
 
                 return userData;
 
-
-
-
-                
-
-
-
-                // console.log(doc.data().listings)
-
-
-
-                // for(let i = 0 ; i < userData.listings.length; i++){
-                //     db.collection("listings").doc(userData.listings[i]).update({
-                //         hidden: true,
-                //         toBeDeleted: true
-                //     })
-                // }
-
-                // return null
-                // bucket.deleteFiles({
-                //     prefix: `users/${uid}`
-                // })
             
             }
-        }).then((userData) => {
+        }).then(async(userData) => {
             let allListings = [];
 
 
-            if(userData.listings.length > 0 && userData.listings.length <= 10){
-                db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", userData.listings).get().then((qs) => {
+            if(userData.listings.length > 0){
+                await db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", userData.listings).get().then((qs) => {
+                    console.log(qs.docs[0].data())
+                    console.log(qs.docs.length)
                     for(let i = 0; i < qs.docs.length; i++){
                         allListings.push(qs.docs[i].data())
                     }
@@ -1064,41 +1191,32 @@ const fs = require('fs');
                 }).catch(e => {
                     throw new Error("Failed to gather listing data")
                 })
-
-                return [userData, allListings]
-
-            }else if(userData.listings.length > 10){
-                let allArrs = [];
-                while(userData.listings.length > 0){
-                    allArrs.push(userData.listings.splice(0, 10))
-                }
-                for(let i = 0; i < allArrs.length; i++){
-                    db.collection('listings').where(admin.firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-                        for(let i = 0; i < qs.docs.length; i++){
-                            allListings.push(qs.docs[i].data())
-                        }
-                        return allListings;
-                    }).catch(e => {
-                        throw new Error("Failed to gather listing data")
-                    })
-                }
-
+                console.log(allListings)
                 return [userData, allListings]
 
             }else{
                 console.log("User had no listings")
                 return [userData, null]
             }
-
             
 
         
         }).then((data) => {
-            console.log(`
-                user data: ${JSON.stringify(data[0])}
-                listing data: ${JSON.stringify(data[1])}
-            `)
-            return null;
+            console.log(`All listings are ${data[1]}`)
+            let listings = data[1];
+            // If user has any listings
+            if(listings){
+                for(let i = 0 ; i < listings.length; i++){
+                    db.collection("listings").doc(listings[i].listingID).update({
+                        hidden: true,
+                        toBeDeleted: true,
+                        deleteDate: 0
+                    })
+                }
+            }
+            return data[0]
+        }).then((userData) => {
+            return db.collection('users').doc(userData.id).delete();
         }).catch(e => {
             return console.error(e)
         })
@@ -1120,6 +1238,90 @@ const fs = require('fs');
         //    return console.log("Completed Function")
         // }).catch(e => {return e})
 
+    })
+
+    exports.suspendUser = functions.https.onRequest((request, response) => {
+        // var beforeUser = snap.before.data() 
+        // var afterUser = snap.after.data()
+        // var currentTime = admin.firestore.Timestamp.now();
+        // var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
+        // var date = new Date();
+
+
+        
+         // 10 second latency before we will update the last_update field in someone's profile
+        // if(currentTime - beforeUser.last_update >= 10 || !beforeUser.last_update){
+        db.collection('users').doc(request.body.user_id).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("User does not exist")
+                error.statusCode = 401;
+                error.name = 'User/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((user) => {
+             // Suspension check
+             if(!user.disabled.isDisabled){
+                 // First suspension
+                 if(user.disabled.numTimesDisabled === 0){
+                    if(user.mailchimpID){
+                        mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${user.mailchimpID}`);
+                     }
+                     admin.auth().updateUser(user.id, {
+                         disabled: true,
+                     });
+                     db.collection('users').doc(user.id).update({
+                         disabled: {
+                             isDisabled: true,
+                             numTimesDisabled: 1,
+                             disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+                         }
+                     })
+                 // Second Suspension
+                 }else if(user.disabled.numTimesDisabled === 1){
+                    if(user.mailchimpID){
+                        mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${user.mailchimpID}`);
+                     }
+                     admin.auth().updateUser(user.id, {
+                         disabled: true,
+                     });
+                     db.collection('users').doc(user.id).update({
+                         disabled: {
+                             isDisabled: true,
+                             numTimesDisabled: 2,
+                             disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+                         }
+                     })
+                 // Third Suspension
+                 }else if (user.disabled.numTimesDisabled >= 2){
+                     if(user.mailchimpID){
+                        mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${user.mailchimpID}`);
+                     }
+                     admin.auth().updateUser(user.id, {
+                         disabled: true,
+                     });
+                     db.collection('users').doc(user.id).update({
+                         disabled: {
+                             isDisabled: true,
+                             numTimesDisabled: 3,
+                             disabledEnds: 9999999999,
+                         }
+                     })
+                 }
+             }
+            }).then(() => {
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS IN SUSPENSION",
+                })
+            }).catch(e => {
+                console.log(e)
+                return e
+            })
+        // }else{
+        //     return null
+        // }
     })
     
 
@@ -1143,57 +1345,56 @@ const fs = require('fs');
         
         
        
-        // 10 second latency before we will update the last_update field in someone's profile
-       if(currentTime - beforeUser.last_update >= 10 || !beforeUser.last_update){
+        // 60 second latency before we will update the last_update field in someone's profile
+       if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
 
-        db.collection('users').doc(context.params.user_id).update({
-            last_update: currentTime
-        }).then(() => {
-            // Suspension check
-            if(afterUser.disabled.isDisabled && disabledUntilDate < date){
-                // First suspension
-                if(beforeUser.disabled.numTimesDisabled === 0){
-                    admin.auth().updateUser(context.params.user_id, {
-                        disabled: true,
-                    });
-                    db.collection('users').doc(context.params.user_id).update({
-                        disabled: {
-                            isDisabled: true,
-                            numTimesDisabled: 1,
-                            disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
-                        }
-                    })
-                // Second Suspension
-                }else if(beforeUser.disabled.numTimesDisabled === 1){
-                    admin.auth().updateUser(context.params.user_id, {
-                        disabled: true,
-                    });
-                    db.collection('users').doc(context.params.user_id).update({
-                        disabled: {
-                            isDisabled: true,
-                            numTimesDisabled: 2,
-                            disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
-                        }
-                    })
-                // Third Suspension
-                }else if (beforeUser.disabled.numTimesDisabled >= 2){
-                    admin.auth().updateUser(context.params.user_id, {
-                        disabled: true,
-                    });
-                    db.collection('users').doc(context.params.user_id).update({
-                        disabled: {
-                            isDisabled: true,
-                            numTimesDisabled: 3,
-                            disabledEnds: 9999999999,
-                        }
-                    })
-                }
-            }
+    //     db.collection('users').doc(context.params.user_id).update({
+    //         last_update: currentTime
+    //     }).then(() => {
+    //         // Suspension check
+    //         if(afterUser.disabled.isDisabled && disabledUntilDate < date){
+    //             // First suspension
+    //             if(beforeUser.disabled.numTimesDisabled === 0){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 1,
+    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+    //                     }
+    //                 })
+    //             // Second Suspension
+    //             }else if(beforeUser.disabled.numTimesDisabled === 1){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 2,
+    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+    //                     }
+    //                 })
+    //             // Third Suspension
+    //             }else if (beforeUser.disabled.numTimesDisabled >= 2){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 3,
+    //                         disabledEnds: 9999999999,
+    //                     }
+    //                 })
+    //             }
+    //         }
 
-            return null
-        }).then(() => {
-            return admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com').file('dev-team/changelog.json`).download()
-        }).then((res) => {
+    //         return null
+    //     }).then(() => {
+           admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`).file(`dev-team/changelog.json`).download().then((res) => {
             return JSON.parse(res)
         }).then((changelog) => {
 

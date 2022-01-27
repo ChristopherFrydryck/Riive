@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import {Card, ThemeProvider} from 'react-native-paper';
 
 import ImagePicker from 'react-native-image-crop-picker';
+import config from 'react-native-config'
 
 
 import 'intl'
@@ -300,11 +301,11 @@ class editSpace extends Component {
     if(this.state.spacePrice){
       let spaceCentsArray = this.state.spacePrice.split(".")
       let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
-        if(spaceCents > 0){
+        if(spaceCents > 49){
           this.setState({spacePriceValid: true, priceError: ''})
           // console.log("Price is valid")
         }else{
-          this.setState({spacePriceValid: false, priceError: 'Price must be greater than $0.00'})
+          this.setState({spacePriceValid: false, priceError: 'Price must be at least than $0.50'})
           // console.log("Price must be greater than $0.00")
         }
     }else{
@@ -377,7 +378,7 @@ class editSpace extends Component {
      })
 
 
-      if(this.state.searchedAddress && this.state.spacePrice && this.state.priceValid && this.state.nameValid && this.state.bioValid && this.state.photo){
+      if(this.state.searchedAddress && this.state.spacePrice && this.state.priceValid && this.state.nameValid && this.state.spacePriceValid && this.state.bioValid && this.state.photo){
 
 
        
@@ -456,7 +457,7 @@ class editSpace extends Component {
                 }
         
        
-
+                this.mailchimpHostTag(true)
         // console.log(`${this.state.address.number} ${this.state.address.street}${this.state.address.box && this.state.address.box.split('').length > 0 ? " APT #" + this.state.address.box :""}, ${this.state.address.city}, ${this.state.address.state_abbr} ${this.state.address.zip}...${this.state.address.country}`)
         // console.log(`${this.state.address.spaceNumber}`)
                  
@@ -485,6 +486,37 @@ class editSpace extends Component {
     )
   }
 
+  mailchimpHostTag = (val) => {
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.props.UserStore.email,
+        mailchimpID: this.props.UserStore.mailchimpID || null,
+        // Tags should be the anatomy of objects which are [{ name: "name", status: "active" }]
+        tags: [{name: "host", status: val == true ? "active" : "inactive"}]
+      })
+    }
+    
+    fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpAddTag`, settings).then(response => {
+      return response.json();
+    }).then(response => {
+      if(response.statusCode == 204){
+        return response
+      }else{
+        throw response
+      }      
+    }).catch(e => {
+      console.warn(e)
+      throw e
+    })
+
+    return null
+  }
+
   deleteSpace = async() => {
     const db = firestore();
     let date = new Date();
@@ -499,6 +531,11 @@ class editSpace extends Component {
 
       this.props.UserStore.listings[index].toBeDeleted = true;
       this.props.UserStore.listings[index].deleteDate = date.getTime();
+
+      if(!this.props.UserStore.listings.map(x => x.toBeDeleted).includes(false)){
+        this.mailchimpHostTag(false)
+      }
+
     }).then(() => {
       this.props.navigation.goBack(null)
     })
@@ -527,6 +564,8 @@ class editSpace extends Component {
 
       this.props.UserStore.listings[index].toBeDeleted = false;
       this.props.UserStore.listings[index].deleteDate = null;
+
+      this.mailchimpHostTag(true)
     }).then(() => {
       this.props.navigation.goBack(null)
     })

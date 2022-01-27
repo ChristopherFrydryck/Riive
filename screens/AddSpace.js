@@ -544,11 +544,11 @@ class addSpace extends Component {
     if(this.state.spacePrice){
       let spaceCentsArray = this.state.spacePrice.split(".")
       let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
-        if(spaceCents > 0){
+        if(spaceCents > 49){
           this.setState({spacePriceValid: true, priceError: ''})
           // console.log("Price is valid")
         }else{
-          this.setState({spacePriceValid: false, priceError: 'Price must be greater than $0.00'})
+          this.setState({spacePriceValid: false, priceError: 'Price must be at least than $0.50'})
           // console.log("Price must be greater than $0.00")
         }
     }else{
@@ -579,6 +579,37 @@ class addSpace extends Component {
     }else{
       this.setState({bioValid: false, bioError: 'Avoid use of special characters outside of .?!;-,()$@%&'})
     }
+  }
+
+  mailchimpHostTag = () => {
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.props.UserStore.email,
+        mailchimpID: this.props.UserStore.mailchimpID || null,
+        // Tags should be the anatomy of objects which are [{ name: "name", status: "active" }]
+        tags: [{name: "host", status: "active"}]
+      })
+    }
+    
+    fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpAddTag`, settings).then(response => {
+      return response.json();
+    }).then(response => {
+      if(response.statusCode == 204){
+        return response
+      }else{
+        throw response
+      }      
+    }).catch(e => {
+      console.warn(e)
+      throw e
+    })
+
+    return null
   }
 
   submitSpace = async() => {
@@ -613,7 +644,7 @@ class addSpace extends Component {
                 let createdTime = new Date().getTime();
                  
                  
-
+                 await this.mailchimpHostTag();
                  await db.collection("users").doc(this.props.UserStore.userID).update({
                     listings: firestore.FieldValue.arrayUnion(
                       this.state.postID
@@ -662,9 +693,12 @@ class addSpace extends Component {
                   visits: [],
                })
 
+  
+
                   // navigate back to profile
-                  this.props.navigation.navigate("Profile")
+                  
                   this.setState({savingSpace: false})
+                  this.props.navigation.navigate("Profile")
                 }catch{
                   this.setState({savingSpace: false})
                 }

@@ -1,7 +1,12 @@
 import React, { Fragment } from 'react'
-import {View, StyleSheet, Switch, Modal, SafeAreaView, Dimensions, Animated, Picker, Platform, ScrollView, FlatList, TouchableOpacity} from 'react-native'
+import {View, StyleSheet, Switch, Modal, SafeAreaView, Dimensions, Animated, Picker, Platform, ScrollView, FlatList, TouchableOpacity, Vibration} from 'react-native'
 
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false
+};
 
 
 
@@ -482,13 +487,15 @@ export default class SearchFilter extends React.PureComponent{
     _updateIndex = ( viewableItems ) => {
 
         let e = viewableItems.nativeEvent.contentOffset.x;
+        let eRounded = Math.round(e / (Dimensions.get('window').width * .16))
+        
 
         let availDays = this.state.dayData.filter(x => x.isEnabled)
         let day = availDays[0]
 
         
-
         
+      
 
          // Scroll position first item
          if(e < Dimensions.get("window").width * .16/2){
@@ -513,6 +520,15 @@ export default class SearchFilter extends React.PureComponent{
         this.props.dayCallback(day);
 
         this.slideAnimate(true)
+
+        if(eRounded !== this.state.dayValue && eRounded < availDays.length){
+            if(Platform.OS == 'ios'){
+                ReactNativeHapticFeedback.trigger("impactMedium", options);
+            }else{
+                ReactNativeHapticFeedback.trigger("effectClick", options);
+            }
+           
+        }
 
         
 
@@ -546,7 +562,7 @@ export default class SearchFilter extends React.PureComponent{
 
     _updateIndexTimes = ( event ) => {
         let e = event.nativeEvent.contentOffset.x;
-
+        let eRounded = Math.round(e / this.timeWidth)
        
 
         let date = new Date();
@@ -563,7 +579,7 @@ export default class SearchFilter extends React.PureComponent{
         
         let firstItemCurrentDayEnd = this.state.endTimes.filter((x) =>  parseInt(x.label) >= parseInt(hour+""+minutes) - 30)
 
-        
+  
 
         // Arrive tab active
         if(this.state.arriveActive){
@@ -609,6 +625,24 @@ export default class SearchFilter extends React.PureComponent{
                     this.setState({departValue: firstItemCurrentDayEnd[index], departIndex: index})
                 }
             }
+
+            if(eRounded !== this.state.arriveIndex && eRounded < this.state.startTimes.length){
+                if(Platform.OS == 'ios'){
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("rigid", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("soft", options);
+                    }
+                }else{
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("effectClick", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("effectTick", options);
+                    }
+                }
+            }
+
+
         // Depart tab active  
         }else{
             // Not current day
@@ -655,6 +689,21 @@ export default class SearchFilter extends React.PureComponent{
                 }
             }
 
+            if(eRounded !== this.state.departIndex && eRounded < this.state.endTimes.length){
+                if(Platform.OS == 'ios'){
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("rigid", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("soft", options);
+                    }
+                }else{
+                    if(this.state.departValue.key % 2 == 0){
+                        ReactNativeHapticFeedback.trigger("effectClick", options);
+                    }else{
+                        ReactNativeHapticFeedback.trigger("effectTick", options);
+                    }
+                }
+            }
             
         }
 
@@ -717,7 +766,6 @@ export default class SearchFilter extends React.PureComponent{
                             showsHorizontalScrollIndicator={false}
                             maxToRenderPerBatch={2}
                             scrollEventThrottle={14}
-                            // onScrollEndDrag = {(event) => this._updateIndex(event)}
                             onScroll ={(event) => this._updateIndex(event)}
                             onMomentumScrollBegin={() => this.setState({scrollingDates: true})}
                             onMomentumScrollEnd={() => this.setState({scrollingDates: false})}

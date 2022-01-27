@@ -227,7 +227,7 @@ class Settings extends React.Component{
         this._isMounted = true;
         AppState.addEventListener("change", this._handleAppStateChange);
         this._navListener = this.props.navigation.addListener('didFocus', () => {
-         checkUserStatus();
+         checkUserStatus(auth().currentUser.uid);
          StatusBar.setBarStyle('dark-content', true);
          Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
          this.setPermissions();

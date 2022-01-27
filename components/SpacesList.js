@@ -1,10 +1,12 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity, Dimensions, FlatList, Animated } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Dimensions, FlatList, Animated, ImageBackground } from 'react-native';
 import Text from './Txt'
 import Colors from '../constants/Colors'
 import Icon from '../components/Icon'
 import Image from '../components/Image'
 
+import HomeImg1 from '../assets/img/Home-Driveway-1.jpg'
+import HomeImg2 from '../assets/img/Home-Driveway-2.jpg'
 
 import { withNavigation } from 'react-navigation';
 
@@ -53,7 +55,9 @@ class SpacesList extends React.Component{
     }
 
     componentDidUpdate(prevProps){
-        if(prevProps.listings !== this.props.UserStore.listings){
+        // console.log(`Prevprops: ${prevProps.listings.length}, current props: ${this.props.listings.length}`)
+        if(prevProps.listings !== this.props.listings){
+            this.fadeAnimation();
             this.setState({          
                 data: this.props.UserStore.listings
             });
@@ -118,6 +122,8 @@ class SpacesList extends React.Component{
         var currentDate = new Date().getTime()
         var orderedData = this.state.data.slice().sort((a, b) => b.created - a.created).filter(x => x.deleteDate > currentDate || !x.deleteDate)
 
+       
+
         
         
         let currentActive = orderedData[index].availability[dayToday].data.filter((x) => parseInt(x.start.substring(0,2)) <= hourToday && parseInt(x.end.substring(0,2)) >= hourToday)
@@ -145,7 +151,7 @@ class SpacesList extends React.Component{
        }
     //    console.log(`${spot.spaceName} is set to be deleted on ${deleteDate}`)
        
-       
+
         return(
         <TouchableOpacity
         // disabled={spot.toBeDeleted}
@@ -209,7 +215,7 @@ class SpacesList extends React.Component{
                 
                 <Icon 
                     iconName="chevron-right"
-                    iconColor={Colors.mist900}
+                    iconColor={Colors.cosmos300}
                     iconSize={28}
                 />
             </View>
@@ -219,11 +225,14 @@ class SpacesList extends React.Component{
        
     </TouchableOpacity> 
         )
+     
     }
 
     render(){
+        
 
         let {spotsLoaded} =  this.props.ComponentStore;
+        let {isLoaded} = this.props
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
         var currentDate = new Date().getTime()
@@ -231,15 +240,25 @@ class SpacesList extends React.Component{
         var {width} = Dimensions.get('window');
 
 
-        if(spotsLoaded && orderedData.length == 1){
+
+        if((!spotsLoaded || !isLoaded) && orderedData.length >= 1){
+            return(
+                <View style={[styles.container, {flexDirection: 'row', justifyContent: 'space-evenly', marginLeft: 16}]}>
+                    <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height="180">
+                        <Rect x="0" width={Dimensions.get('window').width * .75} height="180" rx="4" ry="4" />
+                        <Rect x={Dimensions.get('window').width * .75 + 16} width={Dimensions.get('window').width * .75} height="180" rx="4" ry="4" />
+                    </SvgAnimatedLinearGradient>
+                </View>
+            )
+        }else if(spotsLoaded && isLoaded && orderedData.length == 1){
         return(
         <View style={styles.container}>
                         
-            {this.renderSpaceCard(this.state.data[0], 0)} 
+            {this.renderSpaceCard(orderedData[0], 0)} 
                
         </View>
             
-        )}else if(spotsLoaded && orderedData.length > 1){
+        )}else if(spotsLoaded && isLoaded && orderedData.length > 1){
    
 
            
@@ -259,18 +278,32 @@ class SpacesList extends React.Component{
                 />
             </View>
             )
-        }else if(!spotsLoaded && orderedData.length > 1){
-            return(
-                <View style={[styles.container, {flexDirection: 'row', justifyContent: 'space-evenly', marginLeft: 16}]}>
-                    <SvgAnimatedLinearGradient width={Dimensions.get('window').width} height="160">
-                        <Rect x="0" width={Dimensions.get('window').width * .75} height="160" rx="4" ry="4" />
-                        <Rect x={Dimensions.get('window').width * .75 + 16} width={Dimensions.get('window').width * .75} height="160" rx="4" ry="4" />
-                    </SvgAnimatedLinearGradient>
-                </View>
-            )
         }else{
             return(
-              null
+              <View style={[styles.container, {flexDirection: 'row', marginLeft: 16}]}>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate("AddSpace")} style={[styles.li, {height: 160, backgroundColor: Colors.mist500}]}>
+                    <ImageBackground source={HomeImg1} imageStyle={{opacity: .2}} style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Icon 
+                            iconName="plus"
+                            iconLib="MaterialCommunityIcons"
+                            iconColor={Colors.cosmos700}
+                            iconSize={48}
+                        />
+                        <Text type="Medium" style={{fontSize: 20, color: Colors.cosmos700}}>Add First Space</Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.props.navigation.navigate("AddSpace")} style={[styles.li, {height: 160, backgroundColor: Colors.mist500}]}>
+                    <ImageBackground source={HomeImg2} imageStyle={{opacity: .2}} style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Icon 
+                            iconName="plus"
+                            iconLib="MaterialCommunityIcons"
+                            iconColor={Colors.cosmos700}
+                            iconSize={48}
+                        />
+                        <Text type="Medium" style={{fontSize: 20, color: Colors.cosmos700}}>Add First Space</Text>
+                    </ImageBackground>
+                  </TouchableOpacity>
+              </View>
             )
         }
     
@@ -281,7 +314,7 @@ class SpacesList extends React.Component{
 
 const styles = StyleSheet.create({
     container:{
-        marginTop: 8,
+        marginTop: 0,
     },
     image: {
         overflow: 'hidden',

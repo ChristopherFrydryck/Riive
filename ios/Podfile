@@ -44,6 +44,8 @@ abstract_target 'riive-app' do
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
+  pod 'RNReactNativeHapticFeedback', :path => '../node_modules/react-native-haptic-feedback'
+
   target 'riiveTests' do
     inherit! :complete
     # Pods for testing

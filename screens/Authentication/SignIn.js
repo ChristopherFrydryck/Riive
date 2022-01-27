@@ -127,6 +127,48 @@ export default class Authentication extends React.Component {
     })
   }
 
+  createMailchimpCustomer = async() => {
+    let res = null;
+    let error = null;
+
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: this.props.UserStore.fullname,
+        email: this.props.UserStore.email,
+        phone: this.props.UserStore.phone,
+        FBID: auth().currentUser.uid,
+        dob: this.props.UserStore.dob,
+      })
+    }
+
+    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUserCreated`, settings).then((res) => {
+      let data = res.json()
+      console.log(`fnRes: ${JSON.stringify(res)}`)
+      console.log(`fnResStatus: ${res.status}`)
+      if(res.status === 200){
+   
+        return data
+      }else{
+        error = new Error(`There was an issue saving your email for promotional information.`)
+        error.code = res.status;
+        throw error
+      }
+  }).then(body => {
+      this.props.UserStore.mailchimpID = body.id;
+      res = body;
+      return body
+  }).catch(e => {
+    res = error;
+    throw error
+  })
+
+}
+
 
   getCurrentUserInfo = async() => {
     const db = firestore();
@@ -162,6 +204,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.userID = doc.data().id;
               this.props.UserStore.stripeID = doc.data().stripeID;
               this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
+              this.props.UserStore.mailchimpID = doc.data().mailchimpID;
               this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
               this.props.UserStore.photo = doc.data().photo;
               this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
@@ -197,6 +240,12 @@ export default class Authentication extends React.Component {
                 last_update: currentTime,
                 email: this.props.UserStore.email,
               })
+
+              // If user is missing from mailchimp, create user
+              if(!this.props.UserStore.mailchimpID){
+                this.createMailchimpCustomer();
+              }
+
               // Upon setting the MobX State Observer, navigate to home
               this.props.navigation.navigate('Home')
           
@@ -208,7 +257,7 @@ export default class Authentication extends React.Component {
     }
   }).then((doc) => {
   const length = doc.data().listings.length;
-    if ( length > 0 ){
+    if ( length > 0 && length <= 10 ){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
         for(let i = 0; i < qs.docs.length; i++){
@@ -235,38 +284,38 @@ export default class Authentication extends React.Component {
   })
 
 
-    // }else if(length > 0 && length > 10){
-    // let listings = doc.data().listings;
-    // let allArrs = [];
-    // var listingsData = [];
-    // while(listings.length > 0){
-    //   allArrs.push(listings.splice(0, 10))
-    // }
+    }else if(length > 10){
+    let listings = doc.data().listings;
+    let allArrs = [];
+    var listingsData = [];
+    while(listings.length > 0){
+      allArrs.push(listings.splice(0, 10))
+    }
 
-    // for(let i = 0; i < allArrs.length; i++){
-    //   db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-    //     for(let i = 0; i < qs.docs.length; i++){
-    //       listingsData.push(qs.docs[i].data())
-    //     }
-    //   }).then(() => {
-    //       listingsData.forEach(async(data, i) => {
-    //         let visitsArray = [];
-    //         let snapshot = await firestore().collection('listings')
-    //             .doc(data.listingID)
-    //             .collection('trips')
-    //             .get()
+    for(let i = 0; i < allArrs.length; i++){
+      db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+        for(let i = 0; i < qs.docs.length; i++){
+          listingsData.push(qs.docs[i].data())
+        }
+      }).then(() => {
+          listingsData.forEach(async(data, i) => {
+            let visitsArray = [];
+            let snapshot = await firestore().collection('listings')
+                .doc(data.listingID)
+                .collection('trips')
+                .get()
         
-    //         await snapshot.forEach(doc =>{
-    //             visitsArray.push(doc.data().id)
-    //         })
+            await snapshot.forEach(doc =>{
+                visitsArray.push(doc.data().id)
+            })
 
-    //         listingsData[i].visits = visitsArray
+            listingsData[i].visits = visitsArray
 
-    //         this.props.UserStore.listings = listingsData;
+            this.props.UserStore.listings = listingsData;
             
-    //     })
-    //   })
-    // }
+        })
+      })
+    }
 
   }else{
     this.props.UserStore.listings = []
@@ -374,6 +423,7 @@ export default class Authentication extends React.Component {
                 this.props.UserStore.dob = doc.data().dob || null,
                 this.props.UserStore.stripeID = doc.data().stripeID;
                 this.props.UserStore.stripeConnectID = doc.data().stripeConnectID;
+                this.props.UserStore.mailchimpID = doc.data().mailchimpID;
                 this.props.UserStore.directDepositInfo = doc.data().directDeposit; 
                 this.props.UserStore.photo = doc.data().photo;
                 this.props.UserStore.joinedDate = auth().currentUser.metadata.creationTime;
@@ -404,6 +454,12 @@ export default class Authentication extends React.Component {
                   last_update: currentTime,
                   email: this.props.UserStore.email,
                 })
+
+                // If user is missing from mailchimp, create user
+                if(!this.props.UserStore.mailchimpID){
+                  this.createMailchimpCustomer();
+                }
+
                 // Upon setting the MobX State Observer, navigate to home
                 this.props.navigation.navigate('Home')
             
