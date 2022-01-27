@@ -112,6 +112,7 @@ export default class Authentication extends React.Component {
     // Unmount status bar info
   //  this._navListener.remove();
   }
+  
 
   createMailchimpCustomer = async() => {
     let res = null;
@@ -145,7 +146,6 @@ export default class Authentication extends React.Component {
         throw error
       }
   }).then(body => {
-      console.log(body)
       this.props.UserStore.mailchimpID = body.id;
       res = body;
       return body

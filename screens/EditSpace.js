@@ -457,7 +457,7 @@ class editSpace extends Component {
                 }
         
        
-
+                this.mailchimpHostTag(true)
         // console.log(`${this.state.address.number} ${this.state.address.street}${this.state.address.box && this.state.address.box.split('').length > 0 ? " APT #" + this.state.address.box :""}, ${this.state.address.city}, ${this.state.address.state_abbr} ${this.state.address.zip}...${this.state.address.country}`)
         // console.log(`${this.state.address.spaceNumber}`)
                  

@@ -127,6 +127,48 @@ export default class Authentication extends React.Component {
     })
   }
 
+  createMailchimpCustomer = async() => {
+    let res = null;
+    let error = null;
+
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: this.props.UserStore.fullname,
+        email: this.props.UserStore.email,
+        phone: this.props.UserStore.phone,
+        FBID: auth().currentUser.uid,
+        dob: this.props.UserStore.dob,
+      })
+    }
+
+    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUserCreated`, settings).then((res) => {
+      let data = res.json()
+      console.log(`fnRes: ${JSON.stringify(res)}`)
+      console.log(`fnResStatus: ${res.status}`)
+      if(res.status === 200){
+   
+        return data
+      }else{
+        error = new Error(`There was an issue saving your email for promotional information.`)
+        error.code = res.status;
+        throw error
+      }
+  }).then(body => {
+      this.props.UserStore.mailchimpID = body.id;
+      res = body;
+      return body
+  }).catch(e => {
+    res = error;
+    throw error
+  })
+
+}
+
 
   getCurrentUserInfo = async() => {
     const db = firestore();
@@ -198,6 +240,12 @@ export default class Authentication extends React.Component {
                 last_update: currentTime,
                 email: this.props.UserStore.email,
               })
+
+              // If user is missing from mailchimp, create user
+              if(!this.props.UserStore.mailchimpID){
+                this.createMailchimpCustomer();
+              }
+
               // Upon setting the MobX State Observer, navigate to home
               this.props.navigation.navigate('Home')
           
@@ -406,6 +454,12 @@ export default class Authentication extends React.Component {
                   last_update: currentTime,
                   email: this.props.UserStore.email,
                 })
+
+                // If user is missing from mailchimp, create user
+                if(!this.props.UserStore.mailchimpID){
+                  this.createMailchimpCustomer();
+                }
+
                 // Upon setting the MobX State Observer, navigate to home
                 this.props.navigation.navigate('Home')
             
