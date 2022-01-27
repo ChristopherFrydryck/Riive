@@ -18,6 +18,7 @@ import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
+import Input from '../components/Input'
 
 import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -68,6 +69,9 @@ class externalSpace extends React.Component {
             fullRefund: null,
             refundServiceFee: null,
 
+            visitorNameError: "",
+            visitorNameValid: true,
+
             changesMade: false,
         }
 
@@ -85,6 +89,8 @@ class externalSpace extends React.Component {
         }
 
         this._isMounted = true;
+
+
 
        this.checkIfRefundable()
 
@@ -123,17 +129,18 @@ class externalSpace extends React.Component {
 
     componentDidUpdate(prevProps, prevState){
 
-        if(prevState.selectedVehicle.VehicleID !== this.state.selectedVehicle.VehicleID && this.state.selectedVehicle.VehicleID !== this.props.navigation.state.params.visit.vehicle.VehicleID){
-            // If new vehicle is selected and not original vehicle on initial load
-            this.setState({changesMade: true})
-        }else if(prevState.selectedVehicle.VehicleID !== this.state.selectedVehicle.VehicleID){
-            // If original vehicle selected
-            this.setState({changesMade:false})
-        }else{
-            // DO NOTHING
-        }
-   
-    }
+                if(prevState.selectedVehicle.VehicleID !== this.state.selectedVehicle.VehicleID && this.state.selectedVehicle.VehicleID !== this.props.navigation.state.params.visit.vehicle.VehicleID || prevState.visit.visitorName !== this.state.visit.visitorName && this.state.visit.visitorName !== this.props.navigation.state.params.visit.visitorName){
+                    // If new vehicle is selected and not original vehicle on initial load or name is changed from default
+                    this.setState({changesMade: true})
+                }else if(prevState.selectedVehicle.VehicleID !== this.state.selectedVehicle.VehicleID || prevState.visit.visitorName!== this.state.visit.visitorName){
+                    // If original vehicle selected or name is the original name
+                    this.setState({changesMade:false})
+                }else{
+                    // DO NOTHING
+                }
+        
+            }
+        // }
 
     // getHost = () => {
     //     let {selectedExternalSpot} = this.props.ComponentStore;
@@ -346,6 +353,21 @@ class externalSpace extends React.Component {
         
     }
 
+    checkName = () => {
+        const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/gi;
+        if(this.state.visit.visitorName.match(regexFullname)){
+            this.setState({
+                visitorNameValid: true,
+                visitorNameError: ""
+            })
+        }else{
+            this.setState({
+                visitorNameValid: false,
+                visitorNameError: "Please provide a valid first and last name"
+            })
+        }
+    }
+
     cancelTrip = () => {
         const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
@@ -385,6 +407,10 @@ class externalSpace extends React.Component {
                             hostChargedCents: null,
                             cancelledBy: "guest",
                             updated: currentTime
+                        }).then(async() => {
+                            db.collection("listings").doc(this.props.navigation.state.params.visit.listingID).collection("trips").doc(this.props.navigation.state.params.visit.tripID).update({
+                                isCancelled: true,
+                            })
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().hostID).get().then((host) => {
                                 if(!host.exists){
@@ -434,28 +460,29 @@ class externalSpace extends React.Component {
         }
     }
 
-    updateTrip = () => {
-
-        if(this.state.changesMade){
+    updateTrip = async() => {
+        await this.checkName();
+        if(this.state.changesMade && this.state.visitorNameValid){
             const db = firestore();
             var currentTime = firestore.Timestamp.now();
             db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then((trip) => {
                 if(!trip.exists){
-                    Alert("Failed to save changes. Trip not found.")
+                    alert("Failed to save changes. Trip not found.")
                 }else{
                     try{
                         db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).update({
                             vehicle: this.state.selectedVehicle,
+                            visitorName: this.state.visit.visitorName,
                             updated: currentTime,
                         })
                         this.props.navigation.state.params.visit.vehicle = this.state.selectedVehicle;
+                        this.props.navigation.state.params.visit.visitorName = this.state.visitorName
                         this.updateTripTime();
                         this.setState({changesMade: false})
                     }catch(e){
-                        alert("Failed to save changes to trip. Try again soon and check connection.")
+                        alert("Failed to save changes to trip. Try again soon and check connection.")                        
                     }
                 }
-
             })
         }
     }
@@ -598,6 +625,30 @@ class externalSpace extends React.Component {
                             :
                             <Text>Cancelled {this.state.lastUpdate.split(" ")[0].split("/")[0] + "/" + this.state.lastUpdate.split(" ")[0].split("/")[1] + " @ " + this.state.lastUpdate.split(" ")[1].split(" ")[0].split(":")[0] + ":" + this.state.lastUpdate.split(" ")[1].split(" ")[0].split(":")[1] + " " + this.state.lastUpdate.split(" ")[2].slice(0,2)}</Text>}
                         </View>
+                    </View>
+                    <View style={[styles.contentBox, {marginTop: 16}]}>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Visitor Name</Text>
+                        <Input 
+                             placeholder='Visitor name...'
+                             label="Visitor Name"
+                             name="visitor name"
+                             editable={!this.state.visit.isCancelled || !this.isInPast ? true : false}
+                             onChangeText = {value => {
+                                this.setState({
+                                    visit: {
+                                        ...this.state.visit,
+                                        visitorName: value
+                                    }
+                                })
+                             }
+                                
+                                
+                            }
+                             value={this.state.visit.visitorName}
+                             maxLength = {40}
+                             keyboardType='default'
+                             error={this.state.visitorNameError}
+                        />
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
                         <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Vehicle</Text>

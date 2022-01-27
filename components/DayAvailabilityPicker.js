@@ -456,6 +456,10 @@ export default class DayAvailabilityPicker extends React.Component{
             db.collection("listings").doc(this.state.listing.listingID).update({
                 hidden: this.state.isHidden
             })
+
+            let indexOfListing = this.props.UserStore.listings.findIndex(i => i.listingID == this.state.listing.listingID)
+
+            this.props.UserStore.listings[indexOfListing].hidden = this.state.isHidden
         
 
         // Navigation Callback

@@ -291,9 +291,8 @@ class editSpace extends Component {
 
 
   verifyInputs = () => {
-
-    const nameValidation = /^[A-Za-z0-9]+[A-Za-z0-9 %\-&,()]+[A-Za-z0-9]{1}$/
-    const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,()\-$@%&]{1,299}$/;
+    const nameValidation = /^[A-Za-z0-9.?!;,()\-$@%&'"“”‘’#]+[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]+[A-Za-z0-9.?!;,()\-$@%&'"“”‘’#]{1}$/;
+    const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]{1,299}$/;
 
     let nameValid = nameValidation.test(this.state.spaceName)
     let bioValid = this.state.spaceBio.split("").length > 0 ? bioValidation.test(this.state.spaceBio) : true;
@@ -320,7 +319,13 @@ class editSpace extends Component {
       if(this.state.spaceName.length == 0){
         this.setState({nameError: 'Add a name to your space'})
       }else if(!nameValid){
-        this.setState({nameError: 'Avoid using special characters outside of %&-,()'})
+        if(this.state.spaceName.split("")[this.state.spaceName.length - 1] == " "){
+          this.setState({nameError: 'Avoid ending a name with a space'})
+        }else if(this.state.spaceName.length <= 3){
+          this.setState({nameError: 'A name must be at least 3 characters long'})
+        }else{
+          this.setState({nameError: 'Avoid using special characters excluding .?!;,()-$@%&\'"'})
+        }
       }
       
     }
@@ -360,7 +365,7 @@ class editSpace extends Component {
 
   submitSpace = async() => {
 
-
+    await this.setState({savingSpace: true})
     await this.verifyInputs();
 
     const db = firestore();
@@ -377,14 +382,10 @@ class editSpace extends Component {
 
        
           await this.uploadImage(this.state.photo)
-          this.setState({savingSpace: true})
           try{  
              let spaceCentsArray = this.state.spacePrice.split(".")
              let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
              let createdTime = new Date().getTime();
-                 
-           
-              await this.setState({savingSpace: true})
 
               
               
@@ -493,6 +494,12 @@ class editSpace extends Component {
       toBeDeleted: true,
       deleteDate: date.getTime()
     }).then(() => {
+      let idArray = this.props.UserStore.listings.map(x => x.listingID)
+      let index = idArray.indexOf(this.state.postID)
+
+      this.props.UserStore.listings[index].toBeDeleted = true;
+      this.props.UserStore.listings[index].deleteDate = date.getTime();
+    }).then(() => {
       this.props.navigation.goBack(null)
     })
   }
@@ -514,6 +521,12 @@ class editSpace extends Component {
     await db.collection("listings").doc(this.state.postID).update({
       toBeDeleted: false,
       deleteDate: null,
+    }).then(() => {
+      let idArray = this.props.UserStore.listings.map(x => x.listingID)
+      let index = idArray.indexOf(this.state.postID)
+
+      this.props.UserStore.listings[index].toBeDeleted = false;
+      this.props.UserStore.listings[index].deleteDate = null;
     }).then(() => {
       this.props.navigation.goBack(null)
     })
@@ -732,7 +745,7 @@ renderDotsView = (numItems, position) =>{
                    
                 </KeyboardAwareScrollView>
                 <View style={{paddingHorizontal: 16, marginBottom: 24, height: 60, alignItems: 'center', justifyContent: 'center'}}>
-                  <Button style={ this.state.changesMade ? {backgroundColor: "#FF8708", height: 48} : {backgroundColor:  Colors.mist900, height: 48}} textStyle={this.state.changesMade ? {color:"#FFFFFF"} : {color: Colors.cosmos300}} disabled={!this.state.changesMade} onPress={() => this.submitSpace()}>Save Changes</Button>
+                  <Button style={ this.state.changesMade ? {backgroundColor: "#FF8708", height: 48} : {backgroundColor:  Colors.mist900, height: 48}} textStyle={this.state.changesMade ? {color:"#FFFFFF"} : {color: Colors.cosmos300}} disabled={!this.state.changesMade} onPress={() => this.submitSpace()}>{this.state.savingSpace  ? null : "Save Changes"}</Button>
                 </View>
            
 

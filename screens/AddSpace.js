@@ -529,9 +529,8 @@ class addSpace extends Component {
   }
 
   verifyInputs = () => {
-
-    const nameValidation = /^[A-Za-z0-9]+[A-Za-z0-9 %&\-,()]+[A-Za-z0-9]{1}$/
-    const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,\-()$@%&]{1,299}$/;
+    const nameValidation = /^[A-Za-z0-9.?!;,()\-$@%&'"“”‘’#]+[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]+[A-Za-z0-9.?!;,()\-$@%&'"“”‘’#]{1}$/;
+    const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]{1,299}$/;
 
     let nameValid = nameValidation.test(this.state.spaceName)
     let bioValid = this.state.spaceBio.split("").length > 0 ? bioValidation.test(this.state.spaceBio) : true;
@@ -564,7 +563,13 @@ class addSpace extends Component {
       if(this.state.spaceName.length == 0){
         this.setState({nameError: 'Add a name to your space'})
       }else if(!nameValid){
-        this.setState({nameError: 'Avoid using special characters outside of %&-,()'})
+        if(this.state.spaceName.split("")[this.state.spaceName.length - 1] == " "){
+          this.setState({nameError: 'Avoid ending a name with a space'})
+        }else if(this.state.spaceName.length <= 3){
+          this.setState({nameError: 'A name must be at least 3 characters long'})
+        }else{
+          this.setState({nameError: 'Avoid using special characters excluding .?!;,()-$@%&\'"'})
+        }
       }
       
     }
@@ -590,7 +595,7 @@ class addSpace extends Component {
     // Create a GeoCollection reference
     const geocollection = GeoFirestore.collection('listings');
  
-
+    this.setState({savingSpace: true})
 
 
       if(this.state.searchedAddress && this.state.spacePrice && this.state.nameValid && this.state.bioValid && this.state.photo){
@@ -600,16 +605,14 @@ class addSpace extends Component {
         // console.log(`${this.state.address.number} ${this.state.address.street}${this.state.address.box && this.state.address.box.split('').length > 0 ? " APT #" + this.state.address.box :""}, ${this.state.address.city}, ${this.state.address.state_abbr} ${this.state.address.zip}...${this.state.address.country}`)
         // console.log(`${this.state.address.spaceNumber}`)
                 await this.uploadImage(this.state.photo)
-                this.setState({savingSpace: true})
                 try{  
-
+              
                 let spaceCentsArray = this.state.spacePrice.split(".")
                 let spaceCents = parseInt(spaceCentsArray[0].slice(1) + spaceCentsArray[1])
 
                 let createdTime = new Date().getTime();
                  
                  
-                 await this.setState({savingSpace: true})
 
                  await db.collection("users").doc(this.props.UserStore.userID).update({
                     listings: firestore.FieldValue.arrayUnion(
@@ -635,7 +638,7 @@ class addSpace extends Component {
                       hidden: false,
                       toBeDeleted: false,
                       deleteDate: null,
-                      visits: []
+                      // visits: []
                })
 
                // add space to mobx UserStore
@@ -1113,7 +1116,7 @@ class addSpace extends Component {
                   </Card>
                 )}}
               /> */}
-              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color: 'white'}} disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>Add Space</Button>
+              <Button style={{backgroundColor: "#FF8708"}} textStyle={{color: 'white'}} disabled={this.state.savingSpace} onPress={() => this.submitSpace()}>{this.state.savingSpace ? null : "Add Space"}</Button>
 
             </View>
             

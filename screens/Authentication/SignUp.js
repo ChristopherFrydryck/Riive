@@ -82,10 +82,6 @@ export default class Authentication extends React.Component {
 
   async componentDidMount(){
     // Remove after testing!!
-    // this.setState({email: 'admin@riive.net', password: 'Fallon430'})
-    // this.props.UserStore.email = 'admin@riive.net'
-    // this.props.UserStore.password = "Fallon430"
-
 
 
       // Set Status Bar page info here!

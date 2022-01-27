@@ -54,7 +54,7 @@ export default class FloatingCircles extends React.Component{
     render(){
        
         return(
-            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: this.props.width, height: this.props.height}}>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: this.props.width, height: this.props.height, overflow: 'visible'}}>
                 {
                     
                     this.circles.map((value, i) => {

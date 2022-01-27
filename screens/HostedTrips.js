@@ -8,6 +8,8 @@ import RadioButton from '../components/RadioButton'
 import Image from '../components/Image'
 import Colors from '../constants/Colors'
 
+import checkUserStatus from '../functions/in-app/checkUserStatus';
+
 import MapView, {Marker} from 'react-native-maps';
 import ActionSheet from "react-native-actions-sheet";
 import config from 'react-native-config'
@@ -51,6 +53,7 @@ export default class HostedTrips extends Component{
    componentDidMount(){
         // Set Status Bar page info here!
         this._navListener = this.props.navigation.addListener('didFocus', () => {
+            checkUserStatus();
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
             this.updateVisits();
@@ -139,7 +142,7 @@ export default class HostedTrips extends Component{
         this.setState({cancellingTrip: true})
 
 
-        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHostCents = (serviceFeeCents + processingFeeCents) >= 50 ? serviceFeeCents + processingFeeCents : 50;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
         let refundAmountCents = serviceFeeCents + processingFeeCents + priceCents
@@ -203,6 +206,10 @@ export default class HostedTrips extends Component{
                                 hostChargedCents: amountChargedToHostCents,
                                 cancelledBy: "host",
                                 updated: currentTime
+                            })
+                        }).then(() => {
+                            db.collection("listings").doc(this.state.selectedVisit.visit.listingID).collection("trips").doc(this.state.selectedVisit.visit.tripID).update({
+                                isCancelled: true,
                             })
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
@@ -528,7 +535,7 @@ export default class HostedTrips extends Component{
                     {isCancelled ? 
                       <Text type="Medium" numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.hal500}}>Cancelled by {visit.cancelledBy === 'host' ? 'you' : 'guest'}</Text>
                     : 
-                      <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visited by {visitorName}</Text>
+                      <Text numberOfLines={1} ellipsizeMode='tail' style={{color: Colors.cosmos700}}>Visit{isInPast ? "ed" : null} by {visitorName}</Text>
                     }
                     {isCancelled ? 
                         <Text numberOfLines={1} ellipsizeMode='tail' style={{color: "#adadad", textDecorationLine: "line-through"}}>{visit.visit.time.start.labelFormatted} - {visit.visit.time.end.labelFormatted}</Text> 
@@ -597,7 +604,7 @@ export default class HostedTrips extends Component{
 
         let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
 
-        let amountChargedToHostCents = serviceFeeCents + processingFeeCents
+        let amountChargedToHostCents = (serviceFeeCents + processingFeeCents) >= 50 ? serviceFeeCents + processingFeeCents : 50;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
             if(visible){
@@ -773,7 +780,7 @@ export default class HostedTrips extends Component{
                                 }
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8, marginBottom: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Visit Details</Text>
-                                        <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{visit.tripID}</Text>
+                                        {/* <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{visit.tripID}</Text> */}
                                 </View>
                                 {listing.spaceBio ? <Text style={{color: Colors.cosmos500, lineHeight: Platform.OS === 'ios' ? 18 : 20}}>{listing.spaceBio}</Text> : null}
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'row'}}>
@@ -793,7 +800,7 @@ export default class HostedTrips extends Component{
                                         scrollEnabled={false}
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
-                                        <Text>{listing.address.full}</Text>
+                                        <Text numberOfLines={2}>{listing.address.full}</Text>
                                         <Button onPress={() => this.openEditSpace(listing)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Edit Details</Button>
                                     </View>
                                 </View>

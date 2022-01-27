@@ -7,6 +7,7 @@ import Icon from '../components/Icon'
 import Colors from '../constants/Colors'
 
 import Round from '../functions/in-app/round'
+import checkUserStatus from '../functions/in-app/checkUserStatus';
 
 import MapView, {Marker} from 'react-native-maps';
 import config from 'react-native-config'
@@ -109,6 +110,7 @@ class reserveSpace extends Component {
 
         this._isMounted = true;
         this._navListener = this.props.navigation.addListener('didFocus', () => {
+           checkUserStatus();
            StatusBar.setBarStyle('dark-content', true);
            Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
 
@@ -549,12 +551,20 @@ class reserveSpace extends Component {
                                 },
                             }
 
+                            var shortObj = {
+                                hostID: hostDoc.id,
+                                listingID: this.props.ComponentStore.selectedExternalSpot[0].listingID,
+                                listingSubSpaceID: null,
+                                id: ref.id,
+                                created: currentTime,
+                                isCancelled: false,
+                                visitorID: this.props.UserStore.userID,
+                            }
+
                             
 
                             db.collection("trips").doc(ref.id).set(obj)
-                            db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).update({
-                                visits: firestore.FieldValue.arrayUnion(ref.id)
-                            });
+                            db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).collection("trips").doc(ref.id).set(shortObj);
                             db.collection("users").doc(this.props.UserStore.userID).update({
                                 trips: firestore.FieldValue.arrayUnion(ref.id)
                             })

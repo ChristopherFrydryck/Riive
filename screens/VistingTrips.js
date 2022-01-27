@@ -13,6 +13,8 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import DayMap from '../constants/DayMap'
 import NightMap from '../constants/NightMap'
 
+import checkUserStatus from '../functions/in-app/checkUserStatus';
+
 import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -48,6 +50,7 @@ export default class VisitingTrips extends Component{
    componentDidMount(){
         // Set Status Bar page info here!
     this._navListener = this.props.navigation.addListener('didFocus', () => {
+            checkUserStatus();
             StatusBar.setBarStyle('dark-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor('white');   
             this.updateVisits();  
@@ -435,7 +438,7 @@ export default class VisitingTrips extends Component{
                                 <View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8, marginBottom: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Listing Details</Text>
-                                        <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{data.visit.tripID}</Text>
+                                        {/* <Text style={{flex: 0, color: Colors.cosmos300, fontSize: 11}}>{data.visit.tripID}</Text> */}
                                 </View>
                                 {data.listing.spaceBio ? <Text style={{color: Colors.cosmos500, lineHeight: Platform.OS === 'ios' ? 18 : 20}}>{data.listing.spaceBio}</Text> : null}
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'row'}}>
@@ -455,11 +458,16 @@ export default class VisitingTrips extends Component{
                                         scrollEnabled={false}
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
-                                        <Text onPress={()=> {
-                                            Clipboard.setString(data.listing.address.full)
-                                            this.slideBottomPill()
-                                            
-                                        }}>{data.listing.address.full}  <Icon iconName="copy" iconColor={Colors.cosmos300} iconSize={16} /></Text>
+                                        <TouchableOpacity 
+                                            onPress={()=> {
+                                                Clipboard.setString(data.listing.address.full)
+                                                this.slideBottomPill()
+                                            }} 
+                                            style={{flexDirection: 'row', paddingRight: 16}}
+                                        >
+                                            <Text numberOfLines={2}>{data.listing.address.full}</Text>
+                                            <Icon iconName="copy" iconColor={Colors.cosmos300} iconSize={16} />
+                                        </TouchableOpacity>
                                         
                                         <Button onPress={() => this.openGps(data.listing.region.latitude, data.listing.region.longitude, data.listing.address.full)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Get Directions</Button>
                                     </View>

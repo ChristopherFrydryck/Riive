@@ -13,6 +13,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {requestLocationAccuracy, check ,PERMISSIONS, openSettings, checkMultiple, checkNotifications} from 'react-native-permissions';
 import { pushNotification, getToken } from '../functions/in-app/notifications'
 import { checkPermissionsStatus } from '../functions/in-app/permissions'
+import checkUserStatus from '../functions/in-app/checkUserStatus';
 
 import logo from '../assets/img/Logo_Abbreviated_001.png'
 
@@ -183,9 +184,17 @@ class Home extends Component {
 //   this.setState({changelogVersion: V})
 
   async componentDidMount(){
-    // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`));
-
-
+    setInterval(() => {
+        // Geolocation.getCurrentPosition(info => console.log(`${Platform.OS} ${JSON.stringify(info)}`), (e) => console.log(e), {
+        //     enableHighAccuracy: true,
+        //     timeout: 20000,
+        //     maximumAge: 36000,
+        //   },);
+    // Geolocation.watchPosition((info) => console.log(info))
+    }, 3000)
+ 
+   
+  
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
     checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
@@ -213,23 +222,18 @@ class Home extends Component {
        this._navListener = this.props.navigation.addListener('didFocus', () => {
 
 
-        // If user is not signed in anymore
-        if(!this.props.UserStore.loggedIn){
-            // Sign user out
-            auth().signOut().then(() => {
-                // Once sign out, reload app and reset UserStore
-                this.props.UserStore.reset();
-                DevSettings.reload();
-            })
-        }
+        // this.props.UserStore.listings.forEach(x => console.log(x.visits))
+        // console.log(this.props.UserStore.listings.filter(x => x.spaceName == "Home")[0].visits)
+
+        checkUserStatus();
+        
         
         
 
    
-        
         this.mapLocationFunction();
         this.rippleAnimation();
-        this.getCurrentLocation(false);
+        this.getCurrentLocation(true);
         
         if(this.state.searchFilterOpen){
             StatusBar.setBarStyle('light-content', true);
@@ -259,6 +263,7 @@ class Home extends Component {
         // })
 
       })
+
 
       
 
@@ -293,6 +298,8 @@ class Home extends Component {
    
 
   }
+
+
 
   setPermissions = () => {
     checkPermissionsStatus().then(res => {
@@ -362,11 +369,11 @@ class Home extends Component {
   }
 
   mapLocationFunction = () => {
-     
     this._interval = setInterval(() => {
         if(this.mapScrolling === false){
           this.getCurrentLocation(false)
         }
+       
       }, 5000)
       
 }
@@ -404,21 +411,30 @@ class Home extends Component {
             //     );
             // }
                 
+            },{
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 36000,
             }
-        );
+        ).then(() => {
+            this.setState({locationAvailable: true})
+        })
       }else{
         await Geolocation.getCurrentPosition((position) => {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
+            // console.log(`Lat: ${position.coords.latitude}, Long: ${position.coords.longitude}`)
         },  error => {
             alert(`There was an issue getting your location. ${error.message}`)
             this.setState({locationAvailable: false})
         },
         {
-            enableHighAccuracy: false,
-            timeout: 10000,
-            maximumAge: 3600000
+            enableHighAccuracy: true,
+            timeout: 20000,
+            maximumAge: 36000,
+        }).then(() => {
+            this.setState({locationAvailable: true})
         })
-        this.setState({locationAvailable: true})
+        
       }
 
      
@@ -1001,6 +1017,7 @@ goToReserveSpace = () => {
     // Unmount status bar info
     // this._navListener.remove();
     clearInterval(this._interval)
+    Geolocation.stopObserving();
   }
 
   carouselUpdate = (xVal) => {
@@ -1008,7 +1025,7 @@ goToReserveSpace = () => {
 
     let newIndex = Math.round(xVal/width)
 
-    console.log(newIndex)
+    // console.log(newIndex)
     
 
     this.setState({currentActivePhoto: newIndex})
