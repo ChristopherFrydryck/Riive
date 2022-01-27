@@ -142,15 +142,16 @@ const fs = require('fs');
             return mailchimp
             .post(`/lists/${functions.config().mailchimp.audience_id}/members/${request.body.mailchimpID}/tags`, {
             // Tags should be the anatomy of objects which are [{ name: "name", status: "active" }]
-                TAGS: request.body.tags
+                tags: request.body.tags
             }).then((res) => {
-                console.log("Successfully added mailchimp tags")
-                return res
+                // console.log("Successfully added mailchimp tags")
+                return response.status(200).send(res)
             }).catch(e => {
-                throw e
+                console.log(e)
+                return response.status(310).send(e)
             })
 
-            return response.status(200).send(res)
+            
         }else{
             console.log("User mailchimp ID is not in DB")
             return response.status(301).send("Failure to add mailchimp tag")

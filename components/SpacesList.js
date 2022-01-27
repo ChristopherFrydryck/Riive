@@ -215,7 +215,7 @@ class SpacesList extends React.Component{
                 
                 <Icon 
                     iconName="chevron-right"
-                    iconColor={Colors.mist900}
+                    iconColor={Colors.cosmos300}
                     iconSize={28}
                 />
             </View>
