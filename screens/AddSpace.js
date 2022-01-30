@@ -629,7 +629,7 @@ class addSpace extends Component {
     this.setState({savingSpace: true})
 
 
-      if(this.state.searchedAddress && this.state.spacePrice && this.state.nameValid && this.state.bioValid && this.state.photo){
+      if(this.state.searchedAddress && this.state.spacePrice && this.state.spacePriceValid && this.state.nameValid && this.state.bioValid && this.state.photo){
 
        
 

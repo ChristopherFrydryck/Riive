@@ -305,7 +305,7 @@ class editSpace extends Component {
           this.setState({spacePriceValid: true, priceError: ''})
           // console.log("Price is valid")
         }else{
-          this.setState({spacePriceValid: false, priceError: 'Price must be at least than $0.50'})
+          this.setState({spacePriceValid: false, priceError: 'Price must be at least $0.50'})
           // console.log("Price must be greater than $0.00")
         }
     }else{
@@ -749,7 +749,7 @@ renderDotsView = (numItems, position) =>{
                     
                   </View>
                  
-                  <View style={{paddingHorizontal: 16}}>
+                  <View style={{paddingHorizontal: 16, marginBottom: 16}}>
                     <Input 
                         placeholder='$1.25'         
                         label="Cost Per Hour"
