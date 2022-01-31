@@ -703,12 +703,6 @@ class addSpace extends Component {
                   this.setState({savingSpace: false})
                 }
                 
-            
-               
-               
-              
-           
-                
 
       }else{
         this.setState({savingSpace: false})

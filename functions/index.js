@@ -1180,7 +1180,7 @@ const fs = require('fs');
             let allListings = [];
 
 
-            if(userData.listings.length > 0){
+            if(userData.listings.length > 0 && userData.listings.length <= 10){
                 await db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", userData.listings).get().then((qs) => {
                     console.log(qs.docs[0].data())
                     console.log(qs.docs.length)
@@ -1188,12 +1188,49 @@ const fs = require('fs');
                         allListings.push(qs.docs[i].data())
                     }
                     return allListings;
-                }).catch(e => {
-                    throw new Error("Failed to gather listing data")
                 })
+                // .then((spaces) => {
+                //     spaces.forEach(x => {
+                //         db.collection('listings').doc(x.listingID).update({
+                //             hidden: true,
+                //             toBeDeleted: true,
+                //             deleteDate: Date.now()
+                //         })
+                //     })
+                    
+
+                // }).catch(e => {
+                //     throw new Error("Failed to gather listing data")
+                // })
                 console.log(allListings)
                 return [userData, allListings]
 
+            }else if(userData.listings.length > 10){
+                    let listings = userData.listings;
+                    let allArrs = [];
+                    while(listings.length > 0){
+                        allArrs.push(listings.splice(0, 10))
+                    }
+
+                    for(let i = 0; i < allArrs.length; i++){
+                        db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+                            for(let i = 0; i < qs.docs.length; i++){
+                                allListings.push(qs.docs[i].data())
+                            }
+                            return allListings
+                        })
+                        // .then((spaces) => {
+                        //     return spaces.forEach(x => {
+                        //         db.collection('listings').doc(x.listingID).update({
+                        //             hidden: true,
+                        //             toBeDeleted: true,
+                        //             deleteDate: Date.now()
+                        //         })
+                        //     })
+                        // })
+                    }
+
+                    return[userData, allListings]
             }else{
                 console.log("User had no listings")
                 return [userData, null]
@@ -1202,7 +1239,7 @@ const fs = require('fs');
 
         
         }).then((data) => {
-            console.log(`All listings are ${data[1]}`)
+            // console.log(`All listings are ${data[1]}`)
             let listings = data[1];
             // If user has any listings
             if(listings){
@@ -1210,13 +1247,22 @@ const fs = require('fs');
                     db.collection("listings").doc(listings[i].listingID).update({
                         hidden: true,
                         toBeDeleted: true,
-                        deleteDate: 0
+                        deleteDate: Date.now()
                     })
                 }
             }
             return data[0]
         }).then((userData) => {
-            return db.collection('users').doc(userData.id).delete();
+            if(userData.mailchimpID){
+                mailchimp.delete(`/lists/${functions.config().mailchimp.audience_id}/members/${userData.mailchimpID}`);
+             }
+            return db.collection('users').doc(userData.id).update({
+                deleted: {
+                    isDeleted: true,
+                    toBeDeleted: true,
+                    deletedStarts: Date.now()
+                }
+            })
         }).catch(e => {
             return console.error(e)
         })
@@ -1339,14 +1385,23 @@ const fs = require('fs');
         // When changelog updates, update the file located at https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/dev-team%2Fchangelog.json?alt=media&token=9210aa16-dd93-41df-8246-a17c58a4ee9e
 
         
-
-
+        // console.log(`After user to be deleted: ${afterUser.deleted.toBeDeleted}`)
+        //     console.log(`toBeDeleted time: ${afterUser.deleted.deletedStarts}`)
+        //     console.log(`timestamp: ${Date.now()}`)
         
+            
+            if(afterUser.deleted.toBeDeleted == true && afterUser.deleted.deletedStarts < Date.now()){
+                admin.auth().deleteUser(afterUser.id)
+                
+            }
+
         
         
        
         // 60 second latency before we will update the last_update field in someone's profile
        if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
+
+       
 
     //     db.collection('users').doc(context.params.user_id).update({
     //         last_update: currentTime
@@ -1457,6 +1512,7 @@ const fs = require('fs');
         }else{
             return null
         }
+        
        
     
    
