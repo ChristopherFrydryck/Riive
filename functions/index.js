@@ -1117,6 +1117,7 @@ const fs = require('fs');
                 });
                 return usersNeedingUpdated
         }).then(users => {
+
             users.forEach(async (x, i) => {
                 if(x.mailchimpID){
                     mailchimp
@@ -1125,6 +1126,8 @@ const fs = require('fs');
                         status: 'subscribed',
                     })
                 }
+            
+
                 await db.collection("users").doc(x.id).update({
                     "disabled.isDisabled": false
                 })
@@ -1307,6 +1310,8 @@ const fs = require('fs');
                 return doc.data();
             }
         }).then((user) => {
+            let allListings = [];
+
              // Suspension check
              if(!user.disabled.isDisabled){
                  // First suspension
@@ -1355,6 +1360,42 @@ const fs = require('fs');
                          }
                      })
                  }
+
+                  // 
+                if(user.listings.length > 0 && user.listings.length <= 10){
+                    db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", user.listings).get().then((qs) => {
+                        // console.log(qs.docs[0].data())
+                        // console.log(qs.docs.length)
+                        for(let i = 0; i < qs.docs.length; i++){
+                            allListings.push(qs.docs[i].data())
+                        }
+                        return allListings;
+                    })
+                }else if(user.listings.length > 10){
+                    let listings = x.listings;
+                    let allArrs = [];
+                    while(listings.length > 0){
+                        allArrs.push(listings.splice(0, 10))
+                    }
+
+                    for(let i = 0; i < allArrs.length; i++){
+                        db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+                            for(let i = 0; i < qs.docs.length; i++){
+                                allListings.push(qs.docs[i].data())
+                            }
+                            return allListings
+                        })
+                        
+                    }
+                }
+
+                if(allListings.length > 0){
+                    allListings.forEach(listing => {
+                        db.collection('listings').doc(listing.listingID).update({
+                            hidden: true,
+                        })
+                    })
+                }
              }
             }).then(() => {
                 return response.send({

@@ -38,7 +38,7 @@ export default checkUserStatus = async(userID) => {
                     }else{
                         Alert.alert(
                             "Account Suspension",
-                            "Your account has been suspended.",
+                            "Your account has been suspended. Any listings you may have are paused, but you will still be hosting your upcoming guests. For questions, reach out to us at Support@riive.net",
                             [
                                 { text: 'Close' , onPress: () =>{
                                     DevSettings.reload();
@@ -58,7 +58,7 @@ export default checkUserStatus = async(userID) => {
         }else{
             Alert.alert(
                 "Whoops! Something went wrong.",
-                "We had issues gathering your user data. Try logging back in.",
+                "We had issues checking your user credentials. Try logging back in.",
                 [
                     { text: 'Close' , onPress: () =>{
                         DevSettings.reload();
