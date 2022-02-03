@@ -1310,7 +1310,6 @@ const fs = require('fs');
                 return doc.data();
             }
         }).then((user) => {
-            let allListings = [];
 
              // Suspension check
              if(!user.disabled.isDisabled){
@@ -1361,16 +1360,26 @@ const fs = require('fs');
                      })
                  }
 
-                  // 
+                 return user
+             }
+            }).then(async(user) => {
+                let allListings = [];
+
                 if(user.listings.length > 0 && user.listings.length <= 10){
-                    db.collection("listings").where(admin.firestore.FieldPath.documentId(), "in", user.listings).get().then((qs) => {
+                    await db.collection('listings').where(admin.firestore.FieldPath.documentId(), "in", user.listings).get().then((qs) => {
                         // console.log(qs.docs[0].data())
                         // console.log(qs.docs.length)
                         for(let i = 0; i < qs.docs.length; i++){
                             allListings.push(qs.docs[i].data())
                         }
-                        return allListings;
                     })
+
+                    allListings.forEach(listing => {
+                        db.collection('listings').doc(listing.listingID).update({
+                            hidden: true,
+                        })
+                    })
+
                 }else if(user.listings.length > 10){
                     let listings = x.listings;
                     let allArrs = [];
@@ -1379,7 +1388,7 @@ const fs = require('fs');
                     }
 
                     for(let i = 0; i < allArrs.length; i++){
-                        db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+                        await db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
                             for(let i = 0; i < qs.docs.length; i++){
                                 allListings.push(qs.docs[i].data())
                             }
@@ -1387,16 +1396,16 @@ const fs = require('fs');
                         })
                         
                     }
-                }
 
-                if(allListings.length > 0){
                     allListings.forEach(listing => {
                         db.collection('listings').doc(listing.listingID).update({
                             hidden: true,
                         })
                     })
+                }else{
+                    return null
                 }
-             }
+
             }).then(() => {
                 return response.send({
                     statusCode: 200,
