@@ -37,6 +37,10 @@
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     <!-- END GOOGLE MAPS CONFIG -->
 
+    <!-- FIREBASE NOTIFICATION ICON -->
+    <meta-data  android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@mipmap/ic_notification" />
+
+    
     </application>
 
 </manifest>
