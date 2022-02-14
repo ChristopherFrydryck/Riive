@@ -423,8 +423,10 @@ class Home extends Component {
             this.setLocationState(isFirstTime, position.coords.latitude, position.coords.longitude)
             // console.log(`${JSON.stringify(position)}`)
         },  error => {
-            alert(`There was an issue getting your location. ${error.message}`)
-            this.setState({locationAvailable: false})
+            if(this.state.locationAvailable){
+                alert(`There was an issue getting your location. ${error.message}`)
+                this.setState({locationAvailable: false})
+            }
         },
         {
             enableHighAccuracy: true,
