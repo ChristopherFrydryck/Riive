@@ -1,6 +1,6 @@
 {
   "name": "riive",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "devices": "adb devices && xcrun instruments -s devices",
@@ -12,7 +12,7 @@
     "firebase-dev": "firebase use dev",
     "firebase-prod": "firebase use prod",
     "android": "ENVFILE=.env.development react-native run-android --variant=devDebug --appIdSuffix development",
-    "android-build": "cd android && ./gradlew bundleRelease && cd ..",
+    "android-build": "cd android && ENVFILE=.env.production ./gradlew bundleRelease && cd ..",
     "android-release": "ENVFILE=.env.production react-native run-android --variant=prodRelease",
     "android-device-release": "ENVFILE=.env.production react-native run-android --deviceId=$DEVICEID --variant=prodRelease",
     "android-device": "ENVFILE=.env.development react-native run-android --deviceId=$DEVICEID --appIdSuffix development --variant=devDebug",
