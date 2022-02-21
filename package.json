@@ -2,6 +2,7 @@
   "name": "riive",
   "version": "1.0.0",
   "private": true,
+  "beta": true,
   "scripts": {
     "devices": "adb devices && xcrun instruments -s devices",
     "clean-android": "cd android && ./gradlew clean && cd ..",
