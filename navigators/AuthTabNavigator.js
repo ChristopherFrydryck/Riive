@@ -55,9 +55,9 @@ const AuthenticationTabNav = createMaterialTopTabNavigator({
 {
     tabBarComponent: MaterialTopTabBarWrapper,
     initialRouteName: "SignIn",
+    tabBarPosition: "top",
     navigationOptions:{
         headerStyle: { borderBottomColor: 'transparent' },
-        
     },
     tabBarOptions: {
         labelStyle: {

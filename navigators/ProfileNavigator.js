@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from 'react-navigation-stack'
 import LegalNavigator from './LegalNavigator'
 import BankLinkNavigator from './BankLinkNavigator'
-import Auth from '../screens/Authentication'
+import Auth from './AuthTabNavigator'
 
 import Profile from '../screens/ProfileScreen'
 import BankInfo from '../screens/BankLinking/LinkedBankInfo'
@@ -29,7 +29,14 @@ const ProfileNavigator = createStackNavigator({
     AddPayment: AddPayment,
     EditPayment: EditPayment,
     AddSpace: AddSpace,
-    SignOut: Auth,
+    SignOut: {
+        screen: Auth,
+        navigationOptions: {
+            headerShown: false,
+            headerLeft: () => null,
+            gestureEnabled: false,
+        }
+    },
     EditSpace: EditSpace,
     LegalNavigator: LegalNavigator,
     BankInfo: BankInfo,

@@ -14,6 +14,7 @@ import config from 'react-native-config'
 
 import ImagePicker from 'react-native-image-crop-picker';
 import { request } from 'react-native-permissions';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 import ProfilePic from '../components/ProfilePic'
 import TopBar from '../components/TopBar'
@@ -946,8 +947,15 @@ class Profile extends Component{
             this.props.UserStore.loggedIn = false;
             this.props.UserStore.reset();
             await auth().signOut();
-            DevSettings.reload();
-            
+            this.props.navigation.navigate("SignOut")
+
+            // const resetAction = StackActions.reset({
+            //     index: 0,
+            //     actions: [NavigationActions.navigate({ routeName: 'SignOut' })],
+            //   });
+            //   this.props.navigation.dispatch(resetAction);
+
+          
         }catch(e){
             console.log(e)
         }
