@@ -354,7 +354,7 @@ class externalSpace extends React.Component {
     }
 
     checkName = () => {
-        const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/gi;
+        const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})$/gi;
         if(this.state.visit.visitorName.match(regexFullname)){
             this.setState({
                 visitorNameValid: true,
