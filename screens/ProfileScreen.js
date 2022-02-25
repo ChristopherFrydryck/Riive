@@ -1,5 +1,5 @@
 import React, {Component, useRef} from 'react'
-import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking, DevSettings } from 'react-native'
+import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import Input from '../components/Input'

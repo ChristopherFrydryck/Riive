@@ -158,6 +158,12 @@ class Home extends Component {
           latitudeDelta: null,
           longitudeDelta: null,
       },
+      scrolled: {
+        latitude: null,
+        longitude: null,
+        latitudeDelta: null,
+        longitudeDelta: null,
+      },
       current: {
           latitude: null,
           longitude: null,
@@ -794,6 +800,11 @@ addressCallbackFunction  = (childData) => {
                 latitude: childData.region.latitude,
                 longitude: childData.region.longitude
             },
+            scrolled: {
+                ...this.region.current,
+                latitude: childData.region.latitude,
+                longitude: childData.region.longitude
+            },
             searched: {
                 ...this.region.current,
                 latitude: childData.region.latitude,
@@ -825,6 +836,11 @@ onSelectAddress = async(det) => {
           ...this.region.current,
           latitude: det.geometry.location.lat,
           longitude: det.geometry.location.lng
+      },
+      scrolled: {
+        ...this.region.current,
+        latitude: det.geometry.location.lat,
+        longitude: det.geometry.location.lng
       },
       searched: {
           ...this.region.current,
@@ -922,19 +938,19 @@ onRegionChange = (region) => {
 
       this.region = {
           ...this.region,
-          current: {
+          scrolled: {
               latitudeDelta: region.latitudeDelta,
               longitudeDelta: region.longitudeDelta,
               latitude: region.latitude,
               longitude: region.longitude
-          }
+          },
       }
       
       this.setState(prevState => ({
           mapScrolled: true,
       }))
 
-      this.getResults(this.region.current.latitude, this.region.current.longitude, this.region.current.longitudeDelta * 69, prevLat, prevLng)
+      this.getResults(this.region.scrolled.latitude, this.region.scrolled.longitude, this.region.scrolled.longitudeDelta * 69, prevLat, prevLng)
 
       
   }
@@ -1124,13 +1140,14 @@ renderDotsView = (numItems, position) =>{
                   longitudeDelta: 0.025
               }}
               region={Platform.OS == 'ios' ? {
-                  latitude: this.region.searched.latitude && !this.state.mapScrolled ? this.region.searched.latitude : this.region.current.latitude,
+                  
+                  latitude: this.region.searched.latitude && !this.state.mapScrolled ? this.region.searched.latitude : this.state.mapScrolled ? this.region.scrolled.latitude : this.region.current.latitude,
 
-                  longitude: this.region.searched.longitude && !this.state.mapScrolled ? this.region.searched.longitude : this.region.current.longitude,
+                  longitude: this.region.searched.longitude && !this.state.mapScrolled ? this.region.searched.longitude : this.state.mapScrolled ? this.region.scrolled.longitude : this.region.current.longitude,
 
-                  latitudeDelta: this.region.searched.latitudeDelta  && !this.state.mapScrolled ? this.region.searched.latitudeDelta : this.region.current.latitudeDelta ,
+                  latitudeDelta: this.region.searched.latitudeDelta  && !this.state.mapScrolled ? this.region.searched.latitudeDelta : this.state.mapScrolled ? this.region.scrolled.latitudeDelta : this.region.current.latitudeDelta ,
 
-                  longitudeDelta: this.region.searched.longitudeDelta  && !this.state.mapScrolled ? this.region.searched.longitudeDelta : this.region.current.longitudeDelta
+                  longitudeDelta: this.region.searched.longitudeDelta  && !this.state.mapScrolled ? this.region.searched.longitudeDelta : this.state.mapScrolled ? this.region.scrolled.longitudeDelta : this.region.current.longitudeDelta
                 } : 
                   this.region.searched.latitude && this.region.searched.longitude && !this.state.mapScrolled ? 
                     {
