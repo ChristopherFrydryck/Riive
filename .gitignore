@@ -59,6 +59,7 @@ local.properties
 gradle.properties
 *.iml
 *.hprof
+app/my-upload-key.keystore
 
 # Node
 node_modules

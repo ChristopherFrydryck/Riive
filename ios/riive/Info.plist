@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -36,15 +36,15 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to take photos.</string>
+	<string>We need access to your camera to take photos for any listings you may create.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>We need access to your location to show you relevant search results. With "Always" access we'll also send you location based notifications.</string>
+	<string>We need access to your location to show you relevant search results. With &quot;Always&quot; access we&apos;ll also send you location based notifications.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>We need access to your location to show you relevant search results. With "Always" access we'll also send you location based notifications.</string>
+	<string>We need access to your location to show you relevant search results. With &quot;Always&quot; access we&apos;ll also send you location based notifications.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need access to your location to show you relevant search results.</string>
+	<string>We need access to your location to show you relevant search results in the app.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your camera roll to update and add photos.</string>
+	<string>We need access to your camera roll to add profile pictures and add images to any listings you may create.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Light.ttf</string>

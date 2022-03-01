@@ -119,7 +119,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* riiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* riiveTests.m */; };
-		2DEED2859FE6BDA7E64C3C37 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		3288FC7EC44D40BE816E18CE /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
 		426BF18B55294F5DB372B1B1 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
 		452EF55B81C64293BC9C9524 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
@@ -269,7 +269,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DEED2859FE6BDA7E64C3C37 /* BuildFile in Frameworks */,
+				2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */,
 				6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1941,6 +1941,7 @@
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 				);
 				INFOPLIST_FILE = riive/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -2050,6 +2051,7 @@
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 				);
 				INFOPLIST_FILE = riive/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",

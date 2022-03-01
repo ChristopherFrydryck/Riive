@@ -42,7 +42,7 @@ const providers = {
 
 
 // Regex to check name and phone are valid at sign in
-const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/gi;
+const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})$/gi;
 const regexPhone = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
 
 // Vars that prevent continuing since this is not built into firebase natively
@@ -254,6 +254,8 @@ export default class Authentication extends React.Component {
 
      // Begin ActivityIndicator since auth == true
     this.setState ({ authenticating: true})
+
+      console.log(this.props.UserStore.fullname.match(regexFullname))
 
       // Checks if full name is in format of Firstname Lastname
       if(this.props.UserStore.fullname.match(regexFullname)){

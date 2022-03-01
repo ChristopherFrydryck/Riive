@@ -35,7 +35,7 @@ import {inject, observer} from 'mobx-react'
 
 
 
-const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/i;
+const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})$/i;
 var d = new Date();
 const year = d.getFullYear().toString();
 const lastTwoYearString = year.slice(-2);

@@ -1,5 +1,5 @@
 import React, {Component, useRef} from 'react'
-import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking, DevSettings } from 'react-native'
+import {View, Share, ActivityIndicator, Dimensions, StatusBar, StyleSheet, ScrollView, Modal, Platform, SafeAreaView, RefreshControl, LogBox, Alert, Linking} from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 
 import Input from '../components/Input'
@@ -14,6 +14,7 @@ import config from 'react-native-config'
 
 import ImagePicker from 'react-native-image-crop-picker';
 import { request } from 'react-native-permissions';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 import ProfilePic from '../components/ProfilePic'
 import TopBar from '../components/TopBar'
@@ -56,7 +57,7 @@ import FloatingCircles from '../components/FloatingCircles'
 
 
 // Regex to check name and phone are valid at sign in
-const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/gi;
+const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})$/gi;
 const regexPhone = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
 const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -946,8 +947,15 @@ class Profile extends Component{
             this.props.UserStore.loggedIn = false;
             this.props.UserStore.reset();
             await auth().signOut();
-            DevSettings.reload();
-            
+            this.props.navigation.navigate("SignOut")
+
+            // const resetAction = StackActions.reset({
+            //     index: 0,
+            //     actions: [NavigationActions.navigate({ routeName: 'SignOut' })],
+            //   });
+            //   this.props.navigation.dispatch(resetAction);
+
+          
         }catch(e){
             console.log(e)
         }

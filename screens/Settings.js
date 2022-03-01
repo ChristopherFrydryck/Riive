@@ -6,7 +6,7 @@ import Icon from '../components/Icon'
 import Button from '../components/Button'
 import Colors from '../constants/Colors'
 
-import { version } from '../package.json'
+import { version, beta } from '../package.json'
 
 import {requestLocationAccuracy, checkMultiple, checkNotifications, requestNotifications, PERMISSIONS, openSettings, check, request} from 'react-native-permissions';
 import { getToken, disabledWarningAlert } from '../functions/in-app/notifications'
@@ -334,7 +334,7 @@ class Settings extends React.Component{
                 </View>
             </TouchableOpacity>           
         </View>
-        <Text style={{textAlign: 'center', fontSize: 12, paddingBottom: 8}}>Version {version}</Text>
+        <Text style={{textAlign: 'center', fontSize: 12, paddingBottom: 8}}>Version {version} {beta ? "(beta)" : null}</Text>
       </View>
       
       </ScrollView>

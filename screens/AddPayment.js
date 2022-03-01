@@ -21,7 +21,7 @@ import { requireNativeViewManager } from '@unimodules/core';
 
 
 
-const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})*$/i;
+const regexFullname = /[^0-9]([a-zA-Z]{1,})+[ ]+([a-zA-Z-']{2,})$/i;
 const regexAddress = /^[#.0-9a-zA-Z\s,-]+$/
 var d = new Date();
 const year = d.getFullYear().toString();

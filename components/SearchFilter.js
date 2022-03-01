@@ -853,10 +853,10 @@ const styles = StyleSheet.create({
         paddingBottom: 16,
     },
     enabledDay:{
-     
+        color: Colors.cosmos900
     },
     disabledDay:{
-
+        color: Colors.cosmos900,
         opacity: 0.2,
     },
     triangle: {
