@@ -47,6 +47,7 @@ export default class PasswordReset extends React.Component {
     resetPassword = () => {
       this.setState({sendingEmail: true})
       auth().sendPasswordResetEmail(this.props.UserStore.email || " ").then(() => {
+          console.log(this.props.UserStore.email)
           this.setState({sendingEmail: false})
           Alert.alert(
               'Reset Email Sent',
