@@ -21,13 +21,13 @@ import RadioButton from '../components/RadioButton'
 import StripeTOSModal from '../components/StripeTOSModal';
 
 // Firebase imports
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging'
 import storage from '@react-native-firebase/storage'
-import 'firebase/firestore';
-import 'firebase/auth';
+// import 'firebase/firestore';
+// import 'firebase/auth';
 
 
 //MobX Imports

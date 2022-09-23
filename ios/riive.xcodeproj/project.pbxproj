@@ -83,7 +83,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* riiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* riiveTests.m */; };
-		2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		2DEED2859FE6BDA7E64C3C37 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CE75CF82FE4C13C6F3D6EA2 /* libPods-riive-app-riive.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		A2C8346E8606A44A36AE10AA /* libPods-riive-app-riive-riive-staging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6E9A4128F1EAB005D1BEF3F /* libPods-riive-app-riive-riive-staging.a */; };
@@ -219,7 +219,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */,
+				2DEED2859FE6BDA7E64C3C37 /* BuildFile in Frameworks */,
 				6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

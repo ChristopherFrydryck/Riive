@@ -6,7 +6,7 @@
   "scripts": {
     "devices": "adb devices && xcrun xctrace list devices",
     "clean-android": "cd android && ./gradlew clean && cd ..",
-    "clean-ios": "cd ios && xcodebuild clean && cd .. && rm -rf ~/Library/Developer/Xcode/DerivedData && watchman watch-del-all && cd ios && pod install && cd ..",
+    "clean-ios": "cd ios && xcodebuild clean && cd .. && watchman watch-del-all && cd ios && pod install && cd ..",
     "check-packages": "ncu",
     "firebase-projects": "firebase projects:list",
     "firebase-function-env-vars": "firebase functions:config:get",

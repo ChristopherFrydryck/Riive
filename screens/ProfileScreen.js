@@ -37,12 +37,12 @@ import {Provider, Snackbar, Menu, Divider} from 'react-native-paper'
 
 
 //Firebase imports
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage'
 import firestore from '@react-native-firebase/firestore';
-import 'firebase/firestore';
-import 'firebase/auth';
+// import 'firebase/firestore';
+// import 'firebase/auth';
 
 
 //MobX Imports

@@ -18,11 +18,11 @@ import { version } from '../../package.json'
 import logo from '../../assets/img/Logo_001.png'
 
 // Firebase
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import 'firebase/firestore';
-import 'firebase/auth';
+// import 'firebase/firestore';
+// import 'firebase/auth';
 
 //MobX Imports
 import { inject, observer } from 'mobx-react'

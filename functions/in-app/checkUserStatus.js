@@ -3,11 +3,11 @@ import { Alert, DevSettings } from 'react-native'
 
 import config from 'react-native-config'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import 'firebase/firestore';
-import 'firebase/auth';
+// import 'firebase/firestore';
+// import 'firebase/auth';
 
 
 export default checkUserStatus = async(userID) => {

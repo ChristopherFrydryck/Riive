@@ -17,7 +17,7 @@ import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
 

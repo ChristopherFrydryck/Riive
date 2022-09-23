@@ -27,17 +27,17 @@ import ComponentStore from '../../stores/componentStore'
 
 // Firebase imports
 // import * as firebase from 'firebase'
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import 'firebase/firestore';
-import 'firebase/auth';
+// import 'firebase/firestore';
+// import 'firebase/auth';
 
 
 
-const providers = {
-  googleProvider: new firebase.auth.GoogleAuthProvider(),
-};
+// const providers = {
+//   googleProvider: new firebase.auth.GoogleAuthProvider(),
+// };
 
 
 

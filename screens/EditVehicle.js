@@ -5,7 +5,7 @@ import Dropdown from '../components/Dropdown'
 import Button from '../components/Button'
 import axios from 'axios'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 

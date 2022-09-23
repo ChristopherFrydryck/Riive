@@ -42,13 +42,13 @@ import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 
 // Firebase imports
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import messaging from '@react-native-firebase/messaging'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage'
-import 'firebase/firestore';
-import 'firebase/auth';
+// import 'firebase/firestore';
+// import 'firebase/auth';
 import * as geofirestore from 'geofirestore'
 
 import config from 'react-native-config';

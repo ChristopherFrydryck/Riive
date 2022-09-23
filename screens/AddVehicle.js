@@ -6,7 +6,7 @@ import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import axios from 'axios'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 

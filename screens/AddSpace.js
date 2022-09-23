@@ -25,7 +25,7 @@ import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
 import Timezones from '../constants/Timezones'
 import isDSTObserved from '../functions/in-app/daylightSavings';
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 import storage from '@react-native-firebase/storage'

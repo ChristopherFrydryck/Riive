@@ -12,7 +12,7 @@ import config from 'react-native-config'
 //MobX Imports
 import {inject, observer} from 'mobx-react'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
