@@ -4,7 +4,7 @@
   "private": true,
   "beta": true,
   "scripts": {
-    "devices": "adb devices && xcrun instruments -s devices",
+    "devices": "adb devices && xcrun xctrace list devices",
     "clean-android": "cd android && ./gradlew clean && cd ..",
     "clean-ios": "cd ios && xcodebuild clean && cd .. && rm -rf ~/Library/Developer/Xcode/DerivedData && watchman watch-del-all && cd ios && pod install && cd ..",
     "check-packages": "ncu",
