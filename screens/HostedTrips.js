@@ -806,13 +806,7 @@ export default class HostedTrips extends Component{
                                 </View>
                                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingTop: 8}}>
                                         <Text style={{flex: 1, fontSize: 18, paddingRight: 8}} numberOfLines={1} ellipsizeMode='tail'>Payment Details</Text>
-                                        <Icon 
-                                            iconName={visit.payment.CardType !== '' ? 'cc-' + visit.payment.CardType : 'credit-card'}
-                                            iconLib="FontAwesome"
-                                            iconColor={Colors.cosmos300}
-                                            iconSize={28}
-                                            style={{ marginLeft: 16}}
-                                        />
+                                        
                                 </View>
                                 <View style={{paddingVertical: 16, borderBottomColor: Colors.mist900, borderBottomWidth: 1, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>

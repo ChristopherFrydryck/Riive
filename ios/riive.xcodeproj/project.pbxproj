@@ -18,7 +18,6 @@
 		066969D226E022F600B6D907 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56725D899C0004FE037 /* Poppins-BoldItalic.ttf */; };
 		066969D326E022F600B6D907 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */; };
 		066969D426E022F600B6D907 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56325D899C0004FE037 /* Poppins-Medium.ttf */; };
-		066969D526E022F600B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */; };
 		066969D626E022F600B6D907 /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56425D899C0004FE037 /* Poppins-ExtraLightItalic.ttf */; };
 		066969D726E022F600B6D907 /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56025D899C0004FE037 /* Poppins-MediumItalic.ttf */; };
 		066969D826E022F600B6D907 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
@@ -32,23 +31,7 @@
 		066969E026E022F600B6D907 /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56E25D899C0004FE037 /* Poppins-ExtraBold.ttf */; };
 		066969E126E022F600B6D907 /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56C25D899C0004FE037 /* Poppins-Thin.ttf */; };
 		066969E226E022F600B6D907 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56F25D899C0004FE037 /* Poppins-ThinItalic.ttf */; };
-		066969E326E022F600B6D907 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5DBA88611341A684A12261 /* AntDesign.ttf */; };
-		066969E426E022F600B6D907 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27E5B36EC5AF4CE5ABF9DF37 /* Entypo.ttf */; };
-		066969E526E022F600B6D907 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A338163F4A5A43D2B5C35BC1 /* EvilIcons.ttf */; };
-		066969E626E022F600B6D907 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50F42D68A4774EF0A7666431 /* Feather.ttf */; };
 		066969E726E022F600B6D907 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 0676146025DCC20900639434 /* AirGoogleMaps */; };
-		066969E826E022F600B6D907 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E5B87A84E5440BA3B19619 /* FontAwesome.ttf */; };
-		066969E926E022F600B6D907 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD7031929B6D43F19C159855 /* FontAwesome5_Brands.ttf */; };
-		066969EA26E022F600B6D907 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FC9B69956ED409999EC9E87 /* FontAwesome5_Regular.ttf */; };
-		066969EB26E022F600B6D907 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8B49A49BFC445E28CC28273 /* FontAwesome5_Solid.ttf */; };
-		066969EC26E022F600B6D907 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
-		066969ED26E022F600B6D907 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
-		066969EE26E022F600B6D907 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 428DA4AD5DD14009ADBA2D54 /* Ionicons.ttf */; };
-		066969EF26E022F600B6D907 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 862BAFB6CAFF4883A2EC5982 /* MaterialCommunityIcons.ttf */; };
-		066969F026E022F600B6D907 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CA82E35522B40A29855A828 /* MaterialIcons.ttf */; };
-		066969F126E022F600B6D907 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF66E91405784758808331CD /* Octicons.ttf */; };
-		066969F226E022F600B6D907 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
-		066969F326E022F600B6D907 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 147836BD4D724736861A8E01 /* Zocial.ttf */; };
 		06696A0526E0367200B6D907 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		06696A0626E0367200B6D907 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		06696A0A26E0367200B6D907 /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56625D899C0004FE037 /* Poppins-Light.ttf */; };
@@ -58,7 +41,6 @@
 		06696A0E26E0367200B6D907 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56725D899C0004FE037 /* Poppins-BoldItalic.ttf */; };
 		06696A0F26E0367200B6D907 /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F57125D899C0004FE037 /* Poppins-ExtraBoldItalic.ttf */; };
 		06696A1026E0367200B6D907 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56325D899C0004FE037 /* Poppins-Medium.ttf */; };
-		06696A1126E0367200B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */; };
 		06696A1226E0367200B6D907 /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56425D899C0004FE037 /* Poppins-ExtraLightItalic.ttf */; };
 		06696A1326E0367200B6D907 /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56025D899C0004FE037 /* Poppins-MediumItalic.ttf */; };
 		06696A1426E0367200B6D907 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
@@ -72,23 +54,7 @@
 		06696A1C26E0367300B6D907 /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56E25D899C0004FE037 /* Poppins-ExtraBold.ttf */; };
 		06696A1D26E0367300B6D907 /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56C25D899C0004FE037 /* Poppins-Thin.ttf */; };
 		06696A1E26E0367300B6D907 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56F25D899C0004FE037 /* Poppins-ThinItalic.ttf */; };
-		06696A1F26E0367300B6D907 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5DBA88611341A684A12261 /* AntDesign.ttf */; };
-		06696A2026E0367300B6D907 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27E5B36EC5AF4CE5ABF9DF37 /* Entypo.ttf */; };
-		06696A2126E0367300B6D907 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A338163F4A5A43D2B5C35BC1 /* EvilIcons.ttf */; };
-		06696A2226E0367300B6D907 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50F42D68A4774EF0A7666431 /* Feather.ttf */; };
 		06696A2326E0367300B6D907 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 0676146025DCC20900639434 /* AirGoogleMaps */; };
-		06696A2426E0367300B6D907 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E5B87A84E5440BA3B19619 /* FontAwesome.ttf */; };
-		06696A2526E0367300B6D907 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD7031929B6D43F19C159855 /* FontAwesome5_Brands.ttf */; };
-		06696A2626E0367300B6D907 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FC9B69956ED409999EC9E87 /* FontAwesome5_Regular.ttf */; };
-		06696A2726E0367300B6D907 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8B49A49BFC445E28CC28273 /* FontAwesome5_Solid.ttf */; };
-		06696A2826E0367300B6D907 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
-		06696A2926E0367300B6D907 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
-		06696A2A26E0367300B6D907 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 428DA4AD5DD14009ADBA2D54 /* Ionicons.ttf */; };
-		06696A2B26E0367300B6D907 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 862BAFB6CAFF4883A2EC5982 /* MaterialCommunityIcons.ttf */; };
-		06696A2C26E0367300B6D907 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CA82E35522B40A29855A828 /* MaterialIcons.ttf */; };
-		06696A2D26E0367300B6D907 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF66E91405784758808331CD /* Octicons.ttf */; };
-		06696A2E26E0367300B6D907 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
-		06696A2F26E0367300B6D907 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 147836BD4D724736861A8E01 /* Zocial.ttf */; };
 		06696A4226E047A100B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06696A4126E047A100B6D907 /* GoogleService-Info.plist */; };
 		06696A4626E047D800B6D907 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06696A4526E047D800B6D907 /* GoogleService-Info.plist */; };
 		0673F58C25D89B06004FE037 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56B25D899C0004FE037 /* Poppins-Regular.ttf */; };
@@ -110,34 +76,18 @@
 		0673F59D25D89B06004FE037 /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0673F56D25D899C0004FE037 /* Poppins-LightItalic.ttf */; };
 		0673F6C025DA463C004FE037 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0673F6BF25DA463C004FE037 /* GoogleService-Info.plist */; };
 		0676146125DCC20900639434 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 0676146025DCC20900639434 /* AirGoogleMaps */; };
-		11165A26618A40DD94C0652A /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4FC9B69956ED409999EC9E87 /* FontAwesome5_Regular.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2087B0E4F99A4D77A3C426D8 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD7031929B6D43F19C159855 /* FontAwesome5_Brands.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* riiveTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* riiveTests.m */; };
 		2DEED2859FE6BDA7E64C3C37 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		3288FC7EC44D40BE816E18CE /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7BFA07B03614E28B9588BCF /* SimpleLineIcons.ttf */; };
-		426BF18B55294F5DB372B1B1 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C09201FA71947298B36DCA5 /* Fontisto.ttf */; };
-		452EF55B81C64293BC9C9524 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC649892D9D3493CBFB7113A /* Foundation.ttf */; };
-		553177E6754A4FE0AB601115 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA5DBA88611341A684A12261 /* AntDesign.ttf */; };
 		6534CCA4E05ABC1C9B0958F3 /* libPods-riive-app-riive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CE75CF82FE4C13C6F3D6EA2 /* libPods-riive-app-riive.a */; };
-		75A0EAF1379F43D1BA220F3D /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF66E91405784758808331CD /* Octicons.ttf */; };
-		80B5FD4A94514C6193BE501A /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50F42D68A4774EF0A7666431 /* Feather.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		88F6EC6728B1409C88F559BD /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8B49A49BFC445E28CC28273 /* FontAwesome5_Solid.ttf */; };
-		9BABB6419750421D99E7C7D9 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 428DA4AD5DD14009ADBA2D54 /* Ionicons.ttf */; };
-		9E44890DFBB24DAAA1A40154 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 862BAFB6CAFF4883A2EC5982 /* MaterialCommunityIcons.ttf */; };
 		A2C8346E8606A44A36AE10AA /* libPods-riive-app-riive-riive-staging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6E9A4128F1EAB005D1BEF3F /* libPods-riive-app-riive-riive-staging.a */; };
 		A7FDE2A27BE970ACE74AC9BB /* libPods-riive-app-riive-riive-development.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A934C42BC3B7BA8F2F7803B9 /* libPods-riive-app-riive-riive-development.a */; };
-		B23B916D2B6C499AAB470C38 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A338163F4A5A43D2B5C35BC1 /* EvilIcons.ttf */; };
-		B85C7DD6E05848F88FBEFBE8 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5CA82E35522B40A29855A828 /* MaterialIcons.ttf */; };
-		B8843B862CD74023B769ECC3 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27E5B36EC5AF4CE5ABF9DF37 /* Entypo.ttf */; };
-		D152BAA800554936A03D4285 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 147836BD4D724736861A8E01 /* Zocial.ttf */; };
-		DACAEFE9AFFF431B85603827 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64E5B87A84E5440BA3B19619 /* FontAwesome.ttf */; };
 		E3BA10D9708302DC02B29AC8 /* libPods-riive-app-riive-riiveTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D54509CE31CC736A6365FB8 /* libPods-riive-app-riive-riiveTests.a */; };
 /* End PBXBuildFile section */
 
@@ -620,16 +570,16 @@
 					};
 					066969C526E022F600B6D907 = {
 						DevelopmentTeam = 49J3538JQK;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					06696A0126E0367200B6D907 = {
 						DevelopmentTeam = 49J3538JQK;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 49J3538JQK;
 						LastSwiftMigration = 1120;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -684,7 +634,6 @@
 				066969D226E022F600B6D907 /* Poppins-BoldItalic.ttf in Resources */,
 				066969D326E022F600B6D907 /* Poppins-ExtraBoldItalic.ttf in Resources */,
 				066969D426E022F600B6D907 /* Poppins-Medium.ttf in Resources */,
-				066969D526E022F600B6D907 /* GoogleService-Info.plist in Resources */,
 				066969D626E022F600B6D907 /* Poppins-ExtraLightItalic.ttf in Resources */,
 				066969D726E022F600B6D907 /* Poppins-MediumItalic.ttf in Resources */,
 				066969D826E022F600B6D907 /* Poppins-Regular.ttf in Resources */,
@@ -698,24 +647,8 @@
 				066969E026E022F600B6D907 /* Poppins-ExtraBold.ttf in Resources */,
 				066969E126E022F600B6D907 /* Poppins-Thin.ttf in Resources */,
 				066969E226E022F600B6D907 /* Poppins-ThinItalic.ttf in Resources */,
-				066969E326E022F600B6D907 /* AntDesign.ttf in Resources */,
-				066969E426E022F600B6D907 /* Entypo.ttf in Resources */,
-				066969E526E022F600B6D907 /* EvilIcons.ttf in Resources */,
-				066969E626E022F600B6D907 /* Feather.ttf in Resources */,
 				066969E726E022F600B6D907 /* AirGoogleMaps in Resources */,
 				06696A4226E047A100B6D907 /* GoogleService-Info.plist in Resources */,
-				066969E826E022F600B6D907 /* FontAwesome.ttf in Resources */,
-				066969E926E022F600B6D907 /* FontAwesome5_Brands.ttf in Resources */,
-				066969EA26E022F600B6D907 /* FontAwesome5_Regular.ttf in Resources */,
-				066969EB26E022F600B6D907 /* FontAwesome5_Solid.ttf in Resources */,
-				066969EC26E022F600B6D907 /* Fontisto.ttf in Resources */,
-				066969ED26E022F600B6D907 /* Foundation.ttf in Resources */,
-				066969EE26E022F600B6D907 /* Ionicons.ttf in Resources */,
-				066969EF26E022F600B6D907 /* MaterialCommunityIcons.ttf in Resources */,
-				066969F026E022F600B6D907 /* MaterialIcons.ttf in Resources */,
-				066969F126E022F600B6D907 /* Octicons.ttf in Resources */,
-				066969F226E022F600B6D907 /* SimpleLineIcons.ttf in Resources */,
-				066969F326E022F600B6D907 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,7 +663,6 @@
 				06696A0E26E0367200B6D907 /* Poppins-BoldItalic.ttf in Resources */,
 				06696A0F26E0367200B6D907 /* Poppins-ExtraBoldItalic.ttf in Resources */,
 				06696A1026E0367200B6D907 /* Poppins-Medium.ttf in Resources */,
-				06696A1126E0367200B6D907 /* GoogleService-Info.plist in Resources */,
 				06696A1226E0367200B6D907 /* Poppins-ExtraLightItalic.ttf in Resources */,
 				06696A1326E0367200B6D907 /* Poppins-MediumItalic.ttf in Resources */,
 				06696A1426E0367200B6D907 /* Poppins-Regular.ttf in Resources */,
@@ -744,24 +676,8 @@
 				06696A1C26E0367300B6D907 /* Poppins-ExtraBold.ttf in Resources */,
 				06696A1D26E0367300B6D907 /* Poppins-Thin.ttf in Resources */,
 				06696A1E26E0367300B6D907 /* Poppins-ThinItalic.ttf in Resources */,
-				06696A1F26E0367300B6D907 /* AntDesign.ttf in Resources */,
-				06696A2026E0367300B6D907 /* Entypo.ttf in Resources */,
-				06696A2126E0367300B6D907 /* EvilIcons.ttf in Resources */,
-				06696A2226E0367300B6D907 /* Feather.ttf in Resources */,
 				06696A2326E0367300B6D907 /* AirGoogleMaps in Resources */,
 				06696A4626E047D800B6D907 /* GoogleService-Info.plist in Resources */,
-				06696A2426E0367300B6D907 /* FontAwesome.ttf in Resources */,
-				06696A2526E0367300B6D907 /* FontAwesome5_Brands.ttf in Resources */,
-				06696A2626E0367300B6D907 /* FontAwesome5_Regular.ttf in Resources */,
-				06696A2726E0367300B6D907 /* FontAwesome5_Solid.ttf in Resources */,
-				06696A2826E0367300B6D907 /* Fontisto.ttf in Resources */,
-				06696A2926E0367300B6D907 /* Foundation.ttf in Resources */,
-				06696A2A26E0367300B6D907 /* Ionicons.ttf in Resources */,
-				06696A2B26E0367300B6D907 /* MaterialCommunityIcons.ttf in Resources */,
-				06696A2C26E0367300B6D907 /* MaterialIcons.ttf in Resources */,
-				06696A2D26E0367300B6D907 /* Octicons.ttf in Resources */,
-				06696A2E26E0367300B6D907 /* SimpleLineIcons.ttf in Resources */,
-				06696A2F26E0367300B6D907 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -790,23 +706,7 @@
 				0673F59A25D89B06004FE037 /* Poppins-ExtraBold.ttf in Resources */,
 				0673F59425D89B06004FE037 /* Poppins-Thin.ttf in Resources */,
 				0673F59C25D89B06004FE037 /* Poppins-ThinItalic.ttf in Resources */,
-				553177E6754A4FE0AB601115 /* AntDesign.ttf in Resources */,
-				B8843B862CD74023B769ECC3 /* Entypo.ttf in Resources */,
-				B23B916D2B6C499AAB470C38 /* EvilIcons.ttf in Resources */,
-				80B5FD4A94514C6193BE501A /* Feather.ttf in Resources */,
 				0676146125DCC20900639434 /* AirGoogleMaps in Resources */,
-				DACAEFE9AFFF431B85603827 /* FontAwesome.ttf in Resources */,
-				2087B0E4F99A4D77A3C426D8 /* FontAwesome5_Brands.ttf in Resources */,
-				11165A26618A40DD94C0652A /* FontAwesome5_Regular.ttf in Resources */,
-				88F6EC6728B1409C88F559BD /* FontAwesome5_Solid.ttf in Resources */,
-				426BF18B55294F5DB372B1B1 /* Fontisto.ttf in Resources */,
-				452EF55B81C64293BC9C9524 /* Foundation.ttf in Resources */,
-				9BABB6419750421D99E7C7D9 /* Ionicons.ttf in Resources */,
-				9E44890DFBB24DAAA1A40154 /* MaterialCommunityIcons.ttf in Resources */,
-				B85C7DD6E05848F88FBEFBE8 /* MaterialIcons.ttf in Resources */,
-				75A0EAF1379F43D1BA220F3D /* Octicons.ttf in Resources */,
-				3288FC7EC44D40BE816E18CE /* SimpleLineIcons.ttf in Resources */,
-				D152BAA800554936A03D4285 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1417,8 +1317,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "riive-development/riive-development.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49J3538JQK;
 				ENABLE_BITCODE = NO;
@@ -1513,7 +1413,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive.development;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Riive Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1527,8 +1427,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "riive-development/riive-development.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49J3538JQK;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1622,7 +1522,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive.development;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Riive Dev";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1635,8 +1535,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "riive-staging/riive-staging.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49J3538JQK;
 				ENABLE_BITCODE = NO;
@@ -1731,7 +1631,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive.staging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Riive Staging";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1745,8 +1645,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "riive-staging/riive-staging.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49J3538JQK;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1840,7 +1740,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive.staging;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Riive Staging";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1853,8 +1753,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = riive/riive.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49J3538JQK;
 				ENABLE_BITCODE = NO;
@@ -1950,7 +1850,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive;
 				PRODUCT_NAME = riive;
-				PROVISIONING_PROFILE_SPECIFIER = "Riive Prod";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1964,8 +1864,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = riive/riive.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 49J3538JQK;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2060,7 +1960,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.riive;
 				PRODUCT_NAME = riive;
-				PROVISIONING_PROFILE_SPECIFIER = "Riive Prod";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
