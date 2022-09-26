@@ -52,10 +52,10 @@
     "mobx": "^6.3.7",
     "mobx-react": "^7.2.1",
     "patch-package": "^6.4.7",
-    "react": "17.0.2",
-    "react-native": "0.66.0",
+    "react": "18.0.0",
+    "react-native": "0.69.5",
     "react-native-actions-sheet": "^0.5.7",
-    "react-native-config": "^1.4.5",
+    "react-native-config": "^1.4.6",
     "react-native-device-info": "^8.4.7",
     "react-native-dialog-input": "^1.0.8",
     "react-native-flash-message": "^0.2.0",
@@ -89,10 +89,10 @@
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.3",
-    "eslint": "7.14.0",
+    "eslint": "7.32.0",
     "jest": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.66.2",
-    "react-test-renderer": "17.0.2"
+    "metro-react-native-babel-preset": "^0.70.3",
+    "react-test-renderer": "18.0.0"
   },
   "resolutions": {
     "react-native-svg": "9.9.5",
