@@ -257,7 +257,6 @@ export default class Authentication extends React.Component {
     }
   }).then((doc) => {
   const length = doc.data().listings.length;
-    console.log(length)
     if ( length > 0 && length <= 10 ){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
@@ -472,7 +471,6 @@ export default class Authentication extends React.Component {
       }
   }).then((doc) => {
     const length = doc.data().listings.length;
-    console.log(length)
     if ( length > 0 && length <= 10){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
