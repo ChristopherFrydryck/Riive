@@ -257,6 +257,7 @@ export default class Authentication extends React.Component {
     }
   }).then((doc) => {
   const length = doc.data().listings.length;
+    console.log(length)
     if ( length > 0 && length <= 10 ){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
@@ -471,7 +472,8 @@ export default class Authentication extends React.Component {
       }
   }).then((doc) => {
     const length = doc.data().listings.length;
-    if ( length > 0 ){
+    console.log(length)
+    if ( length > 0 && length <= 10){
       db.collection('listings').where(firestore.FieldPath.documentId(), "in", doc.data().listings).get().then((qs) => {
         let listingsData = [];
         for(let i = 0; i < qs.docs.length; i++){
@@ -495,22 +497,22 @@ export default class Authentication extends React.Component {
           })
       }
   })
-    // }else if(length > 0 && length > 10){
-    //   let listings = doc.data().listings;
-    //   let allArrs = [];
-    //   var listingsData = [];
-    //   while(listings.length > 0){
-    //     allArrs.push(listings.splice(0, 10))
-    //   }
+    }else if(length > 0 && length > 10){
+      let listings = doc.data().listings;
+      let allArrs = [];
+      var listingsData = [];
+      while(listings.length > 0){
+        allArrs.push(listings.splice(0, 10))
+      }
 
-    //   for(let i = 0; i < allArrs.length; i++){
-    //     db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-    //       for(let i = 0; i < qs.docs.length; i++){
-    //         listingsData.push(qs.docs[i].data())
-    //       }
-    //     })
+      for(let i = 0; i < allArrs.length; i++){
+        db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+          for(let i = 0; i < qs.docs.length; i++){
+            listingsData.push(qs.docs[i].data())
+          }
+        })
         
-    //   }
+      }
     
     }else{
       this.props.UserStore.listings = [];

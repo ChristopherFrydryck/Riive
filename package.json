@@ -1,6 +1,6 @@
 {
   "name": "riive",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "beta": true,
   "scripts": {
@@ -32,7 +32,7 @@
     "ios-prod": "ENVFILE=.env.production react-native run-ios --simulator 'iPhone 14 Pro Max'",
     "ios-device-prod": "ENVFILE=.env.production react-native run-ios --udid 00008101-000D25693E80001E",
     "start": "react-native start",
-    "clean-start": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* &&  rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache clean --force &&  npm install --legacy-peer-deps && npm start -- --reset-cache && npx patch-package",
+    "clean-start": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* &&  rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache clean --force &&  npm install --legacy-peer-deps && npx patch-package && npm start -- --reset-cache",
     "test": "jest",
     "lint": "eslint ."
   },
