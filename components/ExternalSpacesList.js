@@ -13,7 +13,7 @@ import SvgAnimatedLinearGradient from 'react-native-svg-animated-linear-gradient
 import Svg, {Circle, Rect} from 'react-native-svg'
 
 // Firebase imports
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
 

@@ -8,7 +8,7 @@ import Colors from '../constants/Colors'
 import AddressTypes from '../constants/AddressTypes'
 import LinearGradient from 'react-native-linear-gradient'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 

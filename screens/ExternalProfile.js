@@ -12,7 +12,7 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import {Menu, Divider, Provider, Snackbar} from 'react-native-paper'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
 //MobX Imports

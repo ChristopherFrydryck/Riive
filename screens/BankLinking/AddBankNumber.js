@@ -21,7 +21,7 @@ import Image from '../../components/Image'
 
 import Timezones from '../../constants/Timezones'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth'
 import storage from '@react-native-firebase/storage'

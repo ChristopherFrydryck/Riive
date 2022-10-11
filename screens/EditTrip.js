@@ -20,7 +20,7 @@ import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
 import Input from '../components/Input'
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
 

@@ -15,11 +15,11 @@ import NightMap from '../constants/NightMap'
 
 import checkUserStatus from '../functions/in-app/checkUserStatus';
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import 'firebase/auth';
-import 'firebase/firestore';
+// import 'firebase/auth';
+// import 'firebase/firestore';
 
 //MobX Imports
 import {inject, observer} from 'mobx-react'

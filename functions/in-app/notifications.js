@@ -11,7 +11,7 @@ const options = {
 
 import { showMessage, hideMessage, renderFlashMessageIcon } from "react-native-flash-message";
 
-import * as firebase from 'firebase/app';
+// import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 
