@@ -1162,7 +1162,6 @@ PODS:
     - React-Core
   - RNVectorIcons (9.2.0):
     - React-Core
-  - Stripe (19.4.1)
   - TOCropViewController (2.6.1)
   - Yoga (1.14.0)
 
@@ -1230,7 +1229,6 @@ DEPENDENCIES:
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - Stripe (from `https://github.com/stripe/stripe-ios.git`, tag `v19.4.1`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1380,16 +1378,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  Stripe:
-    :git: https://github.com/stripe/stripe-ios.git
-    :tag: v19.4.1
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
-
-CHECKOUT OPTIONS:
-  Stripe:
-    :git: https://github.com/stripe/stripe-ios.git
-    :tag: v19.4.1
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
@@ -1474,10 +1464,9 @@ SPEC CHECKSUMS:
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSVG: 07037623c36f12e41312730622d5f6b3656227ca
   RNVectorIcons: fcc2f6cb32f5735b586e66d14103a74ce6ad61f8
-  Stripe: 03e13dd1c55e59aeeb8614547700199ff1dc4e01
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   Yoga: 6c8252e38d65aa387daee699eacf027e055e0b31
 
-PODFILE CHECKSUM: acdb6c955020f968adac17448bf9c2ef4a7429ce
+PODFILE CHECKSUM: f920aa8da6c566c8ae89525af67cc604cb18a799
 
 COCOAPODS: 1.11.3

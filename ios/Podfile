@@ -61,7 +61,7 @@ abstract_target 'riive-app' do
   pod 'BoringSSL-GRPC', '= 0.0.24', :modular_headers => false
   pod 'gRPC-Core', '= 1.44.0', :modular_headers => false
 
-  pod 'Stripe', :git => 'https://github.com/stripe/stripe-ios.git', :tag => 'v19.4.1'
+  # pod 'Stripe', :git => 'https://github.com/stripe/stripe-ios.git', :tag => 'v19.4.1'
 
   pod 'react-native-config', :path => '../node_modules/react-native-config'
 
