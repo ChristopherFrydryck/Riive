@@ -718,14 +718,14 @@ class reserveSpace extends Component {
             }
 
               return(
-                <RadioButton key={payment.PaymentID} style={{paddingVertical: 6}} id={payment.PaymentID} selectItem={() => this.setActivePayment(payment, false)}>
+                <RadioButton key={payment.PaymentID} style={{paddingVertical: 6}} id={payment.PaymentID} disabled={!cardValid} selectItem={() => this.setActivePayment(payment, false)}>
                     <View style={{flex: 1, alignItems: 'flex-start'}}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                            <Text style={{fontSize: 16, marginRight: 16}}>{`••••••••••••${payment.Number}`}</Text> 
+                            <Text style={{fontSize: 16, marginRight: 16, color: cardValid ? Colors.cosmos900 : Colors.cosmos300}}>{`••••••••••••${payment.Number}`}</Text> 
                             <Icon 
                                 iconName={payment.CardType ? 'cc-' + payment.CardType : 'credit-card'}
                                 iconLib="FontAwesome"
-                                iconColor={Colors.cosmos900}
+                                iconColor={cardValid ? Colors.cosmos900 : Colors.cosmos300}
                                 iconSize={20}
                                 style={{ marginLeft: "auto"}}
                              />
