@@ -462,10 +462,11 @@ export default class VisitingTrips extends Component{
                                             onPress={()=> {
                                                 Clipboard.setString(data.listing.address.full)
                                                 this.slideBottomPill()
+                                                console.log(data.listing.address)
                                             }} 
-                                            style={{flexDirection: 'row', paddingRight: 16}}
+                                            style={{flexDirection: 'row', paddingRight: 16,}}
                                         >
-                                            <Text numberOfLines={2}>{data.listing.address.full}</Text>
+                                            <Text style={{paddingRight: 8}} numberOfLines={2}>{data.listing.address.full} {data.listing.address.box ? `APT ${data.listing.address.box}` : ""}</Text>
                                             <Icon iconName="copy" iconColor={Colors.cosmos300} iconSize={16} />
                                         </TouchableOpacity>
                                         
