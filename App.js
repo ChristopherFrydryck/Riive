@@ -75,10 +75,10 @@
       console.log(config)
        return (        
          <Provider {...stores}>
-             <SafeAreaView style={{flex: 1}}> 
+             
                   <AppNavigator />
                   <FlashMessage position="top" />
-               </SafeAreaView>
+                  <SafeAreaView /> 
          </Provider>
        )
      }
