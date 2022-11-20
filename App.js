@@ -75,9 +75,9 @@
       console.log(config)
        return (        
          <Provider {...stores}>
-             
-                  <AppNavigator />
-                  <FlashMessage position="top" />
+              <FlashMessage position="top" /> 
+              <AppNavigator />
+               
                   <SafeAreaView /> 
          </Provider>
        )
