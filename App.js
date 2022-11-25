@@ -77,8 +77,7 @@
          <Provider {...stores}>
               <FlashMessage position="top" /> 
               <AppNavigator />
-               
-                  <SafeAreaView /> 
+              <SafeAreaView style={{backgroundColor: 'white'}}/> 
          </Provider>
        )
      }
