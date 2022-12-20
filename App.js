@@ -18,6 +18,8 @@
    StatusBar,
    LogBox
  } from 'react-native';
+
+ import { SafeAreaProvider,  initialWindowMetrics } from 'react-native-safe-area-context'
  
  import AppNavigator from './navigators/AppNavigator'
 
@@ -73,10 +75,9 @@
       console.log(config)
        return (        
          <Provider {...stores}>
-             <View style={{flex: 1}}>
-               <AppNavigator />
-               <FlashMessage position="top" />
-             </View>
+              <FlashMessage position="top" /> 
+              <AppNavigator />
+              <SafeAreaView style={{backgroundColor: 'white'}}/> 
          </Provider>
        )
      }

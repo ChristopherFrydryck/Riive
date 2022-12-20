@@ -289,14 +289,21 @@ class editSpace extends Component {
     
   }
 
+    containsWhitespace = (str) => {
+      return /^\s*$/.test(str);
+    }
+
 
 
   verifyInputs = () => {
     const nameValidation = /^[A-Za-z0-9.?!;,()\-$@%&'"“”‘’#]+[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]+[A-Za-z0-9.?!;,()\-$@%&'"“”‘’#]{1}$/;
-    const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]{1,299}$/;
+    const bioValidation =  /^[A-Za-z0-9]{1}[A-Za-z0-9 .?!;,()\-$@%&'"“”‘’#]{1,299}$/gm;
 
     let nameValid = nameValidation.test(this.state.spaceName)
     let bioValid = this.state.spaceBio.split("").length > 0 ? bioValidation.test(this.state.spaceBio) : true;
+
+    
+
 
     if(this.state.spacePrice){
       let spaceCentsArray = this.state.spacePrice.split(".")
@@ -331,8 +338,14 @@ class editSpace extends Component {
       
     }
 
+    // console.log(bioValid)
+
     if(bioValid){
       this.setState({bioValid: true, bioError: ''})
+    }else if(this.containsWhitespace(this.state.spaceBio.split("")[this.state.spaceBio.length - 1])){
+      this.setState({bioValid: false, bioError: 'Avoid using a space at the end of a bio.'})
+    }else if(this.state.spaceBio.split("").length < 3){
+      this.setState({bioValid: false, bioError: 'A space bio must be at least three characters long.'})
     }else{
       this.setState({bioValid: false, bioError: 'Avoid use of special characters outside of .?!;-,()$@%&'})
     }
@@ -381,6 +394,30 @@ class editSpace extends Component {
       if(this.state.searchedAddress && this.state.spacePrice && this.state.priceValid && this.state.nameValid && this.state.spacePriceValid && this.state.bioValid && this.state.photo){
 
 
+        // Split bio into sections from linebreaks
+        let bioSplit = this.state.spaceBio.split(/\r?\n|\r|\n/g)
+        let bioSplitRemovals = []
+
+        //if there is a line break in the bio, check each line and then find which lines are 
+        // just whitespace. Add them to another array called bioSplitRemovals
+        if(bioSplit.length >= 2){
+          for(let i = 0; i < bioSplit.length; i++){
+            if(this.containsWhitespace(bioSplit[i])){
+              bioSplitRemovals.push(i)
+            }
+          }
+        }
+
+        // Filter out the blank lines and add two retun carriages. This will ensure that 20 line breaks become only two.
+        bioSplit = bioSplit.filter((x, i) => !bioSplitRemovals.includes(i)).join(`\n\n`)
+
+        
+        // console.log(`indexes to be removed: ${bioSplitRemovals}`)
+        // console.log(`biosplit is now ${bioSplit}`)
+
+        // Update spaceBio to be the new version of the split bio with less line breaks
+        this.setState({spaceBio: bioSplit})
+        
        
           await this.uploadImage(this.state.photo)
           try{  

@@ -800,7 +800,7 @@ export default class HostedTrips extends Component{
                                         scrollEnabled={false}
                                     />
                                     <View style={{flex: 2, justifyContent: 'space-between'}}>
-                                        <Text numberOfLines={2}>{listing.address.full}</Text>
+                                        <Text numberOfLines={2}>{listing.address.full} {data.listing.address.box ? `APT ${data.listing.address.box}` : ""}</Text>
                                         <Button onPress={() => this.openEditSpace(listing)} style = {{backgroundColor: 'rgba(255, 193, 76, 0.3)', height: 48}} textStyle={{color: Colors.tango900, fontWeight: "500"}}>Edit Details</Button>
                                     </View>
                                 </View>

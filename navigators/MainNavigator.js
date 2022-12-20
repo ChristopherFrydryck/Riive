@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar} from 'react-native';
+import { Platform, StatusBar, SafeAreaView} from 'react-native';
 import { createBottomTabNavigator }  from 'react-navigation-tabs'
 // import { createStackNavigator } from 'react-navigation-stack'
 import  TripsNavigator  from './TripsNavigator'
@@ -21,7 +21,7 @@ const navBar =  createBottomTabNavigator(
                 tabBarLabel: 'Explore',
                 title: 'Welcome!',
                 tabBarIcon: ({ focused, tintColor }) => (
-                    <TabBarIcon 
+                        <TabBarIcon 
                         focused={focused}
                         name='search'
                         tintColor={tintColor}
@@ -66,13 +66,14 @@ const navBar =  createBottomTabNavigator(
             activeTintColor: Colors.tango900,
             inactiveTintColor: Colors.cosmos300,
             showIcon: true,
+            safeAreaInset: {
+                bottom: 'never'
+            },
             style: {
-
                 borderTopColor: "transparent",
-                paddingTop: 4,
-                marginBottom: 4,
-                height: 56,
-                // backgroundColor: "#efefef"
+                paddingTop: 8,
+                marginBottom: 0,
+                height: 64,
             },
         },
     }

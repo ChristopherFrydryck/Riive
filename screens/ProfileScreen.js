@@ -1225,9 +1225,32 @@ class Profile extends Component{
                             >
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('Settings')}} title="Settings" />
                                 <Menu.Item onPress={() => {this.props.navigation.navigate('BankInfo')}} title="Bank Information" />
+                                <Menu.Item onPress={() => {
+                                    Linking.canOpenURL("https://www.riive.net/contact-us").then(supported => {
+                                        if(supported){
+                                            Linking.openURL("https://www.riive.net/contact-us")
+                                        }else{
+                                            Alert.alert(
+                                                "Cannot open website",
+                                                "It looks like there was an issue opening the contact us page. Would you like to email us?",
+                                                [
+                                                  {
+                                                    text: "Send Email",
+                                                    onPress: () => {Linking.openURL("mailto:support@riive.net")},
+                                                  },
+                                                  { text: "No thanks", 
+                                                    onPress: () => {},
+                                                    style: "cancel"
+                                                  }
+                                                ],
+                                                { cancelable: false }
+                                              );
+                                        }
+                                    })
+                                }} title="Contact Us" />
                                 <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
                                 <Divider />
-                                <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" />
+                                {/* <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" /> */}
                                 <Menu.Item onPress={() => this.signOut()} title="Sign out" />
                             </Menu>
                         </View>
