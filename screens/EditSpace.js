@@ -21,6 +21,9 @@ import Button from '../components/Button'
 import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
+import SpacesCounter from '../components/SpacesCounter'
+import Dropdown from '../components/Dropdown'
+import DropdownItem from '../components/DropdownItem';
 
 // import * as firebase from 'firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -360,12 +363,13 @@ class editSpace extends Component {
 
 
     let spaceAvailableMatch = JSON.stringify(space.availability) == JSON.stringify(this.state.daily)
-    let spaceBioMatch = space.spaceBio == this.state.spaceBio
+    let spaceBioMatch = space.spaceBio == this.state.spaceBio;
+    let spaceNumbersMatch = space.numSpaces == this.state.numSpaces;
     let spaceNameMatch = space.spaceName == this.state.spaceName;
     let spacePriceMatch = space.spacePrice == this.state.spacePrice;
     let spacePhotoMatch = space.photo == this.state.photo
 
-    if(spaceAvailableMatch && spaceBioMatch && spaceNameMatch && spacePriceMatch && spacePhotoMatch){
+    if(spaceAvailableMatch && spaceBioMatch && spaceNameMatch && spacePriceMatch && spacePhotoMatch && spaceNumbersMatch){
       // console.log("No changes")
       this.setState({changesMade: false})
     }else{
@@ -786,10 +790,10 @@ renderDotsView = (numItems, position) =>{
                     
                   </View>
                  
-                  <View style={{paddingHorizontal: 16, marginBottom: 16}}>
+                  <View style={{paddingHorizontal: 16, marginBottom: 16, flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start'}}>
                     <Input 
                         placeholder='$1.25'         
-                        label="Cost Per Hour"
+                        label="Hourly Rate"
                         name="cost"             
                         onChangeText= {val => this.checkForChanges("spacePrice", val)}
                         value={this.state.spacePrice}
@@ -797,10 +801,38 @@ renderDotsView = (numItems, position) =>{
                         maxLength = {6}
                         keyboardType='default'
                         suffix="/hr"
-                        rightText="Estimated $1.50/hr"
+                        flex = {1}
+                        // rightText="est. $1.50/hr"
                         error={this.state.priceError}
+                        style={{marginTop: 2}}
                       />
+                      <View style={{paddingHorizontal: 16, marginBottom: 16, flex: 1}}>
+                      {/* <Text style={styles.label}>Number of Spaces</Text> */}
+                      {/* <View style={{marginLeft: 16, flex: 16}}> */}
+                        <Dropdown
+                            selectedValue = {this.state.numSpaces}
+                            label="Number of Spaces"
+                            // error={this.state.error.make}
+                            // style={{marginTop: -10}}
+                            onValueChange = {(spaces) => this.checkForChanges("numSpaces", spaces.value)}   
+                        >
+                           {[
+                            { key: 1, label: "1", value: 1 },
+                            { key: 2, label: "2", value: 2 },
+                            { key: 3, label: "3", value: 3 },
+                            { key: 4, label: "4", value: 4 },
+                            { key: 5, label: "5", value: 5 },
+                            { key: 6, label: "6", value: 6 },
+                            { key: 7, label: "7", value: 7 },
+                            { key: 8, label: "8", value: 8 },
+                            { key: 9, label: "9", value: 9 },
+                            { key: 10, label: "10", value: 10 },
+                           ]}
+                         </Dropdown>
                     </View>
+                    </View>
+
+                    
 
                     {/* <View style={styles.numHoriz}>
                       <View style={styles.numContainer}>
@@ -895,7 +927,7 @@ renderDotsView = (numItems, position) =>{
                     }
                   
                         <Text  style={{ flex: 0,fontSize: 24, flexWrap: 'wrap'}}>{this.state.spaceName}</Text>
-                        <View style={{flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8}}>
+                        <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
                             <Icon
                                 iconName="location-pin"
                                 iconLib="Entypo"
@@ -905,8 +937,18 @@ renderDotsView = (numItems, position) =>{
                             />
                             <Text style={{fontSize: 16, color: Colors.cosmos300,  flexWrap: 'wrap', marginRight: 24}}>{this.state.address.full} {this.state.address.box ? "#"+this.state.address.box : null}</Text>
                         </View>
+                        <View style={{flexDirection: 'row', flex: 1, alignItems: 'flex-start', flexShrink: 1, marginTop: 4}}>
+                            <Icon
+                                iconName="garage"
+                                iconLib="MaterialCommunityIcons"
+                                iconColor={Colors.cosmos300}
+                                iconSize={20}
+                                style={{marginRight: 6, marginTop: 2}}
+                            />
+                            <Text style={{fontSize: 16, color: Colors.cosmos300, marginRight: 24}}>{this.state.numSpaces} Parking {this.state.numSpaces > 1 ? "Spaces" : "Space"}</Text> 
+                        </View>
                         {this.state.spaceBio ? 
-                        <View style={{flexDirection: 'row', flex: 1, alignItems: 'flex-start', flexShrink: 1}}>
+                        <View style={{flexDirection: 'row', flex: 1, alignItems: 'flex-start', flexShrink: 1, marginTop: 16}}>
                             <Icon
                                 iconName="form"
                                 iconLib="AntDesign"
@@ -987,14 +1029,14 @@ const styles = StyleSheet.create({
     fontFamily: 'WorkSans-Regular'
   },
   label: {
-    paddingTop: 5,
-    marginBottom: -2,
-    paddingTop: 0,
+    paddingTop: 4,
     color: '#333',
     fontSize: 14,
     fontWeight: '400',
+    height: 24,
     width: 'auto'
 },
+
 
 
 
