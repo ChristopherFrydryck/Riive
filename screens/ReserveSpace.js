@@ -313,46 +313,68 @@ class reserveSpace extends Component {
              })
 
             await this.props.ComponentStore.selectedExternalSpot[0].availability[daySearched.dayValue].data.forEach((data, i) => {
+
+                let numSpacesTotal = this.props.ComponentStore.selectedExternalSpot[0].numSpaces
+                let spacesBooked = 0;
+
                  // If specific time slot is marked unavailable, we will check it
                  if(!data.available){
-                    // Check if start time is out of bounds
-                    if(parseInt(data.start) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
-                        // console.log(`Start value ${data.start} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                        worksArray.push(false)
+                    // // Check if start time is out of bounds
+                    // if(parseInt(data.start) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
+                    //     // console.log(`Start value ${data.start} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
+                    //        spacesBooked ++;
+                    //         if (spacesBooked >= numSpacesTotal){
+                    //               worksArray.push(false)
+                    //               break;
+                    //         }
             
                         
-                    }
-                    // Check if end time is out of bounds
-                    else if(parseInt(data.end) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
-                        worksArray.push(false)
+                    // }
+                    // // Check if end time is out of bounds
+                    // else if(parseInt(data.end) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
+
+                    //     spacesBooked ++;
+                    //     if (spacesBooked >= numSpacesTotal){
+                    //         worksArray.push(false)
+                    //         break;
+                    //   }
                   
                        
-                        // console.log(`End value ${data.end} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                    // If both start and end time don't interfere with filtered time slots
-                    }else{
-                        worksArray.push(true)
+                    //     // console.log(`End value ${data.end} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
+                    // // If both start and end time don't interfere with filtered time slots
+                    // }else{
+                        worksArray.push(false)
        
                         // console.log(`Time slot ${data.id} is marked unavailable but works since ${data.start} and ${data.end} are not within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                    }
+                    // }
                    
                     // console.log("Time slot " + data.id + " does not work")
                 }else{
                     
                      // Check each upcoming visit for a space
                      for(data of futureVisits){
+
                          // Check if visit is not cancelled
                          if(!data.isCancelled){
                             // Check if day of search matches visit day
                             if(daySearched.dayValue === data.visit.day.dayValue){
                                 // if a visit start is after start time and before end time
                                 if(parseInt(data.visit.time.start.label) >= parseInt(timeSearched[0].label) && parseInt(data.visit.time.start.label) <= parseInt(timeSearched[1].label)){
-                                    worksArray.push(false)
-                                    break;
-                                
+                                    
+                                    spacesBooked ++;
+                                    if (spacesBooked >= numSpacesTotal){
+                                        worksArray.push(false)
+                                        break;
+                                    }
+
                                 // if a visit end is before a start time and after end time
                                 }else if(parseInt(data.visit.time.end.label) >= parseInt(timeSearched[0].label) && parseInt(data.visit.time.end.label) <= parseInt(timeSearched[1].label)){
-                                    worksArray.push(false)
-                                    break;
+                                   
+                                    spacesBooked ++;
+                                    if (spacesBooked >= numSpacesTotal){
+                                        worksArray.push(false)
+                                        break;
+                                    }
 
                                 }else{
                                     worksArray.push(true)
