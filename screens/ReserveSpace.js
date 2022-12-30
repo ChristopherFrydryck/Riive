@@ -320,30 +320,9 @@ class reserveSpace extends Component {
                  // If specific time slot is marked unavailable, we will check it
                  if(!data.available){
                     // // Check if start time is out of bounds
-                    // if(parseInt(data.start) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
-                    //     // console.log(`Start value ${data.start} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                    //        spacesBooked ++;
-                    //         if (spacesBooked >= numSpacesTotal){
-                    //               worksArray.push(false)
-                    //               break;
-                    //         }
-            
-                        
-                    // }
-                    // // Check if end time is out of bounds
-                    // else if(parseInt(data.end) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
-
-                    //     spacesBooked ++;
-                    //     if (spacesBooked >= numSpacesTotal){
-                    //         worksArray.push(false)
-                    //         break;
-                    //   }
-                  
-                       
-                    //     // console.log(`End value ${data.end} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                    // // If both start and end time don't interfere with filtered time slots
-                    // }else{
+                    
                         worksArray.push(false)
+                        
        
                         // console.log(`Time slot ${data.id} is marked unavailable but works since ${data.start} and ${data.end} are not within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
                     // }
@@ -889,7 +868,7 @@ class reserveSpace extends Component {
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.total}</Text>
                         </View>
                         <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
-                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.spaceCancelledOrHidden || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? this.state.authenticatingReservation ? null : "Reserve Space" : this.state.spaceCancelledOrHidden ? `Space Unavailable` :`Booked at ${timeSearched[0].labelFormatted}`}</Button>
+                        <Button onPress={() => this.checkout()} style = {this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? styles.activeButton : styles.disabledButton} disabled={!this.state.spaceAvailabilityWorks || this.state.spaceCancelledOrHidden || this.state.authenticatingReservation} textStyle={this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? {color: 'white'} : {color: Colors.cosmos300}}>{this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden ? this.state.authenticatingReservation ? null : "Reserve Space" : this.state.spaceCancelledOrHidden ? `Space No Longer Available` :`Space No Longer Available`}</Button>
                     </View>
                     
                 </ScrollView>

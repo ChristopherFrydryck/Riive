@@ -462,7 +462,6 @@ export default class VisitingTrips extends Component{
                                             onPress={()=> {
                                                 Clipboard.setString(data.listing.address.full)
                                                 this.slideBottomPill()
-                                                console.log(data.listing.address)
                                             }} 
                                             style={{flexDirection: 'row', paddingRight: 16,}}
                                         >
