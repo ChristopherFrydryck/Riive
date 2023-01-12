@@ -999,6 +999,7 @@ const fs = require('fs');
             customer: request.body.visitorID,
             payment_method: request.body.paymentID,
             receipt_email: request.body.customerEmail,
+            application_fee_amount: request.body.transactionFee || 0,
         }).then(function(result) {
             if (result.error) {
               throw result.error
@@ -1017,36 +1018,124 @@ const fs = require('fs');
         });
     })
 
+
+
     exports.payForSpace = functions.https.onRequest((request, response) => {
-        stripe.paymentIntents.create({
-            payment_method_types: ['card'],
-            amount: request.body.amount,
-            currency: 'usd',
-            confirm: true,
-            description: request.body.description,
-            customer: request.body.visitorID,
-            payment_method: request.body.cardID,
-            receipt_email: request.body.customerEmail,
-            application_fee_amount: request.body.transactionFee,
-            transfer_data: {
-              destination: request.body.hostID,
-            },
-          }).then(function(result) {
-            if (result.error) {
-              throw result.error
-            } else {
-                return response.send({
-                    statusCode: 200,
-                    res: "SUCCESS",
-                    data: result,
-                    removedCardID: request.body.PaymentID,
-                })
-              // The payment has succeeded
-              // Display a success message
+
+            if(request.body.discount){
+                    
+                    if(request.body.amount > 0){
+                        stripe.paymentIntents.create({
+                                payment_method_types: ['card'],
+                                amount: request.body.amount,
+                                currency: 'usd',
+                                confirm: true,
+                                description: request.body.description,
+                                customer: request.body.visitorID,
+                                payment_method: request.body.cardID,
+                                receipt_email: request.body.customerEmail,
+                                application_fee_amount: request.body.transactionFee,
+                                transfer_data: {
+                                  destination: request.body.hostID,
+                                },       
+                        }).then((result) => {
+                            if (result.error) {
+                                throw result.error
+                            } else {
+                                return result
+                            // The payment has succeeded
+                            // Display a success message
+                            }
+                        }).then(async(result) => {
+                            let transfer = await stripe.transfers.create({
+                                amount: request.body.discountAmount,
+                                currency: 'usd',
+                                destination: request.body.hostID,
+                            })
+                            return [transfer, result]
+                        }).then((result) => {
+                            return response.send({
+                                statusCode: 200,
+                                res: "SUCCESS",
+                                data: result[1],
+                                transferData: result[0],
+                                removedCardID: request.body.PaymentID,
+                            })
+                        }).catch((e) => {
+                            console.log(e)
+                            response.status(500).send(e)
+                        });
+                    }else{
+                        stripe.transfers.create({
+                            amount: request.body.discountAmount,
+                            currency: 'usd',
+                            destination: request.body.hostID,
+                            
+                         }).then((result) => {
+                            return response.send({
+                                statusCode: 200,
+                                res: "SUCCESS",
+                                data: null,
+                                transferData: result,
+                                removedCardID: request.body.PaymentID,
+                            })
+                        }).catch((e) => {
+                            console.log(e)
+                            response.status(500).send(e)
+                        });
+                    }
+            }else{
+                stripe.paymentIntents.create({
+                    payment_method_types: ['card'],
+                    amount: request.body.amount,
+                    currency: 'usd',
+                    confirm: true,
+                    description: request.body.description,
+                    customer: request.body.visitorID,
+                    payment_method: request.body.cardID,
+                    receipt_email: request.body.customerEmail,
+                    application_fee_amount: request.body.transactionFee,
+                    transfer_data: {
+                      destination: request.body.hostID,
+                    },
+                  }).then(function(result) {
+                    if (result.error) {
+                      throw result.error
+                    } else {
+                        return response.send({
+                            statusCode: 200,
+                            res: "SUCCESS",
+                            data: result,
+                            removedCardID: request.body.PaymentID,
+                        })
+                      // The payment has succeeded
+                      // Display a success message
+                    }
+                }).catch((e) => {
+                    response.status(500).send(e)
+                });
             }
-        }).catch((e) => {
-            response.status(500).send(e)
-        });
+        
+    })
+
+    exports.getCoupon = functions.https.onRequest((request, response) => {
+
+
+        stripe.promotionCodes.list({
+            limit: 100,
+            active: true,
+            code: request.body.code
+        }).then(res => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: res
+            })
+        }).catch(err => {
+            response.status(500).send(err)
+        })
+
+       
     })
 
     exports.refundTrip = functions.https.onRequest((request, response) => {

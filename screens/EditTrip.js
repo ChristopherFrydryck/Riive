@@ -411,6 +411,17 @@ class externalSpace extends React.Component {
                             db.collection("listings").doc(this.props.navigation.state.params.visit.listingID).collection("trips").doc(this.props.navigation.state.params.visit.tripID).update({
                                 isCancelled: true,
                             })
+
+                            if(this.state.visit.promoCode){
+                                db.collection("users").doc(this.props.UserStore.userID).update({
+                                    discounts: firestore.FieldValue.arrayRemove(this.state.visit.promoCode)
+                                })
+    
+                                let removedPromo = this.props.UserStore.discounts.filter(x => x !== this.state.visit.promoCode)
+                                this.props.UserStore.discounts = removedPromo
+                            }
+                            
+
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().hostID).get().then((host) => {
                                 if(!host.exists){

@@ -382,6 +382,7 @@ export default class Authentication extends React.Component {
                       vehicles: [],
                       payments: [],
                       trips: [],
+                      discounts: [],
                       photo: '',
                       joined_date: auth().currentUser.metadata.creationTime,
                       last_update: auth().currentUser.metadata.creationTime,
@@ -431,6 +432,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.reports = [];
                     this.props.UserStore.payments = [];
                     this.props.UserStore.trips = [];
+                    this.props.UserStore.discounts = [];
                     this.props.UserStore.searchHistory = [];
                     this.props.UserStore.disabled = false;
                     this.props.UserStore.deleted = false;
