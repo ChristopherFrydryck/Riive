@@ -1123,7 +1123,7 @@ const fs = require('fs');
 
         stripe.promotionCodes.list({
             limit: 100,
-            active: true,
+            active: request.body.allActive || true,
             code: request.body.code
         }).then(res => {
             return response.send({
@@ -1138,35 +1138,112 @@ const fs = require('fs');
        
     })
 
+    exports.getCouponByID =functions.https.onRequest((request, response) => {
+        stripe.promotionCodes.retrieve(
+            request.body.promoCodeID
+        ).then(res => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: res
+            })
+        }).catch(err => {
+            response.status(500).send(err)
+        })
+    })
+
     exports.refundTrip = functions.https.onRequest((request, response) => {
-        stripe.refunds.create({
-            payment_intent: request.body.paymentIntent,
-            amount: request.body.amount,
-            reason: "requested_by_customer",
-            reverse_transfer: true,
-            refund_application_fee: request.body.refundApplicationFee 
-          }).then(res => {
-              
-              if(res.status !== "succeeded"){
-                const error = new Error("Failed to get your information")
-                error.statusCode = 501;
-                error.name = 'Stripe/RefundFailure'
-                throw error;
-           
-              }else{
+
+        if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount > 0){
+            
+            stripe.refunds.create({
+                payment_intent: request.body.paymentIntent,
+                amount: request.body.amount,
+                reason: "requested_by_customer",
+                reverse_transfer: true,
+                refund_application_fee: request.body.refundApplicationFee 
+              }).then(res => {
+                  
+                  if(res.status !== "succeeded"){
+                    const error = new Error("Failed to get your information")
+                    error.statusCode = 501;
+                    error.name = 'Stripe/RefundFailure'
+                    throw error;
+               
+                  }else{
+                    return res
+                  }
+              }).then( async(res) => {
+                let transfer = await stripe.transfers.createReversal(
+                    request.body.discountID,
+                    {amount: request.body.discountAmount}
+                )
+                return [transfer, res]
+              }).then((result) => {
                 return response.send({
                     statusCode: 200,
                     res: "SUCCESS",
-                    data: res,
+                    data: result[1],
+                    transferData: result[0],
+                    removedCardID: request.body.PaymentID,
                 })
-              }
-          }).catch(err => {
+            }).catch(err => {
+                return response.status(err.statusCode || 500).send({
+                    statusCode: err.statusCode,
+                    message: err.message,
+                    name: err.name
+                })
+              })
+        }else if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount <= 0){
+            stripe.transfers.createReversal(
+                request.body.discountID,
+                {amount: request.body.discountAmount}
+            ).then((result) => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: null,
+                transferData: result,
+                removedCardID: request.body.PaymentID,
+            })
+        }).catch(err => {
             return response.status(err.statusCode || 500).send({
                 statusCode: err.statusCode,
                 message: err.message,
                 name: err.name
             })
           })
+        }else{
+            stripe.refunds.create({
+                payment_intent: request.body.paymentIntent,
+                amount: request.body.amount,
+                reason: "requested_by_customer",
+                reverse_transfer: true,
+                refund_application_fee: request.body.refundApplicationFee 
+              }).then(res => {
+                  
+                  if(res.status !== "succeeded"){
+                    const error = new Error("Failed to get your information")
+                    error.statusCode = 501;
+                    error.name = 'Stripe/RefundFailure'
+                    throw error;
+               
+                  }else{
+                    return response.send({
+                        statusCode: 200,
+                        res: "SUCCESS",
+                        data: res,
+                    })
+                  }
+              }).catch(err => {
+                return response.status(err.statusCode || 500).send({
+                    statusCode: err.statusCode,
+                    message: err.message,
+                    name: err.name
+                })
+              })
+        }
+        
     })
 
     exports.deleteSpace = functions.firestore.document('listings/{listingID}').onDelete((snap, context) => {

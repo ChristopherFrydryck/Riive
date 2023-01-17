@@ -592,6 +592,7 @@ class reserveSpace extends Component {
             }
         }
 
+        
         clearCoupon = ()  => {
             this.setState({
                 discount: null,
@@ -718,6 +719,7 @@ class reserveSpace extends Component {
                                     totalCents: this.state.totalCents,
                                     discount: this.state.discount,
                                     discountType: this.state.discountType,
+                                    discountTotal: this.state.discountTotal,
                                     discountTotalCents: this.state.discountTotalCents
                                 },
                                 paymentIntentID: paymentIntent,
@@ -822,6 +824,7 @@ class reserveSpace extends Component {
                                         total: this.state.total,
                                         totalCents: this.state.totalCents,
                                         discountTotalCents: this.state.discountTotalCents,
+                                        discountTotal: this.state.discountTotal,
                                         discount: this.state.discount,
                                     },
                                     ...this.props.navigation.state.params.homeState
