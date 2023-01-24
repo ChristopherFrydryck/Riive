@@ -78,6 +78,7 @@ class externalSpace extends React.Component {
             visitorNameValid: true,
 
             changesMade: false,
+            cancellingTrip: false,
         }
 
 
@@ -351,11 +352,11 @@ class externalSpace extends React.Component {
                 if(minutesSinceStart >= 30){
                     if(this.state.visit.price.discount){
                         
-                        discountRefundableAmtCents = Math.max(0, this.state.visit.price.discountTotalCents/((thirtyMinSections/2)* hoursUnrefundable))
+                        discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents/((thirtyMinSections/2)* hoursUnrefundable)))
                         discountRefundableAmt = (discountRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                         
                     }
-                        refundableAmtCents = Math.max(0 , Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) - (((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents)/(thirtyMinSections/2))*hoursUnrefundable)))
+                        refundableAmtCents = Math.floor(Math.max(0 , Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) - (((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents)/(thirtyMinSections/2))*hoursUnrefundable))))
                         refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                     
 
@@ -364,24 +365,24 @@ class externalSpace extends React.Component {
                 }else{
                     if(this.state.visit.price.discount){
                         
-                        discountRefundableAmtCents = Math.max(0, this.state.visit.price.discountTotalCents*.8)
+                        discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents*.8))
                         discountRefundableAmt = (discountRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                         
                     }
 
-                        refundableAmtCents = Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) * .8 + this.state.visit.price.serviceFeeCents))
+                        refundableAmtCents = Math.floor(Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) * .8 + this.state.visit.price.serviceFeeCents)))
                         refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                     
                     
                     await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: true, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt})
                 }
             }else{
-                refundableAmtCents = Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) + this.state.visit.price.serviceFeeCents))
+                refundableAmtCents = Math.floor(Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) + this.state.visit.price.serviceFeeCents)))
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
                 if(this.state.visit.price.discount){
                     
-                    discountRefundableAmtCents = Math.max(0, this.state.visit.price.discountTotalCents)
+                    discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents))
                     discountRefundableAmt = (discountRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
                     
                 }
@@ -403,7 +404,7 @@ class externalSpace extends React.Component {
                     if(this.state.refundAmtCents > 0){
                         Alert.alert(
                             'Cancel Trip',
-                            `Cancelling your current trip will return a partial amount of ${this.state.refundAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}. ${this.state.discountCodeReversable ? "By cancelling you will be allowed to reuse the discount code on this purchase": "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code."}`,
+                            `Cancelling your current trip will return a partial amount of ${this.state.refundAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}. ${this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : !this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}}`,
                             [
                             { text: 'Cancel' },
                             { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
@@ -412,7 +413,7 @@ class externalSpace extends React.Component {
                     }else{
                         Alert.alert(
                             'Cancel Trip',
-                            `Cancelling your current trip will not return any funds to your account. ${this.state.discountCodeReversable ? "By cancelling you will be allowed to reuse the discount code on this purchase": "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code."}`,
+                            `Cancelling your current trip will not return any funds to your account. ${this.state.discountCodeReversable && this.state.visit.price.discount!== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : !this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}`,
                             [
                             { text: 'Cancel' },
                             { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
@@ -425,7 +426,7 @@ class externalSpace extends React.Component {
                         
                         Alert.alert(
                             'Cancel Trip',
-                            `Cancelling a trip will return a total amount of ${this.state.refundAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}. ${this.state.discountCodeReversable ? "By cancelling you will be allowed to reuse the discount code on this purchase": "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code."}`,
+                            `Cancelling a trip will return a total amount of ${this.state.refundAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}. ${this.state.discountCodeReversable && this.state.visit.price.discount!== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : !this.state.discountCodeReversable && this.state.visit.price.discount!== null ? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}`,
                             [
                             { text: 'Cancel' },
                             { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
@@ -434,7 +435,7 @@ class externalSpace extends React.Component {
                     }else{
                         Alert.alert(
                             'Cancel Trip',
-                            `Cancelling your upcoming trip will not return any funds to your account. ${this.state.discountCodeReversable ? "By cancelling you will be allowed to reuse the discount code on this purchase": "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code."}`,
+                            `Cancelling your upcoming trip will not return any funds to your account. ${this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : this.state.discountCodeReversable && this.state.visit.price.discount !== null? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}`,
                             [
                             { text: 'Cancel' },
                             { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
@@ -474,6 +475,7 @@ class externalSpace extends React.Component {
     }
 
     cancelTrip = () => {
+        this.setState({cancellingTrip: true})
         const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
         this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
@@ -485,6 +487,7 @@ class externalSpace extends React.Component {
             db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
                     alert("Failed to save changes. Trip not found.")
+                    this.setState({cancellingTrip: false})
                 }else{
                     let hostPushTokens = null;
                     let refundID =  null;
@@ -517,13 +520,15 @@ class externalSpace extends React.Component {
                                 isCancelled: true,
                             })
 
-                            if(this.state.visit.promoCode){
+                            if(this.state.visit.promoCode && this.state.discountCodeReversable){
                                 db.collection("users").doc(this.props.UserStore.userID).update({
                                     discounts: firestore.FieldValue.arrayRemove(this.state.visit.promoCode)
                                 })
     
                                 let removedPromo = this.props.UserStore.discounts.filter(x => x !== this.state.visit.promoCode)
+
                                 this.props.UserStore.discounts = removedPromo
+
                             }
                             
 
@@ -562,17 +567,20 @@ class externalSpace extends React.Component {
 
                             
                         }).then(() => {
+                            this.setState({cancellingTrip: false})
                             this.props.navigation.goBack(null)
                         }).catch(e => {
                             throw e
                         })
                     }catch(e){
                         alert(e)
+                        this.setState({cancellingTrip: false})
                     }
                 }
             })
         }else{
             alert("Failed to cancel this trip. Ended since cancellation.")
+            this.setState({cancellingTrip: false})
         }
     }
 
@@ -724,7 +732,14 @@ class externalSpace extends React.Component {
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
                                 <Text numberOfLines={1} ellipsizeMode='tail'>Last updated {`${this.state.lastUpdate.split(" ")[0].split("/")[0]}/${this.state.lastUpdate.split(" ")[0].split("/")[1]} @ ${this.state.lastUpdate.split(" ")[1].split(":")[0]}:${this.state.lastUpdate.split(" ")[1].split(":")[1]} ${this.state.lastUpdate.split(" ")[2]}`}</Text>
                                 {!this.isInPast && this.state.isRefundable && !this.state.tripReported ? 
-                                    <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                    // <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                    <Button
+                                        style={{backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.hal500, height: 40, marginTop: 5, paddingVertical: 0}} 
+                                        textStyle={this.state.discountTotalCents ? {color: Colors.hal500, fontSize: 16} : {color: Colors.hal500, fontSize: 16}} 
+                                        onPress={() => this.showCancellationModal()}
+                                    >
+                                        {this.state.cancellingTrip ? null : "Cancel Trip"}
+                                    </Button>
                                 :
                                 this.state.tripReported  ? 
                                     <Text type="medium" style={{fontSize: 16, color: Colors.cosmos300}}>Trip Reported</Text> 

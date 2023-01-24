@@ -14,7 +14,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     if(!props.mask){
     return (
         <View {...allProps}>
-            {label ? 
+            {label || containerType !== "fullBorder" ? 
                  <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                      <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                      <Text style={styles.label_disabled}>{rightText}</Text>
@@ -45,7 +45,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     )}else if(props.mask == 'multiline'){
         return(
         <View {...allProps}>
-                {label ? 
+                {label || containerType !== "fullBorder" ? 
                  <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                      <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                      <Text style={styles.label_disabled}>{rightText}</Text>
@@ -86,7 +86,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
         // https://github.com/benhurott/react-native-masked-text
         return (
             <View {...allProps}>
-                    {label ? 
+                    {label || containerType !== "fullBorder" ? 
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
@@ -116,7 +116,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     }if(props.mask == 'number'){
         return (
             <View {...allProps}>
-                    {label ? 
+                    {label || containerType !== "fullBorder" ? 
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
@@ -144,7 +144,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     }if(props.mask == 'phone'){
         return (
             <View {...allProps}>
-                    {label ? 
+                    {label || containerType !== "fullBorder" ? 
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
@@ -174,7 +174,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     }if(props.mask == 'mm/dd/yyyy'){
         return (
             <View {...allProps}>
-                    {label ? 
+                    {label || containerType !== "fullBorder" ? 
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
@@ -204,7 +204,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     }if(props.mask == 'mm/yy'){
         return (
             <View {...allProps}>
-                    {label ? 
+                    {label || containerType !== "fullBorder" ? 
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                         <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                         <Text style={styles.label_disabled}>{rightText}</Text>
@@ -233,7 +233,7 @@ const input = ({label, masked, flex, error, value, onChangeText, placeholder, se
     }if(props.mask == 'USD'){
         return(
             <View {...allProps}>
-                    {label ? 
+                    {label || containerType !== "fullBorder" ? 
                         <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', height: Platform.OS === 'ios' ? 26 : 19}}>
                             <Text style={editable ? styles.label : styles.label_disabled}>{label} </Text>
                             <Text style={styles.label_disabled}>{rightText}</Text>

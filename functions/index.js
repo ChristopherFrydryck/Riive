@@ -41,6 +41,33 @@ const fs = require('fs');
         }
        
     })
+            
+
+    exports.getUserDataFromID = functions.https.onRequest((request, response) => {
+        if(request.method !== "POST"){
+            response.send(405, 'HTTP Method ' +request.method+' not allowed');
+        }else{
+            
+            db.collection('users').doc(request.body.FBID).get().then(doc => {
+                if(!doc.exists){
+                    error = new Error("User does not exist")
+                    error.statusCode = 401;
+                    error.name = 'Firebase/User-ID-Error'
+                    throw error
+                }else{
+                    return doc.data();
+                }
+            }).then((res) => {
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: res,
+            }).catch(e => {
+                response.status(500).send(e);
+            })
+        })
+       
+    }})
 
     exports.addCustomerAddress = functions.https.onRequest((request, response) => {
         let error = null;
@@ -1019,6 +1046,33 @@ const fs = require('fs');
     })
 
 
+    exports.updateExternalUser = functions.https.onRequest((request, response) => {
+        db.collection('users').doc(request.body.FBID).get().then((doc) => {
+            if(!doc.exists){
+                error = new Error("User does not exist")
+                error.statusCode = 401;
+                error.name = 'Firebase/User-Not-Exist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then(user => {
+            db.collection('users').doc(user.id).update(
+                request.body.fields
+            )
+
+            return user
+        }).then(res => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: res,
+            })
+        }).catch(e => {
+            response.status(500).send(e)
+        })
+            
+    })
 
     exports.payForSpace = functions.https.onRequest((request, response) => {
 

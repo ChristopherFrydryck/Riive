@@ -105,6 +105,8 @@ class reserveSpace extends Component {
     }
 
     async componentDidMount(){
+       
+
         const { timeSearched } = this.props.navigation.state.params.homeState;
         await this.getDiffHours(timeSearched[0].label, timeSearched[1].label)
 
@@ -117,6 +119,13 @@ class reserveSpace extends Component {
         })
 
         await this.getPrice();
+
+        //Ensure user's discounts is up to date
+        const db = firestore();
+
+        db.collection('users').doc(this.props.UserStore.userID).get().then(res => {
+            this.props.UserStore.discounts = res.data().discounts
+        })
 
        
         // Check if space is in same timezone as current device
