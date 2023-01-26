@@ -273,6 +273,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
               this.props.UserStore.address = doc.data().primaryAddress || {};
               this.props.UserStore.versions = doc.data().versions || [];
+              this.props.UserStore.discounts = doc.data().discounts || [];
               // this.props.UserStore.permissions = doc.data().permissions || {
               //   notifications: {
               //     discountsAndNews: false,
@@ -577,6 +578,7 @@ export default class Authentication extends React.Component {
                         patch: parseInt(version.split(".")[2])
                       }]
                     }]
+                    this.props.UserStore.discounts = [];
                     // this.props.UserStore.permissions = {
                     //   notifications: {
                     //     discountsAndNews: true,
@@ -711,6 +713,7 @@ onPressSignIn = async() => {
                 this.props.UserStore.ssnProvided = doc.data().ssnProvided || false;
                 this.props.UserStore.address = doc.data().primaryAddress || {};
                 this.props.UserStore.versions = doc.data().versions || [];
+                this.props.UserStore.discounts = doc.data().discounts || [];
                 // Don't pull from data. we want all permissions, not just account level perms
                 // this.props.UserStore.permissions = this.props.UserStore.permissions;
 

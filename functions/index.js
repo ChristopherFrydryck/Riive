@@ -1025,8 +1025,7 @@ const fs = require('fs');
             description: request.body.description,
             customer: request.body.visitorID,
             payment_method: request.body.paymentID,
-            receipt_email: request.body.customerEmail,
-            application_fee_amount: request.body.transactionFee || 0,
+            receipt_email: request.body.customerEmail
         }).then(function(result) {
             if (result.error) {
               throw result.error
@@ -1768,6 +1767,15 @@ const fs = require('fs');
 
                                 }
                             break;
+                            case 1:
+                                switch(versionsBehind[i].patch){
+                                     // Version 1.1.0
+                                     case 0:
+                                        // db.collection('users').doc(context.params.user_id).update({
+                                        //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+                                        //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+                                        // });
+                                }
                         }
                     break
                 }

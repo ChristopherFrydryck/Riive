@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Platform, Animated, Dimensions, StatusBar, ScrollView, View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import Text from '../components/Txt'
 import Button from '../components/Button'
 import Input from '../components/Input';
@@ -81,7 +83,7 @@ class reserveSpace extends Component {
             total: null,
             totalCents: null,
 
-            promoCode: "newuser20",
+            promoCode: "",
             promoCodeID: null,
             promoCodeError: "",
             promoCodeActive: false,
@@ -124,7 +126,7 @@ class reserveSpace extends Component {
         const db = firestore();
 
         db.collection('users').doc(this.props.UserStore.userID).get().then(res => {
-            this.props.UserStore.discounts = res.data().discounts
+            this.props.UserStore.discounts = res.data().discounts || []
         })
 
        
@@ -469,9 +471,10 @@ class reserveSpace extends Component {
                     // Just in case there is somehow two or more discounts with the same code even though Stripe doesn't allow this
                     const sortedResultsNewFirst = data.data.data.sort((a, b) => a.created - b.created)
                     const pcode = sortedResultsNewFirst[0]
-
+                    
+                    console.log(this.props.UserStore.discounts)
                     // The number of times a coupon has been used by a user
-                    let numTimesUsedDiscount = this.props.UserStore.discounts.filter(x => x == pcode.id).length;
+                    let numTimesUsedDiscount = this.props.UserStore.discounts ? this.props.UserStore.discounts.filter(x => x == pcode.id).length : 0;
 
                     // The minimum amount of money that can make the coupon valid. Only for fare, not for additional fees
                     let minimumAmountValid = pcode.restrictions.minimum_amount ? this.state.priceCents >= pcode.restrictions.minimum_amount : true;
@@ -968,7 +971,7 @@ class reserveSpace extends Component {
         //   console.log(`hours spent: ${this.state.hoursSpent} and minutes spent: ${this.state.minutesSpent}`)
 
           return(
-              <ScrollView
+              <KeyboardAwareScrollView
                 stickyHeaderIndices={searchedAddress ? [2] : [1]}
                 style={{backgroundColor: 'white'}}
               >
@@ -1126,7 +1129,7 @@ class reserveSpace extends Component {
                         <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                     </View>
                     
-                </ScrollView>
+                </KeyboardAwareScrollView>
                 
           )
       }

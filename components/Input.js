@@ -288,7 +288,8 @@ const styles = StyleSheet.create({
         borderColor: '#adadad',
         borderWidth: 2,
         borderRadius: 4,
-        height: 40,
+        height: Platform.OS == 'ios' ? 40 : 40,
+        paddingVertical: 0,
         justifyContent: 'center',
         paddingHorizontal: 4,
 
@@ -324,14 +325,17 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingBottom: 2,
         color: '#333',
+        marginTop: -4,
+        lineHeight: 24,
         fontSize: 18,
-        width: '100%'
+        width: '100%',
     },
     input_disabled: {
         paddingRight: 5,
         paddingLeft: 5,
         paddingBottom: 0,
         color: Color.mist900,
+        marginTop: -4,
         fontSize: 18,
         width: '100%'
     },

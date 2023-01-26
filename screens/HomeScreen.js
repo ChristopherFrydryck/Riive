@@ -777,6 +777,7 @@ filterResults = async() => {
 }
 
 clickSpace = async(data) => {
+
   await this.checkDayTimeValid()
   if(this.state.dayTimeValid){
       await this.props.ComponentStore.selectedExternalSpot.clear()
@@ -1144,12 +1145,12 @@ renderDotsView = (numItems, position) =>{
                 latitudeDelta: this.region.current.latitudeDelta || 0.025,
                 longitudeDelta: this.region.current.longitudeDelta || 0.025
               }}
-              region={{
-                  latitude: 0,
-                  longitude: 0,
-                  latitudeDelta: 0.025,
-                  longitudeDelta: 0.025
-              }}
+            //   region={{
+            //       latitude: 0,
+            //       longitude: 0,
+            //       latitudeDelta: 0.025,
+            //       longitudeDelta: 0.025
+            //   }}
               region={Platform.OS == 'ios' ? {
                   
                   latitude: this.region.searched.latitude && !this.state.mapScrolled ? this.region.searched.latitude : this.state.mapScrolled ? this.region.scrolled.latitude : this.region.current.latitude,

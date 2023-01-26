@@ -758,7 +758,7 @@ class externalSpace extends React.Component {
                         </View>
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Visitor</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Visitor Details</Text>
                         <Input 
                              placeholder='Visitor name...'
                              label="Visitor Name"
@@ -782,7 +782,7 @@ class externalSpace extends React.Component {
                         />
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Vehicle</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Vehicle Details</Text>
                         <RadioList activeItem={this.state.selectedVehicle.VehicleID} selectItem={(option) => this.setActiveVehicle(option, true)}>
                                     {vehicleArray}
                         </RadioList>
@@ -793,7 +793,7 @@ class externalSpace extends React.Component {
                         }
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16,}}>Payment</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16,}}>Payment Details</Text>
                       
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderColor: Colors.mist900, borderTopWidth: 2, borderBottomWidth: 2, paddingVertical: 8, paddingHorizontal: 16, marginTop: 16 }}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
