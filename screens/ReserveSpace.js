@@ -342,15 +342,19 @@ class reserveSpace extends Component {
 
                  // If specific time slot is marked unavailable, we will check it
                  if(!data.available){
-                    // // Check if start time is out of bounds
-                    
+                    // Check if start time is out of bounds
+                    if(parseInt(data.start) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
+                        // console.log(`Start value ${data.start} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
                         worksArray.push(false)
+            
                         
-       
-                        // console.log(`Time slot ${data.id} is marked unavailable but works since ${data.start} and ${data.end} are not within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                    // }
-                   
-                    // console.log("Time slot " + data.id + " does not work")
+                    }
+                    // Check if end time is out of bounds
+                    else if(parseInt(data.end) >= parseInt(timeSearched[0].label) && parseInt(data.start) <= parseInt(timeSearched[1].label)){
+                        worksArray.push(false)
+                  
+                    } 
+                        // console.log(`End value ${data.end} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
                 }else{
                     
                      // Check each upcoming visit for a space
@@ -472,14 +476,14 @@ class reserveSpace extends Component {
                     const sortedResultsNewFirst = data.data.data.sort((a, b) => a.created - b.created)
                     const pcode = sortedResultsNewFirst[0]
                     
-                    console.log(this.props.UserStore.discounts)
+                    // console.log(this.props.UserStore.discounts)
                     // The number of times a coupon has been used by a user
                     let numTimesUsedDiscount = this.props.UserStore.discounts ? this.props.UserStore.discounts.filter(x => x == pcode.id).length : 0;
 
                     // The minimum amount of money that can make the coupon valid. Only for fare, not for additional fees
                     let minimumAmountValid = pcode.restrictions.minimum_amount ? this.state.priceCents >= pcode.restrictions.minimum_amount : true;
 
-                    // The number of times a coupon can be used by a user 
+                    // The number of times a coup   on can be used by a user 
                     let numTimesUsedValid = pcode.coupon.max_redemptions ? numTimesUsedDiscount < pcode.coupon.max_redemptions : true;
 
                     // The value for if the coupon is valid only the first trip (we default this to true but make it false down the line if a user has a trip that wasn't cancelled)

@@ -730,12 +730,15 @@ class addSpace extends Component {
                   
                   this.setState({savingSpace: false})
                   this.props.navigation.navigate("Profile")
-                }catch{
+                }catch(e){
+                  alert(e)
                   this.setState({savingSpace: false})
                 }
                 
 
       }else{
+        alert("There was an issue saving your space. Please ensure all required fields are valid.")
+        // console.log(`searched address: ${this.state.searchedAddress} spacePrice: ${this.state.spacePrice} SpacePriceValid ${this.state.spacePriceValid} nameValid: ${this.state.nameValid} bioValid: ${this.state.bioValid} photoValid ${this.state.photo}`)
         this.setState({savingSpace: false})
       }
   
@@ -921,7 +924,7 @@ class addSpace extends Component {
             
             <View style={{zIndex: 999999999}}>
                 <AddressInput 
-                  returnValue={this.addressCallbackFunction}
+                  returnValue={(res) => this.addressCallbackFunction(res)}
 
                 />
               </View>

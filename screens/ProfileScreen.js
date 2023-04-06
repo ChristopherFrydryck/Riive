@@ -147,8 +147,8 @@ class Profile extends Component{
         // Set Status Bar page info here!
        
         this._navListener = this.props.navigation.addListener('didFocus', () => {
-            this.updateProfile();
             checkUserStatus(auth().currentUser.uid);
+            this.updateProfile();
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();
@@ -327,7 +327,7 @@ class Profile extends Component{
     
       
 
-    updateProfile = () => {
+    updateProfile = async() => {
         const db = firestore();
         const doc = db.collection('users').doc(this.props.UserStore.userID);
 
@@ -337,7 +337,7 @@ class Profile extends Component{
        
         if(!this.state.isRefreshing){
 
-            doc.get().then(doc => {
+            await doc.get().then((doc) => {
                 const length = doc.data().listings.length;
 
                 const vehiclesIDSorted = doc.data().vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
@@ -404,34 +404,91 @@ class Profile extends Component{
                         allArrs.push(listings.splice(0, 10))
                     }
 
-                    for(let i = 0; i < allArrs.length; i++){
-                    db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
-                        for(let i = 0; i < qs.docs.length; i++){
-                        listingsData.push(qs.docs[i].data())
-                        }
-                    }).then(() => {
-                        setTimeout(async() => {
-                            listingsData.forEach(async(data, i) => {
-                                let visitsArray = [];
-                                let snapshot = await firestore().collection('listings')
-                                    .doc(data.listingID)
-                                    .collection('trips')
-                                    .get()
-                            
-                                await snapshot.forEach(doc =>{
-                                    visitsArray.push(doc.data().id)
-                                })
+                        
 
-                                listingsData[i].visits = visitsArray
-                                this.props.UserStore.listings = [];
-                                this.props.UserStore.listings = listingsData;
-                                
-                            })
-
-                            this.setState({listings: this.props.UserStore.listings, listingsLoaded: true})
-                        }, 300)
+                    allArrs.forEach(async(x, i) => {
+                        await db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+                            for(let i = 0; i < qs.docs.length; i++){
+                                listingsData.push(qs.docs[i].data())
+                            }
+                            return listingsData
+                        }).then(res => {
+                            this.props.UserStore.listings = listingsData;
+                            this.setState({listings: this.props.UserStore.listings})
+                             // Only loads once the for loop has completed
+                            if(this.state.listings.length == length){
+                                this.setState({listingsLoaded: true})
+                            }
+                        })
                     })
-                    }
+
+                    
+
+                    // await console.log(listingsData.length)
+                    
+
+         
+
+
+
+                    // allArrs.map((x, i) => {
+                    //     for(let g = 0; g < allArrs.length; i++){
+                    //         console.log(allArrs[i])
+                    //     }
+                    // })
+                    // for(let i = 0; i < length; i++){
+                    //     db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then(async(qs) => {
+                            
+                    //     })
+                    // }
+
+                    // allArrs.map(async(x, i) => {
+                    //     await db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then(async(qs) => {
+                    //         // console.log(qs.docs)
+                    //         await qs.docs.forEach(y => {
+                    //             // console.log(y.data())
+                    //             listingsData.push(y.data())
+                    //         })
+                    //     })
+                    // }).then((ld) => {
+                    //     console.log(ld.length)
+                    //     this.props.UserStore.listings = [];
+                    //     this.props.UserStore.listings = listingsData;
+                    //     this.setState({listings: this.props.UserStore.listings, listingsLoaded: true})
+                    // })
+
+                                
+                   
+
+                    // for(let i = 0; i < allArrs.length; i++){
+                    // db.collection('listings').where(firestore.FieldPath.documentId(), "in", allArrs[i]).get().then((qs) => {
+                    //     console.log(qs.docs)
+                    //     for(let i = 0; i < qs.docs.length; i++){
+                    //     listingsData.push(qs.docs[i].data())
+                    //     }
+                    // }).then(() => {
+                    //     setTimeout(async() => {
+                    //         listingsData.forEach(async(data, i) => {
+                    //             let visitsArray = [];
+                    //             let snapshot = await firestore().collection('listings')
+                    //                 .doc(data.listingID)
+                    //                 .collection('trips')
+                    //                 .get()
+                            
+                    //             await snapshot.forEach(doc =>{
+                    //                 visitsArray.push(doc.data().id)
+                    //             })
+
+                    //             listingsData[i].visits = visitsArray
+                    //             this.props.UserStore.listings = [];
+                    //             this.props.UserStore.listings = listingsData;
+                                
+                    //         })
+
+                    //         this.setState({listings: this.props.UserStore.listings, listingsLoaded: true})
+                    //     }, 300)
+                    // })
+                    // }
 
   
                 }else{
@@ -1219,7 +1276,7 @@ class Profile extends Component{
                                         iconColor="#FFFFFF"
                                         iconSize={24}
                                         onPress={() => this.setState({menuVisible: true})}
-                                        style={{paddingLeft: 30, marginLeft: "auto"}}
+                                        style={{paddingLeft: 24, marginLeft: "auto"}}
                                     /> 
                                 }
                             >
