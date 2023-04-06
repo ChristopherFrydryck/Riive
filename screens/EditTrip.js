@@ -64,15 +64,21 @@ class externalSpace extends React.Component {
             tripReported: this.props.UserStore.reports.map(x => x.visit ? x.visit.visitID : null ).includes(this.props.navigation.state.params.visit.tripID),
 
             isRefundable: false,
+            discountCodeReversable: true,
+
             refundAmt: null,
             refundAmtCents: null,
+            discountRefundAmt: null,
+            discountRefundAmtCents: null,
             fullRefund: null,
             refundServiceFee: null,
+
 
             visitorNameError: "",
             visitorNameValid: true,
 
             changesMade: false,
+            cancellingTrip: false,
         }
 
 
@@ -91,6 +97,9 @@ class externalSpace extends React.Component {
         this._isMounted = true;
 
 
+
+    //    this.c(this.state.visit.promoCode);
+    
 
        this.checkIfRefundable()
 
@@ -215,7 +224,7 @@ class externalSpace extends React.Component {
         
     }
 
-    refundTrip = async (amountRefund, refundFee) => {
+    refundTrip = async (amountRefund, refundFee, discountAmount) => {
             
 
         const settings = {
@@ -228,6 +237,8 @@ class externalSpace extends React.Component {
             paymentIntent: this.state.visit.paymentIntentID,
             amount: amountRefund,
             refundApplicationFee: refundFee,
+            discountID: this.state.visit.transferID || null,
+            discountAmount: discountAmount || 0
           })
         }
 
@@ -243,6 +254,43 @@ class externalSpace extends React.Component {
         }    
       }
 
+    
+    getCouponById = async(couponID) => {
+        const settings = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                promoCodeID: couponID,
+            })
+        }
+
+        try{
+            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/getCouponByID`, settings);
+            const data = await fetchResponse.json()
+    
+            return data
+        }catch(e){
+            return e
+        }
+
+       
+    }
+
+    c = (pcode) => {
+        this.getCouponById(pcode).then((res) => {
+            if(res.statusCode !== 200){
+                console.log(res)
+                return res
+            }else{
+                console.log(res.data)
+                return res
+            }
+        })
+    }
+
     checkIfRefundable = () => {
         // const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
@@ -254,23 +302,27 @@ class externalSpace extends React.Component {
         var minutes = Math.floor((diffVisitTimes/1000)/60);
         var thirtyMinSections = Math.ceil(minutes/30)
 
+        let minutesOfTrip = Math.floor(diffVisitTimes/1000/60)
+
         let minutesSinceStart = Math.ceil((timeDiffStart/1000)/60) >= 0 ? null : Math.abs(Math.ceil((timeDiffStart/1000)/60))
         let minutesUntilEnd = minutes - minutesSinceStart
-         
-
+        
+        
         if(minutesSinceStart){
             if(minutesUntilEnd < 30){
-                this.setState({isRefundable: false})
+                this.setState({isRefundable: false, discountCodeReversable: false})
+            }else if(minutesOfTrip/2 >= minutesUntilEnd){
+                this.setState({isRefundable: true, discountCodeReversable: false})
             }else{
-                this.setState({isRefundable: true})
+                this.setState({isRefundable: true, discountCodeReversable: true})
             }
         }else{
-            this.setState({isRefundable: true})
+            this.setState({isRefundable: true, discountCodeReversable: true})
         }
     }
 
-    showCancellationModal = () => {
-        this.checkIfRefundable();
+    showCancellationModal = async() => {
+        await this.checkIfRefundable();
         const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
         this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
@@ -292,50 +344,104 @@ class externalSpace extends React.Component {
 
         let refundableAmt = null
         let refundableAmtCents = null;
+        let discountRefundableAmt = null;
+        let discountRefundableAmtCents = null;
+
         if(this.state.isRefundable){
             if(minutesSinceStart){
                 if(minutesSinceStart >= 30){
-                    refundableAmtCents = Math.floor(this.state.visit.price.priceCents - ((this.state.visit.price.priceCents/(thirtyMinSections/2))*hoursUnrefundable))
-                    refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: false})
+                    if(this.state.visit.price.discount){
+                        
+                        discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents/((thirtyMinSections/2)* hoursUnrefundable)))
+                        discountRefundableAmt = (discountRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                        
+                    }
+                        refundableAmtCents = Math.floor(Math.max(0 , Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) - (((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents)/(thirtyMinSections/2))*hoursUnrefundable))))
+                        refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                    
+
+                    await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: false, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt})
                     
                 }else{
-                    refundableAmtCents = Math.floor(this.state.visit.price.priceCents*.8 + this.state.visit.price.serviceFeeCents)
-                    refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                    this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: true})
+                    if(this.state.visit.price.discount){
+                        
+                        discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents*.8))
+                        discountRefundableAmt = (discountRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                        
+                    }
+
+                        refundableAmtCents = Math.floor(Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) * .8 + this.state.visit.price.serviceFeeCents)))
+                        refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                    
+                    
+                    await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: true, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt})
                 }
             }else{
-                refundableAmtCents = Math.floor(this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)
+                refundableAmtCents = Math.floor(Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents) + this.state.visit.price.serviceFeeCents)))
                 refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
-                this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: true, refundServiceFee: true})
+
+                if(this.state.visit.price.discount){
+                    
+                    discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents))
+                    discountRefundableAmt = (discountRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                    
+                }
+
+                await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: true, refundServiceFee: true, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt})
+                
             }
         }else{
             Alert("This visit can no longer be refunded. For any questions, contact us at support@riive.net.")
-            this.setState({refundAmt: null, refundAmtCents: null, fullRefund: null})
+            await this.setState({refundAmt: null, refundAmtCents: null, fullRefund: null})
         }
+
+        // console.log(discountRefundableAmt)
 
 
         if(this.state.isRefundable){
             if(this.props.UserStore.directDepositInfo.id){
                 if(this.isCurrentlyActive){
-                    Alert.alert(
-                        'Cancel Trip',
-                        `Cancelling your current trip will return a partial amount of ${refundableAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}`,
-                        [
-                        { text: 'Cancel' },
-                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
-                        ]
-                    )
+                    if(this.state.refundAmtCents > 0){
+                        Alert.alert(
+                            'Cancel Trip',
+                            `Cancelling your current trip will return a partial amount of ${this.state.refundAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}. ${this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : !this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}}`,
+                            [
+                            { text: 'Cancel' },
+                            { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                            ]
+                        )
+                    }else{
+                        Alert.alert(
+                            'Cancel Trip',
+                            `Cancelling your current trip will not return any funds to your account. ${this.state.discountCodeReversable && this.state.visit.price.discount!== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : !this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}`,
+                            [
+                            { text: 'Cancel' },
+                            { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                            ]
+                        )
+                    }
 
                 }else{
-                    Alert.alert(
-                        'Cancel Trip',
-                        `Cancelling a trip will return a total amount of ${((this.state.visit.price.priceCents + this.state.visit.price.serviceFeeCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"})} back to the account ending in ${this.props.UserStore.directDepositInfo.number}`,
-                        [
-                        { text: 'Cancel' },
-                        { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
-                        ]
-                    )
+                    if(this.state.refundAmtCents > 0){
+                        
+                        Alert.alert(
+                            'Cancel Trip',
+                            `Cancelling a trip will return a total amount of ${this.state.refundAmt} back to the account ending in ${this.props.UserStore.directDepositInfo.number}. ${this.state.discountCodeReversable && this.state.visit.price.discount!== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : !this.state.discountCodeReversable && this.state.visit.price.discount!== null ? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}`,
+                            [
+                            { text: 'Cancel' },
+                            { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                            ]
+                        )
+                    }else{
+                        Alert.alert(
+                            'Cancel Trip',
+                            `Cancelling your upcoming trip will not return any funds to your account. ${this.state.discountCodeReversable && this.state.visit.price.discount !== null ? "By cancelling you will be allowed to reuse the discount code on this purchase" : this.state.discountCodeReversable && this.state.visit.price.discount !== null? "Unfortunately you will be unable to reuse the discount code on this purchase if it was a one time code." : ""}`,
+                            [
+                            { text: 'Cancel' },
+                            { text: 'Cancel Trip', onPress: () => this.cancelTrip() }
+                            ]
+                        )
+                    }               
                 }
             }else{
                 Alert.alert(
@@ -369,6 +475,7 @@ class externalSpace extends React.Component {
     }
 
     cancelTrip = () => {
+        this.setState({cancellingTrip: true})
         const timeDiffEnd = this.state.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.visit.visit.time.start.unix - new Date().getTime()
         this.isInPast = timeDiffEnd != Math.abs(timeDiffEnd);
@@ -380,6 +487,7 @@ class externalSpace extends React.Component {
             db.collection('trips').doc(this.props.navigation.state.params.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
                     alert("Failed to save changes. Trip not found.")
+                    this.setState({cancellingTrip: false})
                 }else{
                     let hostPushTokens = null;
                     let refundID =  null;
@@ -387,12 +495,12 @@ class externalSpace extends React.Component {
 
                     try{
 
-                      await this.refundTrip(this.state.refundAmtCents, false).then(res => {
+                      await this.refundTrip(this.state.refundAmtCents, false, this.state.discountRefundAmtCents).then(res => {
                       
                             if(res.statusCode !== 200){
                                 throw res.message
                             }else{
-                                refundID = res.data.id
+                                refundID = res.data ? res.data.id : null
                             }
                         })
 
@@ -411,6 +519,19 @@ class externalSpace extends React.Component {
                             db.collection("listings").doc(this.props.navigation.state.params.visit.listingID).collection("trips").doc(this.props.navigation.state.params.visit.tripID).update({
                                 isCancelled: true,
                             })
+
+                            if(this.state.visit.promoCode && this.state.discountCodeReversable){
+                                db.collection("users").doc(this.props.UserStore.userID).update({
+                                    discounts: firestore.FieldValue.arrayRemove(this.state.visit.promoCode)
+                                })
+    
+                                let removedPromo = this.props.UserStore.discounts.filter(x => x !== this.state.visit.promoCode)
+
+                                this.props.UserStore.discounts = removedPromo
+
+                            }
+                            
+
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().hostID).get().then((host) => {
                                 if(!host.exists){
@@ -446,17 +567,20 @@ class externalSpace extends React.Component {
 
                             
                         }).then(() => {
+                            this.setState({cancellingTrip: false})
                             this.props.navigation.goBack(null)
                         }).catch(e => {
                             throw e
                         })
                     }catch(e){
                         alert(e)
+                        this.setState({cancellingTrip: false})
                     }
                 }
             })
         }else{
             alert("Failed to cancel this trip. Ended since cancellation.")
+            this.setState({cancellingTrip: false})
         }
     }
 
@@ -545,7 +669,7 @@ class externalSpace extends React.Component {
 
     render(){
         const {width, height} = Dimensions.get("window")
-        // console.log()
+        // console.log(this.state.visit.promoCode)
         // let vehicleArray = this.props.UserStore.vehicles.map(vehicle => {
         //     return(
         //         <RadioButton disabled={this.state.visit.isCancelled ? true : false} key ={vehicle.VehicleID} style={{paddingVertical: 6}} id={vehicle.VehicleID} selectItem={() => this.setActiveVehicle(vehicle, false)}>
@@ -584,9 +708,9 @@ class externalSpace extends React.Component {
                 <ScrollView >
                     <View style={[styles.contentBox, {marginTop: 16, display: 'flex', flexDirection: 'row'}]}>
                         <View style={{borderRadius: 4, overflow: 'hidden', width: 120}}>
-                            {!this.state.visit.isCancelled ? 
+                            { !this.state.visit.isCancelled ? 
                                 <View style={{position: 'absolute', zIndex: 9, backgroundColor: 'white', top: 4, left: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 4}}>
-                                    <Text>{this.state.visit.price.total}</Text>
+                                    <Text>{this.state.visit.price.discount ? ((this.state.visit.price.totalCents - this.state.visit.price.discountTotalCents)/100).toLocaleString("en-US", {style:"currency", currency:"USD"}) : this.state.visit.price.total}</Text>
                                 </View>
                             : null }
                             <Image 
@@ -608,7 +732,14 @@ class externalSpace extends React.Component {
                                 <Text numberOfLines={1} ellipsizeMode='tail' style={{flex: 1}}>{this.state.visit.visit.time.start.labelFormatted} - {this.state.visit.visit.time.end.labelFormatted}{this.sameTimezone ? null : ` (${this.state.listing.timezone.timeZoneAbbr})`}</Text>
                                 <Text numberOfLines={1} ellipsizeMode='tail'>Last updated {`${this.state.lastUpdate.split(" ")[0].split("/")[0]}/${this.state.lastUpdate.split(" ")[0].split("/")[1]} @ ${this.state.lastUpdate.split(" ")[1].split(":")[0]}:${this.state.lastUpdate.split(" ")[1].split(":")[1]} ${this.state.lastUpdate.split(" ")[2]}`}</Text>
                                 {!this.isInPast && this.state.isRefundable && !this.state.tripReported ? 
-                                    <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                    // <Text type="medium" onPress={() => this.showCancellationModal()} style={{fontSize: 16, color: Colors.hal500, textDecorationLine: 'underline'}}>Cancel {this.isCurrentlyActive ? "Current" : "Upcoming"} Trip</Text>
+                                    <Button
+                                        style={{backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.hal500, height: 40, marginTop: 5, paddingVertical: 0}} 
+                                        textStyle={this.state.discountTotalCents ? {color: Colors.hal500, fontSize: 16} : {color: Colors.hal500, fontSize: 16}} 
+                                        onPress={() => this.showCancellationModal()}
+                                    >
+                                        {this.state.cancellingTrip ? null : "Cancel Trip"}
+                                    </Button>
                                 :
                                 this.state.tripReported  ? 
                                     <Text type="medium" style={{fontSize: 16, color: Colors.cosmos300}}>Trip Reported</Text> 
@@ -627,7 +758,7 @@ class externalSpace extends React.Component {
                         </View>
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Visitor Name</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Visitor Details</Text>
                         <Input 
                              placeholder='Visitor name...'
                              label="Visitor Name"
@@ -651,7 +782,7 @@ class externalSpace extends React.Component {
                         />
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Vehicle</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16, marginBottom: 8}}>Vehicle Details</Text>
                         <RadioList activeItem={this.state.selectedVehicle.VehicleID} selectItem={(option) => this.setActiveVehicle(option, true)}>
                                     {vehicleArray}
                         </RadioList>
@@ -662,7 +793,7 @@ class externalSpace extends React.Component {
                         }
                     </View>
                     <View style={[styles.contentBox, {marginTop: 16}]}>
-                        <Text type="medium" numberOfLines={1} style={{fontSize: 16,}}>Payment</Text>
+                        <Text type="medium" numberOfLines={1} style={{fontSize: 16,}}>Payment Details</Text>
                       
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderColor: Colors.mist900, borderTopWidth: 2, borderBottomWidth: 2, paddingVertical: 8, paddingHorizontal: 16, marginTop: 16 }}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>

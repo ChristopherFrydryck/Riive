@@ -621,7 +621,7 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
      let query = geocollection.near({ 
          center: new firestore.GeoPoint(lat, lng), 
          radius: radius,
-         limit: 100,
+         limit: 500,
       }).where("hidden", "==", false)
 
       query = query.where("toBeDeleted", "==", false)
@@ -676,51 +676,61 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
      
      
 
-  resultsFiltered.forEach((x, i) => {
+  resultsFiltered.forEach((listing, i) => {
       // Gets current day data
       let avail = resultsFiltered[i].space.availability[this.state.daySearched.dayValue].data
       // Creates new array to assume 
       let worksArray = new Array;
+      let numSpacesTotal = resultsFiltered[i].space.numSpaces;
+      let spacesBooked = 0;
+
+    //   console.log(`${resultsFiltered[i].space.spaceName} Has ${numSpacesTotal} Spaces`)
+
+
       for(let data of avail){
+        //   console.log(listing.space.numSpaces)
           // If specific time slot is marked unavailable, we will check it
           if(!data.available){
-              // Check if start time is out of bounds
-              if(parseInt(data.start) >= parseInt(this.state.timeSearched[0].label) && parseInt(data.start) <= parseInt(this.state.timeSearched[1].label)){
-                  // console.log(`Start value ${data.start} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-                  worksArray.push(false)
-              }
-              // Check if end time is out of bounds
-              else if(parseInt(data.end) >= parseInt(this.state.timeSearched[0].label) && parseInt(data.start) <= parseInt(this.state.timeSearched[1].label)){
-                  worksArray.push(false)
-                  // console.log(`End value ${data.end} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-              // If both start and end time don't interfere with filtered time slots
-              }else{
-                  worksArray.push(true)
-                  // console.log(`Time slot ${data.id} is marked unavailable but works since ${data.start} and ${data.end} are not within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
-              }
+
+            // console.log("Time slot " + data.id + " does not work")
+
+            worksArray.push(false)
+            continue;
              
-              // console.log("Time slot " + data.id + " does not work")
+             
           }else{
               let upcomingVisits = resultsFiltered[i].visits
+            //   console.log(upcomingVisits)
               // Check each upcoming visit for a space
               for(data of upcomingVisits){
                   // Check if visit is not cancelled
                   if(!data.isCancelled){
+                    
                       // Check if day of search matches visit day
                       if(this.state.daySearched.dayValue === data.visit.day.dayValue){
+
                           // if a visit start is after start time and before end time
                           if(parseInt(data.visit.time.start.label) >= parseInt(this.state.timeSearched[0].label) && parseInt(data.visit.time.start.label) <= parseInt(this.state.timeSearched[1].label)){
-                              worksArray.push(false)
-                              break;
+
+                            spacesBooked ++;
+                            if (spacesBooked >= numSpacesTotal){
+                                worksArray.push(false)
+                                break;
+                            }
                           
                           // if a visit end is before a start time and after end time
                           }else if(parseInt(data.visit.time.end.label) >= parseInt(this.state.timeSearched[0].label) && parseInt(data.visit.time.end.label) <= parseInt(this.state.timeSearched[1].label)){
-                              worksArray.push(false)
-                              break;
+                            
+                              spacesBooked ++;
+                              if (spacesBooked >= numSpacesTotal){
+                                worksArray.push(false)
+                                break;
+                            }
                           }else{
                               worksArray.push(true)
                               continue;
                           }
+                        
                       // If visit day doesn't match searched day
                       }else{
                           worksArray.push(true)
@@ -731,13 +741,14 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
                   }
                  
               }
+
               
               // console.log("Time slot " + data.id + " is marked available")
           }
       }
 
       if(!worksArray.includes(false)){
-          resultsFilteredTimeAvail.push(x)
+          resultsFilteredTimeAvail.push(listing)
       }
   })
 
@@ -766,6 +777,7 @@ filterResults = async() => {
 }
 
 clickSpace = async(data) => {
+
   await this.checkDayTimeValid()
   if(this.state.dayTimeValid){
       await this.props.ComponentStore.selectedExternalSpot.clear()
@@ -1133,12 +1145,12 @@ renderDotsView = (numItems, position) =>{
                 latitudeDelta: this.region.current.latitudeDelta || 0.025,
                 longitudeDelta: this.region.current.longitudeDelta || 0.025
               }}
-              region={{
-                  latitude: 0,
-                  longitude: 0,
-                  latitudeDelta: 0.025,
-                  longitudeDelta: 0.025
-              }}
+            //   region={{
+            //       latitude: 0,
+            //       longitude: 0,
+            //       latitudeDelta: 0.025,
+            //       longitudeDelta: 0.025
+            //   }}
               region={Platform.OS == 'ios' ? {
                   
                   latitude: this.region.searched.latitude && !this.state.mapScrolled ? this.region.searched.latitude : this.state.mapScrolled ? this.region.scrolled.latitude : this.region.current.latitude,

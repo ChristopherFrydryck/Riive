@@ -97,11 +97,11 @@ class addPayment extends Component {
 
        LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-       if(this.state.address.line1){
-         this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}, ${this.state.address.country}`)
-       }else{
-        this.setLocation("")
-       }
+      //  if(this.state.address.line1){
+      //    this.setLocation(`${this.state.address.line1}, ${this.state.address.city} ${this.state.address.state} ${this.state.address.zipCode}, ${this.state.address.country}`)
+      //  }else{
+      //   this.setLocation("")
+      //  }
        
     }
 
@@ -281,6 +281,15 @@ addPreData = async() => {
     alert(e)
   }
   
+}
+
+resendVerification = () => {
+  const user = auth().currentUser;
+  user.sendEmailVerification().then(() => {
+      this.setState({verificationSent: true})
+  }).catch((e) => {
+      alert(e)
+  })
 }
 
 

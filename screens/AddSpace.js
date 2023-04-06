@@ -21,6 +21,7 @@ import Colors from '../constants/Colors'
 import Image from '../components/Image'
 import ClickableChip from '../components/ClickableChip';
 import DayAvailabilityPicker from '../components/DayAvailabilityPicker'
+import Dropdown from '../components/Dropdown'
 
 import Timezones from '../constants/Timezones'
 import isDSTObserved from '../functions/in-app/daylightSavings';
@@ -926,11 +927,11 @@ class addSpace extends Component {
               </View>
             <View style={{flex: 1, flexDirection: "row"}}>
             <Input
-            flex={0.35}
+            flex={1}
             placeholder='107'        
             label= "Apt # (optional)"
             name="Apartment number" 
-            style={{marginRight: 16}}                
+            style={{marginRight: 16, marginTop: 2}}                
             onChangeText= {(number) => this.setState(prevState => ({
               address:{
                 ...prevState.address,
@@ -940,7 +941,7 @@ class addSpace extends Component {
             value={this.state.address.box}
             maxLength = {6}
             keyboardType='number-pad'/>
-            <Input
+            {/* <Input
             flex={0.45}
             placeholder='32'        
             label= "Space # (optional)"
@@ -954,7 +955,29 @@ class addSpace extends Component {
             value={this.state.address.spaceNumber}
             maxLength = {6}
             keyboardType='number-pad'/>
-            </View>
+            </View> */}
+            <Dropdown
+                            selectedValue = {this.state.numSpaces}
+                            label="Number of Spaces"
+                            // error={this.state.error.make}
+                            // style={{marginTop: -10}}
+                            flex={1}
+                            onValueChange = {(spaces) => this.setState({numSpaces: spaces.value})}   
+                        >
+                           {[
+                            { key: 1, label: "1", value: 1 },
+                            { key: 2, label: "2", value: 2 },
+                            { key: 3, label: "3", value: 3 },
+                            { key: 4, label: "4", value: 4 },
+                            { key: 5, label: "5", value: 5 },
+                            { key: 6, label: "6", value: 6 },
+                            { key: 7, label: "7", value: 7 },
+                            { key: 8, label: "8", value: 8 },
+                            { key: 9, label: "9", value: 9 },
+                            { key: 10, label: "10", value: 10 },
+                           ]}
+                         </Dropdown>
+                         </View>
           </View>
           <MapView
             provider={MapView.PROVIDER_GOOGLE}
@@ -1086,12 +1109,15 @@ class addSpace extends Component {
               <View style={styles.numContainer}>
                 <Text style={styles.number} type="bold">4</Text>
               </View>
-              <Text style={styles.numTitle}>Choose your price</Text>
+              <View>
+                <Text style={styles.numTitle}>Choose your price</Text>
+                <Text style={styles.numSubtitle}>Deposited to {this.props.UserStore.directDepositInfo.type.toUpperCase() == "BANK ACCOUNT" ? "Bank Account #" : "Card #"}{this.props.UserStore.directDepositInfo.number}</Text>
+              </View>
             </View>
           <View style={{paddingHorizontal: 16}}>
             <Input 
                 placeholder='$1.25'         
-                label="Cost Per Hour"
+                label="Hourly Rate"
                 name="cost"             
                 onChangeText= {(spacePrice) => this.setState({spacePrice})}
                 value={this.state.spacePrice}
@@ -1099,7 +1125,7 @@ class addSpace extends Component {
                 maxLength = {6}
                 keyboardType='default'
                 suffix="/hr"
-                rightText={`Deposited to ${this.props.UserStore.directDepositInfo.type.toUpperCase() == "BANK ACCOUNT" ? "Bank" : "Card"} ${this.props.UserStore.directDepositInfo.number}`}
+                // rightText={`Deposited to ${this.props.UserStore.directDepositInfo.type.toUpperCase() == "BANK ACCOUNT" ? "Bank" : "Card"} ${this.props.UserStore.directDepositInfo.number}`}
                 error={this.state.priceError}
               />
             </View>
@@ -1378,8 +1404,14 @@ const styles = StyleSheet.create({
   numTitle: {
     color: Colors.apollo500,
     fontSize: 18,
-    textAlign: 'center',
-    marginLeft: 8,
+    textAlign: 'left',
+    marginLeft: 12,
+  },
+  numSubtitle: {
+    color: Colors.apollo500,
+    fontSize: 14,
+    textAlign: 'left',
+    marginLeft: 12,
   },
   imageListGrid:{
     flexGrow: 1,

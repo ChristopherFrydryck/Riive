@@ -41,6 +41,33 @@ const fs = require('fs');
         }
        
     })
+            
+
+    exports.getUserDataFromID = functions.https.onRequest((request, response) => {
+        if(request.method !== "POST"){
+            response.send(405, 'HTTP Method ' +request.method+' not allowed');
+        }else{
+            
+            db.collection('users').doc(request.body.FBID).get().then(doc => {
+                if(!doc.exists){
+                    error = new Error("User does not exist")
+                    error.statusCode = 401;
+                    error.name = 'Firebase/User-ID-Error'
+                    throw error
+                }else{
+                    return doc.data();
+                }
+            }).then((res) => {
+                return response.send({
+                    statusCode: 200,
+                    res: "SUCCESS",
+                    data: res,
+            }).catch(e => {
+                response.status(500).send(e);
+            })
+        })
+       
+    }})
 
     exports.addCustomerAddress = functions.https.onRequest((request, response) => {
         let error = null;
@@ -998,7 +1025,7 @@ const fs = require('fs');
             description: request.body.description,
             customer: request.body.visitorID,
             payment_method: request.body.paymentID,
-            receipt_email: request.body.customerEmail,
+            receipt_email: request.body.customerEmail
         }).then(function(result) {
             if (result.error) {
               throw result.error
@@ -1017,67 +1044,259 @@ const fs = require('fs');
         });
     })
 
-    exports.payForSpace = functions.https.onRequest((request, response) => {
-        stripe.paymentIntents.create({
-            payment_method_types: ['card'],
-            amount: request.body.amount,
-            currency: 'usd',
-            confirm: true,
-            description: request.body.description,
-            customer: request.body.visitorID,
-            payment_method: request.body.cardID,
-            receipt_email: request.body.customerEmail,
-            application_fee_amount: request.body.transactionFee,
-            transfer_data: {
-              destination: request.body.hostID,
-            },
-          }).then(function(result) {
-            if (result.error) {
-              throw result.error
-            } else {
-                return response.send({
-                    statusCode: 200,
-                    res: "SUCCESS",
-                    data: result,
-                    removedCardID: request.body.PaymentID,
-                })
-              // The payment has succeeded
-              // Display a success message
+
+    exports.updateExternalUser = functions.https.onRequest((request, response) => {
+        db.collection('users').doc(request.body.FBID).get().then((doc) => {
+            if(!doc.exists){
+                error = new Error("User does not exist")
+                error.statusCode = 401;
+                error.name = 'Firebase/User-Not-Exist'
+                throw error
+            }else{
+                return doc.data();
             }
-        }).catch((e) => {
+        }).then(user => {
+            db.collection('users').doc(user.id).update(
+                request.body.fields
+            )
+
+            return user
+        }).then(res => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: res,
+            })
+        }).catch(e => {
             response.status(500).send(e)
-        });
+        })
+            
+    })
+
+    exports.payForSpace = functions.https.onRequest((request, response) => {
+
+            if(request.body.discount){
+                    
+                    if(request.body.amount > 0){
+                        stripe.paymentIntents.create({
+                                payment_method_types: ['card'],
+                                amount: request.body.amount,
+                                currency: 'usd',
+                                confirm: true,
+                                description: request.body.description,
+                                customer: request.body.visitorID,
+                                payment_method: request.body.cardID,
+                                receipt_email: request.body.customerEmail,
+                                application_fee_amount: request.body.transactionFee,
+                                transfer_data: {
+                                  destination: request.body.hostID,
+                                },       
+                        }).then((result) => {
+                            if (result.error) {
+                                throw result.error
+                            } else {
+                                return result
+                            // The payment has succeeded
+                            // Display a success message
+                            }
+                        }).then(async(result) => {
+                            let transfer = await stripe.transfers.create({
+                                amount: request.body.discountAmount,
+                                currency: 'usd',
+                                destination: request.body.hostID,
+                            })
+                            return [transfer, result]
+                        }).then((result) => {
+                            return response.send({
+                                statusCode: 200,
+                                res: "SUCCESS",
+                                data: result[1],
+                                transferData: result[0],
+                                removedCardID: request.body.PaymentID,
+                            })
+                        }).catch((e) => {
+                            console.log(e)
+                            response.status(500).send(e)
+                        });
+                    }else{
+                        stripe.transfers.create({
+                            amount: request.body.discountAmount,
+                            currency: 'usd',
+                            destination: request.body.hostID,
+                            
+                         }).then((result) => {
+                            return response.send({
+                                statusCode: 200,
+                                res: "SUCCESS",
+                                data: null,
+                                transferData: result,
+                                removedCardID: request.body.PaymentID,
+                            })
+                        }).catch((e) => {
+                            console.log(e)
+                            response.status(500).send(e)
+                        });
+                    }
+            }else{
+                stripe.paymentIntents.create({
+                    payment_method_types: ['card'],
+                    amount: request.body.amount,
+                    currency: 'usd',
+                    confirm: true,
+                    description: request.body.description,
+                    customer: request.body.visitorID,
+                    payment_method: request.body.cardID,
+                    receipt_email: request.body.customerEmail,
+                    application_fee_amount: request.body.transactionFee,
+                    transfer_data: {
+                      destination: request.body.hostID,
+                    },
+                  }).then(function(result) {
+                    if (result.error) {
+                      throw result.error
+                    } else {
+                        return response.send({
+                            statusCode: 200,
+                            res: "SUCCESS",
+                            data: result,
+                            removedCardID: request.body.PaymentID,
+                        })
+                      // The payment has succeeded
+                      // Display a success message
+                    }
+                }).catch((e) => {
+                    response.status(500).send(e)
+                });
+            }
+        
+    })
+
+    exports.getCoupon = functions.https.onRequest((request, response) => {
+
+
+        stripe.promotionCodes.list({
+            limit: 100,
+            active: request.body.allActive || true,
+            code: request.body.code
+        }).then(res => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: res
+            })
+        }).catch(err => {
+            response.status(500).send(err)
+        })
+
+       
+    })
+
+    exports.getCouponByID =functions.https.onRequest((request, response) => {
+        stripe.promotionCodes.retrieve(
+            request.body.promoCodeID
+        ).then(res => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: res
+            })
+        }).catch(err => {
+            response.status(500).send(err)
+        })
     })
 
     exports.refundTrip = functions.https.onRequest((request, response) => {
-        stripe.refunds.create({
-            payment_intent: request.body.paymentIntent,
-            amount: request.body.amount,
-            reason: "requested_by_customer",
-            reverse_transfer: true,
-            refund_application_fee: request.body.refundApplicationFee 
-          }).then(res => {
-              
-              if(res.status !== "succeeded"){
-                const error = new Error("Failed to get your information")
-                error.statusCode = 501;
-                error.name = 'Stripe/RefundFailure'
-                throw error;
-           
-              }else{
+
+        if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount > 0){
+            
+            stripe.refunds.create({
+                payment_intent: request.body.paymentIntent,
+                amount: request.body.amount,
+                reason: "requested_by_customer",
+                reverse_transfer: true,
+                refund_application_fee: request.body.refundApplicationFee 
+              }).then(res => {
+                  
+                  if(res.status !== "succeeded"){
+                    const error = new Error("Failed to get your information")
+                    error.statusCode = 501;
+                    error.name = 'Stripe/RefundFailure'
+                    throw error;
+               
+                  }else{
+                    return res
+                  }
+              }).then( async(res) => {
+                let transfer = await stripe.transfers.createReversal(
+                    request.body.discountID,
+                    {amount: request.body.discountAmount}
+                )
+                return [transfer, res]
+              }).then((result) => {
                 return response.send({
                     statusCode: 200,
                     res: "SUCCESS",
-                    data: res,
+                    data: result[1],
+                    transferData: result[0],
+                    removedCardID: request.body.PaymentID,
                 })
-              }
-          }).catch(err => {
+            }).catch(err => {
+                return response.status(err.statusCode || 500).send({
+                    statusCode: err.statusCode,
+                    message: err.message,
+                    name: err.name
+                })
+              })
+        }else if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount <= 0){
+            stripe.transfers.createReversal(
+                request.body.discountID,
+                {amount: request.body.discountAmount}
+            ).then((result) => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: null,
+                transferData: result,
+                removedCardID: request.body.PaymentID,
+            })
+        }).catch(err => {
             return response.status(err.statusCode || 500).send({
                 statusCode: err.statusCode,
                 message: err.message,
                 name: err.name
             })
           })
+        }else{
+            stripe.refunds.create({
+                payment_intent: request.body.paymentIntent,
+                amount: request.body.amount,
+                reason: "requested_by_customer",
+                reverse_transfer: true,
+                refund_application_fee: request.body.refundApplicationFee 
+              }).then(res => {
+                  
+                  if(res.status !== "succeeded"){
+                    const error = new Error("Failed to get your information")
+                    error.statusCode = 501;
+                    error.name = 'Stripe/RefundFailure'
+                    throw error;
+               
+                  }else{
+                    return response.send({
+                        statusCode: 200,
+                        res: "SUCCESS",
+                        data: res,
+                    })
+                  }
+              }).catch(err => {
+                return response.status(err.statusCode || 500).send({
+                    statusCode: err.statusCode,
+                    message: err.message,
+                    name: err.name
+                })
+              })
+        }
+        
     })
 
     exports.deleteSpace = functions.firestore.document('listings/{listingID}').onDelete((snap, context) => {
@@ -1548,6 +1767,15 @@ const fs = require('fs');
 
                                 }
                             break;
+                            case 1:
+                                switch(versionsBehind[i].patch){
+                                     // Version 1.1.0
+                                     case 0:
+                                        // db.collection('users').doc(context.params.user_id).update({
+                                        //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+                                        //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+                                        // });
+                                }
                         }
                     break
                 }

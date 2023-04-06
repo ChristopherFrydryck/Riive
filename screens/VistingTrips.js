@@ -251,7 +251,7 @@ export default class VisitingTrips extends Component{
                     <View style={{borderRadius: 4, overflow: 'hidden'}}>
                         {!isCancelled ? 
                             <View style={{position: 'absolute', zIndex: 9, backgroundColor: 'white', top: 4, left: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 4}}>
-                                <Text>{visit.price.total}</Text>
+                                <Text>{visit.price.discount ? ((visit.price.totalCents - visit.price.discountTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}) : visit.price.total}</Text>
                             </View>
                         : null }
                         <Image 
@@ -359,7 +359,7 @@ export default class VisitingTrips extends Component{
         const {data, visible} = props;
         
         if(data){
-            // console.log(data.isInPast)
+            // console.log(data.visit)
             var date = new Date()
             var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -462,7 +462,6 @@ export default class VisitingTrips extends Component{
                                             onPress={()=> {
                                                 Clipboard.setString(data.listing.address.full)
                                                 this.slideBottomPill()
-                                                console.log(data.listing.address)
                                             }} 
                                             style={{flexDirection: 'row', paddingRight: 16,}}
                                         >
@@ -516,16 +515,26 @@ export default class VisitingTrips extends Component{
                                         <Text>Processing Fee {data.visit.price.processingFeeCents !== 0 && data.visit.isCancelled && data.visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to host)</Text> : null }</Text>
                                         <Text style={data.visit.isCancelled && data.visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null}>{data.visit.price.processingFeeCents === 0 ? "Free" : data.visit.price.processingFee}</Text>
                                     </View>
+                                    {data.visit.price.discount ? 
+                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
+                                            <Text>Discount</Text>
+                                            <Text>{data.visit.price.discountTotal}</Text>
+                                        </View>
+                                    : null}
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                         <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? "Refunded (USD)" : "Total (USD)"}</Text>
                                         <View>
-                                             <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.isCancelled ? data.visit.refundAmt || "--" : data.visit.price.total}</Text>
+                                            {data.visit.isCancelled ?
+                                                <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.refundAmt || "--"}</Text>
+                                             :
+                                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.price.discountTotalCents ? ((data.visit.price.totalCents - data.visit.price.discountTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}): data.visit.price.total}</Text>
+                                            }
                                         </View>
                                        
                                     </View>
-                                    <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
+                                    
                                 </View>
                                 {data.isInPast ? 
                                 <View style={{flexDirection: 'row'}}>
@@ -542,6 +551,7 @@ export default class VisitingTrips extends Component{
                                     }} style = {{flex: 1, height: 48, backgroundColor: Colors.tango900}} textStyle={{color: "white", fontWeight: "500"}}>Edit Trip Details</Button>
                                 </View>
                                 }
+                                <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18, marginTop: 16}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                             </View>
                             
                             

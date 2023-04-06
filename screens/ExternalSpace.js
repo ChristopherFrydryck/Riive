@@ -203,7 +203,7 @@ class externalSpace extends React.Component {
                     
                             <Text  style={{fontSize: 24, flexWrap: 'wrap'}}>{this.props.ComponentStore.selectedExternalSpot[0].spaceName}</Text>
                             <Text style={{marginBottom: 8}}>No ratings yet</Text>
-                            <View style={{flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8}}>
+                            <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
                                 <Icon
                                     iconName="user"
                                     
@@ -213,9 +213,18 @@ class externalSpace extends React.Component {
                                 />
                                 <Text>Hosted by {this.state.host.firstname} {this.state.host.lastname.charAt(0).toUpperCase()}</Text>
                             </View>
-                            
+                                <View style={{flexDirection: 'row', flex: 1, alignItems: 'flex-start', flexShrink: 1, marginTop: 4}}>
+                                <Icon
+                                    iconName="garage"
+                                    iconLib="MaterialCommunityIcons"
+                                    iconColor={Colors.cosmos300}
+                                    iconSize={20}
+                                    style={{marginRight: 6, marginTop: 2}}
+                                />
+                                <Text style={{fontSize: 16, color: Colors.cosmos300, marginRight: 24}}>{this.props.ComponentStore.selectedExternalSpot[0].numSpaces} Parking {this.props.ComponentStore.selectedExternalSpot[0].numSpaces > 1 ? "Spaces" : "Space"}</Text> 
+                            </View>
                             {this.props.ComponentStore.selectedExternalSpot[0].spaceBio.split("").length > 0 ? 
-                            <View style={{flexDirection: 'row'}}>
+                            <View style={{flexDirection: 'row', marginTop: 16}}>
                                 <Icon
                                     iconName="form"
                                     iconLib="AntDesign"

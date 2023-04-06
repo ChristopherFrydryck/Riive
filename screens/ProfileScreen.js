@@ -206,6 +206,8 @@ class Profile extends Component{
         // this._navListener.remove();
     }
 
+    
+
 
 
     addAddress = async () => {
@@ -330,8 +332,6 @@ class Profile extends Component{
         const doc = db.collection('users').doc(this.props.UserStore.userID);
 
         this.setState({isRefreshing: true, listingsLoaded: false})
-
-
 
         auth().currentUser.reload();
        

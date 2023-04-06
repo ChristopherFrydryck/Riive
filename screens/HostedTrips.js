@@ -66,7 +66,7 @@ export default class HostedTrips extends Component{
 
     showCancellationModal = () => {
 
-        
+
         if(this.props.UserStore.payments.length > 0){
             let payment = this.props.UserStore.payments[0]
             this.setState({selectedPayment: {
@@ -135,6 +135,53 @@ export default class HostedTrips extends Component{
         }
     }
 
+    getGuestData = async(fbid) => {
+        const settings = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                FBID: fbid,
+            })
+        }
+
+        try{
+            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/getUserDataFromID`, settings);
+            const data = await fetchResponse.json()
+    
+            return data
+        }catch(e){
+            return e
+        }
+    }
+
+    updateGuest = async(fbid, fields) => {
+        const settings = {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                FBID: fbid,
+                fields: fields
+            })
+        }
+
+        try{
+            const fetchResponse = await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/updateExternalUser`, settings);
+            const data = await fetchResponse.json()
+    
+            return data
+        }catch(e){
+            return e
+        }
+
+       
+    }
+
     cancelTrip = () => {
 
         let { serviceFeeCents, processingFeeCents, priceCents } = this.state.selectedVisit.visit.price
@@ -142,11 +189,14 @@ export default class HostedTrips extends Component{
         this.setState({cancellingTrip: true})
 
 
-        let amountChargedToHostCents = (serviceFeeCents + (processingFeeCents * 2)) >= 50 ? serviceFeeCents + (processingFeeCents * 2) : 50;
+        let amountChargedToHostCents = Math.floor(serviceFeeCents + (processingFeeCents * 2)) >= 50 ? serviceFeeCents + (processingFeeCents * 2) : 50;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-        let refundAmountCents = serviceFeeCents + processingFeeCents + priceCents
+        let refundAmountCents = Math.floor(serviceFeeCents + processingFeeCents + priceCents - this.state.selectedVisit.visit.price.discountTotalCents) || 0
         let refundAmount = (refundAmountCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+
+        let discountAmountCents = Math.floor(this.state.selectedVisit.visit.price.discountTotalCents)
+        let discountAmount = (discountAmountCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
         const timeDiffEnd = this.state.selectedVisit.visit.visit.time.end.unix - new Date().getTime()
         const timeDiffStart = this.state.selectedVisit.visit.visit.time.start.unix - new Date().getTime()
@@ -164,6 +214,7 @@ export default class HostedTrips extends Component{
             db.collection('trips').doc(this.state.selectedVisit.visit.tripID).get().then(async(trip) => {
                 if(!trip.exists){
                     alert("Trip not found.")
+                    this.setState({cancellingTrip: false})
                 }else{
 
                     // let date = new Date();
@@ -187,12 +238,12 @@ export default class HostedTrips extends Component{
                                 throw res.raw.message
                             }
                         }).then(() => {
-                            return this.refundTrip(refundAmountCents, true)
+                            return this.refundTrip(refundAmountCents, true, discountAmountCents)
                         }).then(res => {
                             if(res.statusCode !== 200){
                                 throw res.message
                             }else{
-                               refundID = res.data.id
+                               refundID = res.data ? res.data.id : null
                             }
                         }).then(() => {
                             db.collection('trips').doc(this.state.selectedVisit.visit.tripID).update({
@@ -211,6 +262,19 @@ export default class HostedTrips extends Component{
                             db.collection("listings").doc(this.state.selectedVisit.visit.listingID).collection("trips").doc(this.state.selectedVisit.visit.tripID).update({
                                 isCancelled: true,
                             })
+
+                            // If a promo code was used
+                            if(this.state.selectedVisit.visit.promoCode){
+
+                                // Get visitor data
+                                this.getGuestData(this.state.selectedVisit.visit.visitorID).then(res => {
+                                    let arrayRemovedCoupon = res.data.discounts.filter(x => x !== this.state.selectedVisit.visit.promoCode)
+                                    
+                                    // Update visitor data
+                                    this.updateGuest(this.state.selectedVisit.visit.visitorID, { discounts: arrayRemovedCoupon})
+                                })
+
+                            }
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
                                 if(!visitor.exists){
@@ -270,7 +334,7 @@ export default class HostedTrips extends Component{
         }
     }
 
-    refundTrip = async (amountRefund, refundFee) => {
+    refundTrip = async (amountRefund, refundFee, discountAmount) => {
             
 
         const settings = {
@@ -283,6 +347,8 @@ export default class HostedTrips extends Component{
             paymentIntent: this.state.selectedVisit.visit.paymentIntentID,
             amount: amountRefund,
             refundApplicationFee: refundFee,
+            discountID: this.state.selectedVisit.visit.transferID || null,
+            discountAmount: discountAmount || 0
           })
         }
 
@@ -836,13 +902,21 @@ export default class HostedTrips extends Component{
                                         <Text>Processing Fee {visit.price.processingFeeCents !== 0 &&isCancelled && visit.cancelledBy === 'host' ? <Text style={{fontSize: 12}}>(charged to you)</Text> : visit.price.processingFeeCents !== 0 ? <Text style={{fontSize: 12}}>(charged to visitor)</Text> : null}</Text>
                                         <Text style={visit.isCancelled && visit.cancelledBy !== 'host' ? {textDecorationLine: 'line-through'} : null} >{visit.price.processingFeeCents === 0 ? "Free" : visit.price.processingFee}</Text>
                                     </View>
+                                    {/* {data.visit.price.discount ? 
+                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
+                                            <Text>Discount <Text style={{fontSize: 12}}>(Paid to you by Riive)</Text></Text>
+                                            <Text>{data.visit.price.discountTotal}</Text>
+                                        </View>
+                                    : null} */}
                                 </View>
                                 <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                                     <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
-                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 1} : {fontSize: 24, flex: 1}}>{isCancelled ? visit.cancelledBy === 'host' ? "Charged (USD)" : "Guest Refund (USD)" : "Total(USD)"}</Text>
+                                        <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 1} : {fontSize: 24, flex: 1}}>{isCancelled ? visit.cancelledBy === 'host' ? "Charged (USD)" : "Guest Refund (USD)" : "Total Profit (USD)"}</Text>
                                         <Text type="Medium" numberOfLines={1} style={isCancelled && visit.cancelledBy === 'host' ? {fontSize: 24, color: Colors.hal500, flex: 0}: {fontSize: 24, flex: 0}}>{isCancelled ? visit.cancelledBy === 'host' ? visit.hostCharged : visit.refundAmt : visit.price.price}</Text>
+                                        
                                     </View>
-                                    <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
+                                    <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18, marginTop: 16}}>Guests are refunded based on the amount of time they spent at your hosted space along with if they used a discount code. Hosted spaces do not get discounted, however Riive may pay a portion of the trip to the host directly to make up for the total cost.</Text>
+                                    <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18, marginTop: 8}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.pressedTOS()}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                                 </View>
                                 {isInPast || isCancelled ? 
                                 <View style={{flexDirection: 'row'}}>
