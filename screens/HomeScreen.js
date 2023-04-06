@@ -621,7 +621,7 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
      let query = geocollection.near({ 
          center: new firestore.GeoPoint(lat, lng), 
          radius: radius,
-         limit: 500,
+         limit: 50,
       }).where("hidden", "==", false)
 
       query = query.where("toBeDeleted", "==", false)
@@ -633,7 +633,7 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
 
      await query.get().then( async(value) => {
        // All GeoDocument returned by GeoQuery, like the GeoDocument added above
-      //  console.log(value.docs);
+    //    console.log(value.docs);
      
 
       for (const doc of value.docs) {
@@ -661,7 +661,7 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
                   visits: futureVisits,
               })
              
-              // console.log(`space id: ${doc.data().hostID} and host: ${hostDoc.id}`)
+            //   console.log(`space id: ${doc.data().hostID} and host: ${hostDoc.id}`)
           })
           // console.log(doc.data())
          
@@ -685,17 +685,27 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
       let spacesBooked = 0;
 
     //   console.log(`${resultsFiltered[i].space.spaceName} Has ${numSpacesTotal} Spaces`)
-
+    //   console.log(avail)
 
       for(let data of avail){
         //   console.log(listing.space.numSpaces)
           // If specific time slot is marked unavailable, we will check it
           if(!data.available){
 
-            // console.log("Time slot " + data.id + " does not work")
-
-            worksArray.push(false)
-            continue;
+            // Check if start time is out of bounds
+            if(parseInt(data.start) >= parseInt(this.state.timeSearched[0].label) && parseInt(data.start) <= parseInt(this.state.timeSearched[1].label)){
+                // console.log(`Start value ${data.start} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
+                worksArray.push(false)
+            }
+            // Check if end time is out of bounds
+            else if(parseInt(data.end) >= parseInt(this.state.timeSearched[0].label) && parseInt(data.start) <= parseInt(this.state.timeSearched[1].label)){
+                worksArray.push(false)
+                // console.log(`End value ${data.end} is invalid within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
+            // If both start and end time don't interfere with filtered time slots
+            }else{
+                worksArray.push(true)
+                // console.log(`Time slot ${data.id} is marked unavailable but works since ${data.start} and ${data.end} are not within the bounds of ${this.state.timeSearched[0].label} and ${this.state.timeSearched[1].label}`)
+            }
              
              
           }else{
@@ -743,11 +753,12 @@ getResults = async (lat, lng, radius, prevLat, prevLng) => {
               }
 
               
-              // console.log("Time slot " + data.id + " is marked available")
+            //   console.log("Time slot " + data.id + " is marked available")
           }
       }
 
       if(!worksArray.includes(false)){
+        //   console.log("Space works")
           resultsFilteredTimeAvail.push(listing)
       }
   })
