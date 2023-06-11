@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, Animated, Dimensions, StatusBar, ScrollView, View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { Platform, Animated, Dimensions, StatusBar, ScrollView, View, StyleSheet, ActivityIndicator, Alert, Pressable } from 'react-native';
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -21,6 +21,7 @@ import NightMap from '../constants/NightMap'
 // import { RadioButton } from 'react-native-paper';
 import RadioList from '../components/RadioList'
 import RadioButton from '../components/RadioButton'
+import { Checkbox } from 'react-native-paper';
 import StripeTOSModal from '../components/StripeTOSModal';
 
 // Firebase imports
@@ -76,6 +77,8 @@ class reserveSpace extends Component {
             serviceFeeCents: null,
             processingFee: null,
             processingFeeCents: null,
+            riiveCreditActive: false,
+            riiveCreditTotalCents: 0,
             discount: null,
             discountType: null,
             discountTotal: null,
@@ -106,6 +109,15 @@ class reserveSpace extends Component {
         
     }
 
+    componentDidUpdate(prevProps, prevState){
+        // if()
+        if(prevState.riiveCreditActive !== this.state.riiveCreditActive || prevState.discount !== this.state.discount){
+            this.calculateRiiveCreditTotalCents()
+        }
+           
+    }
+    
+
     async componentDidMount(){
        
 
@@ -119,6 +131,8 @@ class reserveSpace extends Component {
                 serviceFeeCents: values.service_fee,
             })
         })
+
+        await this.updateProfile()
 
         await this.getPrice();
 
@@ -156,8 +170,8 @@ class reserveSpace extends Component {
             }})
         }
 
-        if(this.props.UserStore.payments.length > 0){
-            let payment = this.props.UserStore.payments[0]
+        if(this.props.UserStore.payments.filter(x => x.Type !== "Riive Credit").length > 0){
+            let payment = this.props.UserStore.payments.filter(x => x.Type !== "Riive Credit")[0]
             this.setState({selectedPayment: {
                 CCV: payment.CCV,
                 Number: payment.Number,
@@ -199,6 +213,49 @@ class reserveSpace extends Component {
         // console.log(newIndex)
     
         this.setState({currentActivePhoto: newIndex})
+    }
+
+    updateProfile = async() => {
+        const db = firestore();
+        const doc = db.collection('users').doc(this.props.UserStore.userID);
+
+
+        auth().currentUser.reload();
+       
+
+            await doc.get().then((doc) => {
+                const length = doc.data().listings.length;
+
+                const vehiclesIDSorted = doc.data().vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
+                const vehiclesIDMobXSorted = this.props.UserStore.vehicles.map(x => x.VehicleID).sort((a, b) => a.VehicleID > b.VehicleID)
+                const vehicleData = doc.data().vehicles.sort((a, b) => a.VehicleID > b.VehicleID)
+                const vehicleDataMobx = this.props.UserStore.vehicles.map(x => x).sort((a, b) => a.VehicleID > b.VehicleID)
+
+                const paymentsIDSorted = doc.data().payments.map(x => x.PaymentID).sort((a, b) => a.PaymentID > b.PaymentID)
+                const paymentsIDMobXSorted = this.props.UserStore.payments.map(x => x.PaymentID).sort((a, b) => a.PaymentID > b.PaymentID)
+                const paymentData = doc.data().payments.sort((a, b) => a.PaymentID > b.PaymentID)
+                const paymentDataMobx = this.props.UserStore.payments.map(x => x).sort((a, b) => a.PaymentID > b.PaymentID)
+    
+                // Check if vehicles are updated
+                if(vehiclesIDSorted.length === vehiclesIDMobXSorted.length && vehiclesIDSorted.every((value, index) => value === vehiclesIDMobXSorted[index]) && JSON.stringify(vehicleData) === JSON.stringify(vehicleDataMobx)){
+                    // do nothing
+                }else{
+                    this.props.UserStore.vehicles = doc.data().vehicles
+                }
+
+
+                // Check if payments are updated
+                if(paymentsIDSorted.length === paymentsIDMobXSorted.length && paymentsIDSorted.every((value, index) => value === paymentsIDMobXSorted[index]) && JSON.stringify(paymentData) === JSON.stringify(paymentDataMobx)){
+                    // do nothing
+                }else{
+                    this.props.UserStore.payments = doc.data().payments
+                }
+                
+                
+            })
+        
+        
+        
     }
 
     renderDotsView = (numItems, position) => {
@@ -450,6 +507,7 @@ class reserveSpace extends Component {
             
             // Sets state of button to authenticating 
             this.setState({authenticatingCoupon: true})
+
 
             const settings = {
                 method: 'POST',
@@ -733,6 +791,10 @@ class reserveSpace extends Component {
                                     processingFeeCents: this.state.processingFeeCents,
                                     total: this.state.total,
                                     totalCents: this.state.totalCents,
+                                    riiveCreditApplied: this.state.riiveCreditActive,
+                                    riiveCreditTotal: (this.state.riiveCreditTotalCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"}) ,
+                                    riiveCreditTotalCents: this.state.riiveCreditTotalCents,
+
                                     discount: this.state.discount,
                                     discountType: this.state.discountType,
                                     discountTotal: this.state.discountTotal,
@@ -888,6 +950,34 @@ class reserveSpace extends Component {
               someDate.getFullYear() == today.getFullYear()
           }
 
+        calculateRiiveCreditTotalCents = () => {
+            if(this.state.discount && this.state.riiveCreditActive){
+                if(this.props.UserStore.riiveCredit > (this.state.totalCents - this.state.discountTotalCents)){
+                    // console.log("Extra balance leftover")
+                    this.setState({riiveCreditTotalCents: this.state.totalCents - this.state.discountTotalCents})
+                    // return this.props.UserStore.riiveCredit - this.state.discountTotalCents
+                }else{
+                    // console.log(this.props.UserStore.riiveCredit)
+                    this.setState({riiveCreditTotalCents: this.props.UserStore.riiveCredit })
+                    // return this.props.UserStore.riiveCredit
+                }
+            }else if(this.state.riiveCreditActive){
+                if(this.props.UserStore.riiveCredit > this.state.totalCents){
+                    // console.log("Extra balance leftover")
+                    this.setState({riiveCreditTotalCents: this.state.totalCents})
+                    // return this.props.UserStore.riiveCredit - this.state.totalCents
+                }else{
+                    // console.log("Total balance used")
+                    this.setState({riiveCreditTotalCents: this.props.UserStore.riiveCredit })
+                    // return this.props.UserStore.riiveCredit
+                }
+            }else{
+                this.setState({riiveCreditTotalCents: 0 })
+                // return null
+            }
+
+        }  
+
         payForSpace = async (hostStripeID, refID) => {
 
             const settings = {
@@ -937,11 +1027,11 @@ class reserveSpace extends Component {
           })
 
        
-          let paymentsArray = this.props.UserStore.payments.map(payment => {
+          let paymentsArray = this.props.UserStore.payments.filter(x => x.Type !== "Riive Credit").map(payment => {
               let cardValid = false
               let d = new Date();
               // Validate card is not expired
-              if(payment.Year < parseInt(d.getFullYear().toString().slice(2))){
+            if(payment.Year < parseInt(d.getFullYear().toString().slice(2))){
                 cardValid = false;
             }else if(payment.Year == parseInt(d.getFullYear().toString().slice(2)) && payment.Month < d.getMonth() + 1){
                 cardValid = false;
@@ -1069,6 +1159,20 @@ class reserveSpace extends Component {
                                     {paymentsArray}
                                 </RadioList>
                             : null}
+
+                                <Pressable disabled={this.props.UserStore.riiveCredit == 0} style={{height: 40, flexDirection: 'row', alignItems: 'center'}}
+                                 onPress={() => {
+                                    this.calculateRiiveCreditTotalCents()
+                                    this.setState({riiveCreditActive: this.state.riiveCreditActive === false ? true : false})
+                                }}>
+                                <Checkbox.Android
+                                    status={this.state.riiveCreditActive ? "checked" : "unchecked"}
+                                    color={Colors.tango900}
+                                    disabled={this.props.UserStore.riiveCredit == 0}
+                                />
+                                <Text style={{color: this.props.UserStore.riiveCredit == 0 ? Colors.cosmos300 : Colors.cosmos900}}>Apply {(this.props.UserStore.riiveCredit / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} Riive credit to trip</Text>
+                            </Pressable>
+
                         <Button onPress={() => this.props.navigation.navigate("AddPayment")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Payment</Button>
                         </View>
                     
@@ -1090,7 +1194,13 @@ class reserveSpace extends Component {
                         {this.state.discount ? 
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                 <Text>Discount</Text>
-                                <Text>{this.state.discountTotal}</Text>
+                                <Text style={{color: Colors.hal500}}>- {this.state.discountTotal}</Text>
+                            </View>
+                        : null}
+                        {this.state.riiveCreditActive ? 
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
+                                <Text>Riive Credit</Text>
+                                <Text style={{color: Colors.hal500}}>- {(this.state.riiveCreditTotalCents / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                             </View>
                         : null}
                         <View style={{display: 'flex', flexDirection: 'row', marginTop: 8, alignItems: 'flex-start', height: 72}}>
@@ -1110,7 +1220,11 @@ class reserveSpace extends Component {
                             <Button 
                                 style={this.state.discountTotalCents ? {backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.hal500, flex: 1, height: 40, marginTop: 5, paddingVertical: 0} : {backgroundColor: "#FFFFFF", borderWidth: 2, borderColor: Colors.tango900, flex: 1, height: 40, marginTop: 5, paddingVertical: 0}} 
                                 textStyle={this.state.discountTotalCents ? {color: Colors.hal500, fontSize: 16} : {color: Colors.tango900, fontSize: 16}} 
-                                onPress={this.state.discountTotalCents ?  () => this.clearCoupon() : () => this.checkCoupon(this.state.promoCode)}>
+                                onPress={
+                                    this.state.discountTotalCents ?  
+                                    () => { this.clearCoupon() } : 
+                                    () => {this.checkCoupon(this.state.promoCode)}}
+                            >
                                     {this.state.authenticatingCoupon ? null :this.state.discountTotalCents ? "Clear" : "Apply"}
                             </Button>
                         </View>
