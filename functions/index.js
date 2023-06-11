@@ -1729,6 +1729,8 @@ const fs = require('fs');
             }else{
                 versionsBehind = changelog.versions.filter(x => x.dateUnix > beforeUser.last_update.toMillis() && x.isReleased)
             }
+
+            // console.log(changelog.versions)
             
             // Checks if user is behind in changelog versions
             for(var i = 0; i < versionsBehind.length; i++){
@@ -1767,6 +1769,8 @@ const fs = require('fs');
 
                                 }
                             break;
+
+                            // Version 1.1
                             case 1:
                                 switch(versionsBehind[i].patch){
                                      // Version 1.1.0
@@ -1775,9 +1779,30 @@ const fs = require('fs');
                                         //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
                                         //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
                                         // });
+                                    break;
+
+                                    // Version 1.1.1
+                                    case 1:
+                                        //  db.collection('users').doc(context.params.user_id).update({
+                                        //    accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
+                                        // });
+
+                                        if (beforeUser.payments.filter(x => x.Type == "Riive Credit").length == 0){
+                                            const ref = db.collection("users").doc();
+
+                                            db.collection("users").doc(context.params.user_id).update({
+                                                payments: admin.firestore.FieldValue.arrayUnion({
+                                                    Type: "Riive Credit",
+                                                    Amount: 0,
+                                                    PaymentID: ref.id,
+                                                })
+                                             })
+                                        }
+                                    break;
                                 }
+                            break;
                         }
-                    break
+                    break;
                 }
             }
             return null

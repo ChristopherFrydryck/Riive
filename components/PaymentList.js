@@ -61,17 +61,25 @@ class VehicleList extends React.Component{
         let {paymentsLoaded} =  this.props.ComponentStore;
         let {payments} = this.props.UserStore;
         let loaders = [];
+
+        let paymentsArray = payments.map(x => x);
+        let riiveCreditIndex = paymentsArray.findIndex(x => x.Type == "Riive Credit")
+        
+        riiveCreditIndex == -1 ? paymentsArray : paymentsArray.unshift(...paymentsArray.splice(riiveCreditIndex, 1))
+
         if(paymentsLoaded){
         return(
             
             <View style={styles.container}>
                 {
-                    this.props.UserStore.payments.map((payment, i) => (
+                    
+                   payments.map((payment, i) => (
                         
                         <TouchableOpacity
-                            key={payments[i].PaymentID}
+                            key={payment.PaymentID}
                             style={i == 0 ? styles.li_first : styles.li}
                             onPress = {() => this.selectPayment(payment)}
+                            disabled={payment.Type == "Riive Credit" ? true : false}
                             >
                             {payment.Type == "Card" ?   
                             <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap'}}>
@@ -125,15 +133,8 @@ class VehicleList extends React.Component{
                                 
                             />
                             <View style={{flexDirection: "column"}}>
-                                <Text style={{fontSize: 16}}>{payment.Type}</Text>
-                                <Text style={{flexWrap: 'wrap'}}>{payment.Amount % 1 === 0 ? '$' + payment.Amount + '.00' : '$' + payment.Amount}</Text>
-                            </View>
-                            <View style={{position:"absolute", right:0}}>
-                                <Icon 
-                                    iconName="chevron-right"
-                                    iconColor={Colors.mist900}
-                                    iconSize={28}
-                                />
+                                <Text style={{fontSize: 16}}>Riive Credit</Text>
+                                <Text style={{flexWrap: 'wrap'}}>{(payment.Amount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                             </View>
 
                         </View> 

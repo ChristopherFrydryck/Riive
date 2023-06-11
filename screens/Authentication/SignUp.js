@@ -380,7 +380,14 @@ export default class Authentication extends React.Component {
                       numTimesOpenedApp: 1,
                       listings: [],
                       vehicles: [],
-                      payments: [],
+                      payments: [
+                        {
+                          Amount: 0,
+                          Type: "Riive Credit",
+                          PaymentID: db.collection("users").doc().id, 
+                          // Creates custom ID
+                        }
+                      ],
                       trips: [],
                       discounts: [],
                       photo: '',

@@ -1,31 +1,58 @@
 {
-    "versions": [{
-        "release": "0.0.0",
-        "major": 0,
-        "minor": 0,
-        "patch": 0,
-        "isBeta": false,
-        "isReleased": true,
-        "title": "Welcome to Riive",
-        "contributors": [{
-            "name": "Christopher Frydryck",
-            "email": "chris@riive.net",
-            "userID": "e8clD1B96thKlXRSA2lKUQW74mU2",
-            "photo": "https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/users%2Fe8clD1B96thKlXRSA2lKUQW74mU2%2Fprofile-pic?alt=media&token=f79aed94-2030-4ef7-b72b-65b01d6bf414"
-        }],
-        "description": ["Welcome to Riive and thank you for joining the movement. We are introducing a new way to park, and share space in the community. Thank you for joining us, and we are happy to be of service.", "Discover spaces by interacting with the map. You can set your day and time up to a week in advance, search for your destination and find parking around the area.", "View your upcoming and past trips, and if you are a host, view all your upcoming and hosted trips.", "Simply add your vehicle, a debit or credit card and book your first space.", "Optionally, host your own space and make extra income through Riive. We will directly deposit your earnings into your bank account."],
-        "images": [
-            "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FLogo_001.png?alt=media&token=61ecdf27-919c-4059-b21d-b49c625e2637",
-            "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FSearchSpace.gif?alt=media&token=55918f1a-8036-4375-b807-dceb51d550fc",
-            "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FTrips.gif?alt=media&token=00d8ce6b-c230-432b-8d90-da01355a5ceb",
-            "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FRiive-CC-Input.png?alt=media&token=41943f9c-9bde-4b22-abe0-d80307c91957", "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FSpaces-ProfileHost.png?alt=media&token=2d8aa8ec-bdb1-4777-88c3-d512d2cd1b17"],
-        "added": "",
-        "changed": "",
-        "deprecated": "",
-        "removed": "",
-        "fixed": "",
-        "security": "",
-        "date": "Tue 25 Sep 2020 22:07:13 GMT-0400",
-        "dateUnix": 1601093235528
-    }]
+    "versions": [
+        {
+            "release": "0.0.0",
+            "major": 0,
+            "minor": 0,
+            "patch": 0,
+            "isBeta": false,
+            "isReleased": true,
+            "title": "Welcome to Riive",
+            "contributors": [{
+                "name": "Christopher Frydryck",
+                "email": "chris@riive.net",
+                "userID": "e8clD1B96thKlXRSA2lKUQW74mU2",
+                "photo": "https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/users%2Fe8clD1B96thKlXRSA2lKUQW74mU2%2Fprofile-pic?alt=media&token=f79aed94-2030-4ef7-b72b-65b01d6bf414"
+            }],
+            "description": ["Welcome to Riive and thank you for joining the movement. We are introducing a new way to park, and share space in the community. Thank you for joining us, and we are happy to be of service.", "Discover spaces by interacting with the map. You can set your day and time up to a week in advance, search for your destination and find parking around the area.", "View your upcoming and past trips, and if you are a host, view all your upcoming and hosted trips.", "Simply add your vehicle, a debit or credit card and book your first space.", "Optionally, host your own space and make extra income through Riive. We will directly deposit your earnings into your bank account."],
+            "images": [
+                "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FLogo_001.png?alt=media&token=61ecdf27-919c-4059-b21d-b49c625e2637",
+                "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FSearchSpace.gif?alt=media&token=55918f1a-8036-4375-b807-dceb51d550fc",
+                "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FTrips.gif?alt=media&token=00d8ce6b-c230-432b-8d90-da01355a5ceb",
+                "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FRiive-CC-Input.png?alt=media&token=41943f9c-9bde-4b22-abe0-d80307c91957", "https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F0.0.0%2FSpaces-ProfileHost.png?alt=media&token=2d8aa8ec-bdb1-4777-88c3-d512d2cd1b17"],
+            "added": "",
+            "changed": "",
+            "deprecated": "",
+            "removed": "",
+            "fixed": "",
+            "security": "",
+            "date": "Tue 25 Sep 2020 22:07:13 GMT-0400",
+            "dateUnix": 1601093235528
+        },
+        {
+            "release": "1.1.1",
+            "major": 1,
+            "minor": 1,
+            "patch": 1,
+            "isBeta": false,
+            "isReleased": true,
+            "title": "New To Version 1.1.1",
+            "contributors": [{
+                "name": "Christopher Frydryck",
+                "email": "chris@riive.net",
+                "userID": "e8clD1B96thKlXRSA2lKUQW74mU2",
+                "photo": "https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/users%2Fe8clD1B96thKlXRSA2lKUQW74mU2%2Fprofile-pic?alt=media&token=f79aed94-2030-4ef7-b72b-65b01d6bf414"
+            }],
+            "description": ["New hosts now get a bonus for signing up. Create your first space and get a credit to your account within a week!"],
+            "images": ["https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F1.1.1%2FFocusSpace-Profile.JPG?alt=media&token=c99a9394-a2bb-4ed4-9cf6-4133e86fd220&_gl=1*p27fw7*_ga*NTc1ODQ1MDIzLjE2ODQyNTk3NDc.*_ga_CW55HF8NVT*MTY4NjI0Mjk5NC42LjEuMTY4NjI0MzM0OS4wLjAuMA"],
+            "added": "",
+            "changed": "",
+            "deprecated": "",
+            "removed": "",
+            "fixed": "",
+            "security": "",
+            "date": "Thu June 08, 2023 02:52:28 GMT-0400",
+            "dateUnix": 1686207148000
+        }
+    ]
 }

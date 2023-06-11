@@ -152,7 +152,7 @@ export let checkWhatsNew = (isNewUser, versionsUsed) => {
         
   }
 
-  let addVersionToUserDB = (version) => {
+export let addVersionToUserDB = (version) => {
     const db = firestore()
      const user = db.collection('users').doc(auth().currentUser.uid)
 

@@ -462,6 +462,7 @@ export default class Authentication extends React.Component {
                 if(!this.props.UserStore.mailchimpID){
                   this.createMailchimpCustomer();
                 }
+                
 
                 // Upon setting the MobX State Observer, navigate to home
                 this.props.navigation.navigate('Home')
