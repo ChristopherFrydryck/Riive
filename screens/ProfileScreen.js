@@ -1428,7 +1428,7 @@ class Profile extends Component{
                         </View>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>
-                                {payments == undefined || payments.length <= 1 ? <Text style={styles.categoryTitle}>My Payment</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Payments</Text>}
+                                {payments == undefined || payments.length < 1 ? <Text style={styles.categoryTitle}>My Payment</Text> : <Text style={{fontSize: 20, marginRight: 'auto'}}>My Payments</Text>}
                                 <ClickableChip
                                     onPress={() => this.props.navigation.navigate("AddPayment")}
                                     bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%
