@@ -373,6 +373,9 @@ class externalSpace extends React.Component {
                     await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: false, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt, refundCreditAmt: riiveCreditRefundableAmt, refundCreditAmtCents: riiveCreditRefundableAmtCents})
                     
                 }else{
+                    refundableAmtCents = Math.floor(Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents - this.state.visit.price.riiveCreditTotalCents) * .8 + this.state.visit.price.serviceFeeCents)))
+                    refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+
                     if(this.state.visit.price.discount){
                         
                         discountRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.discountTotalCents*.8))
@@ -380,11 +383,10 @@ class externalSpace extends React.Component {
                         
                     }   
 
-                        riiveCreditRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.riiveCreditTotalCents*.8))
+                        riiveCreditRefundableAmtCents = Math.floor(Math.max(0, (this.state.visit.price.riiveCreditTotalCents - (refundableAmtCents == 0 ? this.state.visit.price.serviceFeeCents : 0) )*.8))
                         riiveCreditRefundableAmt = (riiveCreditRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-                        refundableAmtCents = Math.floor(Math.max(0, Math.floor((this.state.visit.price.priceCents - this.state.visit.price.discountTotalCents - this.state.visit.price.riiveCreditTotalCents) * .8 + this.state.visit.price.serviceFeeCents)))
-                        refundableAmt = (refundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
+                        
                     
                     
                     await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: false, refundServiceFee: true, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt, refundCreditAmt: riiveCreditRefundableAmt, refundCreditAmtCents: riiveCreditRefundableAmtCents})
@@ -400,7 +402,7 @@ class externalSpace extends React.Component {
                     
                 }
 
-                riiveCreditRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.riiveCreditTotalCents))
+                riiveCreditRefundableAmtCents = Math.floor(Math.max(0, this.state.visit.price.riiveCreditTotalCents - (refundableAmtCents == 0 ? this.state.visit.price.serviceFeeCents : 0)))
                 riiveCreditRefundableAmt = (riiveCreditRefundableAmtCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
                 await this.setState({refundAmt: refundableAmt, refundAmtCents: refundableAmtCents, fullRefund: true, refundServiceFee: true, discountRefundAmtCents: discountRefundableAmtCents, discountRefundAmt: discountRefundableAmt, refundCreditAmt: riiveCreditRefundableAmt, refundCreditAmtCents: riiveCreditRefundableAmtCents})

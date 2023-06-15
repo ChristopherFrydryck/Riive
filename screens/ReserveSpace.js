@@ -767,6 +767,7 @@ class reserveSpace extends Component {
                                             paymentIntent = res.data.id
                                         }
                                     }else{
+                                        transferID = res.transferData.id
                                         if(Math.round(this.state.totalCents - this.state.riiveCreditTotalCents) == 0){
                                             paymentIntent = null
                                         }else{

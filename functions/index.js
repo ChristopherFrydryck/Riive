@@ -1207,6 +1207,7 @@ const fs = require('fs');
     exports.refundTrip = functions.https.onRequest((request, response) => {
          
 
+        // If a discount is used and it covers part of the total
         if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount > 0){
             
             stripe.refunds.create({
@@ -1247,6 +1248,7 @@ const fs = require('fs');
                     name: err.name
                 })
               })
+        // If a discount is used and it covers the entire total
         }else if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount <= 0){
             stripe.transfers.createReversal(
                 request.body.discountID,
