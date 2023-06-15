@@ -250,6 +250,8 @@ class reserveSpace extends Component {
                 }else{
                     this.props.UserStore.payments = doc.data().payments
                 }
+
+                this.props.UserStore.accountBalance = doc.data().accountBalance || 0;
                 
                 
             })
@@ -693,7 +695,7 @@ class reserveSpace extends Component {
 
             if(this.state.selectedVehicle && this.state.selectedPayment && this.state.spaceAvailabilityWorks && !this.state.spaceCancelledOrHidden){
                 let card = this.state.selectedPayment;
-                let vehicle = this.state.selectedPayment;
+                let vehicle = this.state.selectedVehicle;
                 // console.log(`${this.props.UserStore.userID} is paying for spot ${this.props.ComponentStore.selectedExternalSpot[0].listingID} with card ${this.state.selectedPayment.PaymentID} and driving a ${this.state.selectedVehicle.Year} ${this.state.selectedVehicle.Make} ${this.state.selectedVehicle.Model}`)
                 var d = new Date()
 
@@ -739,6 +741,8 @@ class reserveSpace extends Component {
 
                             var paymentIntent = null
                             var transferID = null
+                      
+
 
                             
 
@@ -755,14 +759,19 @@ class reserveSpace extends Component {
                                         // console.log(res.transferData)
                                         transferID = res.transferData.id
 
-                                        if(Math.round(this.state.totalCents - this.state.discountTotalCents) == 0){
+                                    
+
+                                        if(Math.round(this.state.totalCents - this.state.discountTotalCents - this.state.riiveCreditTotalCents) == 0){
                                             paymentIntent = null
-                                            
                                         }else{
                                             paymentIntent = res.data.id
                                         }
                                     }else{
-                                        paymentIntent = res.data.id
+                                        if(Math.round(this.state.totalCents - this.state.riiveCreditTotalCents) == 0){
+                                            paymentIntent = null
+                                        }else{
+                                            paymentIntent = res.data.id
+                                        } 
                                     }
                                 }
                             })
@@ -798,7 +807,7 @@ class reserveSpace extends Component {
                                     discount: this.state.discount,
                                     discountType: this.state.discountType,
                                     discountTotal: this.state.discountTotal,
-                                    discountTotalCents: this.state.discountTotalCents
+                                    discountTotalCents: Math.round(this.state.discountTotalCents)
                                 },
                                 paymentIntentID: paymentIntent,
                                 transferID: transferID,
@@ -815,6 +824,8 @@ class reserveSpace extends Component {
                                 distanceWalking: locationDifferenceWalking,
                                 refundAmt: null,
                                 refundAmtCents: null,
+                                refundCreditAmt: null,
+                                refundCreditAmtCents: null,
                                 refundFull: null,
                                 refundServiceFee: null,
                                 hostCharged: null,
@@ -852,7 +863,6 @@ class reserveSpace extends Component {
                                 visitorID: this.props.UserStore.userID,
                             }
 
-                            
 
                             db.collection("trips").doc(ref.id).set(obj)
                             db.collection("listings").doc(this.props.ComponentStore.selectedExternalSpot[0].listingID).collection("trips").doc(ref.id).set(shortObj);
@@ -860,6 +870,14 @@ class reserveSpace extends Component {
                                 trips: firestore.FieldValue.arrayUnion(ref.id),
                                 discounts: firestore.FieldValue.arrayUnion(this.state.promoCodeID)
                             })
+
+                            if(this.state.riiveCreditActive > 0){
+                                db.collection("users").doc(this.props.UserStore.userID).update({
+                                    accountBalance: Math.round(this.props.UserStore.accountBalance - this.state.riiveCreditTotalCents)
+                                })
+
+                                this.props.UserStore.accountBalance = this.props.UserStore.accountBalance - this.state.riiveCreditTotalCents;
+                            }
 
                             if(this.state.discount){
                                 this.props.UserStore.discounts.push(this.state.promoCodeID)
@@ -904,6 +922,8 @@ class reserveSpace extends Component {
                                         discountTotalCents: this.state.discountTotalCents,
                                         discountTotal: this.state.discountTotal,
                                         discount: this.state.discount,
+                                        riiveCreditActive: this.state.riiveCreditActive,
+                                        riiveCreditTotalCents: this.state.riiveCreditTotalCents
                                     },
                                     ...this.props.navigation.state.params.homeState
                                 }
@@ -952,24 +972,24 @@ class reserveSpace extends Component {
 
         calculateRiiveCreditTotalCents = () => {
             if(this.state.discount && this.state.riiveCreditActive){
-                if(this.props.UserStore.riiveCredit > (this.state.totalCents - this.state.discountTotalCents)){
+                if(this.props.UserStore.accountBalance > (this.state.totalCents - this.state.discountTotalCents)){
                     // console.log("Extra balance leftover")
                     this.setState({riiveCreditTotalCents: this.state.totalCents - this.state.discountTotalCents})
-                    // return this.props.UserStore.riiveCredit - this.state.discountTotalCents
+                    // return this.props.UserStore.accountBalance - this.state.discountTotalCents
                 }else{
-                    // console.log(this.props.UserStore.riiveCredit)
-                    this.setState({riiveCreditTotalCents: this.props.UserStore.riiveCredit })
-                    // return this.props.UserStore.riiveCredit
+                    // console.log(this.props.UserStore.accountBalance)
+                    this.setState({riiveCreditTotalCents: this.props.UserStore.accountBalance })
+                    // return this.props.UserStore.accountBalance
                 }
             }else if(this.state.riiveCreditActive){
-                if(this.props.UserStore.riiveCredit > this.state.totalCents){
+                if(this.props.UserStore.accountBalance > this.state.totalCents){
                     // console.log("Extra balance leftover")
                     this.setState({riiveCreditTotalCents: this.state.totalCents})
-                    // return this.props.UserStore.riiveCredit - this.state.totalCents
+                    // return this.props.UserStore.accountBalance - this.state.totalCents
                 }else{
                     // console.log("Total balance used")
-                    this.setState({riiveCreditTotalCents: this.props.UserStore.riiveCredit })
-                    // return this.props.UserStore.riiveCredit
+                    this.setState({riiveCreditTotalCents: this.props.UserStore.accountBalance })
+                    // return this.props.UserStore.accountBalance
                 }
             }else{
                 this.setState({riiveCreditTotalCents: 0 })
@@ -987,15 +1007,16 @@ class reserveSpace extends Component {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                amount: this.state.discount ? Math.round(this.state.totalCents - this.state.discountTotalCents) : this.state.totalCents,
+                amount: this.state.discount ? Math.round(this.state.totalCents - this.state.discountTotalCents - this.state.riiveCreditTotalCents) : this.state.totalCents - this.state.riiveCreditTotalCents,
+                totalToHost: this.state.totalCents,
                 visitorID: this.props.UserStore.stripeID,
                 description: `Visit id: ${refID}`,
                 cardID: this.state.selectedPayment.StripePMID,
                 customerEmail: this.props.UserStore.email,
                 transactionFee: this.state.serviceFeeCents + this.state.processingFeeCents,
                 hostID: hostStripeID,
-                discount: this.state.discount ? true : false,
-                discountAmount: Math.round(this.state.discountTotalCents)
+                discount: this.state.discount || this.state.riiveCreditActive ? true : false,
+                discountAmount: Math.round(this.state.discountTotalCents) + Math.round(this.state.riiveCreditTotalCents)
               })
             }
 
@@ -1027,7 +1048,7 @@ class reserveSpace extends Component {
           })
 
        
-          let paymentsArray = this.props.UserStore.payments.filter(x => x.Type !== "Riive Credit").map(payment => {
+          let paymentsArray = this.props.UserStore.payments.map(payment => {
               let cardValid = false
               let d = new Date();
               // Validate card is not expired
@@ -1160,7 +1181,7 @@ class reserveSpace extends Component {
                                 </RadioList>
                             : null}
 
-                                <Pressable disabled={this.props.UserStore.riiveCredit == 0} style={{height: 40, flexDirection: 'row', alignItems: 'center'}}
+                                <Pressable disabled={this.props.UserStore.accountBalance == 0} style={{height: 40, flexDirection: 'row', alignItems: 'center'}}
                                  onPress={() => {
                                     this.calculateRiiveCreditTotalCents()
                                     this.setState({riiveCreditActive: this.state.riiveCreditActive === false ? true : false})
@@ -1168,9 +1189,9 @@ class reserveSpace extends Component {
                                 <Checkbox.Android
                                     status={this.state.riiveCreditActive ? "checked" : "unchecked"}
                                     color={Colors.tango900}
-                                    disabled={this.props.UserStore.riiveCredit == 0}
+                                    disabled={this.props.UserStore.accountBalance == 0}
                                 />
-                                <Text style={{color: this.props.UserStore.riiveCredit == 0 ? Colors.cosmos300 : Colors.cosmos900}}>Apply {(this.props.UserStore.riiveCredit / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} Riive credit to trip</Text>
+                                <Text style={{color: this.props.UserStore.accountBalance == 0 ? Colors.cosmos300 : Colors.cosmos900}}>Apply {(this.props.UserStore.accountBalance / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} Riive credit to trip</Text>
                             </Pressable>
 
                         <Button onPress={() => this.props.navigation.navigate("AddPayment")} style = {{backgroundColor: "rgba(255, 193, 76, 0.3)", marginTop: 16, height: 40, paddingVertical: 0}} textStyle={{color: Colors.tango900, fontSize: 16}}>+ Add Payment</Button>
@@ -1239,7 +1260,7 @@ class reserveSpace extends Component {
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                             <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
                             <View style={{display: 'flex', flexDirection: 'row'}}>
-                                <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.discountTotalCents ? ((this.state.totalCents - this.state.discountTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}): this.state.total}</Text>
+                                <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{this.state.discountTotalCents ? (Math.max(0,(this.state.totalCents - this.state.discountTotalCents - this.state.riiveCreditTotalCents)) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}) : (Math.max(0,(this.state.totalCents - this.state.riiveCreditTotalCents)) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                             </View>
                         </View>
                         

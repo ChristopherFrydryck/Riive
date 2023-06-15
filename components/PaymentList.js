@@ -62,15 +62,34 @@ class VehicleList extends React.Component{
         let {payments} = this.props.UserStore;
         let loaders = [];
 
-        let paymentsArray = payments.map(x => x);
-        let riiveCreditIndex = paymentsArray.findIndex(x => x.Type == "Riive Credit")
-        
-        riiveCreditIndex == -1 ? paymentsArray : paymentsArray.unshift(...paymentsArray.splice(riiveCreditIndex, 1))
 
+        
         if(paymentsLoaded){
         return(
             
             <View style={styles.container}>
+                <TouchableOpacity
+                    // key={payment.PaymentID}
+                    style={styles.li_first}
+                    // onPress = {() => this.selectPayment(payment)}
+                    disabled={true}
+                >
+                    <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap'}}>
+                            <Icon
+                                iconName="dollar-sign"
+                                iconColor={Colors.apollo500}
+                                iconSize={28}
+                                style={{marginRight: 8}}
+                                
+                            />
+                            <View style={{flexDirection: "column"}}>
+                                <Text style={{fontSize: 16}}>Riive Credit</Text>
+                                <Text style={{flexWrap: 'wrap'}}>{(this.props.UserStore.accountBalance / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
+                            </View>
+
+                        </View> 
+                </TouchableOpacity>
+                
                 {
                     
                    payments.map((payment, i) => (

@@ -1075,9 +1075,26 @@ const fs = require('fs');
 
     exports.payForSpace = functions.https.onRequest((request, response) => {
 
-            if(request.body.discount){
+            if(request.body.amount <= 50){
+                stripe.transfers.create({
+                    amount: request.body.totalToHost,
+                    currency: 'usd',
+                    destination: request.body.hostID,
                     
-                    if(request.body.amount > 0){
+                 }).then((result) => {
+                    return response.send({
+                        statusCode: 200,
+                        res: "SUCCESS",
+                        data: null,
+                        transferData: result,
+                        removedCardID: null,
+                    })
+                }).catch((e) => {
+                    console.log(e)
+                    response.status(500).send(e)
+                });
+            }else if(request.body.discount){
+    
                         stripe.paymentIntents.create({
                                 payment_method_types: ['card'],
                                 amount: request.body.amount,
@@ -1118,25 +1135,7 @@ const fs = require('fs');
                             console.log(e)
                             response.status(500).send(e)
                         });
-                    }else{
-                        stripe.transfers.create({
-                            amount: request.body.discountAmount,
-                            currency: 'usd',
-                            destination: request.body.hostID,
-                            
-                         }).then((result) => {
-                            return response.send({
-                                statusCode: 200,
-                                res: "SUCCESS",
-                                data: null,
-                                transferData: result,
-                                removedCardID: request.body.PaymentID,
-                            })
-                        }).catch((e) => {
-                            console.log(e)
-                            response.status(500).send(e)
-                        });
-                    }
+                   
             }else{
                 stripe.paymentIntents.create({
                     payment_method_types: ['card'],
@@ -1206,6 +1205,7 @@ const fs = require('fs');
     })
 
     exports.refundTrip = functions.https.onRequest((request, response) => {
+         
 
         if(request.body.discountID && request.body.discountAmount > 0 && request.body.amount > 0){
             
@@ -1783,21 +1783,21 @@ const fs = require('fs');
 
                                     // Version 1.1.1
                                     case 1:
-                                        //  db.collection('users').doc(context.params.user_id).update({
-                                        //    accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
-                                        // });
+                                         db.collection('users').doc(context.params.user_id).update({
+                                           accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
+                                        });
 
-                                        if (beforeUser.payments.filter(x => x.Type == "Riive Credit").length == 0){
-                                            const ref = db.collection("users").doc();
+                                        // if (beforeUser.payments.filter(x => x.Type == "Riive Credit").length == 0){
+                                        //     const ref = db.collection("users").doc();
 
-                                            db.collection("users").doc(context.params.user_id).update({
-                                                payments: admin.firestore.FieldValue.arrayUnion({
-                                                    Type: "Riive Credit",
-                                                    Amount: 0,
-                                                    PaymentID: ref.id,
-                                                })
-                                             })
-                                        }
+                                        //     db.collection("users").doc(context.params.user_id).update({
+                                        //         payments: admin.firestore.FieldValue.arrayUnion({
+                                        //             Type: "Riive Credit",
+                                        //             Amount: 0,
+                                        //             PaymentID: ref.id,
+                                        //         })
+                                        //      })
+                                        // }
                                     break;
                                 }
                             break;

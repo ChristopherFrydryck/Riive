@@ -380,14 +380,8 @@ export default class Authentication extends React.Component {
                       numTimesOpenedApp: 1,
                       listings: [],
                       vehicles: [],
-                      payments: [
-                        {
-                          Amount: 0,
-                          Type: "Riive Credit",
-                          PaymentID: db.collection("users").doc().id, 
-                          // Creates custom ID
-                        }
-                      ],
+                      payments: [],
+                      accountBalance: 0,
                       trips: [],
                       discounts: [],
                       photo: '',
@@ -438,6 +432,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.listings = [];
                     this.props.UserStore.reports = [];
                     this.props.UserStore.payments = [];
+                    this.props.UserStore.accountBalance = 0;
                     this.props.UserStore.trips = [];
                     this.props.UserStore.discounts = [];
                     this.props.UserStore.searchHistory = [];

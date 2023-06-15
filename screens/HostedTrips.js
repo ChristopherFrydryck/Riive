@@ -192,10 +192,10 @@ export default class HostedTrips extends Component{
         let amountChargedToHostCents = Math.floor(serviceFeeCents + (processingFeeCents * 2)) >= 50 ? serviceFeeCents + (processingFeeCents * 2) : 50;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-        let refundAmountCents = Math.floor(serviceFeeCents + processingFeeCents + priceCents - this.state.selectedVisit.visit.price.discountTotalCents) || 0
+        let refundAmountCents = Math.floor(serviceFeeCents + processingFeeCents + priceCents - this.state.selectedVisit.visit.price.discountTotalCents - this.state.selectedVisit.visit.price.riiveCreditTotalCents) || 0
         let refundAmount = (refundAmountCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
-        let discountAmountCents = Math.floor(this.state.selectedVisit.visit.price.discountTotalCents)
+        let discountAmountCents = Math.floor(this.state.selectedVisit.visit.price.discountTotalCents + this.state.selectedVisit.visit.price.riiveCreditTotalCents)
         let discountAmount = (discountAmountCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
         const timeDiffEnd = this.state.selectedVisit.visit.visit.time.end.unix - new Date().getTime()
@@ -263,8 +263,18 @@ export default class HostedTrips extends Component{
                                 isCancelled: true,
                             })
 
-                            // If a promo code was used
-                            if(this.state.selectedVisit.visit.promoCode){
+                            // If a promo code was used or Riive credit
+                            if(this.state.selectedVisit.visit.promoCode && this.state.selectedVisit.visit.price.riiveCreditApplied){
+
+                                // Get visitor data
+                                this.getGuestData(this.state.selectedVisit.visit.visitorID).then(res => {
+                                    let arrayRemovedCoupon = res.data.discounts.filter(x => x !== this.state.selectedVisit.visit.promoCode)
+                                    
+                                    // Update visitor data
+                                    this.updateGuest(this.state.selectedVisit.visit.visitorID, { discounts: arrayRemovedCoupon, accountBalance: res.data.accountBalance + this.state.selectedVisit.visit.price.riiveCreditTotalCents})
+                                })
+                                
+                            }else if(this.state.selectedVisit.visit.promoCode){
 
                                 // Get visitor data
                                 this.getGuestData(this.state.selectedVisit.visit.visitorID).then(res => {
@@ -274,7 +284,16 @@ export default class HostedTrips extends Component{
                                     this.updateGuest(this.state.selectedVisit.visit.visitorID, { discounts: arrayRemovedCoupon})
                                 })
 
-                            }
+                            }else if(this.state.selectedVisit.visit.price.riiveCreditApplied){
+                                // Get visitor data
+                                this.getGuestData(this.state.selectedVisit.visit.visitorID).then(res => {
+                                   
+                                    // Update visitor data
+                                    this.updateGuest(this.state.selectedVisit.visit.visitorID, { accountBalance: res.data.accountBalance + this.state.selectedVisit.visit.price.riiveCreditTotalCents })
+                                })
+
+                            }else{}
+
                         }).then(async() => {
                             await db.collection("users").doc(trip.data().visitorID).get().then((visitor) => {
                                 if(!visitor.exists){
@@ -670,7 +689,7 @@ export default class HostedTrips extends Component{
 
         let { serviceFeeCents, processingFeeCents } = this.state.selectedVisit.visit.price
 
-        let amountChargedToHostCents = (serviceFeeCents + (processingFeeCents *2)) >= 50 ? serviceFeeCents + (processingFeeCents * 2) : 50;
+        let amountChargedToHostCents = (serviceFeeCents + (processingFeeCents *2)) >= 100 ? serviceFeeCents + (processingFeeCents * 2) : 100;
         let amountChargedToHost = (amountChargedToHostCents/100).toLocaleString("en-US", {style:"currency", currency:"USD"})
 
             if(visible){

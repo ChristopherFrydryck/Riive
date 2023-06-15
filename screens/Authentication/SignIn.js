@@ -214,6 +214,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.reports = [];
               this.props.UserStore.trips = doc.data().trips;
               this.props.UserStore.payments = doc.data().payments;
+              this.props.UserStore.accountBalance = doc.data().accountBalance || 0;
               this.props.UserStore.searchHistory = searchHistory;
               this.props.UserStore.disabled = doc.data().disabled.isDisabled;
               this.props.UserStore.toBeDeleted = doc.data().deleted.toBeDeleted
@@ -435,6 +436,7 @@ export default class Authentication extends React.Component {
                 this.props.UserStore.reports = [];
                 this.props.UserStore.trips = doc.data().trips;
                 this.props.UserStore.payments = doc.data().payments;
+                this.props.UserStore.accountBalance = doc.data().accountBalance || 0;
                 this.props.UserStore.searchHistory = searchHistory;
                 this.props.UserStore.disabled = doc.data().disabled.isDisabled;
                 this.props.UserStore.deleted = doc.data().deleted.toBeDeleted

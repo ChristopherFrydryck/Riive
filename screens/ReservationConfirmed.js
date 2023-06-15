@@ -136,14 +136,20 @@ class ReservationConfirmed extends Component {
                             {cost.discount ? 
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                 <Text>Discount</Text>
-                                <Text>{cost.discountTotal}</Text>
+                                <Text style={{color: Colors.hal500}}>- {cost.discountTotal}</Text>
+                            </View>
+                        : null}
+                        {cost.riiveCreditActive ? 
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
+                                <Text>Riive Credit</Text>
+                                <Text style={{color: Colors.hal500}}>- {(cost.riiveCreditTotalCents / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                             </View>
                         : null}
                         </View>
                         <View style={{paddingVertical: 16, flexDirection: 'column'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>Total (USD)</Text>
-                                <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{cost.discountTotalCents ? ((cost.totalCents - cost.discountTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}): cost.total}</Text>
+                                <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{cost.discountTotalCents ? ((cost.totalCents - cost.discountTotalCents - cost.riiveCreditTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}): ((cost.totalCents - cost.riiveCreditTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                             </View>
                             <Text style={{fontSize: 12, lineHeight: Platform.OS === 'ios' ? 16 : 18, marginTop: 16}}>For more information in regards to our return policy or currency conversion, please visit our <Text style={{fontSize: 12, color: Colors.tango900}} onPress={() => this.props.navigation.navigate("TOS")}>Terms of Service</Text>. If you have a question, or you do not recall booking this parking experience, please contact us at support@riive.net.</Text>
                         </View>

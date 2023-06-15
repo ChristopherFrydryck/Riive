@@ -364,6 +364,8 @@ class Profile extends Component{
                 }else{
                     this.props.UserStore.payments = doc.data().payments
                 }
+
+                this.props.UserStore.accountBalance = doc.data().accountBalance || 0;
                 
                 // Check if spaces are updated
                 if(length > 0 && length <= 10){

@@ -251,7 +251,7 @@ export default class VisitingTrips extends Component{
                     <View style={{borderRadius: 4, overflow: 'hidden'}}>
                         {!isCancelled ? 
                             <View style={{position: 'absolute', zIndex: 9, backgroundColor: 'white', top: 4, left: 4, paddingHorizontal: 6, paddingVertical: 4, borderRadius: 4}}>
-                                <Text>{visit.price.discount ? ((visit.price.totalCents - visit.price.discountTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}) : visit.price.total}</Text>
+                                <Text>{visit.price.discount ? (Math.max(0,(visit.price.totalCents - visit.price.discountTotalCents - (visit.price.riiveCreditTotalCents || 0))) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}) : (Math.max(0, (visit.price.totalCents - (visit.price.riiveCreditTotalCents || 0))) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                             </View>
                         : null }
                         <Image 
@@ -518,7 +518,13 @@ export default class VisitingTrips extends Component{
                                     {data.visit.price.discount ? 
                                         <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
                                             <Text>Discount</Text>
-                                            <Text>{data.visit.price.discountTotal}</Text>
+                                            <Text style={{color: Colors.hal500}}>- {data.visit.price.discountTotal}</Text>
+                                        </View>
+                                    : null}
+                                    {data.visit.price.riiveCreditApplied ? 
+                                        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 4}}>
+                                            <Text>Riive Credit</Text>
+                                            <Text style={{color: Colors.hal500}}>- {data.visit.price.riiveCreditTotal}</Text>
                                         </View>
                                     : null}
                                 </View>
@@ -529,7 +535,7 @@ export default class VisitingTrips extends Component{
                                             {data.visit.isCancelled ?
                                                 <Text type="Medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.refundAmt || "--"}</Text>
                                              :
-                                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.price.discountTotalCents ? ((data.visit.price.totalCents - data.visit.price.discountTotalCents) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}): data.visit.price.total}</Text>
+                                                 <Text type="medium" numberOfLines={1} style={{fontSize: 24}}>{data.visit.price.discountTotalCents ? (Math.max(0,(data.visit.price.totalCents - data.visit.price.discountTotalCents - (data.visit.price.riiveCreditTotalCents || 0))) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"}): (Math.max(0,(data.visit.price.totalCents - (data.visit.price.riiveCreditTotalCents || 0))) * .01).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
                                             }
                                         </View>
                                        
