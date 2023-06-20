@@ -43,7 +43,7 @@
                 "userID": "e8clD1B96thKlXRSA2lKUQW74mU2",
                 "photo": "https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/users%2Fe8clD1B96thKlXRSA2lKUQW74mU2%2Fprofile-pic?alt=media&token=f79aed94-2030-4ef7-b72b-65b01d6bf414"
             }],
-            "description": ["New hosts now get a bonus for signing up. Create your first space and get a credit to your account within a week!"],
+            "description": ["New hosts now get a bonus for signing up. Create your first space and email us at support@riive.net and we will add a $50 credit to your account from now until July 31st."],
             "images": ["https://firebasestorage.googleapis.com/v0/b/riive-dev.appspot.com/o/dev-team%2Fchangelog-artifacts%2F1.1.1%2FFocusSpace-Profile.JPG?alt=media&token=c99a9394-a2bb-4ed4-9cf6-4133e86fd220&_gl=1*p27fw7*_ga*NTc1ODQ1MDIzLjE2ODQyNTk3NDc.*_ga_CW55HF8NVT*MTY4NjI0Mjk5NC42LjEuMTY4NjI0MzM0OS4wLjAuMA"],
             "added": "",
             "changed": "",
@@ -51,8 +51,8 @@
             "removed": "",
             "fixed": "",
             "security": "",
-            "date": "Thu June 08, 2023 02:52:28 GMT-0400",
-            "dateUnix": 1686207148000
+            "date": "Wed Jun 21 2023 00:00:00 GMT-0600 (Mountain Daylight Time)",
+            "dateUnix": 1687327200000
         }
     ]
 }
