@@ -201,13 +201,14 @@ class Home extends Component {
 
     this.mapLocationFunction();
 
+
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
 
     checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
         
         if(res !== null){
-            this.setState({changelogVersion: res})
+            this.setState({changelogVersion: res.hasAppUpdateModal ? res : null})
             this.props.UserStore.versions.push({
                 code: res.release,
                 dateAdded: new Date(),

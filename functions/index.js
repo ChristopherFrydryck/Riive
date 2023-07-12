@@ -1204,6 +1204,186 @@ const fs = require('fs');
         })
     })
 
+    exports.sentInvite = functions.https.onRequest((request, response) => {
+        db.collection('referralCodes').doc(request.body.referralCode).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("Referral does not exist")
+                error.statusCode = 401;
+                error.name = 'ReferralCode/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((codeData) => {
+           return db.collection('referralCodes').doc(request.body.referralCode).update({
+                numInvitations: codeData.numInvitations + 1,
+            })
+        }).then(() => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: null
+            })
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+        })
+    })
+
+    exports.checkInviteCode = functions.https.onRequest((request, response) => {
+        db.collection('referralCodes').doc(request.body.referralCode).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("Referral does not exist")
+                error.statusCode = 401;
+                error.name = 'ReferralCode/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((data) => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: data,
+            })
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+        })
+    })
+
+    exports.usedInviteCode = functions.https.onRequest((request, response) => {
+        db.collection('referralCodes').doc(request.body.referralCode).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("Referral does not exist")
+                error.statusCode = 401;
+                error.name = 'ReferralCode/DoesNotExist'
+                throw error
+            }else{
+                db.collection('referralCodes').doc(request.body.referralCode).update({
+                    numSignups: doc.data().numSignups + 1,
+                    userSignups: admin.firestore.FieldValue.arrayUnion(request.body.uid)
+                })
+
+                // console.log(`updated referall code`)
+
+                return doc.data();
+            }
+        }).then(async (data) => {
+            let newUser = null 
+
+            await db.collection('users').doc(request.body.uid).get().then(doc => {
+                if(!doc.exists){
+                    console.log("New user doesnt exist with the uid of " + request.body.uid)
+                }else{
+                    console.log("New user exists under " + request.body.uid)
+                    newUser = doc.data();
+                }
+            })
+
+            // console.log(`New User: ${newUser.email}`)
+
+            let returnValue = {
+                "referralCodeData": data,
+                "newUser": newUser
+            }
+
+            return returnValue
+
+        }).then(async(data) => {
+            
+            let invitee = null
+            
+            await db.collection('users').doc(data.referralCodeData.owner).get().then(doc => {
+                if(doc.exists){
+                    invitee = doc.data();
+                }
+            })
+
+            // console.log(`Invitee: ${invitee.accountBalance}`)
+            
+            let returnValue = {
+                "invitee": invitee,
+                ...data
+            }
+
+            return returnValue
+
+        }).then(async(data) => {
+            let bonuses = null;
+
+            await db.collection('environment').doc('referrals').get().then(doc => {
+                if(doc.exists){
+                    bonuses = doc.data();
+                }
+            })
+
+            // console.log(`Invitee Bonus: ${bonuses.existingUserAmount}`)
+
+            let returnValue = {
+                "bonuses": bonuses,
+                ...data
+            }
+
+            return returnValue
+
+        }).then(data => {
+            
+            if(data.newUser && data.invitee && data.bonuses){
+                let newUserAmt = data.bonuses.newUserAmount;
+                let inviteeAmt = data.bonuses.existingUserAmount;
+
+                db.collection('users').doc(data.newUser.id).update({
+                    accountBalance: data.newUser.accountBalance + newUserAmt
+                })
+
+                db.collection('users').doc(data.invitee.id).update({
+                    accountBalance: data.invitee.accountBalance + inviteeAmt
+                })
+
+                return data
+            }else{
+                if(!data.newUser){
+                    error = new Error("New user not found to add credit to account")
+                    error.statusCode = 402;
+                    error.name = 'ReferralCode/NewUserCreditFailure'
+                    throw error
+                }else if(!data.invitee){
+                    error = new Error("Invitee not found to add credit to account")
+                    error.statusCode = 403;
+                    error.name = 'ReferralCode/InviteeCreditFailure'
+                    throw error
+                }else{
+                    error = new Error("Failure to get referall amount")
+                    error.statusCode = 404;
+                    error.name = 'ReferralCode/ReferallAmountNotFound'
+                    throw error
+                }
+                
+            }
+            
+
+        }).then((data) => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: data,
+            })
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+        })
+    })
+
     exports.refundTrip = functions.https.onRequest((request, response) => {
          
 
@@ -1789,17 +1969,23 @@ const fs = require('fs');
                                            accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
                                         });
 
-                                        // if (beforeUser.payments.filter(x => x.Type == "Riive Credit").length == 0){
-                                        //     const ref = db.collection("users").doc();
+                                    break;
 
-                                        //     db.collection("users").doc(context.params.user_id).update({
-                                        //         payments: admin.firestore.FieldValue.arrayUnion({
-                                        //             Type: "Riive Credit",
-                                        //             Amount: 0,
-                                        //             PaymentID: ref.id,
-                                        //         })
-                                        //      })
-                                        // }
+                                    // Version 1.1.2
+                                    case 2:
+                                        let refCode = `${beforeUser.firstname.toUpperCase()}-${context.params.user_id.slice(-6).toUpperCase()}`
+
+                                        db.collection('users').doc(context.params.user_id).update({
+                                            referralCode: refCode
+                                         });
+
+                                         db.collection('referralCodes').doc(refCode).create({
+                                            code: refCode,
+                                            numInvitations: 0,
+                                            numSignups: 0,
+                                            owner: context.params.user_id,
+                                            userSignups: [],
+                                         })
                                     break;
                                 }
                             break;

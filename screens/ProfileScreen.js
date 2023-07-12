@@ -51,6 +51,7 @@ import UserStore from '../stores/userStore'
 import ComponentStore from '../stores/componentStore'
 import Colors from '../constants/Colors';
 import FloatingCircles from '../components/FloatingCircles'
+import { color } from 'react-native-reanimated'
 
 
 
@@ -128,6 +129,10 @@ class Profile extends Component{
             },
             addressSaveReady: false,
 
+            hostBonus: 0,
+            newUserAmount: 0,
+            existingUserAmount: 0,
+
 
             
             isRefreshing: false,
@@ -152,7 +157,6 @@ class Profile extends Component{
             StatusBar.setBarStyle('light-content', true);
             Platform.OS === 'android' && StatusBar.setBackgroundColor(Colors.tango900);
             this.resetAddress();
-
 
           });
 
@@ -324,12 +328,16 @@ class Profile extends Component{
       
         
       }
+
+
+      
     
       
 
     updateProfile = async() => {
         const db = firestore();
         const doc = db.collection('users').doc(this.props.UserStore.userID);
+        const referralDoc = db.collection('environment').doc("referrals");
 
         this.setState({isRefreshing: true, listingsLoaded: false})
 
@@ -500,6 +508,14 @@ class Profile extends Component{
                     }, 300)
                 }
             })
+
+            await referralDoc.get().then((doc) => {
+                this.setState({
+                    hostBonus: doc.data().hostBonus,
+                    existingUserAmount: doc.data().existingUserAmount,
+                    newUserAmount: doc.data().newUserAmount
+                })
+            })
         
 
             this.setState({isRefreshing: false})
@@ -511,24 +527,71 @@ class Profile extends Component{
   
 
       onShare = async () => {
+
         try{
-         Share.share({
-            message: 'Come join Riive with me and learn how you can lease your driveway or park smarter at www.riive.net.',
-            url: 'https://www.riive.net',
+         const result = await Share.share({
+            message: this.state.newUserAmount > 0 ? `Join Riive and use my code ${this.props.UserStore.referralCode} when you sign up to get a ${(this.state.newUserAmount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} bonus to use towards any trip.` : `Join Riive and use my code ${this.props.UserStore.referralCode} when you sign up.`,
+            url: 'https://www.riive.net/download',
             title: 'Riive | The Shareparking App'
           }, {
             // Android only:
             dialogTitle: 'Share Riive',
             // iOS only:
-            subject: 'Join Riive with me',
+            subject: `Join Riive and use code ${this.props.UserStore.referralCode}`,
             excludedActivityTypes: [
                 'com.apple.UIKit.activity.SaveToCameraRoll', 
                 'com.apple.UIKit.activity.AssignToContact'
             ]
           })
-        }catch(e){
-            alert(e)
+
+        //   console.log(result)
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+            //   alert(result.activityType)
+              return this.shareFunction();
+              // shared with activity type of result.activityType
+            } else {
+              return this.shareFunction();
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            return null
+            // dismissed
+          }
+            
+            }catch(e){
+                alert(e)
+            }
+      }
+
+
+      shareFunction = async() => {
+        const settings = {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            "Access-Control-Request-Method": "POST"
+            },
+            body: JSON.stringify({
+                referralCode: this.props.UserStore.referralCode
+            })
         }
+
+        await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/sentInvite`, settings).then((res) => {
+                if(res.status == 200){
+                    Alert.alert("Thanks for sharing!", `For each sign up you will recieve a credit to your account. New sign ups right now will gift ${(this.state.newUserAmount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} to your invitees and you will get ${(this.state.existingUserAmount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} per sign up.`)
+                }else{
+                    // If response is not 200
+                    error = new Error(`There was an issue on our end, but no worries, your friends can still use the discount you sent them!`)
+                    error.code = res.status
+                    error.name = "Issue Updating FB Referral Code Collection"
+                    throw error
+                }
+                                
+                }).catch(e => {
+                    // If fetch is not 200 or function fails
+                    throw e.code
+                })
       }
       
 
@@ -1307,7 +1370,7 @@ class Profile extends Component{
                                         }
                                     })
                                 }} title="Contact Us" />
-                                <Menu.Item onPress={() => {this.onShare()}} title="Invite friends" />
+                                <Menu.Item onPress={() => {this.onShare()}} title={`Invite & Earn ${(this.state.existingUserAmount/100).toLocaleString("en-US", {style:"currency", currency:"USD"}).split(".")[0]}`} />
                                 <Divider />
                                 {/* <Menu.Item onPress={() => {this.props.navigation.navigate('TOS')}} title="ToS and Privacy Policy" /> */}
                                 <Menu.Item onPress={() => this.signOut()} title="Sign out" />
@@ -1393,13 +1456,15 @@ class Profile extends Component{
                                 />
                             </Circle>
 
+
                    
                     <ScrollView keyboardShouldPersistTaps="handled" style={{marginTop: 12}} refreshControl={<RefreshControl refreshing={this.state.isRefreshing} onRefresh={() => this.updateProfile()}/>}>
 
                     
-                            
+                        
                  
                         <View style={styles.contentBox}>
+                            
                              <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingHorizontal: 16}}>
                                 <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>
                                 <ClickableChip
@@ -1410,6 +1475,19 @@ class Profile extends Component{
                             </View>                            
                         </View>
                         <View>
+                        
+                        {this.state.listings.length == 0 && this.state.hostBonus > 0 ? 
+                            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', paddingVertical: 8, paddingLeft: 16, paddingRight: 8, backgroundColor: Colors.fortune100, width: width, marginBottom: 8}}>
+                                <Icon 
+                                    iconName="shimmer"
+                                    iconLib="MaterialCommunityIcons"
+                                    iconColor={Colors.fortune700}
+                                    iconSize={20}
+                                    style={{flex: 0, marginRight: 8, marginTop: 4}}
+                                />
+                                <Text style={{flex: 1, color: Colors.fortune700, fontWeight: '500', fontSize: 14}}>Host your first space and get {(this.state.hostBonus / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} of credit towards your account</Text>
+                            </View>
+                        : null}
                             {<SpacesList isLoaded={this.state.listingsLoaded} listings={this.state.listings}/>}
                         </View>
                         <View style={styles.contentBox}>

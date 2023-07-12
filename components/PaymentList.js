@@ -98,7 +98,6 @@ class VehicleList extends React.Component{
                             key={payment.PaymentID}
                             style={i == 0 ? styles.li_first : styles.li}
                             onPress = {() => this.selectPayment(payment)}
-                            disabled={payment.Type == "Riive Credit" ? true : false}
                             >
                             {payment.Type == "Card" ?   
                             <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap'}}>
@@ -142,21 +141,6 @@ class VehicleList extends React.Component{
                                 </View>
     
                             </View>
-                            : payment.Type == "Riive Credit" ? 
-                            <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap'}}>
-                            <Icon
-                                iconName="dollar-sign"
-                                iconColor={Colors.apollo500}
-                                iconSize={28}
-                                style={{marginRight: 8}}
-                                
-                            />
-                            <View style={{flexDirection: "column"}}>
-                                <Text style={{fontSize: 16}}>Riive Credit</Text>
-                                <Text style={{flexWrap: 'wrap'}}>{(payment.Amount / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})}</Text>
-                            </View>
-
-                        </View> 
                             : payment.Type == "PayPal" ?
                             <View style={{flexDirection: 'row', alignItems: 'center', flexWrap: 'nowrap'}}>
                                 <Icon

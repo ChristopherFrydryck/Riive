@@ -7,6 +7,7 @@
             "patch": 0,
             "isBeta": false,
             "isReleased": true,
+            "hasAppUpdateModal": true,
             "title": "Welcome to Riive",
             "contributors": [{
                 "name": "Christopher Frydryck",
@@ -36,6 +37,7 @@
             "patch": 1,
             "isBeta": false,
             "isReleased": true,
+            "hasAppUpdateModal": true,
             "title": "New To Version 1.1.1",
             "contributors": [{
                 "name": "Christopher Frydryck",
@@ -53,6 +55,32 @@
             "security": "",
             "date": "Wed Jun 20 2023 00:00:00 GMT-0600 (Mountain Daylight Time)",
             "dateUnix": 1687124479000
+        },
+        {
+            "release": "1.1.2",
+            "major": 1,
+            "minor": 1,
+            "patch": 2,
+            "isBeta": false,
+            "isReleased": true,
+            "hasAppUpdateModal": false,
+            "title": "",
+            "contributors": [{
+                "name": "Christopher Frydryck",
+                "email": "chris@riive.net",
+                "userID": "e8clD1B96thKlXRSA2lKUQW74mU2",
+                "photo": "https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/users%2Fe8clD1B96thKlXRSA2lKUQW74mU2%2Fprofile-pic?alt=media&token=f79aed94-2030-4ef7-b72b-65b01d6bf414"
+            }],
+            "description": [],
+            "images": [],
+            "added": "",
+            "changed": "",
+            "deprecated": "",
+            "removed": "",
+            "fixed": "",
+            "security": "",
+            "date": "Wed Jun 28 2023 00:00:00 GMT-0600 (Mountain Daylight Time)",
+            "dateUnix": 1687932000000
         }
     ]
 }

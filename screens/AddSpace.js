@@ -621,6 +621,38 @@ class addSpace extends Component {
     return null
   }
 
+  setHostBonus = () => {
+    const db = firestore();
+
+    db.collection('environment').doc('referrals').get().then(doc => {
+      return doc.data()
+    }).then(data => {
+      let { hostBonus } = data;
+
+      return hostBonus
+
+    }).then( async(hostBonus) => {
+      let accountBal = 0;
+
+      await db.collection('users').doc(this.props.UserStore.userID).get().then(doc => {
+        accountBal = doc.data().accountBalance
+      })
+
+      return {
+        "hostBonus": hostBonus,
+        "accountBalance": accountBal,
+      }
+    }).then(res => {
+      db.collection('users').doc(this.props.UserStore.userID).update({
+        accountBalance: res.accountBalance + res.hostBonus
+      })
+
+      this.props.UserStore.accountBalance = res.accountBalance + res.hostBonus
+    })
+  }
+
+
+
   submitSpace = async() => {
     
     await this.verifyInputs();
@@ -703,6 +735,10 @@ class addSpace extends Component {
                       // visits: []
                })
 
+               if(this.props.UserStore.listings.length == 0){
+                await this.setHostBonus();
+               }
+
                // add space to mobx UserStore
                await this.props.UserStore.listings.push({
                   listingID: this.state.postID,
@@ -724,6 +760,8 @@ class addSpace extends Component {
                   visits: [],
                })
 
+
+             
   
 
                   // navigate back to profile

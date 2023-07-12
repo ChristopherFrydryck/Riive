@@ -151,8 +151,8 @@ android {
         applicationId "com.riive"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 11
-        versionName "1.1.0"
+        versionCode 13
+        versionName "1.1.2"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         resValue "string", "build_config_package", "com.riive"

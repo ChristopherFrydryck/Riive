@@ -24,7 +24,7 @@ const PrivacyNavigator = createMaterialTopTabNavigator({
         screen: TOS,
         navigationOptions: {
             tabBarLabel: 'Terms of Service',
-        }
+        },
     },
     PrivacyNavigator: {
         screen: PrivacyPolicy,
@@ -40,8 +40,9 @@ const PrivacyNavigator = createMaterialTopTabNavigator({
     navigationOptions:{
         title:"Terms and Privacy Policy",
         headerStyle: { borderBottomColor: 'transparent' },
-        
+        headerBackTitle: 'Back'
     },
+    
     tabBarOptions: {
         labelStyle: {
           fontSize: 14,
