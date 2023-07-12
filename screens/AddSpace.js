@@ -623,31 +623,18 @@ class addSpace extends Component {
 
   setHostBonus = () => {
     const db = firestore();
+    let { hostBonus } = this.props.navigation.state.params
 
-    db.collection('environment').doc('referrals').get().then(doc => {
-      return doc.data()
-    }).then(data => {
-      let { hostBonus } = data;
+    db.collection('users').doc(this.props.UserStore.userID).get().then(doc => {
+      accountBal = doc.data().accountBalance
 
-      return hostBonus
-
-    }).then( async(hostBonus) => {
-      let accountBal = 0;
-
-      await db.collection('users').doc(this.props.UserStore.userID).get().then(doc => {
-        accountBal = doc.data().accountBalance
-      })
-
-      return {
-        "hostBonus": hostBonus,
-        "accountBalance": accountBal,
-      }
-    }).then(res => {
+      return accountBal
+    }).then(accountBal => {
       db.collection('users').doc(this.props.UserStore.userID).update({
-        accountBalance: res.accountBalance + res.hostBonus
+        accountBalance: accountBal + parseInt(hostBonus)
       })
 
-      this.props.UserStore.accountBalance = res.accountBalance + res.hostBonus
+      this.props.UserStore.accountBalance =  accountBal + parseInt(hostBonus)
     })
   }
 

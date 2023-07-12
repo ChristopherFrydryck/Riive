@@ -1469,7 +1469,9 @@ class Profile extends Component{
                                 <Text style={{fontSize: 20, marginRight: 'auto'}}>My Spaces</Text>
                                 <ClickableChip
                                     bgColor='rgba(255, 193, 76, 0.3)' // Colors.Tango300 with opacity of 30%
-                                    onPress={() => this.props.navigation.navigate("AddSpace")}
+                                    onPress={() => this.props.navigation.navigate("AddSpace", {
+                                        hostBonus: this.state.hostBonus,
+                                    })}
                                     textColor={Colors.tango700}
                                 >+ Space</ClickableChip>
                             </View>                            
