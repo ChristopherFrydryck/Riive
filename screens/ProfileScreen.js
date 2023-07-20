@@ -1480,6 +1480,8 @@ class Profile extends Component{
                         
                         {this.state.listings.length == 0 && this.state.hostBonus > 0 ? 
                             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', paddingVertical: 8, paddingLeft: 16, paddingRight: 8, backgroundColor: Colors.fortune100, width: width, marginBottom: 8}}>
+                                {Platform.OS == 'ios' ? 
+                                // Strange glitch where icon shows nothing on Android (tested on emulator)
                                 <Icon 
                                     iconName="shimmer"
                                     iconLib="MaterialCommunityIcons"
@@ -1487,10 +1489,21 @@ class Profile extends Component{
                                     iconSize={20}
                                     style={{flex: 0, marginRight: 8, marginTop: 4}}
                                 />
+                                : 
+                                <Icon 
+                                    iconName="exclamationcircleo"
+                                    iconLib="AntDesign"
+                                    iconColor={Colors.fortune700}
+                                    iconSize={20}
+                                    style={{flex: 0, marginRight: 8, marginTop: 4}}
+                                />
+                                }
                                 <Text style={{flex: 1, color: Colors.fortune700, fontWeight: '500', fontSize: 14}}>Host your first space and get {(this.state.hostBonus / 100).toLocaleString("en-US", {style:"currency", currency:"USD"})} of credit towards your account</Text>
                             </View>
                         : null}
-                            {<SpacesList isLoaded={this.state.listingsLoaded} listings={this.state.listings}/>}
+                            {<SpacesList emptyNav={() => this.props.navigation.navigate("AddSpace", {
+                                        hostBonus: this.state.hostBonus,
+                                    })} isLoaded={this.state.listingsLoaded} listings={this.state.listings}/>}
                         </View>
                         <View style={styles.contentBox}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: 16, paddingRight: 16}}>

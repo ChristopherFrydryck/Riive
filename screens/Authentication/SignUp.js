@@ -306,12 +306,12 @@ useSignUpCode = (code, uid) => {
 
   // Sign up authorization with email and password
   // also sends an email verification to the user
-  onPressSignUp = () => {
+  onPressSignUp = async() => {
 
     let namevalid = null;
     let phoneValid = null;
     let passwordValid = null;
-    let signUpCodeValid = true
+    let signUpCodeValid = true;
 
      // Begin ActivityIndicator since auth == true
     this.setState ({ authenticating: true})
@@ -348,7 +348,7 @@ useSignUpCode = (code, uid) => {
 
       
       if(this.state.signUpCode && this.state.signUpCode !== ""){
-        this.getSignUpCode(this.state.signUpCode).then(x => {
+        await this.getSignUpCode(this.state.signUpCode).then(x => {
           if(x.status == 200){
             this.setState({signUpCodeError: ''})
             signUpCodeValid = true;
@@ -405,7 +405,7 @@ useSignUpCode = (code, uid) => {
 
 
 
-
+      console.log(signUpCodeValid);
       
 
     // If vars are true and valid beguin creating user

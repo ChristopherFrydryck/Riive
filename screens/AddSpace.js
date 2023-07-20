@@ -165,8 +165,7 @@ class addSpace extends Component {
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-      
-     
+  
 
       this.setState({postID: ref.id})
       this._isMounted = true;
@@ -625,17 +624,21 @@ class addSpace extends Component {
     const db = firestore();
     let { hostBonus } = this.props.navigation.state.params
 
-    db.collection('users').doc(this.props.UserStore.userID).get().then(doc => {
-      accountBal = doc.data().accountBalance
+    console.log(hostBonus)
 
-      return accountBal
-    }).then(accountBal => {
-      db.collection('users').doc(this.props.UserStore.userID).update({
-        accountBalance: accountBal + parseInt(hostBonus)
+
+      db.collection('users').doc(this.props.UserStore.userID).get().then(doc => {
+        accountBal = doc.data().accountBalance
+
+        return accountBal
+      }).then(accountBal => {
+        db.collection('users').doc(this.props.UserStore.userID).update({
+          accountBalance: accountBal + parseInt(hostBonus)
+        })
+
+        this.props.UserStore.accountBalance =  accountBal + parseInt(hostBonus)
       })
-
-      this.props.UserStore.accountBalance =  accountBal + parseInt(hostBonus)
-    })
+  
   }
 
 
@@ -693,6 +696,7 @@ class addSpace extends Component {
 
                 let createdTime = new Date().getTime();
                  
+                
                  
                  await this.mailchimpHostTag();
                  await db.collection("users").doc(this.props.UserStore.userID).update({
@@ -746,6 +750,8 @@ class addSpace extends Component {
                   deleteDate: null,
                   visits: [],
                })
+
+               
 
 
              
@@ -1255,7 +1261,7 @@ class addSpace extends Component {
       return(
         <ScrollView 
          style={{backgroundColor: "white", paddingHorizontal: 16}} 
-         contentContainerStyle={{flex: 1}}
+         contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
         > 
    
           <View style={styles.container}>
@@ -1353,7 +1359,7 @@ class addSpace extends Component {
             style={{marginBottom: 16}}
           />
           <Text style={{textAlign: "center"}}>Let's link a bank account.</Text>
-          <Button style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("BankLinkNavigator")}>Link Bank Account</Button>    
+          <Button style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300, width: '100%', textAlign: 'center'}}  onPress={() => this.props.navigation.navigate("BankLinkNavigator")}>Link Account</Button>    
             
           </View>
           
