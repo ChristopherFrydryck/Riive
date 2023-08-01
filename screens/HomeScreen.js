@@ -206,10 +206,10 @@ class Home extends Component {
     
 
     checkWhatsNew(this.props.UserStore.versions).then((res) => {
-        
-        if(res !== null){
 
-            console.log(res)
+        const storageRef = storage().ref().child("dev-team/changelog.json")
+
+        if(res !== null && !isNew){
 
             this.setState({changelogVersion: res.hasAppUpdateModal ? res : null})
             this.props.UserStore.versions.push({
@@ -219,8 +219,28 @@ class Home extends Component {
                 minor: res.minor,
                 patch: res.patch,
             })
+        }else if(res !== null && isNew){
+
+            storageRef.getDownloadURL().then((url) => {
+                let details = fetch(url)
+                return details
+            }, (err) => {
+                return err
+            }).then((res) => {
+                return res.json()
+            }).then(async (res) => {
+                this.setState({changelogVersion: res.versions[0]})
+            })
+
+            
+            this.props.UserStore.versions.push({
+                code: res.release,
+                dateAdded: new Date(),
+                major: res.major,
+                minor: res.minor,
+                patch: res.patch,
+            })
         }
-        // this.props.UserStore.versions: [res, ...this.props.UserStore.versions]
     })
 
     this.forceUpdate();

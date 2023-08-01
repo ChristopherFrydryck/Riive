@@ -137,28 +137,19 @@ export let checkWhatsNew = (versionsUsed) => {
             return res.json()
         }).then(async (res) => {
 
-            // let currentVersionMajor = parseInt(version.split('.')[0]);
-            // let currentVersionMinor = parseInt(version.split('.')[1]);
-            // let currentVersionPatch = parseInt(version.split('.')[2]);
-
+            // Ints of the major, minor and patches for the most recent version in UserStore
             let userVersionMajor = parseInt(versionsUsed[versionsUsed.length - 1].major);
             let userVersionMinor = parseInt(versionsUsed[versionsUsed.length - 1].minor);
             let userVersionPatch = parseInt(versionsUsed[versionsUsed.length - 1].patch);
 
-            var V = res.versions.filter(x => x.release == version)[0]
-
+            // Get all released versions from Changelog file that are newer than the  most recent version
             var versionsBetween = res.versions.filter(verz => verz.isReleased == true && verz.major >= userVersionMajor && verz.minor >= userVersionMinor && verz.patch > userVersionPatch)
 
-            console.log(versionsBetween.map(x => x.release))
+            // console.log(versionsBetween.map(x => x.release))
 
+            // Loop of all new versions to update user content
             for(let i = 0; i < versionsBetween.length; i++){
-                    if(i + 1 == versionsBetween.length){
-                        await addVersionToUserDB(versionsBetween[i].release);
-                    }
 
-         
-
-            
                 const settings = {
                     method: 'POST',
                     headers: {
@@ -183,6 +174,11 @@ export let checkWhatsNew = (versionsUsed) => {
                           }else{
                             throw response
                           }      
+                    }).then(() => {
+                        if(i + 1 == versionsBetween.length){
+                            // Add newest version of riive to database
+                            addVersionToUserDB(versionsBetween[i].release);
+                        }
                     }).catch(e => {
                         // console.warn(e)
                         throw e

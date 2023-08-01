@@ -1842,11 +1842,6 @@ const fs = require('fs');
                             switch(request.body.patch){
                                 // Version 1.0.0
                                 case 0:
-                                    // console.log("Patch 1.0.0")
-                                    // db.collection('users').doc(context.params.user_id).update({
-                                    //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
-                                    //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
-                                    // });
                                     for(let i = 0; i < user.listings.length; i++){
                                         db.collection('listings').doc(user.listings[i]).update({
                                             hidden: false,
@@ -1860,11 +1855,7 @@ const fs = require('fs');
     
                                 // Version 1.0.1
                                 case 1: 
-                                    // console.log("Patch 1.0.1")
-                                    // db.collection('users').doc(context.params.user_id).update({
-                                    //     otherValue: "goodbye"
-                                    // })
-                                  break;
+                                break;
     
                             }
                         break;
@@ -1873,11 +1864,7 @@ const fs = require('fs');
                         case 1:
                             switch(request.body.patch){
                                  // Version 1.1.0
-                                 case 0:
-                                    // db.collection('users').doc(context.params.user_id).update({
-                                    //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
-                                    //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
-                                    // });
+                                case 0:
                                 break;
     
                                 // Version 1.1.1
@@ -1907,9 +1894,6 @@ const fs = require('fs');
 
                                 // Version 1.1.3
                                 case 3:
-                                    // db.collection('users').doc(user.id).update({
-                                    //     testing: "version 1.1.3"
-                                    //  });
                                 break;
                             }
                         break;
@@ -1925,196 +1909,203 @@ const fs = require('fs');
                 versionUpdate: `${request.body.major}.${request.body.minor}.${request.body.patch}`
             })
         }).catch(e => {
-            return e
+            return response.send({
+                statusCode: e.code,
+                res: "ERROR",
+                versionUpdate: `${request.body.major}.${request.body.minor}.${request.body.patch}`
+            })
         })
         
     })
+
+
+    // Deprecated functions
   
 
-    exports.updateUserInfo = functions.firestore
-    .document('users/{user_id}')
-    .onUpdate((snap, context) => {
-       var beforeUser = snap.before.data() 
-       var afterUser = snap.after.data()
-       var currentTime = admin.firestore.Timestamp.now();
-       var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
-       var date = new Date();
+    // exports.updateUserInfo = functions.firestore
+    // .document('users/{user_id}')
+    // .onUpdate((snap, context) => {
+    //    var beforeUser = snap.before.data() 
+    //    var afterUser = snap.after.data()
+    //    var currentTime = admin.firestore.Timestamp.now();
+    //    var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
+    //    var date = new Date();
 
-        // When changelog updates, update the file located at https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/dev-team%2Fchangelog.json?alt=media&token=9210aa16-dd93-41df-8246-a17c58a4ee9e
+    //     // When changelog updates, update the file located at https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/dev-team%2Fchangelog.json?alt=media&token=9210aa16-dd93-41df-8246-a17c58a4ee9e
 
         
-        // console.log(`After user to be deleted: ${afterUser.deleted.toBeDeleted}`)
-        //     console.log(`toBeDeleted time: ${afterUser.deleted.deletedStarts}`)
-        //     console.log(`timestamp: ${Date.now()}`)
+    //     // console.log(`After user to be deleted: ${afterUser.deleted.toBeDeleted}`)
+    //     //     console.log(`toBeDeleted time: ${afterUser.deleted.deletedStarts}`)
+    //     //     console.log(`timestamp: ${Date.now()}`)
         
             
-            if(afterUser.deleted.toBeDeleted == true && afterUser.deleted.deletedStarts < Date.now()){
-                admin.auth().deleteUser(afterUser.id)
+    //         if(afterUser.deleted.toBeDeleted == true && afterUser.deleted.deletedStarts < Date.now()){
+    //             admin.auth().deleteUser(afterUser.id)
                 
-            }
-
-        
-        
-       
-        // 60 second latency before we will update the last_update field in someone's profile
-       if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
-
-       
-
-    //     db.collection('users').doc(context.params.user_id).update({
-    //         last_update: currentTime
-    //     }).then(() => {
-    //         // Suspension check
-    //         if(afterUser.disabled.isDisabled && disabledUntilDate < date){
-    //             // First suspension
-    //             if(beforeUser.disabled.numTimesDisabled === 0){
-    //                 admin.auth().updateUser(context.params.user_id, {
-    //                     disabled: true,
-    //                 });
-    //                 db.collection('users').doc(context.params.user_id).update({
-    //                     disabled: {
-    //                         isDisabled: true,
-    //                         numTimesDisabled: 1,
-    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
-    //                     }
-    //                 })
-    //             // Second Suspension
-    //             }else if(beforeUser.disabled.numTimesDisabled === 1){
-    //                 admin.auth().updateUser(context.params.user_id, {
-    //                     disabled: true,
-    //                 });
-    //                 db.collection('users').doc(context.params.user_id).update({
-    //                     disabled: {
-    //                         isDisabled: true,
-    //                         numTimesDisabled: 2,
-    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
-    //                     }
-    //                 })
-    //             // Third Suspension
-    //             }else if (beforeUser.disabled.numTimesDisabled >= 2){
-    //                 admin.auth().updateUser(context.params.user_id, {
-    //                     disabled: true,
-    //                 });
-    //                 db.collection('users').doc(context.params.user_id).update({
-    //                     disabled: {
-    //                         isDisabled: true,
-    //                         numTimesDisabled: 3,
-    //                         disabledEnds: 9999999999,
-    //                     }
-    //                 })
-    //             }
     //         }
 
-    //         return null
-    //     }).then(() => {
-           admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`).file(`dev-team/changelog.json`).download().then((res) => {
-            return JSON.parse(res)
-        }).then((changelog) => {
+        
+        
+       
+    //     // 60 second latency before we will update the last_update field in someone's profile
+    //    if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
 
-            var versionsBehind;
+       
 
-            if(!beforeUser.last_update){
-                versionsBehind = changelog.versions.filter(x => x.isReleased)
-            }else{
-                versionsBehind = changelog.versions.filter(x => x.dateUnix > beforeUser.last_update.toMillis() && x.isReleased)
-            }
+    // //     db.collection('users').doc(context.params.user_id).update({
+    // //         last_update: currentTime
+    // //     }).then(() => {
+    // //         // Suspension check
+    // //         if(afterUser.disabled.isDisabled && disabledUntilDate < date){
+    // //             // First suspension
+    // //             if(beforeUser.disabled.numTimesDisabled === 0){
+    // //                 admin.auth().updateUser(context.params.user_id, {
+    // //                     disabled: true,
+    // //                 });
+    // //                 db.collection('users').doc(context.params.user_id).update({
+    // //                     disabled: {
+    // //                         isDisabled: true,
+    // //                         numTimesDisabled: 1,
+    // //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+    // //                     }
+    // //                 })
+    // //             // Second Suspension
+    // //             }else if(beforeUser.disabled.numTimesDisabled === 1){
+    // //                 admin.auth().updateUser(context.params.user_id, {
+    // //                     disabled: true,
+    // //                 });
+    // //                 db.collection('users').doc(context.params.user_id).update({
+    // //                     disabled: {
+    // //                         isDisabled: true,
+    // //                         numTimesDisabled: 2,
+    // //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+    // //                     }
+    // //                 })
+    // //             // Third Suspension
+    // //             }else if (beforeUser.disabled.numTimesDisabled >= 2){
+    // //                 admin.auth().updateUser(context.params.user_id, {
+    // //                     disabled: true,
+    // //                 });
+    // //                 db.collection('users').doc(context.params.user_id).update({
+    // //                     disabled: {
+    // //                         isDisabled: true,
+    // //                         numTimesDisabled: 3,
+    // //                         disabledEnds: 9999999999,
+    // //                     }
+    // //                 })
+    // //             }
+    // //         }
 
-            // console.log(changelog.versions)
+    // //         return null
+    // //     }).then(() => {
+    //        admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`).file(`dev-team/changelog.json`).download().then((res) => {
+    //         return JSON.parse(res)
+    //     }).then((changelog) => {
+
+    //         var versionsBehind;
+
+    //         if(!beforeUser.last_update){
+    //             versionsBehind = changelog.versions.filter(x => x.isReleased)
+    //         }else{
+    //             versionsBehind = changelog.versions.filter(x => x.dateUnix > beforeUser.last_update.toMillis() && x.isReleased)
+    //         }
+
+    //         // console.log(changelog.versions)
             
-            // Checks if user is behind in changelog versions
-            for(var i = 0; i < versionsBehind.length; i++){
-                switch(versionsBehind[i].major){
-                    // Version 1
-                    case 1:
-                        switch(versionsBehind[i].minor){
-                            // Version 1.0
-                            case 0:
-                                switch(versionsBehind[i].patch){
-                                    // Version 1.0.0
-                                    case 0:
-                                        // console.log("Patch 1.0.0")
-                                        // db.collection('users').doc(context.params.user_id).update({
-                                        //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
-                                        //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
-                                        // });
-                                        for(let i = 0; i < afterUser.listings.length; i++){
-                                            db.collection('listings').doc(afterUser.listings[i]).update({
-                                                hidden: false,
-                                                toBeDeleted: false,
-                                                deleted: false,
-                                                visits: 0, 
-                                            })
-                                        }
+    //         // Checks if user is behind in changelog versions
+    //         for(var i = 0; i < versionsBehind.length; i++){
+    //             switch(versionsBehind[i].major){
+    //                 // Version 1
+    //                 case 1:
+    //                     switch(versionsBehind[i].minor){
+    //                         // Version 1.0
+    //                         case 0:
+    //                             switch(versionsBehind[i].patch){
+    //                                 // Version 1.0.0
+    //                                 case 0:
+    //                                     // console.log("Patch 1.0.0")
+    //                                     // db.collection('users').doc(context.params.user_id).update({
+    //                                     //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+    //                                     //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+    //                                     // });
+    //                                     for(let i = 0; i < afterUser.listings.length; i++){
+    //                                         db.collection('listings').doc(afterUser.listings[i]).update({
+    //                                             hidden: false,
+    //                                             toBeDeleted: false,
+    //                                             deleted: false,
+    //                                             visits: 0, 
+    //                                         })
+    //                                     }
                                         
-                                        break;
+    //                                     break;
 
-                                    // Version 1.0.1
-                                    case 1: 
-                                        // console.log("Patch 1.0.1")
-                                        // db.collection('users').doc(context.params.user_id).update({
-                                        //     otherValue: "goodbye"
-                                        // })
-                                      break;
+    //                                 // Version 1.0.1
+    //                                 case 1: 
+    //                                     // console.log("Patch 1.0.1")
+    //                                     // db.collection('users').doc(context.params.user_id).update({
+    //                                     //     otherValue: "goodbye"
+    //                                     // })
+    //                                   break;
 
-                                }
-                            break;
+    //                             }
+    //                         break;
 
-                            // Version 1.1
-                            case 1:
-                                switch(versionsBehind[i].patch){
-                                     // Version 1.1.0
-                                     case 0:
-                                        // db.collection('users').doc(context.params.user_id).update({
-                                        //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
-                                        //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
-                                        // });
-                                    break;
+    //                         // Version 1.1
+    //                         case 1:
+    //                             switch(versionsBehind[i].patch){
+    //                                  // Version 1.1.0
+    //                                  case 0:
+    //                                     // db.collection('users').doc(context.params.user_id).update({
+    //                                     //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+    //                                     //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+    //                                     // });
+    //                                 break;
 
-                                    // Version 1.1.1
-                                    case 1:
-                                         db.collection('users').doc(context.params.user_id).update({
-                                           accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
-                                        });
+    //                                 // Version 1.1.1
+    //                                 case 1:
+    //                                      db.collection('users').doc(context.params.user_id).update({
+    //                                        accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
+    //                                     });
 
-                                    break;
+    //                                 break;
 
-                                    // Version 1.1.2
-                                    case 2:
-                                        let refCode = `${beforeUser.firstname.toUpperCase()}-${context.params.user_id.slice(-6).toUpperCase()}`
+    //                                 // Version 1.1.2
+    //                                 case 2:
+    //                                     let refCode = `${beforeUser.firstname.toUpperCase()}-${context.params.user_id.slice(-6).toUpperCase()}`
 
-                                        db.collection('users').doc(context.params.user_id).update({
-                                            referralCode: refCode
-                                         });
+    //                                     db.collection('users').doc(context.params.user_id).update({
+    //                                         referralCode: refCode
+    //                                      });
 
-                                         db.collection('referralCodes').doc(refCode).create({
-                                            code: refCode,
-                                            numInvitations: 0,
-                                            numSignups: 0,
-                                            owner: context.params.user_id,
-                                            userSignups: [],
-                                         })
-                                    break;
-                                }
-                            break;
-                        }
-                    break;
-                }
-            }
-            return null
+    //                                      db.collection('referralCodes').doc(refCode).create({
+    //                                         code: refCode,
+    //                                         numInvitations: 0,
+    //                                         numSignups: 0,
+    //                                         owner: context.params.user_id,
+    //                                         userSignups: [],
+    //                                      })
+    //                                 break;
+    //                             }
+    //                         break;
+    //                     }
+    //                 break;
+    //             }
+    //         }
+    //         return null
             
-        }).catch((e) => {
-            throw e
-        })
+    //     }).catch((e) => {
+    //         throw e
+    //     })
             
-            return null
-        }else{
-            return null
-        }
+    //         return null
+    //     }else{
+    //         return null
+    //     }
         
        
     
    
-    })
+    // })
 
 
 
