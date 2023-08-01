@@ -1822,6 +1822,113 @@ const fs = require('fs');
     })
     
 
+    exports.newVersionUpdate = functions.https.onRequest((request, response) => {
+        db.collection('users').doc(request.body.user_id).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("User does not exist")
+                error.statusCode = 401;
+                error.name = 'User/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((user) => {
+            switch(request.body.major){
+                // Version 1
+                case 1:
+                    switch(request.body.minor){
+                        // Version 1.0
+                        case 0:
+                            switch(request.body.patch){
+                                // Version 1.0.0
+                                case 0:
+                                    // console.log("Patch 1.0.0")
+                                    // db.collection('users').doc(context.params.user_id).update({
+                                    //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+                                    //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+                                    // });
+                                    for(let i = 0; i < user.listings.length; i++){
+                                        db.collection('listings').doc(user.listings[i]).update({
+                                            hidden: false,
+                                            toBeDeleted: false,
+                                            deleted: false,
+                                            visits: 0, 
+                                        })
+                                    }
+                                    
+                                    break;
+    
+                                // Version 1.0.1
+                                case 1: 
+                                    // console.log("Patch 1.0.1")
+                                    // db.collection('users').doc(context.params.user_id).update({
+                                    //     otherValue: "goodbye"
+                                    // })
+                                  break;
+    
+                            }
+                        break;
+    
+                        // Version 1.1
+                        case 1:
+                            switch(request.body.patch){
+                                 // Version 1.1.0
+                                 case 0:
+                                    // db.collection('users').doc(context.params.user_id).update({
+                                    //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+                                    //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+                                    // });
+                                break;
+    
+                                // Version 1.1.1
+                                case 1:
+                                     db.collection('users').doc(user.id).update({
+                                       accountBalance: user.accountBalance ? user.accountBalance : 0,
+                                    });
+    
+                                break;
+    
+                                // Version 1.1.2
+                                case 2:
+                                    let refCode = `${user.firstname.toUpperCase()}-${user.id.slice(-6).toUpperCase()}`
+    
+                                    db.collection('users').doc(user.id).update({
+                                        referralCode: refCode
+                                     });
+    
+                                     db.collection('referralCodes').doc(refCode).create({
+                                        code: refCode,
+                                        numInvitations: 0,
+                                        numSignups: 0,
+                                        owner: user.id,
+                                        userSignups: [],
+                                     })
+                                break;
+
+                                // Version 1.1.3
+                                case 3:
+                                    // db.collection('users').doc(user.id).update({
+                                    //     testing: "version 1.1.3"
+                                    //  });
+                                break;
+                            }
+                        break;
+                    }
+                break;
+            }
+
+            return user
+        }).then(() => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                versionUpdate: `${request.body.major}.${request.body.minor}.${request.body.patch}`
+            })
+        }).catch(e => {
+            return e
+        })
+        
+    })
   
 
     exports.updateUserInfo = functions.firestore

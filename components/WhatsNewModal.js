@@ -13,6 +13,8 @@ import storage from '@react-native-firebase/storage'
 import firestore from '@react-native-firebase/firestore'
 import auth, { firebase } from '@react-native-firebase/auth';
 
+import config from 'react-native-config'
+
 
 class Item extends PureComponent{
     render(){
@@ -123,7 +125,7 @@ export class WhatsNewModal extends PureComponent{
     }
 }
 
-export let checkWhatsNew = (isNewUser, versionsUsed) => {
+export let checkWhatsNew = (versionsUsed) => {
      const storageRef = storage().ref().child("dev-team/changelog.json")
 
         return storageRef.getDownloadURL().then((url) => {
@@ -133,21 +135,64 @@ export let checkWhatsNew = (isNewUser, versionsUsed) => {
             return err
         }).then((res) => {
             return res.json()
-        }).then((res) => {
+        }).then(async (res) => {
+
+            // let currentVersionMajor = parseInt(version.split('.')[0]);
+            // let currentVersionMinor = parseInt(version.split('.')[1]);
+            // let currentVersionPatch = parseInt(version.split('.')[2]);
+
+            let userVersionMajor = parseInt(versionsUsed[versionsUsed.length - 1].major);
+            let userVersionMinor = parseInt(versionsUsed[versionsUsed.length - 1].minor);
+            let userVersionPatch = parseInt(versionsUsed[versionsUsed.length - 1].patch);
 
             var V = res.versions.filter(x => x.release == version)[0]
-                
-            if(isNewUser){
-                return res.versions.filter(x => x.release == "0.0.0")[0]
-            }else{
-                if(versionsUsed.map(x => x.code).includes(version)){
-                    return null
-                }else{
-                    addVersionToUserDB(version);
-                    return V
-                }
-            }
 
+            var versionsBetween = res.versions.filter(verz => verz.isReleased == true && verz.major >= userVersionMajor && verz.minor >= userVersionMinor && verz.patch > userVersionPatch)
+
+            console.log(versionsBetween.map(x => x.release))
+
+            for(let i = 0; i < versionsBetween.length; i++){
+                    if(i + 1 == versionsBetween.length){
+                        await addVersionToUserDB(versionsBetween[i].release);
+                    }
+
+         
+
+            
+                const settings = {
+                    method: 'POST',
+                    headers: {
+                        Accept: 
+                            'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: auth().currentUser.uid,
+                            major: parseInt(versionsBetween[i].major),
+                            minor: parseInt(versionsBetween[i].minor),
+                            patch: parseInt(versionsBetween[i].patch),
+                    })
+                }
+                        
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/newVersionUpdate`, settings).then(response => {
+                          return response
+                    }).then(response => {
+
+                          if(response.status == 200){
+                            return response
+                          }else{
+                            throw response
+                          }      
+                    }).catch(e => {
+                        // console.warn(e)
+                        throw e
+                    })
+            }
+                    
+                return versionsBetween.length > 0 ? versionsBetween[versionsBetween.length - 1] : null
+
+        }).catch(e => {
+            console.error(e)
         })
         
   }
@@ -155,7 +200,6 @@ export let checkWhatsNew = (isNewUser, versionsUsed) => {
 export let addVersionToUserDB = (version) => {
     const db = firestore()
      const user = db.collection('users').doc(auth().currentUser.uid)
-
 
      user.update({
          versions: firebase.firestore.FieldValue.arrayUnion({

@@ -205,9 +205,12 @@ class Home extends Component {
     let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
     
 
-    checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
+    checkWhatsNew(this.props.UserStore.versions).then((res) => {
         
         if(res !== null){
+
+            console.log(res)
+
             this.setState({changelogVersion: res.hasAppUpdateModal ? res : null})
             this.props.UserStore.versions.push({
                 code: res.release,
