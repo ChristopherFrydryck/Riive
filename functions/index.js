@@ -1919,6 +1919,70 @@ const fs = require('fs');
     })
 
 
+    exports.onUserUpdate = functions.firestore
+        .document('users/{user_id}')
+        .onUpdate((snap, context) => {
+               var beforeUser = snap.before.data() 
+               var afterUser = snap.after.data()
+               var currentTime = admin.firestore.Timestamp.now();
+               var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
+               var date = new Date();
+
+
+                   // 60 second latency before we will update the last_update field in someone's profile
+                    if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
+
+            
+
+                    db.collection('users').doc(context.params.user_id).update({
+                        last_update: currentTime
+                    }).then(() => {
+                        // Suspension check
+                        if(afterUser.disabled.isDisabled && disabledUntilDate < date){
+                            // First suspension
+                            if(beforeUser.disabled.numTimesDisabled === 0){
+                                admin.auth().updateUser(context.params.user_id, {
+                                    disabled: true,
+                                });
+                                db.collection('users').doc(context.params.user_id).update({
+                                    disabled: {
+                                        isDisabled: true,
+                                        numTimesDisabled: 1,
+                                        disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+                                    }
+                                })
+                            // Second Suspension
+                            }else if(beforeUser.disabled.numTimesDisabled === 1){
+                                admin.auth().updateUser(context.params.user_id, {
+                                    disabled: true,
+                                });
+                                db.collection('users').doc(context.params.user_id).update({
+                                    disabled: {
+                                        isDisabled: true,
+                                        numTimesDisabled: 2,
+                                        disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+                                    }
+                                })
+                            // Third Suspension
+                            }else if (beforeUser.disabled.numTimesDisabled >= 2){
+                                admin.auth().updateUser(context.params.user_id, {
+                                    disabled: true,
+                                });
+                                db.collection('users').doc(context.params.user_id).update({
+                                    disabled: {
+                                        isDisabled: true,
+                                        numTimesDisabled: 3,
+                                        disabledEnds: 9999999999,
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+
+                return null
+        })
+
     // Deprecated functions
   
 
@@ -1947,54 +2011,54 @@ const fs = require('fs');
         
         
        
-    //     // 60 second latency before we will update the last_update field in someone's profile
+        // 60 second latency before we will update the last_update field in someone's profile
     //    if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
 
        
 
-    // //     db.collection('users').doc(context.params.user_id).update({
-    // //         last_update: currentTime
-    // //     }).then(() => {
-    // //         // Suspension check
-    // //         if(afterUser.disabled.isDisabled && disabledUntilDate < date){
-    // //             // First suspension
-    // //             if(beforeUser.disabled.numTimesDisabled === 0){
-    // //                 admin.auth().updateUser(context.params.user_id, {
-    // //                     disabled: true,
-    // //                 });
-    // //                 db.collection('users').doc(context.params.user_id).update({
-    // //                     disabled: {
-    // //                         isDisabled: true,
-    // //                         numTimesDisabled: 1,
-    // //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
-    // //                     }
-    // //                 })
-    // //             // Second Suspension
-    // //             }else if(beforeUser.disabled.numTimesDisabled === 1){
-    // //                 admin.auth().updateUser(context.params.user_id, {
-    // //                     disabled: true,
-    // //                 });
-    // //                 db.collection('users').doc(context.params.user_id).update({
-    // //                     disabled: {
-    // //                         isDisabled: true,
-    // //                         numTimesDisabled: 2,
-    // //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
-    // //                     }
-    // //                 })
-    // //             // Third Suspension
-    // //             }else if (beforeUser.disabled.numTimesDisabled >= 2){
-    // //                 admin.auth().updateUser(context.params.user_id, {
-    // //                     disabled: true,
-    // //                 });
-    // //                 db.collection('users').doc(context.params.user_id).update({
-    // //                     disabled: {
-    // //                         isDisabled: true,
-    // //                         numTimesDisabled: 3,
-    // //                         disabledEnds: 9999999999,
-    // //                     }
-    // //                 })
-    // //             }
-    // //         }
+    //     db.collection('users').doc(context.params.user_id).update({
+    //         last_update: currentTime
+    //     }).then(() => {
+    //         // Suspension check
+    //         if(afterUser.disabled.isDisabled && disabledUntilDate < date){
+    //             // First suspension
+    //             if(beforeUser.disabled.numTimesDisabled === 0){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 1,
+    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+    //                     }
+    //                 })
+    //             // Second Suspension
+    //             }else if(beforeUser.disabled.numTimesDisabled === 1){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 2,
+    //                         disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+    //                     }
+    //                 })
+    //             // Third Suspension
+    //             }else if (beforeUser.disabled.numTimesDisabled >= 2){
+    //                 admin.auth().updateUser(context.params.user_id, {
+    //                     disabled: true,
+    //                 });
+    //                 db.collection('users').doc(context.params.user_id).update({
+    //                     disabled: {
+    //                         isDisabled: true,
+    //                         numTimesDisabled: 3,
+    //                         disabledEnds: 9999999999,
+    //                     }
+    //                 })
+    //             }
+    //         }
 
     // //         return null
     // //     }).then(() => {

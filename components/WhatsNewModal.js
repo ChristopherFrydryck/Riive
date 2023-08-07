@@ -143,12 +143,15 @@ export let checkWhatsNew = (versionsUsed) => {
             let userVersionPatch = parseInt(versionsUsed[versionsUsed.length - 1].patch);
 
             // Get all released versions from Changelog file that are newer than the  most recent version
-            var versionsBetween = res.versions.filter(verz => verz.isReleased == true && verz.major >= userVersionMajor && verz.minor >= userVersionMinor && verz.patch > userVersionPatch)
+            var versionsBetween = res.versions.filter(verz => verz.isReleased == true && verz.major >= userVersionMajor && verz.minor >= userVersionMinor && verz.patch >= userVersionPatch && verz.release !== versionsUsed[versionsUsed.length - 1].code)
 
+       
             // console.log(versionsBetween.map(x => x.release))
 
             // Loop of all new versions to update user content
             for(let i = 0; i < versionsBetween.length; i++){
+
+                // console.log(`Version ${versionsBetween[i].major}.${versionsBetween[i].minor}.${versionsBetween[i].patch}`)
 
                 const settings = {
                     method: 'POST',

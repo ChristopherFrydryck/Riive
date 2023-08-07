@@ -202,7 +202,7 @@ class Home extends Component {
     this.mapLocationFunction();
 
 
-    let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
+    let isNew = this.props.UserStore.lastUpdate == this.props.UserStore.joinedDate ? true : false
     
 
     checkWhatsNew(this.props.UserStore.versions).then((res) => {
@@ -219,7 +219,7 @@ class Home extends Component {
                 minor: res.minor,
                 patch: res.patch,
             })
-        }else if(res !== null && isNew){
+        }else if(isNew){
 
             storageRef.getDownloadURL().then((url) => {
                 let details = fetch(url)
@@ -233,13 +233,20 @@ class Home extends Component {
             })
 
             
+            
             this.props.UserStore.versions.push({
-                code: res.release,
+                code: version,
                 dateAdded: new Date(),
-                major: res.major,
-                minor: res.minor,
-                patch: res.patch,
+                major: version.split(".")[0],
+                minor: version.split(".")[1],
+                patch: version.split(".")[2]
             })
+
+            this.props.UserStore.lastUpdate = new Date();
+
+      
+
+            
         }
     })
 
