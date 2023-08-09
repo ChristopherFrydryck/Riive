@@ -1204,6 +1204,186 @@ const fs = require('fs');
         })
     })
 
+    exports.sentInvite = functions.https.onRequest((request, response) => {
+        db.collection('referralCodes').doc(request.body.referralCode).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("Referral does not exist")
+                error.statusCode = 401;
+                error.name = 'ReferralCode/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((codeData) => {
+           return db.collection('referralCodes').doc(request.body.referralCode).update({
+                numInvitations: codeData.numInvitations + 1,
+            })
+        }).then(() => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: null
+            })
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+        })
+    })
+
+    exports.checkInviteCode = functions.https.onRequest((request, response) => {
+        db.collection('referralCodes').doc(request.body.referralCode).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("Referral does not exist")
+                error.statusCode = 401;
+                error.name = 'ReferralCode/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((data) => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: data,
+            })
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+        })
+    })
+
+    exports.usedInviteCode = functions.https.onRequest((request, response) => {
+        db.collection('referralCodes').doc(request.body.referralCode).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("Referral does not exist")
+                error.statusCode = 401;
+                error.name = 'ReferralCode/DoesNotExist'
+                throw error
+            }else{
+                db.collection('referralCodes').doc(request.body.referralCode).update({
+                    numSignups: doc.data().numSignups + 1,
+                    userSignups: admin.firestore.FieldValue.arrayUnion(request.body.uid)
+                })
+
+                // console.log(`updated referall code`)
+
+                return doc.data();
+            }
+        }).then(async (data) => {
+            let newUser = null 
+
+            await db.collection('users').doc(request.body.uid).get().then(doc => {
+                if(!doc.exists){
+                    console.log("New user doesnt exist with the uid of " + request.body.uid)
+                }else{
+                    console.log("New user exists under " + request.body.uid)
+                    newUser = doc.data();
+                }
+            })
+
+            // console.log(`New User: ${newUser.email}`)
+
+            let returnValue = {
+                "referralCodeData": data,
+                "newUser": newUser
+            }
+
+            return returnValue
+
+        }).then(async(data) => {
+            
+            let invitee = null
+            
+            await db.collection('users').doc(data.referralCodeData.owner).get().then(doc => {
+                if(doc.exists){
+                    invitee = doc.data();
+                }
+            })
+
+            // console.log(`Invitee: ${invitee.accountBalance}`)
+            
+            let returnValue = {
+                "invitee": invitee,
+                ...data
+            }
+
+            return returnValue
+
+        }).then(async(data) => {
+            let bonuses = null;
+
+            await db.collection('environment').doc('referrals').get().then(doc => {
+                if(doc.exists){
+                    bonuses = doc.data();
+                }
+            })
+
+            // console.log(`Invitee Bonus: ${bonuses.existingUserAmount}`)
+
+            let returnValue = {
+                "bonuses": bonuses,
+                ...data
+            }
+
+            return returnValue
+
+        }).then(data => {
+            
+            if(data.newUser && data.invitee && data.bonuses){
+                let newUserAmt = data.bonuses.newUserAmount;
+                let inviteeAmt = data.bonuses.existingUserAmount;
+
+                db.collection('users').doc(data.newUser.id).update({
+                    accountBalance: data.newUser.accountBalance + newUserAmt
+                })
+
+                db.collection('users').doc(data.invitee.id).update({
+                    accountBalance: data.invitee.accountBalance + inviteeAmt
+                })
+
+                return data
+            }else{
+                if(!data.newUser){
+                    error = new Error("New user not found to add credit to account")
+                    error.statusCode = 402;
+                    error.name = 'ReferralCode/NewUserCreditFailure'
+                    throw error
+                }else if(!data.invitee){
+                    error = new Error("Invitee not found to add credit to account")
+                    error.statusCode = 403;
+                    error.name = 'ReferralCode/InviteeCreditFailure'
+                    throw error
+                }else{
+                    error = new Error("Failure to get referall amount")
+                    error.statusCode = 404;
+                    error.name = 'ReferralCode/ReferallAmountNotFound'
+                    throw error
+                }
+                
+            }
+            
+
+        }).then((data) => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                data: data,
+            })
+        }).catch(err => {
+            return response.status(err.statusCode || 500).send({
+                statusCode: err.statusCode,
+                message: err.message,
+                name: err.name
+            })
+        })
+    })
+
     exports.refundTrip = functions.https.onRequest((request, response) => {
          
 
@@ -1642,35 +1822,197 @@ const fs = require('fs');
     })
     
 
+    exports.newVersionUpdate = functions.https.onRequest((request, response) => {
+        db.collection('users').doc(request.body.user_id).get().then(doc => {
+            if(!doc.exists){
+                error = new Error("User does not exist")
+                error.statusCode = 401;
+                error.name = 'User/DoesNotExist'
+                throw error
+            }else{
+                return doc.data();
+            }
+        }).then((user) => {
+            switch(request.body.major){
+                // Version 1
+                case 1:
+                    switch(request.body.minor){
+                        // Version 1.0
+                        case 0:
+                            switch(request.body.patch){
+                                // Version 1.0.0
+                                case 0:
+                                    for(let i = 0; i < user.listings.length; i++){
+                                        db.collection('listings').doc(user.listings[i]).update({
+                                            hidden: false,
+                                            toBeDeleted: false,
+                                            deleted: false,
+                                            visits: 0, 
+                                        })
+                                    }
+                                    
+                                    break;
+    
+                                // Version 1.0.1
+                                case 1: 
+                                break;
+    
+                            }
+                        break;
+    
+                        // Version 1.1
+                        case 1:
+                            switch(request.body.patch){
+                                 // Version 1.1.0
+                                case 0:
+                                break;
+    
+                                // Version 1.1.1
+                                case 1:
+                                     db.collection('users').doc(user.id).update({
+                                       accountBalance: user.accountBalance ? user.accountBalance : 0,
+                                    });
+    
+                                break;
+    
+                                // Version 1.1.2
+                                case 2:
+                                    let refCode = `${user.firstname.toUpperCase()}-${user.id.slice(-6).toUpperCase()}`
+    
+                                    db.collection('users').doc(user.id).update({
+                                        referralCode: refCode
+                                     });
+    
+                                     db.collection('referralCodes').doc(refCode).create({
+                                        code: refCode,
+                                        numInvitations: 0,
+                                        numSignups: 0,
+                                        owner: user.id,
+                                        userSignups: [],
+                                     })
+                                break;
+
+                                // Version 1.1.3
+                                case 3:
+                                break;
+                            }
+                        break;
+                    }
+                break;
+            }
+
+            return user
+        }).then(() => {
+            return response.send({
+                statusCode: 200,
+                res: "SUCCESS",
+                versionUpdate: `${request.body.major}.${request.body.minor}.${request.body.patch}`
+            })
+        }).catch(e => {
+            return response.send({
+                statusCode: e.code,
+                res: "ERROR",
+                versionUpdate: `${request.body.major}.${request.body.minor}.${request.body.patch}`
+            })
+        })
+        
+    })
+
+
+    exports.onUserUpdate = functions.firestore
+        .document('users/{user_id}')
+        .onUpdate((snap, context) => {
+               var beforeUser = snap.before.data() 
+               var afterUser = snap.after.data()
+               var currentTime = admin.firestore.Timestamp.now();
+               var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
+               var date = new Date();
+
+
+                   // 60 second latency before we will update the last_update field in someone's profile
+                    if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
+
+            
+
+                    db.collection('users').doc(context.params.user_id).update({
+                        last_update: currentTime
+                    }).then(() => {
+                        // Suspension check
+                        if(afterUser.disabled.isDisabled && disabledUntilDate < date){
+                            // First suspension
+                            if(beforeUser.disabled.numTimesDisabled === 0){
+                                admin.auth().updateUser(context.params.user_id, {
+                                    disabled: true,
+                                });
+                                db.collection('users').doc(context.params.user_id).update({
+                                    disabled: {
+                                        isDisabled: true,
+                                        numTimesDisabled: 1,
+                                        disabledEnds: Math.round((new Date()).getTime() / 1000) + 24*3600,
+                                    }
+                                })
+                            // Second Suspension
+                            }else if(beforeUser.disabled.numTimesDisabled === 1){
+                                admin.auth().updateUser(context.params.user_id, {
+                                    disabled: true,
+                                });
+                                db.collection('users').doc(context.params.user_id).update({
+                                    disabled: {
+                                        isDisabled: true,
+                                        numTimesDisabled: 2,
+                                        disabledEnds: Math.round((new Date()).getTime() / 1000) + 3*24*3600,
+                                    }
+                                })
+                            // Third Suspension
+                            }else if (beforeUser.disabled.numTimesDisabled >= 2){
+                                admin.auth().updateUser(context.params.user_id, {
+                                    disabled: true,
+                                });
+                                db.collection('users').doc(context.params.user_id).update({
+                                    disabled: {
+                                        isDisabled: true,
+                                        numTimesDisabled: 3,
+                                        disabledEnds: 9999999999,
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+
+                return null
+        })
+
+    // Deprecated functions
   
 
-    exports.updateUserInfo = functions.firestore
-    .document('users/{user_id}')
-    .onUpdate((snap, context) => {
-       var beforeUser = snap.before.data() 
-       var afterUser = snap.after.data()
-       var currentTime = admin.firestore.Timestamp.now();
-       var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
-       var date = new Date();
+    // exports.updateUserInfo = functions.firestore
+    // .document('users/{user_id}')
+    // .onUpdate((snap, context) => {
+    //    var beforeUser = snap.before.data() 
+    //    var afterUser = snap.after.data()
+    //    var currentTime = admin.firestore.Timestamp.now();
+    //    var disabledUntilDate = new Date(afterUser.disabled.disabledEnds * 1000)
+    //    var date = new Date();
 
-        // When changelog updates, update the file located at https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/dev-team%2Fchangelog.json?alt=media&token=9210aa16-dd93-41df-8246-a17c58a4ee9e
+    //     // When changelog updates, update the file located at https://firebasestorage.googleapis.com/v0/b/riive-parking.appspot.com/o/dev-team%2Fchangelog.json?alt=media&token=9210aa16-dd93-41df-8246-a17c58a4ee9e
 
         
-        // console.log(`After user to be deleted: ${afterUser.deleted.toBeDeleted}`)
-        //     console.log(`toBeDeleted time: ${afterUser.deleted.deletedStarts}`)
-        //     console.log(`timestamp: ${Date.now()}`)
+    //     // console.log(`After user to be deleted: ${afterUser.deleted.toBeDeleted}`)
+    //     //     console.log(`toBeDeleted time: ${afterUser.deleted.deletedStarts}`)
+    //     //     console.log(`timestamp: ${Date.now()}`)
         
             
-            if(afterUser.deleted.toBeDeleted == true && afterUser.deleted.deletedStarts < Date.now()){
-                admin.auth().deleteUser(afterUser.id)
+    //         if(afterUser.deleted.toBeDeleted == true && afterUser.deleted.deletedStarts < Date.now()){
+    //             admin.auth().deleteUser(afterUser.id)
                 
-            }
+    //         }
 
         
         
        
         // 60 second latency before we will update the last_update field in someone's profile
-       if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
+    //    if(currentTime - beforeUser.last_update >= 60 || !beforeUser.last_update){
 
        
 
@@ -1718,110 +2060,116 @@ const fs = require('fs');
     //             }
     //         }
 
-    //         return null
-    //     }).then(() => {
-           admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`).file(`dev-team/changelog.json`).download().then((res) => {
-            return JSON.parse(res)
-        }).then((changelog) => {
+    // //         return null
+    // //     }).then(() => {
+    //        admin.storage().bucket(`gs://${functions.config().project.id}.appspot.com`).file(`dev-team/changelog.json`).download().then((res) => {
+    //         return JSON.parse(res)
+    //     }).then((changelog) => {
 
-            var versionsBehind;
+    //         var versionsBehind;
 
-            if(!beforeUser.last_update){
-                versionsBehind = changelog.versions.filter(x => x.isReleased)
-            }else{
-                versionsBehind = changelog.versions.filter(x => x.dateUnix > beforeUser.last_update.toMillis() && x.isReleased)
-            }
+    //         if(!beforeUser.last_update){
+    //             versionsBehind = changelog.versions.filter(x => x.isReleased)
+    //         }else{
+    //             versionsBehind = changelog.versions.filter(x => x.dateUnix > beforeUser.last_update.toMillis() && x.isReleased)
+    //         }
 
-            // console.log(changelog.versions)
+    //         // console.log(changelog.versions)
             
-            // Checks if user is behind in changelog versions
-            for(var i = 0; i < versionsBehind.length; i++){
-                switch(versionsBehind[i].major){
-                    // Version 1
-                    case 1:
-                        switch(versionsBehind[i].minor){
-                            // Version 1.0
-                            case 0:
-                                switch(versionsBehind[i].patch){
-                                    // Version 1.0.0
-                                    case 0:
-                                        // console.log("Patch 1.0.0")
-                                        // db.collection('users').doc(context.params.user_id).update({
-                                        //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
-                                        //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
-                                        // });
-                                        for(let i = 0; i < afterUser.listings.length; i++){
-                                            db.collection('listings').doc(afterUser.listings[i]).update({
-                                                hidden: false,
-                                                toBeDeleted: false,
-                                                deleted: false,
-                                                visits: 0, 
-                                            })
-                                        }
+    //         // Checks if user is behind in changelog versions
+    //         for(var i = 0; i < versionsBehind.length; i++){
+    //             switch(versionsBehind[i].major){
+    //                 // Version 1
+    //                 case 1:
+    //                     switch(versionsBehind[i].minor){
+    //                         // Version 1.0
+    //                         case 0:
+    //                             switch(versionsBehind[i].patch){
+    //                                 // Version 1.0.0
+    //                                 case 0:
+    //                                     // console.log("Patch 1.0.0")
+    //                                     // db.collection('users').doc(context.params.user_id).update({
+    //                                     //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+    //                                     //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+    //                                     // });
+    //                                     for(let i = 0; i < afterUser.listings.length; i++){
+    //                                         db.collection('listings').doc(afterUser.listings[i]).update({
+    //                                             hidden: false,
+    //                                             toBeDeleted: false,
+    //                                             deleted: false,
+    //                                             visits: 0, 
+    //                                         })
+    //                                     }
                                         
-                                        break;
+    //                                     break;
 
-                                    // Version 1.0.1
-                                    case 1: 
-                                        // console.log("Patch 1.0.1")
-                                        // db.collection('users').doc(context.params.user_id).update({
-                                        //     otherValue: "goodbye"
-                                        // })
-                                      break;
+    //                                 // Version 1.0.1
+    //                                 case 1: 
+    //                                     // console.log("Patch 1.0.1")
+    //                                     // db.collection('users').doc(context.params.user_id).update({
+    //                                     //     otherValue: "goodbye"
+    //                                     // })
+    //                                   break;
 
-                                }
-                            break;
+    //                             }
+    //                         break;
 
-                            // Version 1.1
-                            case 1:
-                                switch(versionsBehind[i].patch){
-                                     // Version 1.1.0
-                                     case 0:
-                                        // db.collection('users').doc(context.params.user_id).update({
-                                        //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
-                                        //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
-                                        // });
-                                    break;
+    //                         // Version 1.1
+    //                         case 1:
+    //                             switch(versionsBehind[i].patch){
+    //                                  // Version 1.1.0
+    //                                  case 0:
+    //                                     // db.collection('users').doc(context.params.user_id).update({
+    //                                     //     otherValue: beforeUser.otherValue ? afterUser.otherValue : "hello",
+    //                                     //     newValue: beforeUser.newValue ? afterUser.newValue :"world"
+    //                                     // });
+    //                                 break;
 
-                                    // Version 1.1.1
-                                    case 1:
-                                         db.collection('users').doc(context.params.user_id).update({
-                                           accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
-                                        });
+    //                                 // Version 1.1.1
+    //                                 case 1:
+    //                                      db.collection('users').doc(context.params.user_id).update({
+    //                                        accountBalance: beforeUser.accountBalance ? beforeUser.accountBalance : 0,
+    //                                     });
 
-                                        // if (beforeUser.payments.filter(x => x.Type == "Riive Credit").length == 0){
-                                        //     const ref = db.collection("users").doc();
+    //                                 break;
 
-                                        //     db.collection("users").doc(context.params.user_id).update({
-                                        //         payments: admin.firestore.FieldValue.arrayUnion({
-                                        //             Type: "Riive Credit",
-                                        //             Amount: 0,
-                                        //             PaymentID: ref.id,
-                                        //         })
-                                        //      })
-                                        // }
-                                    break;
-                                }
-                            break;
-                        }
-                    break;
-                }
-            }
-            return null
+    //                                 // Version 1.1.2
+    //                                 case 2:
+    //                                     let refCode = `${beforeUser.firstname.toUpperCase()}-${context.params.user_id.slice(-6).toUpperCase()}`
+
+    //                                     db.collection('users').doc(context.params.user_id).update({
+    //                                         referralCode: refCode
+    //                                      });
+
+    //                                      db.collection('referralCodes').doc(refCode).create({
+    //                                         code: refCode,
+    //                                         numInvitations: 0,
+    //                                         numSignups: 0,
+    //                                         owner: context.params.user_id,
+    //                                         userSignups: [],
+    //                                      })
+    //                                 break;
+    //                             }
+    //                         break;
+    //                     }
+    //                 break;
+    //             }
+    //         }
+    //         return null
             
-        }).catch((e) => {
-            throw e
-        })
+    //     }).catch((e) => {
+    //         throw e
+    //     })
             
-            return null
-        }else{
-            return null
-        }
+    //         return null
+    //     }else{
+    //         return null
+    //     }
         
        
     
    
-    })
+    // })
 
 
 

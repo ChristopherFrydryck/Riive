@@ -28,6 +28,7 @@ class UserStore {
     @observable vehicles = [];
     @observable payments = [];
     @observable accountBalance = 0;
+    @observable referralCode = null;
     @observable reports = [];
     @observable versions = [];
     @observable searchHistory = [];

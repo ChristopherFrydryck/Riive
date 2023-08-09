@@ -30,6 +30,7 @@ import ComponentStore from '../../stores/componentStore'
 // import * as firebase from 'firebase/app';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { rejectResponderTermination } from 'deprecated-react-native-prop-types/DeprecatedTextInputPropTypes';
 // import 'firebase/firestore';
 // import 'firebase/auth';
 
@@ -66,6 +67,7 @@ export default class Authentication extends React.Component {
       fullname: '',
       phone: '',
       stripeID: 'invalid',
+      signUpCode: '',
       authenticating: false,
       toggleLogIn: false,
       agreedToTOS: "unchecked",
@@ -76,6 +78,7 @@ export default class Authentication extends React.Component {
       fullnameError: '',
       dobError: '',
       phoneError: '',
+      signUpCodeError: '',
     }
   }
 
@@ -112,6 +115,63 @@ export default class Authentication extends React.Component {
     // Unmount status bar info
   //  this._navListener.remove();
   }
+
+  getSignUpCode = (code) => {
+    return new Promise( async (resolve, reject) => {
+      const settings = {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          referralCode: code || ""
+        })
+      }
+      await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/checkInviteCode`, settings).then((res) => {
+      let data = res.json()
+      // console.log(`Response: ${JSON.stringify(res.status)}`)
+      return res
+
+      }).then(res => {
+        if(res.status == 200){
+          resolve(res)
+        }else{
+          resolve(res)
+        }
+      })
+    })
+
+    
+}
+
+useSignUpCode = (code, uid) => {
+  return new Promise( async (resolve, reject) => {
+    const settings = {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        referralCode: code || "",
+        uid: uid
+      })
+    }
+    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/usedInviteCode`, settings).then((res) => {
+    let data = res.json()
+    // console.log(`Response: ${JSON.stringify(res.status)}`)
+    return res
+
+    }).then(res => {
+      if(res.status == 200){
+        resolve(res)
+      }else{
+        resolve(res)
+      }
+    })
+  })
+}
   
 
   createMailchimpCustomer = async() => {
@@ -135,8 +195,8 @@ export default class Authentication extends React.Component {
 
     await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/mailchimpUserCreated`, settings).then((res) => {
       let data = res.json()
-      console.log(`fnRes: ${JSON.stringify(res)}`)
-      console.log(`fnResStatus: ${res.status}`)
+      // console.log(`fnRes: ${JSON.stringify(res)}`)
+      // console.log(`fnResStatus: ${res.status}`)
       if(res.status === 200){
    
         return data
@@ -246,16 +306,17 @@ export default class Authentication extends React.Component {
 
   // Sign up authorization with email and password
   // also sends an email verification to the user
-  onPressSignUp = () => {
+  onPressSignUp = async() => {
 
     let namevalid = null;
     let phoneValid = null;
     let passwordValid = null;
+    let signUpCodeValid = true;
 
      // Begin ActivityIndicator since auth == true
     this.setState ({ authenticating: true})
 
-      console.log(this.props.UserStore.fullname.match(regexFullname))
+      // console.log(this.props.UserStore.fullname.match(regexFullname))
 
       // Checks if full name is in format of Firstname Lastname
       if(this.props.UserStore.fullname.match(regexFullname)){
@@ -279,11 +340,24 @@ export default class Authentication extends React.Component {
       }else{
         // alert('name invalid')
         this.setState({
-          phoneError: 'Please provide a proper 10 digit phone number.',
+          phoneError: 'Phone number is not valid.',
           authenticating: false
         });
         phoneValid = false;
       }  
+
+      
+      if(this.state.signUpCode && this.state.signUpCode !== ""){
+        await this.getSignUpCode(this.state.signUpCode).then(x => {
+          if(x.status == 200){
+            this.setState({signUpCodeError: ''})
+            signUpCodeValid = true;
+          }else{
+            this.setState({signUpCodeError: 'This code is not valid.', authenticating: false})
+            signUpCodeValid = false;
+          }
+        })
+      }
 
       
 
@@ -300,19 +374,19 @@ export default class Authentication extends React.Component {
       }else{
         if(year !== 0 && year < 1900 || year > new Date().getFullYear() - 15){
           this.setState({
-            dobError: 'Please ensure your year is valid and you are 16 or older',
+            dobError: 'You must be 16 or older',
           })
         }else if(day !== 0 && day > this.getDaysInMonth(year, month) || day.toString() == "0"){
           this.setState({
-            dobError: 'Please ensure your day is valid.',
+            dobError: 'Day is not valid.',
           })
         }else if(month !== 0 && month > 12 || month.toString() == "0"){
           this.setState({
-            dobError: 'Please ensure your month is valid.',
+            dobError: 'Month is not valid.',
           })
         }else{
           this.setState({
-            dobError: 'Please ensure your date is in the proper format (MM/DD/YYYY).',
+            dobError: 'Date format must be MM/DD/YYYY.',
           })
         }
         this.setState({authenticating: false})
@@ -323,17 +397,19 @@ export default class Authentication extends React.Component {
         passwordValid = true;
       }else{
         this.setState({
-          passwordError: 'Please ensure your passwords match.',
+          passwordError: "Passwords don't match.",
         })
         this.setState({authenticating: false})
         passwordValid = false;
       }
 
 
+
+      console.log(signUpCodeValid);
       
 
     // If vars are true and valid beguin creating user
-    if(nameValid && phoneValid && dobValid && passwordValid){
+    if(nameValid && phoneValid && dobValid && passwordValid && signUpCodeValid){
 
      
     
@@ -384,6 +460,7 @@ export default class Authentication extends React.Component {
                       accountBalance: 0,
                       trips: [],
                       discounts: [],
+                      referralCode: `${this.props.UserStore.firstname.toUpperCase()}-${auth().currentUser.uid.slice(-6).toUpperCase()}`,
                       photo: '',
                       joined_date: auth().currentUser.metadata.creationTime,
                       last_update: auth().currentUser.metadata.creationTime,
@@ -415,6 +492,17 @@ export default class Authentication extends React.Component {
                         patch: parseInt(version.split(".")[2])
                       }]
                     })
+
+                    db.collection("referralCodes").doc(`${this.props.UserStore.firstname.toUpperCase()}-${auth().currentUser.uid.slice(-6).toUpperCase()}`).set({
+                        code: `${this.props.UserStore.firstname.toUpperCase()}-${auth().currentUser.uid.slice(-6).toUpperCase()}`,
+                        numInvitations: 0,
+                        numSignups: 0,
+                        owner: auth().currentUser.uid,
+                        userSignups: []
+                    })
+
+                    
+                    
                 return docData
               }).then((doc) => {
                     // console.log(doc.data())
@@ -435,6 +523,7 @@ export default class Authentication extends React.Component {
                     this.props.UserStore.accountBalance = 0;
                     this.props.UserStore.trips = [];
                     this.props.UserStore.discounts = [];
+                    this.props.UserStore.referralCode = `${(this.props.UserStore.firstname).toUpperCase()}-${auth().currentUser.uid.slice(-6).toUpperCase()}`;
                     this.props.UserStore.searchHistory = [];
                     this.props.UserStore.disabled = false;
                     this.props.UserStore.deleted = false;
@@ -470,6 +559,12 @@ export default class Authentication extends React.Component {
                 try {
                   await this.createMailchimpCustomer()
                   await this.createStripeCustomer()
+                  if(this.state.signUpCode && this.state.signUpCode !== ""){
+                    await this.useSignUpCode(this.state.signUpCode, auth().currentUser.uid).then(res => {
+                      console.log(res)
+                    })
+                  }
+                  
                 }catch(e) {
                   throw e
                 }
@@ -527,6 +622,8 @@ export default class Authentication extends React.Component {
         // alert(e);
       }
     })
+  }else{
+    this.setState({authenticating: false})
   }
 }
 
@@ -552,29 +649,33 @@ renderCurrentState() {
         keyboardType='default'
         error={this.state.fullnameError}
         />
-        <Input 
-        placeholder='05/31/1996'
-        mask="mm/dd/yyyy"
-        label="Date of Birth"
-        name="DOB"
-        onChangeText = {(dob) => this.props.UserStore.dob = dob}
-        value={this.props.UserStore.dob}
-        maxLength = {9}
-        keyboardType='phone-pad'
-        error={this.state.dobError}
-        />
-        <Input 
-        placeholder='000-000-0000'
-        mask='phone'
-        label="Phone"
-        name="phone"
-        type="phone"
-        onChangeText= {(phone) => this.props.UserStore.phone = phone}
-        value={this.props.UserStore.phone}
-        keyboardType='phone-pad'
-        maxLength = {17}
-        error={this.state.phoneError}
-        />
+        <View style={{display: 'flex', flexDirection: 'row'}}>
+          <Input 
+          placeholder='05/31/1996'
+          mask="mm/dd/yyyy"
+          label="Date of Birth"
+          name="DOB"
+          onChangeText = {(dob) => this.props.UserStore.dob = dob}
+          value={this.props.UserStore.dob}
+          maxLength = {9}
+          keyboardType='phone-pad'
+          error={this.state.dobError}
+          style={{flex: 1, marginRight: 8}}
+          />
+          <Input 
+          placeholder='000-000-0000'
+          mask='phone'
+          label="Phone"
+          name="phone"
+          type="phone"
+          onChangeText= {(phone) => this.props.UserStore.phone = phone}
+          value={this.props.UserStore.phone}
+          keyboardType='phone-pad'
+          maxLength = {17}
+          error={this.state.phoneError}
+          style={{flex: 1, marginLeft: 8}}
+          />
+        </View>
         <Input 
         placeholder='Enter email...'
         label="Email"
@@ -607,7 +708,22 @@ renderCurrentState() {
         keyboardType='default'
         error={null}
         />
-        <Pressable style={{height: 40, flexDirection: 'row', alignItems: 'center'}} onPress={() => { this.setState({agreedToTOS: this.state.agreedToTOS === "checked" ? "unchecked" : "checked"})}}>
+        <Input 
+        placeholder='Enter sign up code...'
+        label="Sign Up Code (optional)"
+        name="sign up code"
+        onChangeText= {(code) => this.setState({signUpCode: code.toUpperCase()})}
+        value={this.state.signUpCode}
+        autoCapitalize="characters"
+        maxLength = {40}
+        keyboardType='default'
+        error={this.state.signUpCodeError}
+        />
+        <Pressable style={{height: 40, flexDirection: 'row', alignItems: 'center'}} onPress={() => { 
+
+
+          this.setState({agreedToTOS: this.state.agreedToTOS === "checked" ? "unchecked" : "checked"})
+          }}>
           <Checkbox.Android
               status={this.state.agreedToTOS}
           />

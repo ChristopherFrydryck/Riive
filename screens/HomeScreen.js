@@ -201,13 +201,17 @@ class Home extends Component {
 
     this.mapLocationFunction();
 
-    let isNew = this.props.UserStore.lastUpdate !== this.props.UserStore.joinedDate ? false : true
+
+    let isNew = this.props.UserStore.lastUpdate == this.props.UserStore.joinedDate ? true : false
     
 
-    checkWhatsNew(isNew, this.props.UserStore.versions).then((res) => {
-        
-        if(res !== null){
-            this.setState({changelogVersion: res})
+    checkWhatsNew(this.props.UserStore.versions).then((res) => {
+
+        const storageRef = storage().ref().child("dev-team/changelog.json")
+
+        if(res !== null && !isNew){
+
+            this.setState({changelogVersion: res.hasAppUpdateModal ? res : null})
             this.props.UserStore.versions.push({
                 code: res.release,
                 dateAdded: new Date(),
@@ -215,8 +219,35 @@ class Home extends Component {
                 minor: res.minor,
                 patch: res.patch,
             })
+        }else if(isNew){
+
+            storageRef.getDownloadURL().then((url) => {
+                let details = fetch(url)
+                return details
+            }, (err) => {
+                return err
+            }).then((res) => {
+                return res.json()
+            }).then(async (res) => {
+                this.setState({changelogVersion: res.versions[0]})
+            })
+
+            
+            
+            this.props.UserStore.versions.push({
+                code: version,
+                dateAdded: new Date(),
+                major: version.split(".")[0],
+                minor: version.split(".")[1],
+                patch: version.split(".")[2]
+            })
+
+            this.props.UserStore.lastUpdate = new Date();
+
+      
+
+            
         }
-        // this.props.UserStore.versions: [res, ...this.props.UserStore.versions]
     })
 
     this.forceUpdate();

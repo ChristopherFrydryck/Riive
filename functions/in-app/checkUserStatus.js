@@ -55,7 +55,19 @@ export default checkUserStatus = async(userID) => {
                     return e
                 }  
                 
+        }else if(e.code == 'auth/network-request-failed'){
+            Alert.alert(
+                "Connection Issue.",
+                "Looks like there is a connection issue. Check your connection. If the error persists, reach out to us at support@riive.net.",
+                [
+                    { text: 'Close' , onPress: () =>{
+                        auth().currentUser.reload();
+                        this.checkUserStatus();
+                    }},
+                ]
+            )
         }else{
+            console.log(e.code)
             Alert.alert(
                 "Whoops! Something went wrong.",
                 "We had issues checking your user credentials. Try logging back in.",

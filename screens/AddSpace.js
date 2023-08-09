@@ -165,8 +165,7 @@ class addSpace extends Component {
 
       LogBox.ignoreLogs(['VirtualizedLists should never be nested'])
 
-      
-     
+  
 
       this.setState({postID: ref.id})
       this._isMounted = true;
@@ -621,6 +620,29 @@ class addSpace extends Component {
     return null
   }
 
+  setHostBonus = () => {
+    const db = firestore();
+    let { hostBonus } = this.props.navigation.state.params
+
+    console.log(hostBonus)
+
+
+      db.collection('users').doc(this.props.UserStore.userID).get().then(doc => {
+        accountBal = doc.data().accountBalance
+
+        return accountBal
+      }).then(accountBal => {
+        db.collection('users').doc(this.props.UserStore.userID).update({
+          accountBalance: accountBal + parseInt(hostBonus)
+        })
+
+        this.props.UserStore.accountBalance =  accountBal + parseInt(hostBonus)
+      })
+  
+  }
+
+
+
   submitSpace = async() => {
     
     await this.verifyInputs();
@@ -674,6 +696,7 @@ class addSpace extends Component {
 
                 let createdTime = new Date().getTime();
                  
+                
                  
                  await this.mailchimpHostTag();
                  await db.collection("users").doc(this.props.UserStore.userID).update({
@@ -703,6 +726,10 @@ class addSpace extends Component {
                       // visits: []
                })
 
+               if(this.props.UserStore.listings.length == 0){
+                await this.setHostBonus();
+               }
+
                // add space to mobx UserStore
                await this.props.UserStore.listings.push({
                   listingID: this.state.postID,
@@ -724,6 +751,10 @@ class addSpace extends Component {
                   visits: [],
                })
 
+               
+
+
+             
   
 
                   // navigate back to profile
@@ -1230,7 +1261,7 @@ class addSpace extends Component {
       return(
         <ScrollView 
          style={{backgroundColor: "white", paddingHorizontal: 16}} 
-         contentContainerStyle={{flex: 1}}
+         contentContainerStyle={{flex: 1, alignItems: 'center', justifyContent: 'center'}}
         > 
    
           <View style={styles.container}>
@@ -1328,7 +1359,7 @@ class addSpace extends Component {
             style={{marginBottom: 16}}
           />
           <Text style={{textAlign: "center"}}>Let's link a bank account.</Text>
-          <Button style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300}}  onPress={() => this.props.navigation.navigate("BankLinkNavigator")}>Link Bank Account</Button>    
+          <Button style={this.state.verificationSent ? {backgroundColor: Colors.fortune500} : {backgroundColor: Colors.tango900}} textStyle={{color: Colors.mist300, width: '100%', textAlign: 'center'}}  onPress={() => this.props.navigation.navigate("BankLinkNavigator")}>Link Account</Button>    
             
           </View>
           

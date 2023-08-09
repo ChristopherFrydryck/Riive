@@ -13,6 +13,8 @@ import storage from '@react-native-firebase/storage'
 import firestore from '@react-native-firebase/firestore'
 import auth, { firebase } from '@react-native-firebase/auth';
 
+import config from 'react-native-config'
+
 
 class Item extends PureComponent{
     render(){
@@ -123,7 +125,7 @@ export class WhatsNewModal extends PureComponent{
     }
 }
 
-export let checkWhatsNew = (isNewUser, versionsUsed) => {
+export let checkWhatsNew = (versionsUsed) => {
      const storageRef = storage().ref().child("dev-team/changelog.json")
 
         return storageRef.getDownloadURL().then((url) => {
@@ -133,21 +135,63 @@ export let checkWhatsNew = (isNewUser, versionsUsed) => {
             return err
         }).then((res) => {
             return res.json()
-        }).then((res) => {
+        }).then(async (res) => {
 
-            var V = res.versions.filter(x => x.release == version)[0]
-                
-            if(isNewUser){
-                return res.versions.filter(x => x.release == "0.0.0")[0]
-            }else{
-                if(versionsUsed.map(x => x.code).includes(version)){
-                    return null
-                }else{
-                    addVersionToUserDB(version);
-                    return V
+            // Ints of the major, minor and patches for the most recent version in UserStore
+            let userVersionMajor = parseInt(versionsUsed[versionsUsed.length - 1].major);
+            let userVersionMinor = parseInt(versionsUsed[versionsUsed.length - 1].minor);
+            let userVersionPatch = parseInt(versionsUsed[versionsUsed.length - 1].patch);
+
+            // Get all released versions from Changelog file that are newer than the  most recent version
+            var versionsBetween = res.versions.filter(verz => verz.isReleased == true && verz.major >= userVersionMajor && verz.minor >= userVersionMinor && verz.patch >= userVersionPatch && verz.release !== versionsUsed[versionsUsed.length - 1].code)
+
+       
+            // console.log(versionsBetween.map(x => x.release))
+
+            // Loop of all new versions to update user content
+            for(let i = 0; i < versionsBetween.length; i++){
+
+                // console.log(`Version ${versionsBetween[i].major}.${versionsBetween[i].minor}.${versionsBetween[i].patch}`)
+
+                const settings = {
+                    method: 'POST',
+                    headers: {
+                        Accept: 
+                            'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: auth().currentUser.uid,
+                            major: parseInt(versionsBetween[i].major),
+                            minor: parseInt(versionsBetween[i].minor),
+                            patch: parseInt(versionsBetween[i].patch),
+                    })
                 }
-            }
+                        
+                    await fetch(`https://us-central1-${config.FIREBASEAPPID}.cloudfunctions.net/newVersionUpdate`, settings).then(response => {
+                          return response
+                    }).then(response => {
 
+                          if(response.status == 200){
+                            return response
+                          }else{
+                            throw response
+                          }      
+                    }).then(() => {
+                        if(i + 1 == versionsBetween.length){
+                            // Add newest version of riive to database
+                            addVersionToUserDB(versionsBetween[i].release);
+                        }
+                    }).catch(e => {
+                        // console.warn(e)
+                        throw e
+                    })
+            }
+                    
+                return versionsBetween.length > 0 ? versionsBetween[versionsBetween.length - 1] : null
+
+        }).catch(e => {
+            console.error(e)
         })
         
   }
@@ -155,7 +199,6 @@ export let checkWhatsNew = (isNewUser, versionsUsed) => {
 export let addVersionToUserDB = (version) => {
     const db = firestore()
      const user = db.collection('users').doc(auth().currentUser.uid)
-
 
      user.update({
          versions: firebase.firestore.FieldValue.arrayUnion({

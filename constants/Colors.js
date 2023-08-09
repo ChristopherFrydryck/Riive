@@ -13,6 +13,7 @@ export default {
     hal500: '#E84242',
     hal700: '#BE3737',
     hal900: '#942A2A',
+    fortune100: '#DFFDEF',
     fortune300: '#62C897',
     fortune500: '#40BC81',
     fortune700: '#359A6A',

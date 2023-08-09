@@ -78,18 +78,11 @@ export default class Authentication extends React.Component {
 
 
   async componentDidMount(){
-    // Remove after testing!!
-    // this.setState({email: 'admin@riive.net', password: 'Fallon430'})
-    // this.props.UserStore.email = 'chris@riive.net'
-    // this.props.UserStore.password = "Fallon430"
-
-
 
       // Set Status Bar page info here!
    this._navListener = this.props.navigation.addListener('didFocus', async() => {
     StatusBar.setBarStyle('dark-content', true);
     Platform.OS === 'android' && StatusBar.setBackgroundColor('white');
-
 
 
    
@@ -224,6 +217,7 @@ export default class Authentication extends React.Component {
               this.props.UserStore.address = doc.data().primaryAddress || {};
               this.props.UserStore.versions = doc.data().versions || [];
               this.props.UserStore.discounts = doc.data().discounts || [];
+              this.props.UserStore.referralCode = doc.data().referralCode || `${(this.props.UserStore.firstname).toUpperCase()}-${auth().currentUser.uid.slice(-6).toUpperCase()}`;
 
               // this.props.UserStore.permissions = doc.data().permissions || {
               //   notifications: {
@@ -445,6 +439,7 @@ export default class Authentication extends React.Component {
                 this.props.UserStore.address = doc.data().primaryAddress || {};
                 this.props.UserStore.versions = doc.data().versions || [];
                 this.props.UserStore.discounts = doc.data().discounts || [];
+                this.props.UserStore.referralCode = doc.data().referralCode || `${(this.props.UserStore.firstname).toUpperCase()}-${auth().currentUser.uid.slice(-6).toUpperCase()}`;
                 // Don't pull from data. we want all permissions, not just account level perms
                 // this.props.UserStore.permissions = this.props.UserStore.permissions;
 

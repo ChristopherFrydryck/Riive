@@ -107,7 +107,7 @@ class SpacesList extends React.Component{
                 deleteDate: spot.deleteDate,
                 visits: spot.visits,
             })
-            // console.log(this.props.ComponentStore.selectedSpot[0].spaceName)
+            console.log(this.props.ComponentStore.selectedSpot[0].spaceName)
             this.props.navigation.navigate("EditSpace")
          
            
@@ -232,7 +232,7 @@ class SpacesList extends React.Component{
         
 
         let {spotsLoaded} =  this.props.ComponentStore;
-        let {isLoaded} = this.props
+        let {isLoaded, emptyNav} = this.props
         var dayToday = new Date().getDay()
         var hourToday = new Date().getHours()
         var currentDate = new Date().getTime()
@@ -281,7 +281,7 @@ class SpacesList extends React.Component{
         }else{
             return(
               <View style={[styles.container, {flexDirection: 'row', marginLeft: 16}]}>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate("AddSpace")} style={[styles.li, {height: 160, backgroundColor: Colors.mist500}]}>
+                  <TouchableOpacity onPress={emptyNav} style={[styles.li, {height: 160, backgroundColor: Colors.mist500}]}>
                     <ImageBackground source={HomeImg1} imageStyle={{opacity: .2}} style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                     <Icon 
                             iconName="plus"
@@ -292,7 +292,7 @@ class SpacesList extends React.Component{
                         <Text type="Medium" style={{fontSize: 20, color: Colors.cosmos700}}>Add First Space</Text>
                     </ImageBackground>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.props.navigation.navigate("AddSpace")} style={[styles.li, {height: 160, backgroundColor: Colors.mist500}]}>
+                  <TouchableOpacity onPress={emptyNav} style={[styles.li, {height: 160, backgroundColor: Colors.mist500}]}>
                     <ImageBackground source={HomeImg2} imageStyle={{opacity: .2}} style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                     <Icon 
                             iconName="plus"
